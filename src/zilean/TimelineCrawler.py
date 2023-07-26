@@ -104,7 +104,7 @@ class TimelineCrawler:
             self.watcher = dummy_watcher
 
     def crawl(self, n: int, match_per_id: int = 15, file: str = None,
-              cutoff: int = 16) -> list:
+              cutoff: int = 16) -> tuple[list,set]:
         """Crawl ``MatchTimelineDto`` s and save results to disk as a
         json file. Also, return a list of unique ``MatchTimelineDto`` s.
         Each ``MatchTimelineDto`` is a dictionary that contains game
@@ -161,11 +161,11 @@ class TimelineCrawler:
                     .grandmaster_by_queue(self.region,
                                           self.queue)
             # For masters
-            elif self.tier == "MASTER":
+            else:
                 league_list = self.watcher.league \
                     .masters_by_queue(self.region,
                                       self.queue)
-            leagueIds = set([league_list["leagueId"]])
+            leagueIds = {league_list["leagueId"]}
         # For all others - LeagueEntries
         else:
             league_entries_set = self.watcher.league \
@@ -211,8 +211,7 @@ class TimelineCrawler:
         # Clean matches with specified cutoff
         result = clean_json(file_path, cutoff)
 
-        # Clean temporary files if to_dick is False
+        # Clean temporary files if to_disk is False
         if not to_disk:
             os.remove(file_path)
-
-        return result
+        return result, visited_matchIds
