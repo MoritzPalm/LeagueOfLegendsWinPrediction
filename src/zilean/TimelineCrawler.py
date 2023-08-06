@@ -104,7 +104,7 @@ class TimelineCrawler:
             self.watcher = dummy_watcher
 
     def crawl(self, n: int, match_per_id: int = 15, file: str = None,
-              cutoff: int = 16) -> tuple[list,set]:
+              cutoff: int = 16, excludingIDs: set = None) -> tuple[list, set]:
         """Crawl ``MatchTimelineDto`` s and save results to disk as a
         json file. Also, return a list of unique ``MatchTimelineDto`` s.
         Each ``MatchTimelineDto`` is a dictionary that contains game
@@ -127,6 +127,11 @@ class TimelineCrawler:
         cutoff : int
             The mininum number of minutes required for a match to
             be counted toward the final list. Defaults to 16.
+        excludingIDs : set
+            The set of matchIDs that should not be included in the output.
+            Usually used for successive runs, where already downloaded matches
+            should not be processed twice.
+            A list will also work, but is much slower, so a set is preferred
 
         Returns
         -------
@@ -195,11 +200,12 @@ class TimelineCrawler:
                 for i in range(min(match_per_id, len(match_list))):
                     matchId = match_list[i]
                     if matchId in visited_matchIds: continue
-                    timeline = self.watcher.match.timeline_by_match(self.region,
-                                                                    matchId)
+                    if matchId in excludingIDs: continue
+                    timeline = self.getTimeline(self.region, matchId)
                     # Save to disk
                     write_messy_json(timeline, file_path)
                     visited_matchIds.add(matchId)
+                    excludingIDs.add(matchId)
                     pbar.update(1)
                     if len(visited_matchIds) == n: break
                 if len(visited_matchIds) == n: break
@@ -215,3 +221,7 @@ class TimelineCrawler:
         if not to_disk:
             os.remove(file_path)
         return result, visited_matchIds
+
+    def getTimeline(self, region: str, matchID: int) -> dict:
+        timeline = self.watcher.match.timeline_by_match(self.region, matchID)
+        return timeline

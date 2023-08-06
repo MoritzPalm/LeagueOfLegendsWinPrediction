@@ -78,7 +78,7 @@ def clean_json(file: str, cutoff: int = 16) -> list:
             frame_interval = match['info']['frameInterval']
             total_frame_num = len(match['info']['frames'])
             if total_frame_num < int(cutoff * 60000 / frame_interval):
-                continue;
+                continue
             matches += [match]
     print(f"There are in total {len(matches)} crawled matches " +
           f"longer than {cutoff} minutes.")
