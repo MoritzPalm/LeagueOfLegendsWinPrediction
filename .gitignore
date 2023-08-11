@@ -1,5 +1,6 @@
 keys.py
-Data
+Data/
 .idea
 __pycache__
+database.ini
 
