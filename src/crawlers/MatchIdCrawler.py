@@ -1,46 +1,44 @@
-from tqdm import tqdm
+import logging
+
 from riotwatcher import LolWatcher
 
-from .core import *
+logger = logging.getLogger(__name__)
 
 
-class TimelineCrawler:
-    """An automatic crawler for Riot ``MatchTimelineDto`` s. The Riot
-    ``MatchTimelineDto`` s contain stats of a match at each minute mark.
-    The crawler runs ``riotwatcher.LolWatcher`` under the hood.
+class MatchIdCrawler:
+    """An automatic crawler for Riot MatchIDs.
+       The crawler runs ``riotwatcher.LolWatcher`` under the hood.
 
-    Attributes
-    ----------
-    api_key : str
-        Your Riot API key. You must have a valid API key to access
-        information through the Riot API. Defaults to None.
-    region : str
-        The region of interest, defaults to None.
-    tier : str
-        Tier level of the matches, defaults to None.
-    queue : str
-        The queue type of the matches, defaults to None.
-    dummy_watcher : :class:`DummyWatcher`
-        For testing purpose only, defaults to None.
+       Attributes
+       ----------
+       api_key : str
+           Your Riot API key. You must have a valid API key to access
+           information through the Riot API. Defaults to None.
+       region : str
+           The region of interest, defaults to None.
+       tier : str
+           Tier level of the matches, defaults to None.
+       queue : str
+           The queue type of the matches, defaults to None.
 
-    Notes
-    -----
-        The available options for ``region`` are
+       Notes
+       -----
+           The available options for ``region`` are
 
-        >>> ["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2",
-        ...  "na1", "oc1", "ru", "tr1"]
+           >>> ["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2",
+           ...  "na1", "oc1", "ru", "tr1"]
 
-        The available options for ``tier`` are
+           The available options for ``tier`` are
 
-        >>> ["CHALLENGER", "GRANDMASTER", "MASTER",
-        ...  "DIAMOND", "PLATINUM", "GOLD", "SILVER",
-        ...  "BRONZE", "IRON"]
+           >>> ["CHALLENGER", "GRANDMASTER", "MASTER",
+           ...  "DIAMOND", "EMERALD", "PLATINUM", "GOLD", "SILVER",
+           ...  "BRONZE", "IRON"]
 
-        The available options for ``queue`` are
+           The available options for ``queue`` are
 
-        >>> ["RANKED_SOLO_5x5", "RANKED_FLEX_SR",
-        ...  "RANKED_FLEX_TT"]
-    """
+           >>> ["RANKED_SOLO_5x5", "RANKED_FLEX_SR",
+           ...  "RANKED_FLEX_TT"]
+       """
 
     region_options_ = ["br1",
                        "eun1", "euw1",
@@ -55,6 +53,7 @@ class TimelineCrawler:
                      "GRANDMASTER",
                      "MASTER",
                      "DIAMOND",
+                     "EMERALD",
                      "PLATINUM",
                      "GOLD",
                      "SILVER",
@@ -65,8 +64,7 @@ class TimelineCrawler:
                       "RANKED_FLEX_SR",
                       "RANKED_FLEX_TT"]
 
-    def __init__(self, api_key: str = None, region: str = None, tier: str = None,
-                 queue: str = None, dummy_watcher=None) -> None:
+    def __init__(self, api_key: str, region: str = "euw1", tier: str = "CHALLENGER", queue: str = "RANKED_SOLO_5x5"):
         # Error checking
         # api_key
         if type(api_key) != str:
@@ -98,59 +96,41 @@ class TimelineCrawler:
         else:
             self.queue = queue
 
-        # Initiat the LolWatcher
         self.watcher = LolWatcher(api_key=self.api_key)
-        if dummy_watcher:
-            self.watcher = dummy_watcher
 
-    def crawl(self, n: int, match_per_id: int = 15, file: str = None,
-              cutoff: int = 16, excludingIDs: set = None) -> tuple[list, set]:
-        """Crawl ``MatchTimelineDto`` s and save results to disk as a
-        json file. Also, return a list of unique ``MatchTimelineDto`` s.
-        Each ``MatchTimelineDto`` is a dictionary that contains game
-        statistics at each minute mark. To perform analysis, feed the
-        returned list to a :class:`zilean.SnapShots` object.
-
-        Parameters
-        ----------
+    def getMatchIDs(self, n: int, match_per_id: int = 15,
+                    cutoff: int = 16, excludingIDs: set = None) -> set:
+        """
         n : int
-            The number of unique matches to be crawled.
+            Number of matchIDs to be returned. If not enough matches can be found,
+            it logs a warning and return the (smaller than wanted) set of matchIDs
         match_per_id : int
             The number of matches to be crawled for each unique
             account. Recommend to be a minimum of 15. Will handle
             the case if a player have played for less than the
             specified number of matches. Defaults to 15.
-        file : str
-            The name of the file to write the crawled result.
-            If None, then result will not be saved to disk. Defaults
-            to None.
         cutoff : int
-            The mininum number of minutes required for a match to
+            The minimum number of minutes required for a match to
             be counted toward the final list. Defaults to 16.
         excludingIDs : set
             The set of matchIDs that should not be included in the output.
             Usually used for successive runs, where already downloaded matches
             should not be processed twice.
             A list will also work, but is much slower, so a set is preferred
-
-        Returns
-        -------
-        list
-            A list of ``MatchTimelineDto`` s.
+        :return: set of matchIDs (str)
         """
-        # Define variables
-        to_disk = True if file else False
-        file_path = file if to_disk else ".temp.json"
-
-        # Error checking
-        if os.path.exists(file_path) and to_disk:
-            raise ValueError(f"File {file_path} already exist.")
+        # error checking
         if n <= 0:
             raise ValueError("Invalid number of matched to be crawled.")
         if match_per_id <= 0:
             raise ValueError("Invalid number of match per account.")
         if cutoff < 0:
             raise ValueError("Invalid cutoff.")
+        # variable definition
+        if not excludingIDs:
+            exclude_IDs = False
+        else:
+            exclude_IDs = True
 
         # Fetch a set of leagueIds
         # For highest tiers - LeagueLists
@@ -177,15 +157,8 @@ class TimelineCrawler:
                 .entries(self.region, self.queue,
                          self.tier, "I")
             leagueIds = set([entry["leagueId"] for entry in league_entries_set])
-        leagueIds = list(leagueIds)
-        leagueIds.sort()  # For testing purposes
 
-        # Start crawling
-        # Record matches that are already visited
         visited_matchIds = set()
-        # Set tqdm progress bar
-        pbar = tqdm(total=n)
-        pbar.set_description("Crawling matches")
         # Iterate over the leagueIds to fetch leagueEntries
         for leagueId in leagueIds:
             entries = self.watcher.league.by_id(self.region, leagueId)['entries']
@@ -196,32 +169,28 @@ class TimelineCrawler:
                 puuid = self.watcher.summoner.by_id(self.region, summonerId)["puuid"]
                 # Then fetch a list of matchIds for that puuid
                 match_list = self.watcher.match.matchlist_by_puuid(self.region, puuid)
-                # Lastly fetch MatchTimelines for each matchId
                 for i in range(min(match_per_id, len(match_list))):
                     matchId = match_list[i]
-                    if matchId in visited_matchIds: continue
-                    if matchId in excludingIDs: continue
-                    timeline = self.getTimeline(self.region, matchId)
-                    # Save to disk
-                    write_messy_json(timeline, file_path)
-                    visited_matchIds.add(matchId)
-                    excludingIDs.add(matchId)
-                    pbar.update(1)
-                    if len(visited_matchIds) == n: break
-                if len(visited_matchIds) == n: break
-            if len(visited_matchIds) == n: break
-        if len(visited_matchIds) < n:
-            print(f"{n} unique matches cannot be met with match_per_id " +
-                  f"= {match_per_id} (currently {len(visited_matchIds)} matches).")
-        pbar.close()
-        # Clean matches with specified cutoff
-        result = clean_json(file_path, cutoff)
+                    if matchId in visited_matchIds:
+                        continue
+                    if exclude_IDs and matchId in excludingIDs:
+                        continue
+                    if self.checkValidMatch(matchID=matchId, region=self.region):
+                        visited_matchIds.add(matchId)
+                    if len(visited_matchIds) >= n:
+                        break
+                if len(visited_matchIds) >= n:
+                    break
+            if len(visited_matchIds) >= n:
+                break
+        return visited_matchIds
 
-        # Clean temporary files if to_disk is False
-        if not to_disk:
-            os.remove(file_path)
-        return result, visited_matchIds
-
-    def getTimeline(self, region: str, matchID: int) -> dict:
-        timeline = self.watcher.match.timeline_by_match(self.region, matchID)
-        return timeline
+    def checkValidMatch(self, matchID: str, region: str) -> bool:
+        """
+        :param matchID:
+        :param region:
+        :return:
+        """
+        minGameDuration = 960   # 16min in seconds
+        gameDuration = self.watcher.match.by_id(match_id=matchID, region=region)['info']['gameDuration']
+        return gameDuration > minGameDuration

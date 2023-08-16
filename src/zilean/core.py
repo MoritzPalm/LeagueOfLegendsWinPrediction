@@ -88,7 +88,7 @@ def clean_json(file: str, cutoff: int = 16) -> list:
 
 
 # =====================
-# == Data Processing ==
+# == data Processing ==
 # =====================
 
 def json_data_mask(dic: dict) -> list:
