@@ -9,6 +9,9 @@ import numpy as np
 
 from riotwatcher import LolWatcher
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import exists
+from sqlalchemy.exc import IntegrityError
+
 
 from utils import get_season
 from crawlers.MatchIdCrawler import MatchIdCrawler
@@ -43,7 +46,7 @@ def main():
         args.n = sys.maxsize
 
     crawler = MatchIdCrawler(api_key=api_key, region=args.region, tier=args.tier)
-    matchIDs = crawler.getMatchIDs(n=100)
+    matchIDs = crawler.getMatchIDs(n=1)
     watcher = LolWatcher(api_key)
     Base.metadata.create_all(bind=engine)
     Session = sessionmaker(bind=engine)
@@ -60,8 +63,12 @@ def main():
                                 gameDuration=current_match_info['gameDuration'],
                                 gameCreation=current_match_info['gameCreation'],
                                 )
-        session.add(curent_match)
-    session.commit()
+        session.add(curent_match)   # if performance is an issue, we can still use the core api, see here: https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
+
+    try:
+        session.commit()    # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
+    except IntegrityError:
+        session.rollback()
 
 
 parser = argparse.ArgumentParser(description='Downloading all match, player and champion data')
