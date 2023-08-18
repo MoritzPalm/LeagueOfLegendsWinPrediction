@@ -1,8 +1,3 @@
-
-
-
-import os
-import time
 import sys
 import keys
 import pickle
@@ -12,8 +7,12 @@ import argparse
 import pandas as pd
 import numpy as np
 
+from riotwatcher import LolWatcher
+from sqlalchemy.orm import sessionmaker
+
+from utils import get_season
 from crawlers.MatchIdCrawler import MatchIdCrawler
-from src.sqlstore.db import session
+from src.sqlstore.db import Base, engine
 from src.sqlstore.match import SQLmatch
 
 
@@ -44,10 +43,24 @@ def main():
         args.n = sys.maxsize
 
     crawler = MatchIdCrawler(api_key=api_key, region=args.region, tier=args.tier)
-    matchIDs = crawler.getMatchIDs(n=1)
-
-    match = SQLmatch("ejfjdkk", 1, 2, 3, "adfadf", 4, 5, 6, 7)
-    session.add(match)
+    matchIDs = crawler.getMatchIDs(n=100)
+    watcher = LolWatcher(api_key)
+    Base.metadata.create_all(bind=engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    for matchID in matchIDs:
+        current_match_info = watcher.match.by_id(match_id=matchID, region='euw1')['info']
+        seasonId = get_season(current_match_info['gameVersion'])
+        curent_match = SQLmatch(platformId=current_match_info['platformId'],
+                                gameId=current_match_info['gameId'],
+                                seasonId=seasonId,    # TODO: this needs to be calculated in separate function, this info is the first part of gameVersion
+                                queueId=current_match_info['queueId'],
+                                gameVersion=current_match_info['gameVersion'],
+                                mapId=current_match_info['mapId'],
+                                gameDuration=current_match_info['gameDuration'],
+                                gameCreation=current_match_info['gameCreation'],
+                                )
+        session.add(curent_match)
     session.commit()
 
 

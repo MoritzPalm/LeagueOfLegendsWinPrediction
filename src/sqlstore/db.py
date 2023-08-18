@@ -40,6 +40,4 @@ Base = declarative_base()
 engine = connect_to_db()
 logger.info('Database connection established')
 metadata = MetaData()
-Base.metadata.create_all(bind=engine)
-Session = sessionmaker(bind=engine)
-session = Session()
+
