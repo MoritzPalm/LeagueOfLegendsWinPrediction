@@ -11,38 +11,14 @@ import argparse
 
 import pandas as pd
 import numpy as np
-import psycopg2
 
-from riotwatcher import LolWatcher, ApiError
-from configparser import ConfigParser, Error
 from crawlers.MatchIdCrawler import MatchIdCrawler
-
-
-def db_config(filename='database.ini', section='postgresql'):
-    # create a parser
-    db_configparser = ConfigParser()
-    # read config file
-    db_configparser.read(filename)
-    # get section, default to postgresql
-    db = {}
-    if db_configparser.has_section(section):
-        params = db_configparser.items(section)
-        for param in params:
-            db[param[0]] = param[1]
-    else:
-        raise Exception('Section {0} not found in the {1} file'.format(section, filename))
-    return db
-
-
-def connect_to_db():
-    """Connect to db and return the connection object"""
-    params = db_config()
-    return psycopg2.connect(**params)
+from src.sqlstore.db import session
+from src.sqlstore.match import SQLmatch
 
 
 def main():
     api_key = keys.API_KEY_1
-    print(api_key)
     logginglevel = getattr(logging, args.logginglevel.upper(), None)
     if not isinstance(logginglevel, int):
         raise ValueError('Invalid log level: %s' % args.logginglevel)
@@ -70,22 +46,9 @@ def main():
     crawler = MatchIdCrawler(api_key=api_key, region=args.region, tier=args.tier)
     matchIDs = crawler.getMatchIDs(n=1)
 
-    conn = None
-    try:
-        conn = connect_to_db()
-        logger.info('Database connection established')
-        cur = conn.cursor()
-        cur.execute('INSERT INTO match_test(matchid) VALUES (%s) RETURNING matchid', (matchIDs.pop(),))
-        matchID = cur.fetchone()[0]
-        print(matchID)
-        conn.commit()
-        cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-            logger.info('Database connection closed.')
+    match = SQLmatch("ejfjdkk", 1, 2, 3, "adfadf", 4, 5, 6, 7)
+    session.add(match)
+    session.commit()
 
 
 parser = argparse.ArgumentParser(description='Downloading all match, player and champion data')
@@ -109,10 +72,8 @@ parser.add_argument('-m', '--matches_per_id', action='store', default=15, type=i
                     help='number of matches to be crawled per id', dest='matches_per_id')
 args = parser.parse_args()
 
+
 if __name__ == '__main__':
     main()
-
-
-
 
 
