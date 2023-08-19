@@ -12,11 +12,12 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import exists
 from sqlalchemy.exc import IntegrityError
 
-
 from utils import get_season
 from crawlers.MatchIdCrawler import MatchIdCrawler
-from src.sqlstore.db import Base, engine
+from src.sqlstore.db import get_conn, get_session
 from src.sqlstore.match import SQLmatch
+
+# TODO: make logging actually useful
 
 
 def main():
@@ -46,54 +47,55 @@ def main():
         args.n = sys.maxsize
 
     crawler = MatchIdCrawler(api_key=api_key, region=args.region, tier=args.tier)
-    matchIDs = crawler.getMatchIDs(n=1)
+    matchIDs = crawler.getMatchIDs(n=args.n)
     watcher = LolWatcher(api_key)
-    Base.metadata.create_all(bind=engine)
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    for matchID in matchIDs:
-        current_match_info = watcher.match.by_id(match_id=matchID, region='euw1')['info']
-        seasonId = get_season(current_match_info['gameVersion'])
-        curent_match = SQLmatch(platformId=current_match_info['platformId'],
-                                gameId=current_match_info['gameId'],
-                                seasonId=seasonId,    # TODO: this needs to be calculated in separate function, this info is the first part of gameVersion
-                                queueId=current_match_info['queueId'],
-                                gameVersion=current_match_info['gameVersion'],
-                                mapId=current_match_info['mapId'],
-                                gameDuration=current_match_info['gameDuration'],
-                                gameCreation=current_match_info['gameCreation'],
-                                )
-        session.add(curent_match)   # if performance is an issue, we can still use the core api, see here: https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
+    with get_session() as session:
+        for matchID in matchIDs:
+            current_match_info = watcher.match.by_id(match_id=matchID, region='euw1')['info']
+            seasonId = get_season(current_match_info['gameVersion'])
+            current_match = SQLmatch(platformId=current_match_info['platformId'],
+                                     gameId=current_match_info['gameId'],
+                                     seasonId=seasonId,
+                                     queueId=current_match_info['queueId'],
+                                     gameVersion=current_match_info['gameVersion'],
+                                     mapId=current_match_info['mapId'],
+                                     gameDuration=current_match_info['gameDuration'],
+                                     gameCreation=current_match_info['gameCreation'],
+                                     )
+            session.add(
+                current_match)  # if performance is an issue, we can still use the core api, see here:
+                                # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
 
-    try:
-        session.commit()    # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
-    except IntegrityError:
-        session.rollback()
-
-
-parser = argparse.ArgumentParser(description='Downloading all match, player and champion data')
-parser.add_argument('-f', '--folder', action='store', default='../data', type=str,
-                    help='path to target folder in which the folder for this run will be created',
-                    dest='folder')
-parser.add_argument('-v', '--visited', action='store', default='', type=str,
-                    help='path to pickle file containing a set of visited and thus to be excluded match IDs',
-                    dest='visitedPath')
-parser.add_argument('-l', '--log', action='store', default='error', type=str.upper,
-                    choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-                    help='choosing the level of logging used', dest='logginglevel')
-parser.add_argument('-r', '--region', action='store', default='euw1', type=str,
-                    choices=["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2", "na1", "oc1", "ru", "tr1"],
-                    help='region from which matches should be crawled', dest='region')
-parser.add_argument('-t', '--tier', action='store', default='challenger', type=str.upper,
-                    choices=["CHALLENGER", "GRANDMASTER", "MASTER", "DIAMOND", "EMERALD", "PLATINUM", "GOLD", "SILVER", "BRONZE", "IRON"],
-                    help='elo tier from which matches should be crawled', dest='tier')
-parser.add_argument('-n', action='store', default=0, type=int, help='number of matches to be crawled, 0 means that every available match will be crawled')
-parser.add_argument('-m', '--matches_per_id', action='store', default=15, type=int,
-                    help='number of matches to be crawled per id', dest='matches_per_id')
-args = parser.parse_args()
+        try:
+            session.commit()  # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
+        except IntegrityError:
+            session.rollback()
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Downloading all match, player and champion data')
+    parser.add_argument('-f', '--folder', action='store', default='../data', type=str,
+                        help='path to target folder in which the folder for this run will be created',
+                        dest='folder')
+    parser.add_argument('-v', '--visited', action='store', default='', type=str,
+                        help='path to pickle file containing a set of visited and thus to be excluded match IDs',
+                        dest='visitedPath')
+    parser.add_argument('-l', '--log', action='store', default='error', type=str.upper,
+                        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
+                        help='choosing the level of logging used', dest='logginglevel')
+    parser.add_argument('-r', '--region', action='store', default='euw1', type=str,
+                        choices=["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2", "na1", "oc1", "ru", "tr1"],
+                        help='region from which matches should be crawled', dest='region')
+    parser.add_argument('-t', '--tier', action='store', default='challenger', type=str.upper,
+                        choices=["CHALLENGER", "GRANDMASTER", "MASTER", "DIAMOND", "EMERALD", "PLATINUM", "GOLD",
+                                 "SILVER",
+                                 "BRONZE", "IRON"],
+                        help='elo tier from which matches should be crawled', dest='tier')
+    parser.add_argument('-n', action='store', default=0, type=int,
+                        help='number of matches to be crawled, 0 means that every available match will be crawled')
+    parser.add_argument('-m', '--matches_per_id', action='store', default=15, type=int,
+                        help='number of matches to be crawled per id', dest='matches_per_id')
+
+    args = parser.parse_args()
+
     main()
-
-

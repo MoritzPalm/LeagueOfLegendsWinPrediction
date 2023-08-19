@@ -1,13 +1,13 @@
 import logging
+import contextlib
 
 from sqlalchemy import create_engine, MetaData, URL
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from configparser import ConfigParser, Error
 
 logger = logging.getLogger(__name__)
 
-
-
+# TODO: logging
 def db_config(filename='database.ini', section='postgresql'):
     # create a parser
     db_configparser = ConfigParser()
@@ -38,6 +38,31 @@ def connect_to_db():
 
 Base = declarative_base()
 engine = connect_to_db()
-logger.info('Database connection established')
-metadata = MetaData()
 
+
+@contextlib.contextmanager
+def get_session(cleanup=False):
+    session = Session(bind=engine)
+    Base.metadata.create_all(engine)
+
+    try:
+        yield session
+    except Exception:   # TODO: this should be a more specific exception
+        session.rollback()
+    finally:
+        session.close()
+
+    if cleanup:
+        Base.metadata.drop_all(engine)
+
+
+@contextlib.contextmanager
+def get_conn(cleanup=False):
+    conn = engine.connect()
+    Base.metadata.create_all(engine)
+
+    yield conn
+    conn.close()
+
+    if cleanup:
+        Base.metadata.drop_all(engine)
