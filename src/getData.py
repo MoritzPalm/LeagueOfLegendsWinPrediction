@@ -17,6 +17,7 @@ from crawlers.MatchIdCrawler import MatchIdCrawler
 from src.sqlstore.db import get_conn, get_session
 from src.sqlstore.match import SQLmatch
 
+
 # TODO: make logging actually useful
 
 
@@ -53,7 +54,8 @@ def main():
         for matchID in matchIDs:
             current_match_info = watcher.match.by_id(match_id=matchID, region='euw1')['info']
             seasonId = get_season(current_match_info['gameVersion'])
-            current_match = SQLmatch(platformId=current_match_info['platformId'],
+            current_match = SQLmatch(matchId=matchID,
+                                     platformId=current_match_info['platformId'],
                                      gameId=current_match_info['gameId'],
                                      seasonId=seasonId,
                                      queueId=current_match_info['queueId'],
@@ -64,7 +66,7 @@ def main():
                                      )
             session.add(
                 current_match)  # if performance is an issue, we can still use the core api, see here:
-                                # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
+            # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
 
         try:
             session.commit()  # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?

@@ -6,9 +6,9 @@ from src.sqlstore.db import Base
 
 class SQLmatch(Base):
     __tablename__ = "match"
-
-    platformId = Column("platformId", String(7), primary_key=True)
-    gameId = Column("gameId", BigInteger, primary_key=True)
+    matchId = Column("matchId", String(20), primary_key=True)
+    platformId = Column("platformId", String(7))
+    gameId = Column("gameId", BigInteger)
     seasonId = Column("seasonId", Integer)
     queueId = Column("queueId", Integer)
     gameVersion = Column("gameVersion", String(23))
@@ -18,8 +18,9 @@ class SQLmatch(Base):
     timeCreated = Column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = Column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, platformId: str, gameId: int, seasonId: int, queueId: int,
+    def __init__(self, matchId: str, platformId: str, gameId: int, seasonId: int, queueId: int,
                  gameVersion: str, mapId: int, gameDuration: int, gameCreation: int):
+        self.matchId = matchId
         self.platformId = platformId
         self.gameId = gameId
         self.seasonId = seasonId
