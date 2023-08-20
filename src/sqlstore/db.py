@@ -8,6 +8,8 @@ from configparser import ConfigParser, Error
 logger = logging.getLogger(__name__)
 
 # TODO: logging
+
+
 def db_config(filename='database.ini', section='postgresql'):
     # create a parser
     db_configparser = ConfigParser()
