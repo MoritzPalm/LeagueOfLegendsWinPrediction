@@ -67,6 +67,7 @@ def main():
             session.add(
                 current_match)  # if performance is an issue, we can still use the core api, see here:
             # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
+            #for puuid in current_match_info['metadata']['participants']:
 
         try:
             session.commit()  # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
