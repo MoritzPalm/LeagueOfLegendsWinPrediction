@@ -57,6 +57,9 @@ def main():
             current_match_info = watcher.match.by_id(match_id=matchID, region='euw1')['info']
             seasonId = get_season(current_match_info['gameVersion'])
             logger.debug(f"seasonID: {seasonId}")
+            logger.debug(f"sqlmatch arguments: {matchID}, {current_match_info['platformId']}, "
+                         f"{current_match_info['gameId']}, {seasonId}, {current_match_info['queueId']}, "
+                         f"{current_match_info['gameVersion']}, {current_match_info['mapId']}, {current_match_info['gameDuration']}, {current_match_info['gameCreation']}")
             current_match = SQLmatch(matchId=matchID,
                                      platformId=current_match_info['platformId'],
                                      gameId=current_match_info['gameId'],
@@ -67,16 +70,13 @@ def main():
                                      gameDuration=current_match_info['gameDuration'],
                                      gameCreation=current_match_info['gameCreation'],
                                      )
-            session.commit()
-            logger.debug(f"game id of first participant: {current_match_info['participants'][0]['gameId']}")
-            for participant in current_match_info['participants']:
-                logger.debug("I am here")
-                curr_participantStats = SQLparticipantStats(participant['puuid'], current_match_info['platformId'], current_match_info['gameId'], participant['allInPings'])
-                print(curr_participantStats)
-                session.add(curr_participantStats)
-            session.add(
-                current_match)  # if performance is an issue, we can still use the core api, see here:
+            session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
             # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
+            for participant in current_match_info['participants']:
+                participant_args = {'puuid': participant['puuid'], 'platformId': current_match_info['platformId'],
+                                    'gameId': current_match_info['gameId'], 'allInPings': participant['allInPings']}
+                curr_participantStats = SQLparticipantStats(**participant_args)
+                session.add(curr_participantStats)
         try:
             session.commit()  # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
         except IntegrityError:

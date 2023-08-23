@@ -6,7 +6,7 @@ from src.sqlstore.db import Base
 class SQLparticipantStats(Base):
     __tablename__ = "match_participant_stats"
 
-    puuid = Column(String(40), primary_key=True)
+    puuid = Column(String(100), primary_key=True)
     platformId = Column(String(7), primary_key=True)
     gameId = Column(BigInteger, primary_key=True)
     allInPings = Column(Integer)
