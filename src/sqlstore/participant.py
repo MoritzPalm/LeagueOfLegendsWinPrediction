@@ -141,7 +141,7 @@ class SQLparticipantStats(Base):
     lastUpdate = Column(DateTime(timezone=True), onupdate=func.now())
 
     def __init__(self, **kwargs):
-        for attr in ('puuid', 'platformId', 'gameId', 'allInPings'):
+        for attr in ('puuid', 'platformId', 'gameId', 'allInPings'):    # TODO: complete the list after testing
             setattr(self, attr, kwargs.get(attr))
 
     def __repr__(self):
