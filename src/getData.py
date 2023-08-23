@@ -16,6 +16,7 @@ from utils import get_season
 from crawlers.MatchIdCrawler import MatchIdCrawler
 from src.sqlstore.db import get_conn, get_session
 from src.sqlstore.match import SQLmatch
+from src.sqlstore.participant import SQLparticipantStats
 
 
 # TODO: make logging actually useful
@@ -50,10 +51,12 @@ def main():
     crawler = MatchIdCrawler(api_key=api_key, region=args.region, tier=args.tier)
     matchIDs = crawler.getMatchIDs(n=args.n)
     watcher = LolWatcher(api_key)
-    with get_session() as session:
+    with get_session(cleanup=False) as session:
         for matchID in matchIDs:
+            logger.debug(f"matchID: {matchID}")
             current_match_info = watcher.match.by_id(match_id=matchID, region='euw1')['info']
             seasonId = get_season(current_match_info['gameVersion'])
+            logger.debug(f"seasonID: {seasonId}")
             current_match = SQLmatch(matchId=matchID,
                                      platformId=current_match_info['platformId'],
                                      gameId=current_match_info['gameId'],
@@ -64,11 +67,16 @@ def main():
                                      gameDuration=current_match_info['gameDuration'],
                                      gameCreation=current_match_info['gameCreation'],
                                      )
+            session.commit()
+            logger.debug(f"game id of first participant: {current_match_info['participants'][0]['gameId']}")
+            for participant in current_match_info['participants']:
+                logger.debug("I am here")
+                curr_participantStats = SQLparticipantStats(participant['puuid'], current_match_info['platformId'], current_match_info['gameId'], participant['allInPings'])
+                print(curr_participantStats)
+                session.add(curr_participantStats)
             session.add(
                 current_match)  # if performance is an issue, we can still use the core api, see here:
             # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
-            #for puuid in current_match_info['metadata']['participants']:
-
         try:
             session.commit()  # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
         except IntegrityError:
