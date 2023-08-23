@@ -6,7 +6,7 @@ from src.sqlstore.db import Base
 class SQLparticipantStats(Base):
     __tablename__ = "match_participant_stats"
 
-    puuid = Column(String(40), primary_key=True)
+    puuid = Column(String(100), primary_key=True)
     platformId = Column(String(7), primary_key=True)
     gameId = Column(BigInteger, primary_key=True)
     allInPings = Column(Integer)
@@ -90,8 +90,8 @@ class SQLparticipantStats(Base):
     profileIcon = Column(Integer)
     pushPings = Column(Integer)
     quadraKills = Column(Integer)
-    # riotIdName = Column(String(63))
-    # riotIdTagLine = Column(String(63))
+    riotIdName = Column(String(63))
+    riotIdTagLine = Column(String(63))
     role = Column(String(20))
     sightWardsBoughtInGame = Column(Integer)
     spell1Casts = Column(Integer)
@@ -103,12 +103,12 @@ class SQLparticipantStats(Base):
     summoner1Id = Column(Integer)
     summoner2Casts = Column(Integer)
     summoner2Id = Column(Integer)
-    summonerId = Column(String(63))
+    summonerId = Column(String(100))
     summonerLevel = Column(Integer)
     summonerName = Column(String(63))
     teamEarlySurrendered = Column(Boolean)
     teamId = Column(Integer)
-    teamPosition = Column(String(10))
+    teamPosition = Column(String(20))
     timeCCingOthers = Column(Integer)
     timePlayed = Column(Integer)
     totalAllyJungleMinionsKilled = Column(Integer)
@@ -141,7 +141,8 @@ class SQLparticipantStats(Base):
     lastUpdate = Column(DateTime(timezone=True), onupdate=func.now())
 
     def __init__(self, **kwargs):
-        for attr in ('puuid', 'platformId', 'gameId', 'allInPings'):    # TODO: complete the list after testing
+        for attr in ('allInPings', 'assistMePings', 'assists', 'baitPings', 'baronKills', 'basicPings', 'bountyLevel', 'champExperience', 'champLevel', 'championId', 'championName', 'championTransform', 'commandPings', 'consumablesPurchased', 'damageDealtToBuildings', 'damageDealtToObjectives', 'damageDealtToTurrets', 'damageSelfMitigated', 'dangerPings', 'deaths', 'detectorWardsPlaced', 'doubleKills', 'dragonKills', 'eligibleForProgression', 'enemyMissingPings', 'enemyVisionPings', 'firstBloodAssist', 'firstBloodKill', 'firstTowerAssist', 'firstTowerKill', 'gameEndedInEarlySurrender', 'gameEndedInSurrender', 'getBackPings', 'goldEarned', 'goldSpent', 'holdPings', 'individualPosition', 'inhibitorKills', 'inhibitorTakedowns', 'inhibitorsLost', 'item0', 'item1', 'item2', 'item3', 'item4', 'item5', 'item6', 'itemsPurchased', 'killingSprees', 'kills', 'lane', 'largestCriticalStrike', 'largestKillingSpree', 'largestMultiKill', 'longestTimeSpentLiving', 'magicDamageDealt', 'magicDamageDealtToChampions', 'magicDamageTaken', 'needVisionPings', 'neutralMinionsKilled', 'nexusKills', 'nexusLost', 'nexusTakedowns', 'objectivesStolen', 'objectivesStolenAssists', 'onMyWayPings', 'participantId', 'pentaKills', 'physicalDamageDealt', 'physicalDamageDealtToChampions', 'physicalDamageTaken', 'placement', 'playerAugment1', 'playerAugment2', 'playerAugment3', 'playerAugment4', 'playerSubteamId', 'profileIcon', 'pushPings', 'puuid', 'quadraKills', 'riotIdName', 'riotIdTagline', 'role', 'sightWardsBoughtInGame', 'spell1Casts', 'spell2Casts', 'spell3Casts', 'spell4Casts', 'subteamPlacement', 'summoner1Casts', 'summoner1Id', 'summoner2Casts', 'summoner2Id', 'summonerId', 'summonerLevel', 'summonerName', 'teamEarlySurrendered', 'teamId', 'teamPosition', 'timeCCingOthers', 'timePlayed', 'totalAllyJungleMinionsKilled', 'totalDamageDealt', 'totalDamageDealtToChampions', 'totalDamageShieldedOnTeammates', 'totalDamageTaken', 'totalEnemyJungleMinionsKilled', 'totalHeal', 'totalHealsOnTeammates', 'totalMinionsKilled', 'totalTimeCCDealt', 'totalTimeSpentDead', 'totalUnitsHealed', 'tripleKills', 'trueDamageDealt', 'trueDamageDealtToChampions', 'trueDamageTaken', 'turretKills', 'turretTakedowns', 'turretsLost', 'unrealKills', 'visionClearedPings', 'visionScore', 'visionWardsBoughtInGame', 'wardsKilled', 'wardsPlaced', 'win', 'platformId', 'gameId'):
+            print(f"{attr}: {kwargs.get(attr)}")
             setattr(self, attr, kwargs.get(attr))
 
     def __repr__(self):

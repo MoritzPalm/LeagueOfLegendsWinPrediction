@@ -53,13 +53,8 @@ def main():
     watcher = LolWatcher(api_key)
     with get_session(cleanup=False) as session:
         for matchID in matchIDs:
-            logger.debug(f"matchID: {matchID}")
             current_match_info = watcher.match.by_id(match_id=matchID, region='euw1')['info']
             seasonId = get_season(current_match_info['gameVersion'])
-            logger.debug(f"seasonID: {seasonId}")
-            logger.debug(f"sqlmatch arguments: {matchID}, {current_match_info['platformId']}, "
-                         f"{current_match_info['gameId']}, {seasonId}, {current_match_info['queueId']}, "
-                         f"{current_match_info['gameVersion']}, {current_match_info['mapId']}, {current_match_info['gameDuration']}, {current_match_info['gameCreation']}")
             current_match = SQLmatch(matchId=matchID,
                                      platformId=current_match_info['platformId'],
                                      gameId=current_match_info['gameId'],
@@ -72,14 +67,19 @@ def main():
                                      )
             session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
             # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
+            session.commit()
             for participant in current_match_info['participants']:
-                participant_args = {'puuid': participant['puuid'], 'platformId': current_match_info['platformId'],
-                                    'gameId': current_match_info['gameId'], 'allInPings': participant['allInPings']}
-                curr_participantStats = SQLparticipantStats(**participant_args)
+                participant['platformId'] = current_match_info['platformId']
+                participant['gameId'] = current_match_info['gameId']
+                del participant['challenges']
+                del participant['perks']
+                curr_participantStats = SQLparticipantStats(**participant)
                 session.add(curr_participantStats)
         try:
+            session.flush()
             session.commit()  # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
-        except IntegrityError:
+        except Exception as e:
+            print(str(e))
             session.rollback()
 
 
