@@ -53,8 +53,10 @@ def main():
     watcher = LolWatcher(api_key)
     with get_session(cleanup=False) as session:
         for matchID in matchIDs:
-            current_match_info = watcher.match.by_id(match_id=matchID, region='euw1')['info']
+            current_match_info = watcher.match.by_id(match_id=matchID, region=args.region)['info']
+            current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)
             seasonId = get_season(current_match_info['gameVersion'])
+            logging.debug(current_match_timeline)
             current_match = SQLmatch(matchId=matchID,
                                      platformId=current_match_info['platformId'],
                                      gameId=current_match_info['gameId'],
@@ -67,7 +69,6 @@ def main():
                                      )
             session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
             # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
-            session.commit()
             for participant in current_match_info['participants']:
                 participant['platformId'] = current_match_info['platformId']
                 participant['gameId'] = current_match_info['gameId']

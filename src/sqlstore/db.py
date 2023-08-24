@@ -49,7 +49,8 @@ def get_session(cleanup=False):
 
     try:
         yield session
-    except Exception:   # TODO: this should be a more specific exception
+    except Exception as e:   # TODO: this should be a more specific exception
+        print(str(e))
         session.rollback()
     finally:
         session.close()
