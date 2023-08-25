@@ -17,6 +17,7 @@ from crawlers.MatchIdCrawler import MatchIdCrawler
 from src.sqlstore.db import get_conn, get_session
 from src.sqlstore.match import SQLmatch
 from src.sqlstore.participant import SQLparticipantStats
+from src.sqlstore.timeline import SQLTimeline, SQLTimelineEvent, SQLTimelineFrame, SQLTimelineParticipantFrame
 
 
 # TODO: make logging actually useful
@@ -54,9 +55,8 @@ def main():
     with get_session(cleanup=False) as session:
         for matchID in matchIDs:
             current_match_info = watcher.match.by_id(match_id=matchID, region=args.region)['info']
-            current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)
+            current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)['info']
             seasonId = get_season(current_match_info['gameVersion'])
-            logging.debug(current_match_timeline)
             current_match = SQLmatch(matchId=matchID,
                                      platformId=current_match_info['platformId'],
                                      gameId=current_match_info['gameId'],
@@ -76,6 +76,31 @@ def main():
                 del participant['perks']
                 curr_participantStats = SQLparticipantStats(**participant)
                 session.add(curr_participantStats)
+        current_timeline = SQLTimeline(platformId=current_match_info['platformId'], gameId=current_match_info['gameId'],
+                                       frameInterval=current_match_timeline['frameInterval'])
+        session.add(current_timeline)
+        for frameId, frame in enumerate(current_match_timeline['frames']):
+            frame_obj = SQLTimelineFrame(platformId=current_match_info['platformId'], gameId=current_match_info['gameId'],
+                                         frameId=frameId, timestamp=current_match_timeline['frames'][frameId]['timestamp'])
+            session.add(frame_obj)
+            for eventId, event in enumerate(current_match_timeline['frames'][frameId]['events']):
+                if event['type'] in ['CHAMPION_KILL', 'CHAMPION_SPECIAL_KILL']:
+                    continue
+                event['platformId'] = current_match_info['platformId']
+                event['gameId'] = current_match_info['gameId']
+                event['frameId'] = frameId
+                event['eventId'] = eventId
+                event_obj = SQLTimelineEvent(**event)
+                session.add(event_obj)
+            for i, participantFrame in enumerate(current_match_timeline['frames'][frameId]['participantFrames'].items(), start=1):
+                participantFrameData = participantFrame[1]
+                print(participantFrameData)
+                participantFrameData['platformId'] = current_match_info['platformId']
+                participantFrameData['gameId'] = current_match_info['gameId']
+                participantFrameData['frameId'] = frameId
+                participantFrameData['participantId'] = i
+                participantFrame_obj = SQLTimelineParticipantFrame(**participantFrameData)
+                session.add(participantFrame_obj)
         try:
             session.flush()
             session.commit()  # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
