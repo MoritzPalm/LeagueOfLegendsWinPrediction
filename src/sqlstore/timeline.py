@@ -73,7 +73,7 @@ class SQLTimelineEvent(Base):
 
 
 class SQLTimelineKillEvent(Base):
-    __tablename = "match_timeline_event_kill"
+    __tablename__ = "match_timeline_event_kill"
     platformId = Column(String(7), primary_key=True)
     gameId = Column(BigInteger, primary_key=True)
     frameId = Column(Integer, primary_key=True)
@@ -105,7 +105,7 @@ class SQLTimelineVictimDamageDealt(Base):
     gameId = Column(BigInteger, primary_key=True)
     frameId = Column(Integer, primary_key=True)
     damageId = Column(Integer, Identity(always=True), primary_key=True)
-    killId = Column(Integer, ForeignKey("match_timeline_event_kill.killId"), nullable=False)
+    #killId = Column(Integer, ForeignKey("match_timeline_event_kill.killId"), nullable=False)
     basic = Column(Boolean)
     magicDamage = Column(Integer)
     name = Column(String(30))
@@ -131,7 +131,7 @@ class SQLTimelineVictimDamageReceived(Base):    # TODO: can/should this table be
     gameId = Column(BigInteger, primary_key=True)
     frameId = Column(Integer, primary_key=True)
     damageId = Column(Integer, Identity(always=True), primary_key=True)
-    killId = Column(Integer, ForeignKey("match_timeline_event_kill.killId"), nullable=False)
+    #killId = Column(Integer, ForeignKey("match_timeline_event_kill.killId"), nullable=False)
     basic = Column(Boolean)
     magicDamage = Column(Integer)
     name = Column(String(30))

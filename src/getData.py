@@ -54,7 +54,7 @@ def main():
     watcher = LolWatcher(api_key)
     with get_session(cleanup=False) as session:
         for matchID in matchIDs:
-            if session.query(exists().where(SQLmatch.matchId == matchID)):
+            if session.query(exists().where(SQLmatch.matchId == matchID)).scalar():
                 logger.info(f"matchID {matchID} already present in database")
                 continue
             current_match_info = watcher.match.by_id(match_id=matchID, region=args.region)['info']
@@ -75,8 +75,8 @@ def main():
             for participant in current_match_info['participants']:
                 participant['platformId'] = current_match_info['platformId']
                 participant['gameId'] = current_match_info['gameId']
-                del participant['challenges']
-                del participant['perks']
+                # TODO: challenges table implementation
+                # TODO: perks table implementation
                 curr_participantStats = SQLparticipantStats(**participant)
                 session.add(curr_participantStats)
             current_timeline = SQLTimeline(platformId=current_match_info['platformId'],
