@@ -143,7 +143,32 @@ class SQLparticipantStats(Base):
     lastUpdate = Column(DateTime(timezone=True), onupdate=func.now())
 
     def __init__(self, **kwargs):   # TODO: include challenges and perks
-        for attr in ('allInPings', 'assistMePings', 'assists', 'baitPings', 'baronKills', 'basicPings', 'bountyLevel', 'champExperience', 'champLevel', 'championId', 'championName', 'championTransform', 'commandPings', 'consumablesPurchased', 'damageDealtToBuildings', 'damageDealtToObjectives', 'damageDealtToTurrets', 'damageSelfMitigated', 'dangerPings', 'deaths', 'detectorWardsPlaced', 'doubleKills', 'dragonKills', 'eligibleForProgression', 'enemyMissingPings', 'enemyVisionPings', 'firstBloodAssist', 'firstBloodKill', 'firstTowerAssist', 'firstTowerKill', 'gameEndedInEarlySurrender', 'gameEndedInSurrender', 'getBackPings', 'goldEarned', 'goldSpent', 'holdPings', 'individualPosition', 'inhibitorKills', 'inhibitorTakedowns', 'inhibitorsLost', 'item0', 'item1', 'item2', 'item3', 'item4', 'item5', 'item6', 'itemsPurchased', 'killingSprees', 'kills', 'lane', 'largestCriticalStrike', 'largestKillingSpree', 'largestMultiKill', 'longestTimeSpentLiving', 'magicDamageDealt', 'magicDamageDealtToChampions', 'magicDamageTaken', 'needVisionPings', 'neutralMinionsKilled', 'nexusKills', 'nexusLost', 'nexusTakedowns', 'objectivesStolen', 'objectivesStolenAssists', 'onMyWayPings', 'participantId', 'pentaKills', 'physicalDamageDealt', 'physicalDamageDealtToChampions', 'physicalDamageTaken', 'placement', 'playerAugment1', 'playerAugment2', 'playerAugment3', 'playerAugment4', 'playerSubteamId', 'profileIcon', 'pushPings', 'puuid', 'quadraKills', 'riotIdName', 'riotIdTagline', 'role', 'sightWardsBoughtInGame', 'spell1Casts', 'spell2Casts', 'spell3Casts', 'spell4Casts', 'subteamPlacement', 'summoner1Casts', 'summoner1Id', 'summoner2Casts', 'summoner2Id', 'summonerId', 'summonerLevel', 'summonerName', 'teamEarlySurrendered', 'teamId', 'teamPosition', 'timeCCingOthers', 'timePlayed', 'totalAllyJungleMinionsKilled', 'totalDamageDealt', 'totalDamageDealtToChampions', 'totalDamageShieldedOnTeammates', 'totalDamageTaken', 'totalEnemyJungleMinionsKilled', 'totalHeal', 'totalHealsOnTeammates', 'totalMinionsKilled', 'totalTimeCCDealt', 'totalTimeSpentDead', 'totalUnitsHealed', 'tripleKills', 'trueDamageDealt', 'trueDamageDealtToChampions', 'trueDamageTaken', 'turretKills', 'turretTakedowns', 'turretsLost', 'unrealKills', 'visionClearedPings', 'visionScore', 'visionWardsBoughtInGame', 'wardsKilled', 'wardsPlaced', 'win', 'platformId', 'gameId'):
+        for attr in ('allInPings', 'assistMePings', 'assists', 'baitPings', 'baronKills', 'basicPings', 'bountyLevel',
+                     'champExperience', 'champLevel', 'championId', 'championName', 'championTransform', 'commandPings',
+                     'consumablesPurchased', 'damageDealtToBuildings', 'damageDealtToObjectives', 'damageDealtToTurrets',
+                     'damageSelfMitigated', 'dangerPings', 'deaths', 'detectorWardsPlaced', 'doubleKills', 'dragonKills',
+                     'eligibleForProgression', 'enemyMissingPings', 'enemyVisionPings', 'firstBloodAssist',
+                     'firstBloodKill', 'firstTowerAssist', 'firstTowerKill', 'gameEndedInEarlySurrender',
+                     'gameEndedInSurrender', 'getBackPings', 'goldEarned', 'goldSpent', 'holdPings',
+                     'individualPosition', 'inhibitorKills', 'inhibitorTakedowns', 'inhibitorsLost', 'item0', 'item1',
+                     'item2', 'item3', 'item4', 'item5', 'item6', 'itemsPurchased', 'killingSprees', 'kills', 'lane',
+                     'largestCriticalStrike', 'largestKillingSpree', 'largestMultiKill', 'longestTimeSpentLiving',
+                     'magicDamageDealt', 'magicDamageDealtToChampions', 'magicDamageTaken', 'needVisionPings',
+                     'neutralMinionsKilled', 'nexusKills', 'nexusLost', 'nexusTakedowns', 'objectivesStolen',
+                     'objectivesStolenAssists', 'onMyWayPings', 'participantId', 'pentaKills', 'physicalDamageDealt',
+                     'physicalDamageDealtToChampions', 'physicalDamageTaken', 'placement', 'playerAugment1',
+                     'playerAugment2', 'playerAugment3', 'playerAugment4', 'playerSubteamId', 'profileIcon', 'pushPings',
+                     'puuid', 'quadraKills', 'riotIdName', 'riotIdTagline', 'role', 'sightWardsBoughtInGame',
+                     'spell1Casts', 'spell2Casts', 'spell3Casts', 'spell4Casts', 'subteamPlacement', 'summoner1Casts',
+                     'summoner1Id', 'summoner2Casts', 'summoner2Id', 'summonerId', 'summonerLevel', 'summonerName',
+                     'teamEarlySurrendered', 'teamId', 'teamPosition', 'timeCCingOthers', 'timePlayed',
+                     'totalAllyJungleMinionsKilled', 'totalDamageDealt', 'totalDamageDealtToChampions',
+                     'totalDamageShieldedOnTeammates', 'totalDamageTaken', 'totalEnemyJungleMinionsKilled',
+                     'totalHeal', 'totalHealsOnTeammates', 'totalMinionsKilled', 'totalTimeCCDealt',
+                     'totalTimeSpentDead', 'totalUnitsHealed', 'tripleKills', 'trueDamageDealt',
+                     'trueDamageDealtToChampions', 'trueDamageTaken', 'turretKills', 'turretTakedowns',
+                     'turretsLost', 'unrealKills', 'visionClearedPings', 'visionScore', 'visionWardsBoughtInGame',
+                     'wardsKilled', 'wardsPlaced', 'win', 'platformId', 'gameId'):
             setattr(self, attr, kwargs.get(attr))
 
     def __repr__(self):
