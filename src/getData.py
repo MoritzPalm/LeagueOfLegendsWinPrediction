@@ -21,7 +21,7 @@ from src.sqlstore.timeline import SQLTimeline, SQLTimelineEvent, SQLTimelineFram
 
 
 # TODO: make logging actually useful
-
+# TODO: implement champion stat parsing and update strategy
 
 def main():
     api_key = keys.API_KEY_1
