@@ -102,19 +102,18 @@ def main():
                 for i, participantFrame in enumerate(
                         current_match_timeline['frames'][frameId]['participantFrames'].items(), start=1):
                     participantFrameData = participantFrame[1]
-                    print(participantFrameData)
                     participantFrameData['platformId'] = current_match_info['platformId']
                     participantFrameData['gameId'] = current_match_info['gameId']
                     participantFrameData['frameId'] = frameId
                     participantFrameData['participantId'] = i
                     participantFrame_obj = SQLTimelineParticipantFrame(**participantFrameData)
                     session.add(participantFrame_obj)
-        try:
-            session.flush()
-            session.commit()  # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
-        except Exception as e:
-            print(str(e))
-            session.rollback()
+            try:
+                session.flush()
+                session.commit()  # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
+            except Exception as e:
+                print(str(e))
+                session.rollback()
 
 
 if __name__ == '__main__':
