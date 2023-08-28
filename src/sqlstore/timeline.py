@@ -92,11 +92,14 @@ class SQLTimelineKillEvent(Base):
     timeCreated = Column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = Column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self):
-        pass
+    def __init__(self, **kwargs):
+        for attr in ('platformId', 'gameId', 'frameId', 'killId', 'eventId', 'assistingParticipantIds', 'bounty',
+                     'killStreakLength', 'killerId', 'position_x', 'position_y', 'shutdownBounty', 'timestamp'):
+            setattr(self, attr, kwargs.get(attr))
 
     def __repr__(self):
-        pass
+        return f"{self.platformId}_{self.gameId} at frame {self.frameId} (id: {self.killId}) {self.killerId} killed " \
+               f"{self.victimId}"
 
 
 class SQLTimelineVictimDamageDealt(Base):
@@ -118,11 +121,14 @@ class SQLTimelineVictimDamageDealt(Base):
     timeCreated = Column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = Column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self):
-        pass
+    def __init__(self, **kwargs):
+        for attr in ('platformId', 'gameId', 'frameId', 'damageId', 'killId', 'magicDamage', 'name', 'participantId',
+                     'physicalDamage', 'spellName', 'spellSlot', 'trueDamage', 'type'):
+            setattr(self, attr, kwargs.get(attr))
 
     def __repr__(self):
-        pass
+        return f"{self.platformId}_{self.gameId} at frame {self.frameId} (id: {self.damageId}) {self.name} " \
+               f"dealt damage before being killed"
 
 
 class SQLTimelineVictimDamageReceived(Base):    # TODO: can/should this table be merged with victimdmgdealt?
@@ -144,11 +150,14 @@ class SQLTimelineVictimDamageReceived(Base):    # TODO: can/should this table be
     timeCreated = Column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = Column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self):
-        pass
+    def __init__(self, **kwargs):
+        for attr in ('platformId', 'gameId', 'frameId', 'damageId', 'killId', 'magicDamage', 'name', 'participantId',
+                     'physicalDamage', 'spellName', 'spellSlot', 'trueDamage', 'type'):
+            setattr(self, attr, kwargs.get(attr))
 
     def __repr__(self):
-        pass
+        return f"{self.platformId}_{self.gameId} at frame {self.frameId} (id: {self.damageId}) {self.name} " \
+               f"received fatal damage"
 
 
 class SQLTimelineParticipantFrame(Base):
