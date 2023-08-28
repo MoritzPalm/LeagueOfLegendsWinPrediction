@@ -4,11 +4,8 @@ import pickle
 import logging
 import argparse
 
-import pandas as pd
-import numpy as np
 
 from riotwatcher import LolWatcher
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import exists
 from sqlalchemy.exc import IntegrityError
 
@@ -23,35 +20,16 @@ from src.sqlstore.timeline import SQLTimeline, SQLTimelineEvent, SQLTimelineFram
 # TODO: make logging actually useful
 # TODO: implement champion stat parsing and update strategy
 
-def main():
-    api_key = keys.API_KEY_1
-    logginglevel = getattr(logging, args.logginglevel.upper(), None)
-    if not isinstance(logginglevel, int):
-        raise ValueError('Invalid log level: %s' % args.logginglevel)
-    file_handler = logging.FileHandler(filename=f'{args.folder}/logging.log')
-    stdout_handler = logging.StreamHandler(stream=sys.stdout)
-    handlers = [file_handler, stdout_handler]
-    logging.basicConfig(encoding='utf-8', level=logginglevel,
-                        format="%(asctime)s - %(levelname)s - %(funcName)s() - %(message)s", handlers=handlers)
-    logger = logging.getLogger(__name__)
-
-    logger.info(f'starting getData.py with arguments {sys.argv}')
-
-    try:
-        logger.info('opening file containing already visited matchIDs')
-        with open(args.visitedPath, 'rb') as f:
-            visited_matchIDs: set = pickle.load(f)
-            logger.info('file found, pickle load succeeded')
-    except FileNotFoundError as error:
-        logger.warning('No file with matchIDs passed, saving all matches.')
-        visited_matchIDs = set()
-
+def getData():
     if args.n == 0:
-        args.n = sys.maxsize
-
+        args.n = sys.maxsize    # if no maximum number of matches or 0 passed, use maximum number of matches possible
+    logger.info(f"initializing matchIdCrawler with api key {api_key}, region {args.region} and tier {args.tier}")
     crawler = MatchIdCrawler(api_key=api_key, region=args.region, tier=args.tier)
+    logger.info(f"crawling {args.n} matchIDs")
     matchIDs = crawler.getMatchIDs(n=args.n)
+    logger.info(f"{len(matchIDs)} non-unique matchIDs crawled")
     watcher = LolWatcher(api_key)
+    # TODO: check if new patch is out, if yes, parse new champion stats (from where??)
     with get_session(cleanup=False) as session:
         for matchID in matchIDs:
             if session.query(exists().where(SQLmatch.matchId == matchID)).scalar():
@@ -142,4 +120,16 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    main()
+    api_key = keys.API_KEY_1
+    logginglevel = getattr(logging, args.logginglevel.upper(), None)
+    if not isinstance(logginglevel, int):
+        raise ValueError('Invalid log level: %s' % args.logginglevel)
+    file_handler = logging.FileHandler(filename=f'{args.folder}/logging.log')
+    stdout_handler = logging.StreamHandler(stream=sys.stdout)
+    handlers = [file_handler, stdout_handler]
+    logging.basicConfig(encoding='utf-8', level=logginglevel,
+                        format="%(asctime)s - %(levelname)s - %(funcName)s() - %(message)s", handlers=handlers)
+    logger = logging.getLogger(__name__)
+
+    logger.info(f'starting getData.py with arguments {sys.argv}')
+    getData()
