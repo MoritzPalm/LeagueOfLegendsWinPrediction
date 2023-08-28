@@ -10,6 +10,7 @@ class SQLmatch(Base):
     platformId = Column("platformId", String(7))
     gameId = Column("gameId", BigInteger)
     seasonId = Column("seasonId", Integer)
+    #patch = Column(Integer)
     queueId = Column("queueId", Integer)
     gameVersion = Column("gameVersion", String(23))
     mapId = Column("mapId", Integer)
@@ -19,11 +20,12 @@ class SQLmatch(Base):
     lastUpdate = Column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
     def __init__(self, matchId: str, platformId: str, gameId: int, seasonId: int, queueId: int,
-                 gameVersion: str, mapId: int, gameDuration: int, gameCreation: int):
+                 gameVersion: str, mapId: int, gameDuration: int, gameCreation: int, patch=None):
         self.matchId = matchId
         self.platformId = platformId
         self.gameId = gameId
         self.seasonId = seasonId
+        #self.patch = patch
         self.queueId = queueId
         self.gameVersion = gameVersion
         self.mapId = mapId
