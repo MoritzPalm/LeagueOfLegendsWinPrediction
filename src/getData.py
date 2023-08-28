@@ -3,7 +3,7 @@ import keys
 import pickle
 import logging
 import argparse
-
+import pytest
 
 from riotwatcher import LolWatcher
 from sqlalchemy.sql import exists
@@ -17,7 +17,6 @@ from src.sqlstore.participant import SQLparticipantStats
 from src.sqlstore.timeline import SQLTimeline, SQLTimelineEvent, SQLTimelineFrame, SQLTimelineParticipantFrame
 
 
-# TODO: make logging actually useful
 # TODO: implement champion stat parsing and update strategy
 
 def getData():
@@ -33,7 +32,7 @@ def getData():
     with get_session(cleanup=False) as session:
         for matchID in matchIDs:
             if session.query(exists().where(SQLmatch.matchId == matchID)).scalar():
-                logger.info(f"matchID {matchID} already present in database")
+                logger.warning(f"matchID {matchID} already present in database")
                 continue
             current_match_info = watcher.match.by_id(match_id=matchID, region=args.region)['info']
             current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)['info']
@@ -42,6 +41,7 @@ def getData():
                                      platformId=current_match_info['platformId'],
                                      gameId=current_match_info['gameId'],
                                      seasonId=seasonId,
+                                     #patch = 0, # TODO: patch parsing
                                      queueId=current_match_info['queueId'],
                                      gameVersion=current_match_info['gameVersion'],
                                      mapId=current_match_info['mapId'],
@@ -88,9 +88,12 @@ def getData():
                     session.add(participantFrame_obj)
             try:
                 session.flush()
-                session.commit()  # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
+                logger.info(f"session commit")
+                session.commit()
+                # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
             except Exception as e:
-                print(str(e))
+                logger.error(e)
+                logger.error(f"session rollback because something went wrong with parsing matchId {matchID}")
                 session.rollback()
 
 
@@ -130,6 +133,7 @@ if __name__ == '__main__':
     logging.basicConfig(encoding='utf-8', level=logginglevel,
                         format="%(asctime)s - %(levelname)s - %(funcName)s() - %(message)s", handlers=handlers)
     logger = logging.getLogger(__name__)
-
+    logging.getLogger("sqlalchemy.engine").setLevel(logginglevel)
+    logging.getLogger("riotwatcher.LolWatcher").setLevel(logginglevel)
     logger.info(f'starting getData.py with arguments {sys.argv}')
     getData()
