@@ -1,4 +1,7 @@
 import sys
+
+import sqlalchemy.orm
+
 import keys
 import pickle
 import logging
@@ -28,8 +31,12 @@ def getData():
     matchIDs = crawler.getMatchIDs(n=args.n)
     logger.info(f"{len(matchIDs)} non-unique matchIDs crawled")
     watcher = LolWatcher(api_key)
-    # TODO: check if new patch is out, if yes, parse new champion stats (from where??)
+    new_patch = True
+
+    # TODO: check if new patch is out, if yes, parse new champion stats from data dragon
     with get_session(cleanup=False) as session:
+        if new_patch:
+            parse_champion_data(session, watcher)
         for matchID in matchIDs:
             if session.query(exists().where(SQLmatch.matchId == matchID)).scalar():
                 logger.warning(f"matchID {matchID} already present in database")
@@ -95,6 +102,11 @@ def getData():
                 logger.error(e)
                 logger.error(f"session rollback because something went wrong with parsing matchId {matchID}")
                 session.rollback()
+
+
+def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher):
+    print(watcher.data_dragon.champions(version="13.17.1", full=True))
+
 
 
 if __name__ == '__main__':

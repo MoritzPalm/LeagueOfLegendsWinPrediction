@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Text, CheckConstraint
+from sqlalchemy import Column, Integer, String, Float, Text, CheckConstraint, PickleType
 from sqlalchemy.sql import func
 from src.sqlstore.db import Base
 
@@ -7,28 +7,73 @@ class SQLChampion(Base):
     __tablename__ = "champion"
 
     championId = Column(Integer, primary_key=True)
+    key = Column(Integer, primary_key=True)
     championName = Column(String(100))
     championTitle = Column(String(100))
-    # championLore = Column(Text)  # Text() for long descriptions # TODO: is this necessary considering the disk usage?
-    skillLevel = Column(Integer, CheckConstraint('skillLevel>=1 AND skillLevel<=5'), nullable=True)
+    infoAttack = Column(Integer)
+    infoDefense = Column(Integer)
+    infoMagic = Column(Integer)
+    infoDifficulty = Column(Integer)
+    tags = Column(PickleType)   # serialized list of tags (eg. [Marksman, Support] for Ashe)
+    partype = Column(String(150))   # type of mana or energy (eg. "Blood Well" for Aatrox)
     patchWinRate = Column(Float, nullable=True)  # Represented as a percent
     patchPlayRate = Column(Float, nullable=True)  # Represented as a percent
-    patchNumber = Column(String(20), nullable=True)  # Representing which game patch # TODO: should this be part of the primary key?
+    patchNumber = Column(Integer, nullable=True)    # this may be problematic if saving data from multiple seasons , consider adding season as column
+    # TODO: should this be part of the primary key?
     primaryRole = Column(String(50), nullable=True)  # Top, Mid...
     # Maybe counters, abilities, Tier, maybe range, skill-shot-based, or not, cc-level.., trends in winrates,
     # role flexibility, new skin released (higher playrate)
+    # -> this should not be saved in db, instead calculated server/analytics side imo
 
-    def init(self, championId, championName, championTitle, championLore=None, skillLevel=None,
-                 patchWinRate=None, patchPlayRate=None, patchNumber=None, role=None):
+    def init(self, championId: int, key: int, championName: str, championTitle: str, infoAttack: int, infoDefense: int,
+             infoMagic: int, infoDifficulty: int, tags, partype: str, patchWinRate: float = None,
+             patchPlayRate: float = None, patchNumber: float = None, role: str = None):
         self.championId = championId
+        self.key = key
         self.championName = championName
         self.championTitle = championTitle
-        self.championLore = championLore
-        self.skillLevel = skillLevel
+        self.infoAttack = infoAttack
+        self.infoDefense = infoDefense
+        self.infoMagic = infoMagic
+        self.infoDifficulty = infoDifficulty
+        self.tags = tags
+        self.partype = partype
         self.patchWinRate = patchWinRate
         self.patchPlayRate = patchPlayRate
         self.patchNumber = patchNumber
         self.primaryRole = role
 
     def repr(self):
-        return f"<Champion {self.championName} - {self.championTitle}>"
+        return f"<Champion {self.championName} ({self.key}) - {self.championTitle}>"
+
+
+class SQLChampionStats(Base):
+
+    __tablename__ = "champion_stats"
+
+    championId = Column(Integer, primary_key=True)
+    hp = Column(Integer)
+    hpperlevel = Column(Integer)
+    mp = Column(Integer)
+    mpperlevel = Column(Integer)
+    movespeed = Column(Integer)
+    armor = Column(Integer)
+    armorperlevel = Column(Float)
+    spellblock = Column(Integer)
+    spellblockperlevel = Column(Float)
+    attackrange = Column(Integer)
+    hpregen = Column(Float)
+    hpregenperlevel = Column(Float)
+    mpregen = Column(Float)
+    mpregenperlevel = Column(Float)
+    crit = Column(Integer)
+    critperlevel = Column(Integer)
+    attackdamage = Column(Integer)
+    attackdamageperlevel = Column(Float)
+    attackspeed = Column(Float)
+
+    def __init__(self):
+        pass
+
+    def __repr__(self):
+        pass
