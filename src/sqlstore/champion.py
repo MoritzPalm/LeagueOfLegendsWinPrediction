@@ -7,7 +7,6 @@ class SQLChampion(Base):
     __tablename__ = "champion"
 
     championId = Column(Integer, primary_key=True)
-    key = Column(Integer, primary_key=True)
     championName = Column(String(100))
     championTitle = Column(String(100))
     infoAttack = Column(Integer)
@@ -25,11 +24,27 @@ class SQLChampion(Base):
     # role flexibility, new skin released (higher playrate)
     # -> this should not be saved in db, instead calculated server/analytics side imo
 
-    def init(self, championId: int, key: int, championName: str, championTitle: str, infoAttack: int, infoDefense: int,
+    def init(self, championId: int, championName: str, championTitle: str, infoAttack: int, infoDefense: int,
              infoMagic: int, infoDifficulty: int, tags, partype: str, patchWinRate: float = None,
              patchPlayRate: float = None, patchNumber: float = None, role: str = None):
+        """
+
+        :param championId:
+        :param championName:
+        :param championTitle:
+        :param infoAttack:
+        :param infoDefense:
+        :param infoMagic:
+        :param infoDifficulty:
+        :param tags:
+        :param partype:
+        :param patchWinRate:
+        :param patchPlayRate:
+        :param patchNumber:
+        :param role:
+        :return:
+        """
         self.championId = championId
-        self.key = key
         self.championName = championName
         self.championTitle = championTitle
         self.infoAttack = infoAttack
@@ -72,8 +87,30 @@ class SQLChampionStats(Base):
     attackdamageperlevel = Column(Float)
     attackspeed = Column(Float)
 
-    def __init__(self):
-        pass
+    def __init__(self, championId: int, hp: int, hpperlevel: int, mp: int, mpperlevel: int, movespeed: int, armor: int,
+                 armorperlevel: float, spellblock: int, spellblockperlevel: float, attackrange: int, hpregen: float,
+                 hpregenperlevel: float, mpregen: float, mpregenperlevel: float, crit: int, critperlevel: int,
+                 attackdamage: int, attackdamageperlevel: float, attackspeed: float):
+        self.championId = championId
+        self.hp = hp
+        self.hpperlevel = hpperlevel
+        self.mp = mp
+        self.mpperlevel = mpperlevel
+        self.movespeed = movespeed
+        self.armor = armor
+        self.armorperlevel = armorperlevel
+        self.spellblock = spellblock
+        self.spellblockperlevel = spellblockperlevel
+        self.attackrange = attackrange
+        self.hpregen = hpregen
+        self.hpregenperlevel = hpregenperlevel
+        self.mpregen = mpregen
+        self.mpregenperlevel = mpregenperlevel
+        self.crit = crit
+        self.critperlevel = critperlevel
+        self.attackdamage = attackdamage
+        self.attackdamageperlevel = attackdamageperlevel
+        self.attackspeed = attackspeed
 
     def __repr__(self):
-        pass
+        return f"Champion stats of champion {self.championId}"

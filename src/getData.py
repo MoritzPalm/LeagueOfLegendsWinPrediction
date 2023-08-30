@@ -1,7 +1,4 @@
 import sys
-
-import sqlalchemy.orm
-
 import keys
 import pickle
 import logging
@@ -11,6 +8,7 @@ import pytest
 from riotwatcher import LolWatcher
 from sqlalchemy.sql import exists
 from sqlalchemy.exc import IntegrityError
+import sqlalchemy.orm.session
 
 from utils import get_season
 from crawlers.MatchIdCrawler import MatchIdCrawler
@@ -18,6 +16,7 @@ from src.sqlstore.db import get_conn, get_session
 from src.sqlstore.match import SQLmatch
 from src.sqlstore.participant import SQLparticipantStats
 from src.sqlstore.timeline import SQLTimeline, SQLTimelineEvent, SQLTimelineFrame, SQLTimelineParticipantFrame
+from src.sqlstore.champion import SQLChampion, SQLChampionStats
 
 
 # TODO: implement champion stat parsing and update strategy
@@ -105,8 +104,37 @@ def getData():
 
 
 def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher):
-    print(watcher.data_dragon.champions(version="13.17.1", full=True))
-
+    """ parses champion information provided by datadragon and fill corresponding Champion and ChampionStats tables
+      WARNING: parses only the brief summary of champion data, if additional data is needed this needs to be reworked
+    :param session: sqlalchemy session
+    :param watcher: riotwatcher LolWatcher
+    :returns: None
+    """
+    data = watcher.data_dragon.champions(version="13.17.1", full=False)['data']  # TODO: patch number as argument
+    for champion in data:
+        championdata = data[champion]
+        championstats = championdata['stats']
+        tags = pickle.dumps(championdata['tags'], protocol=pickle.HIGHEST_PROTOCOL)
+        champion_obj = SQLChampion(championId=championdata['key'], championName=championdata['name'],
+                                   championTitle=championdata['title'], infoAttack=championdata['info']['attack'],
+                                   infoDefense=championdata['info']['defense'], infoMagic=championdata['info']['magic'],
+                                   infoDifficulty=championdata['info']['difficulty'], tags=tags)
+        session.add(champion_obj)
+        championStats_obj = SQLChampionStats(championId=championdata['key'], hp=championstats['hp'],
+                                             hpperlevel=championstats['hpperlevel'], mp=championstats['mp'],
+                                             mpperlevel=championstats['mpperlevel'], movespeed=championstats['movespeed'],
+                                             armor=championstats['armor'], armorperlevel=championstats['armorperlevel'],
+                                             spellblock=championstats['spellblock'],
+                                             spellblockperlevel=championstats['spellblockperlevel'],
+                                             attackrange=championstats['attackrange'], hpregen=championstats['hpregen'],
+                                             hpregenperlevel=championstats['hpregenperlevel'],
+                                             mpregen=championstats['mpregen'],
+                                             mpregenperlevel=championstats['mpregenperlevel'], crit=championstats['crit'],
+                                             critperlevel=championstats['critperlevel'],
+                                             attackdamage=championstats['attackdamage'],
+                                             attackdamageperlevel=championstats['attackdamage'],
+                                             attackspeed=championstats['attackspeed'])
+        session.add(championStats_obj)
 
 
 if __name__ == '__main__':
