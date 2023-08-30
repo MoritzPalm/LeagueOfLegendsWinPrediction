@@ -86,7 +86,7 @@ class SQLChampionStats(Base):
     attackdamage = Column(Integer)
     attackdamageperlevel = Column(Float)
     attackspeed = Column(Float)
-
+    # TODO: consider using setattr() instead of listing all arguments
     def __init__(self, championId: int, hp: int, hpperlevel: int, mp: int, mpperlevel: int, movespeed: int, armor: int,
                  armorperlevel: float, spellblock: int, spellblockperlevel: float, attackrange: int, hpregen: float,
                  hpregenperlevel: float, mpregen: float, mpregenperlevel: float, crit: int, critperlevel: int,

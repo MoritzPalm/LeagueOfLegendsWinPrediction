@@ -2,19 +2,18 @@ import configparser
 import logging
 import contextlib
 
-from sqlalchemy import create_engine, MetaData, URL, exc
-from sqlalchemy.orm import sessionmaker, declarative_base, Session
-from configparser import ConfigParser, Error
+from sqlalchemy import create_engine, URL, exc
+from sqlalchemy.orm import declarative_base, Session
+from configparser import ConfigParser
 
 logger = logging.getLogger(__name__)
-
-# TODO: logging
 
 
 def db_config(filename='database.ini', section='postgresql') -> dict:
     db_configparser = ConfigParser()
     try:
         with open(filename) as f:
+            logger.info("opening config file")
             db_configparser.read_file(f)
     except IOError:
         logger.critical(f"no dabase ini file found!")
@@ -36,6 +35,7 @@ def connect_to_db():
                             host=config['host'],
                             database=config['database'],
                             )
+    logger.info(f"creating engine object with {url_object}")
     return create_engine(url_object, echo="debug")
 
 
@@ -46,6 +46,7 @@ engine = connect_to_db()
 @contextlib.contextmanager
 def get_session(cleanup=False):
     session = Session(bind=engine)
+    logger.info(f"creating all tables")
     Base.metadata.create_all(engine)
 
     try:
@@ -57,16 +58,19 @@ def get_session(cleanup=False):
         session.close()
 
     if cleanup:
+        logger.info("dropping all tables")
         Base.metadata.drop_all(engine)
 
 
 @contextlib.contextmanager
 def get_conn(cleanup=False):
     conn = engine.connect()
+    logger.info("creating all tables")
     Base.metadata.create_all(engine)
 
     yield conn
     conn.close()
 
     if cleanup:
+        logger.info("dropping all tables")
         Base.metadata.drop_all(engine)
