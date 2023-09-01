@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Text, CheckConstraint, PickleType
+from sqlalchemy import Column, Integer, String, Float, Text, CheckConstraint, PickleType, DateTime
 from sqlalchemy.sql import func
 from src.sqlstore.db import Base
 
@@ -23,6 +23,8 @@ class SQLChampion(Base):
     # Maybe counters, abilities, Tier, maybe range, skill-shot-based, or not, cc-level.., trends in winrates,
     # role flexibility, new skin released (higher playrate)
     # -> this should not be saved in db, instead calculated server/analytics side imo
+    timeCreated = Column(DateTime(timezone=True), server_default=func.now())
+    lastUpdate = Column(DateTime(timezone=True), onupdate=func.now())
 
     def init(self, championId: int, championName: str, championTitle: str, infoAttack: int, infoDefense: int,
              infoMagic: int, infoDifficulty: int, tags, partype: str, patchWinRate: float = None,

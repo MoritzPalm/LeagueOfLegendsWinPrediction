@@ -10,8 +10,8 @@ from sqlalchemy.sql import exists
 from sqlalchemy.exc import IntegrityError
 import sqlalchemy.orm.session
 
-from utils import get_season
-from crawlers.MatchIdCrawler import MatchIdCrawler
+from src.utils import get_season
+from src.crawlers.MatchIdCrawler import MatchIdCrawler
 from src.sqlstore.db import get_conn, get_session
 from src.sqlstore.match import SQLmatch
 from src.sqlstore.participant import SQLparticipantStats
@@ -19,7 +19,7 @@ from src.sqlstore.timeline import SQLTimeline, SQLTimelineEvent, SQLTimelineFram
 from src.sqlstore.champion import SQLChampion, SQLChampionStats
 
 
-# TODO: implement champion stat parsing and update strategy
+# TODO: implement update strategy after new patch
 
 def getData():
     if args.n == 0:
@@ -139,9 +139,6 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Downloading all match, player and champion data')
-    parser.add_argument('-f', '--folder', action='store', default='../data', type=str,
-                        help='path to target folder in which the folder for this run will be created',
-                        dest='folder')
     parser.add_argument('-v', '--visited', action='store', default='', type=str,
                         help='path to pickle file containing a set of visited and thus to be excluded match IDs',
                         dest='visitedPath')
@@ -167,7 +164,7 @@ if __name__ == '__main__':
     logginglevel = getattr(logging, args.logginglevel.upper(), None)
     if not isinstance(logginglevel, int):
         raise ValueError('Invalid log level: %s' % args.logginglevel)
-    file_handler = logging.FileHandler(filename=f'{args.folder}/logging.log')
+    file_handler = logging.FileHandler(filename=f'logging.log')
     stdout_handler = logging.StreamHandler(stream=sys.stdout)
     handlers = [file_handler, stdout_handler]
     logging.basicConfig(encoding='utf-8', level=logginglevel,

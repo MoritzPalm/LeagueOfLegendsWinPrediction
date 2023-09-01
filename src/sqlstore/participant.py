@@ -172,4 +172,46 @@ class SQLparticipantStats(Base):
             setattr(self, attr, kwargs.get(attr))
 
     def __repr__(self):
-        return f"({self.platformId}) ({self.gameId}) {self.puuid}"
+        return f"{self.platformId}_{self.gameId} player {self.puuid} with number {self.participantId}"
+
+
+class SQLStatPerks(Base):
+    __tablename__ = "match_participant_stat_perks"
+
+    puuid = Column(String(100), primary_key=True)
+    platformId = Column(String(7), primary_key=True)
+    gameId = Column(BigInteger, primary_key=True)
+    defense = Column(Integer)
+    flex = Column(Integer)
+    offense = Column(Integer)
+    timeCreated = Column(DateTime(timezone=True), server_default=func.now())
+    lastUpdate = Column(DateTime(timezone=True), onupdate=func.now())
+
+    def __init(self, puuid: str, platformId: str, gameId: str, defense: int, flex: int, offense: int):
+        self.puuid = puuid
+        self.platformId = platformId
+        self.gameId = gameId
+        self.defense = defense
+        self.flex = flex
+        self.offense = offense
+
+    def __repr__(self):
+        return f"{self.platformId}_{self.gameId} player {self.puuid} stats"
+
+
+class SQLStyles(Base):
+    __tablename__ = "match_participant_styles"
+
+    puuid = Column(String(100), primary_key=True)
+    platformId = Column(String(7), primary_key=True)
+    gameId = Column(BigInteger, primary_key=True)
+    description = Column(String(80))
+    style = Column(Integer)
+    timeCreated = Column(DateTime(timezone=True), server_default=func.now())
+    lastUpdate = Column(DateTime(timezone=True), onupdate=func.now())
+
+    def __init__(self):
+        pass
+
+    def __repr__(self):
+        pass
