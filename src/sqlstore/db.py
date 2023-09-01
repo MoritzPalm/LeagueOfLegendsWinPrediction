@@ -9,7 +9,7 @@ from configparser import ConfigParser
 logger = logging.getLogger(__name__)
 
 
-def db_config(filename='database.ini', section='postgresql') -> dict:
+def db_config(filename='src/database.ini', section='postgresql') -> dict:
     db_configparser = ConfigParser()
     try:
         with open(filename) as f:
