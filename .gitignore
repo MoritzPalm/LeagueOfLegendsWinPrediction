@@ -1,3 +1,5 @@
+env
+*.log
 keys.py
 data/
 .idea
