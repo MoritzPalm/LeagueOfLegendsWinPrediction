@@ -10,7 +10,7 @@ from sqlalchemy.sql import exists
 from sqlalchemy.exc import IntegrityError
 import sqlalchemy.orm.session
 
-from src.utils import get_season
+from src.utils import get_season, get_patch
 from src.crawlers.MatchIdCrawler import MatchIdCrawler
 from src.sqlstore.db import get_conn, get_session
 from src.sqlstore.match import SQLmatch
@@ -43,11 +43,12 @@ def getData():
             current_match_info = watcher.match.by_id(match_id=matchID, region=args.region)['info']
             current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)['info']
             seasonId = get_season(current_match_info['gameVersion'])
+            patch = get_patch(current_match_info['gameVersion'])
             current_match = SQLmatch(matchId=matchID,
                                      platformId=current_match_info['platformId'],
                                      gameId=current_match_info['gameId'],
                                      seasonId=seasonId,
-                                     #patch = 0, # TODO: patch parsing
+                                     patch=patch,
                                      queueId=current_match_info['queueId'],
                                      gameVersion=current_match_info['gameVersion'],
                                      mapId=current_match_info['mapId'],
@@ -61,7 +62,6 @@ def getData():
 
                 participant['platformId'] = current_match_info['platformId']
                 participant['gameId'] = current_match_info['gameId']
-                # TODO: challenges table implementation
                 # TODO: perks table implementation
                 curr_participantStats = SQLparticipantStats(**participant)
                 session.add(curr_participantStats)
