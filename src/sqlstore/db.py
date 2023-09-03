@@ -36,7 +36,7 @@ def connect_to_db():
                             database=config['database'],
                             )
     logger.info(f"creating engine object with {url_object}")
-    return create_engine(url_object, echo="debug")
+    return create_engine(url_object)
 
 
 Base = declarative_base()

@@ -7,6 +7,7 @@ class SQLChampion(Base):
     __tablename__ = "champion"
 
     championId = Column(Integer, primary_key=True)
+    patchNumber = Column(Integer, primary_key=True)
     championName = Column(String(100))
     championTitle = Column(String(100))
     infoAttack = Column(Integer)
@@ -17,7 +18,6 @@ class SQLChampion(Base):
     partype = Column(String(150))   # type of mana or energy (eg. "Blood Well" for Aatrox)
     patchWinRate = Column(Float, nullable=True)  # Represented as a percent
     patchPlayRate = Column(Float, nullable=True)  # Represented as a percent
-    patchNumber = Column(Integer, nullable=True)    # this may be problematic if saving data from multiple seasons , consider adding season as column
     # TODO: should this be part of the primary key?
     primaryRole = Column(String(50), nullable=True)  # Top, Mid...
     # Maybe counters, abilities, Tier, maybe range, skill-shot-based, or not, cc-level.., trends in winrates,
@@ -28,7 +28,7 @@ class SQLChampion(Base):
 
     def init(self, championId: int, championName: str, championTitle: str, infoAttack: int, infoDefense: int,
              infoMagic: int, infoDifficulty: int, tags, partype: str, patchWinRate: float = None,
-             patchPlayRate: float = None, patchNumber: float = None, role: str = None):
+             patchPlayRate: float = None, patchNumber: int = None, role: str = None):
         """
 
         :param championId:
@@ -69,6 +69,7 @@ class SQLChampionStats(Base):
     __tablename__ = "champion_stats"
 
     championId = Column(Integer, primary_key=True)
+    patchNumber = Column(Integer, primary_key=True)
     hp = Column(Integer)
     hpperlevel = Column(Integer)
     mp = Column(Integer)
@@ -88,12 +89,13 @@ class SQLChampionStats(Base):
     attackdamage = Column(Integer)
     attackdamageperlevel = Column(Float)
     attackspeed = Column(Float)
-    # TODO: consider using setattr() instead of listing all arguments
-    def __init__(self, championId: int, hp: int, hpperlevel: int, mp: int, mpperlevel: int, movespeed: int, armor: int,
+
+    def __init__(self, championId: int, patchNumber: int, hp: int, hpperlevel: int, mp: int, mpperlevel: int, movespeed: int, armor: int,
                  armorperlevel: float, spellblock: int, spellblockperlevel: float, attackrange: int, hpregen: float,
                  hpregenperlevel: float, mpregen: float, mpregenperlevel: float, crit: int, critperlevel: int,
                  attackdamage: int, attackdamageperlevel: float, attackspeed: float):
         self.championId = championId
+        self.patchNumber = patchNumber
         self.hp = hp
         self.hpperlevel = hpperlevel
         self.mp = mp
