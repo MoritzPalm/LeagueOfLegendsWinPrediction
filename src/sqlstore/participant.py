@@ -6,10 +6,6 @@ from src.sqlstore.db import Base
 # TODO: should this be a dataclass?
 
 
-class SQLMatchParticipant(Base):
-    pass
-
-
 class SQLparticipantStats(Base):
     __tablename__ = "match_participant_stats"
 
@@ -251,14 +247,14 @@ class SQLChallenges(Base):
     doubleAces = Column(Integer)
     dragonTakedowns = Column(Integer)
     earliestBaron = Column(Float)
-    earlyLaningPhaseGoldAdvantage = Column(Integer)
+    earlyLaningPhaseGoldExpAdvantage = Column(Integer)
     effectiveHealAndShielding = Column(Float)
     elderDragonKillsWithOpposingSoul = Column(Integer)
-    elderDragonMultiKills = Column(Integer)
+    elderDragonMultikills = Column(Integer)
     enemyChampionImmobilizations = Column(Integer)
     enemyJungleMonsterKills = Column(Integer)
     epicMonsterKillsNearEnemyJungler = Column(Integer)
-    epicMonsterKillsWithhin30SecondsOfSpawn = Column(Integer)
+    epicMonsterKillsWithin30SecondsOfSpawn = Column(Integer)
     epicMonsterSteals = Column(Integer)
     epicMonsterStolenWithoutSmite = Column(Integer)
     firstTurretKilled = Column(Boolean)
@@ -278,7 +274,7 @@ class SQLChallenges(Base):
     kda = Column(Float)
     killAfterHiddenWithAlly = Column(Integer)
     killParticipation = Column(Float)
-    killedChampionTookFullTeamDamageSurvived = Column(Integer)
+    killedChampTookFullTeamDamageSurvived = Column(Integer)
     killingSprees = Column(Integer)
     killsNearEnemyTurret = Column(Integer)
     killsOnOtherLanesEarlyJungleAsLaner = Column(Integer)
@@ -318,7 +314,7 @@ class SQLChallenges(Base):
     shortestTimeToAceFromFirstTakedown = Column(Float)
     skillshotsDodged = Column(Integer)
     skillshotsHit = Column(Integer)
-    snowBallsHit = Column(Integer)
+    snowballsHit = Column(Integer)
     soloBaronKills = Column(Integer)
     soloKills = Column(Integer)
     stealthWardsPlaced = Column(Integer)
@@ -335,7 +331,6 @@ class SQLChallenges(Base):
     teamDamagePercentage = Column(Float)
     teamElderDragonKills = Column(Integer)
     teamRiftHeraldKills = Column(Integer)
-    teleportTakedowns = Column(Integer)
     tookLargeDamageSurvived = Column(Integer)
     turretPlatesTaken = Column(Integer)
     turretTakedowns = Column(Integer)
@@ -357,16 +352,16 @@ class SQLChallenges(Base):
                      'blastConeOppositeOpponentCount', 'bountyGold', 'buffsStolen', 'completeSupportQuestOnTime',
                      'controlWardsPlaced', 'damagePerMinute', 'damageTakenOnTeamPercentage', 'dancedWithRiftHerald',
                      'deathsByEnemyChamps', 'dodgeSkillShotsSmallWindow', 'doubleAces', 'dragonTakedowns',
-                     'earliestBaron', 'earlyLaningPhaseGoldAdvantage', 'effectiveHealAndShielding',
-                     'elderDragonKillsWithOpposingSoul', 'elderDragonMultiKills', 'enemyChampionImmobilizations',
+                     'earliestBaron', 'earlyLaningPhaseGoldExpAdvantage', 'effectiveHealAndShielding',
+                     'elderDragonKillsWithOpposingSoul', 'elderDragonMultikills', 'enemyChampionImmobilizations',
                      'enemyJungleMonsterKills', 'epicMonsterKillsNearEnemyJungler',
-                     'epicMonsterKillsWithhin30SecondsOfSpawn', 'epicMonsterSteals', 'epicMonsterStolenWithoutSmite',
+                     'epicMonsterKillsWithin30SecondsOfSpawn', 'epicMonsterSteals', 'epicMonsterStolenWithoutSmite',
                      'firstTurretKilled', 'flawlessAces', 'fullTeamTakedown', 'gameLength',
                      'getTakedownsInAllLanesEarlyJungleAsLaner', 'goldPerMinute', 'hadOpenNexus',
                      'highestCrowdControlScore', 'immobilizeAndKillWithAlly', 'initialBuffCount', 'initialCrabCount',
                      'jungleCsBefore10Minutes', 'junglerTakedownsNearDamagedEpicMonster',
                      'kTurretsDestroyedBeforePlatesFall', 'kda', 'killAfterHiddenWithAlly', 'killParticipation',
-                     'killedChampionTookFullTeamDamageSurvived', 'killingSprees', 'killsNearEnemyTurret',
+                     'killedChampTookFullTeamDamageSurvived', 'killingSprees', 'killsNearEnemyTurret',
                      'killsOnOtherLanesEarlyJungleAsLaner', 'killsOnRecentlyHealedByAramPack', 'killsUnderOwnTurret',
                      'killsWithHelpFromEpicMonster', 'knockEnemyIntoTeamAndKill', 'landSkillShotsEarlyGame',
                      'laneMinionsFirst10Minutes', 'laningPhaseGoldExpAdvantage', 'legendaryCount', 'lostAnInhibitor',
@@ -377,11 +372,11 @@ class SQLChallenges(Base):
                      'perfectDragonSoulsTaken', 'perfectGame', 'pickKillWithAlly', 'playedChampSelectPosition',
                      'poroExplosions', 'quickCleanse', 'quickFirstTurret', 'quickSoloKills', 'riftHeraldTakedowns',
                      'saveAllyFromDeath', 'scuttleCrabKills', 'shortestTimeToAceFromFirstTakedown', 'skillshotsDodged',
-                     'skillshotsHit', 'snowBallsHit', 'soloBaronKills', 'soloKills', 'stealthWardsPlaced',
+                     'skillshotsHit', 'snowballsHit', 'soloBaronKills', 'soloKills', 'stealthWardsPlaced',
                      'survivedSingleDigitHpCount', 'survivedThreeImmobilizesInFight', 'takedownOnFirstTurret',
                      'takedowns', 'takedownsAfterGainingLevelAdvantage', 'takedownsBeforeJungleMinionSpawn',
                      'takedownsFirstXMinutes', 'takedownsInAlcove', 'takedownsInEnemyFountain', 'teamBaronKills',
-                     'teamDamagePercentage', 'teamElderDragonKills', 'teamRiftHeraldKills', 'teleportTakedowns',
+                     'teamDamagePercentage', 'teamElderDragonKills', 'teamRiftHeraldKills',
                      'tookLargeDamageSurvived', 'turretPlatesTaken', 'turretTakedowns', 'turretsTakenWithRiftHerald',
                      'twentyMinionsIn3SecondsCount', 'twoWardsOneSweeperCount', 'unseenRecalls',
                      'visionScoreAdvantageLaneOpponent', 'visionScorePerMinute', 'wardTakedowns',

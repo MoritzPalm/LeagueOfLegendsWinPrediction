@@ -14,7 +14,7 @@ from src.utils import get_season
 from src.crawlers.MatchIdCrawler import MatchIdCrawler
 from src.sqlstore.db import get_conn, get_session
 from src.sqlstore.match import SQLmatch
-from src.sqlstore.participant import SQLparticipantStats
+from src.sqlstore.participant import SQLparticipantStats, SQLChallenges
 from src.sqlstore.timeline import SQLTimeline, SQLTimelineEvent, SQLTimelineFrame, SQLTimelineParticipantFrame
 from src.sqlstore.champion import SQLChampion, SQLChampionStats
 
@@ -30,7 +30,7 @@ def getData():
     matchIDs = crawler.getMatchIDs(n=args.n)
     logger.info(f"{len(matchIDs)} non-unique matchIDs crawled")
     watcher = LolWatcher(api_key)
-    new_patch = True
+    new_patch = False
 
     # TODO: check if new patch is out, if yes, parse new champion stats from data dragon
     with get_session(cleanup=False) as session:
@@ -57,12 +57,20 @@ def getData():
             session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
             # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
             for participant in current_match_info['participants']:
+                print(participant['challenges'])
+
                 participant['platformId'] = current_match_info['platformId']
                 participant['gameId'] = current_match_info['gameId']
                 # TODO: challenges table implementation
                 # TODO: perks table implementation
                 curr_participantStats = SQLparticipantStats(**participant)
                 session.add(curr_participantStats)
+                participant['challenges']['puuid'] = participant['puuid']
+                participant['challenges']['platformId'] = current_match_info['platformId']
+                participant['challenges']['gameId'] = current_match_info['gameId']
+                participant['challenges']['Assist12StreakCount'] = participant['challenges']['12AssistStreakCount']
+                curr_participantChallenges = SQLChallenges(**participant['challenges'])
+                session.add(curr_participantChallenges)
             current_timeline = SQLTimeline(platformId=current_match_info['platformId'],
                                            gameId=current_match_info['gameId'],
                                            frameInterval=current_match_timeline['frameInterval'])
