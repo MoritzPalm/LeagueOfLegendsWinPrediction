@@ -26,9 +26,9 @@ def db_config(filename='src/database.ini', section='postgresql') -> dict:
     return db
 
 
-def connect_to_db():
+def connect_to_db(filename):
     """Connect to db and return the engine object"""
-    config: dict = db_config()
+    config: dict = db_config(filename)
     url_object = URL.create('postgresql+psycopg2',
                             username=config['user'],
                             password=config['password'],
@@ -40,7 +40,7 @@ def connect_to_db():
 
 
 Base = declarative_base()
-engine = connect_to_db()
+engine = connect_to_db(filename='../src/database.ini')
 
 
 @contextlib.contextmanager
