@@ -5,14 +5,15 @@ from src.sqlstore.db import Base
 
 
 class SQLTimeline(Base):
-    __tablename__ = "match_timeline"
+    __tablename__ = "timeline"
 
-    platformId = mapped_column(String(7), primary_key=True)
-    gameId = mapped_column(BigInteger, primary_key=True)
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    platformId = mapped_column(String(7), nullable=False)
+    gameId = mapped_column(BigInteger, nullable=False)
     frameInterval = mapped_column(Integer)
-    frameIds = mapped_column(Integer, ForeignKey("match_timeline_frame.id"))
     timeCreated = mapped_column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
+    UniqueConstraint("platformId", "gameId")
 
     def __init__(self, platformId: str, gameId: int, frameInterval: int):
         self.platformId = platformId
@@ -20,41 +21,42 @@ class SQLTimeline(Base):
         self.frameInterval = frameInterval
 
     def __repr__(self):
-        return f"{self.platformId}_{self.gameId} with interval {self.frameInterval}ms"
+        return f"timeline (id: {self.id} of match {self.platformId}_{self.gameId} with interval {self.frameInterval}ms"
 
 
-class SQLTimelineFrame(Base):
-    __tablename__ = "match_timeline_frame"
+class SQLFrame(Base):
+    __tablename__ = "frame"
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     platformId = mapped_column(String(7), nullable=False)
     gameId = mapped_column(BigInteger, nullable=False)
-    frameId = mapped_column(Integer, nullable=False)     # this is not present in the data and needs to be calculated
-    eventIds = mapped_column(Integer, ForeignKey("match_timeline_event.id"))
-    timestamp = mapped_column(Integer, nullable=False)
+    timelineId = mapped_column(BigInteger, ForeignKey("timeline.id"), nullable=False)
+    frameId = mapped_column(Integer)  # frame id is starting at 0 and counting up per game, encodes order of frames
+    timestamp = mapped_column(Integer, nullable=False)  # in milliseconds?
     timeCreated = mapped_column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, platformId: str, gameId: int, frameId: int, timestamp: int):
+    def __init__(self, platformId: str, gameId: int, timelineId: int, frameId: int, timestamp: int):
         self.platformId = platformId
         self.gameId = gameId
+        self.timelineId = timelineId
         self.frameId = frameId
         self.timestamp = timestamp
 
     def __repr__(self):
-        return f"{self.platformId}_{self.gameId} frame {self.frameId} at {self.timestamp}"
+        return f"timeline frame (id: {self.id} of timeline {self.timelineId} in game {self.platformId}_{self.gameId} " \
+               f"at {self.timestamp}"
 
 
-class SQLTimelineEvent(Base):
-    __tablename__ = "match_timeline_event"
+class SQLEvent(Base):
+    __tablename__ = "event"
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
-    platformId = mapped_column(String(7), nullable=False)
-    gameId = mapped_column(BigInteger, nullable=False)
-    frameId = mapped_column(Integer, nullable=False)
-    eventId = mapped_column(Integer, nullable=False)
-    timestamp = mapped_column(Integer, nullable=False)
-    type = mapped_column(String(100), nullable=False)
+    frameId = mapped_column(BigInteger, ForeignKey("frame.id"), nullable=False)
+    timelineId = mapped_column(BigInteger, ForeignKey("timeline.id"), nullable=False)  # TODO: see above
+    eventId = mapped_column(Integer, nullable=False)  # starting at 0 and counting up per game, encodes order of events
+    timestamp = mapped_column(Integer, nullable=False)  # in milliseconds?
+    type = mapped_column(String(100), nullable=False)  # e.g. SKILL_LEVEL_UP
     participantId = mapped_column(Integer)
     itemId = mapped_column(Integer)
     skillSlot = mapped_column(Integer)
@@ -65,10 +67,9 @@ class SQLTimelineEvent(Base):
     wardType = mapped_column(String(50))
     timeCreated = mapped_column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
-    UniqueConstraint("platformId", "gameId", "frameId", "eventId")
 
     def __init__(self, **kwargs):
-        for attr in ('platformId', 'gameId', 'frameId', 'eventId', 'timestamp', 'type', 'participantId', 'itemId',
+        for attr in ('frameId', 'timelineId', 'eventId', 'timestamp', 'type', 'participantId', 'itemId',
                      'skillSlot', 'creatorId', 'teamId', 'afterId', 'beforeId', 'wardType'):
             setattr(self, attr, kwargs.get(attr))
 
@@ -76,14 +77,13 @@ class SQLTimelineEvent(Base):
         return f"{self.platformId}_{self.gameId} frame {self.frameId} event {self.eventId} at {self.timestamp} of type {self.type}"
 
 
-class SQLTimelineKillEvent(Base):
-    __tablename__ = "match_timeline_event_kill"
-    platformId = mapped_column(String(7), primary_key=True)
-    gameId = mapped_column(BigInteger, primary_key=True)
-    frameId = mapped_column(Integer, primary_key=True)
-    killId = mapped_column(Integer, Identity(always=True), primary_key=True)
-    # eventId = mapped_column(Integer, ForeignKey("match_timeline_event.eventId"))   # TODO: is this correct?
-    assistingParticipantIds = mapped_column(PickleType)    # serialized list of participant ids
+class SQLKillEvent(Base):
+    __tablename__ = "killevent"
+
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    frameId = mapped_column(BigInteger, ForeignKey("frame.id"), nullable=False)
+    timelineId = mapped_column(BigInteger, ForeignKey("timeline.id"), nullable=False)
+    assistingParticipantIds = mapped_column(PickleType)  # serialized list of participant ids
     bounty = mapped_column(Integer)
     killStreakLength = mapped_column(Integer)
     killerId = mapped_column(Integer)
@@ -97,8 +97,8 @@ class SQLTimelineKillEvent(Base):
     lastUpdate = mapped_column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
     def __init__(self, **kwargs):
-        for attr in ('platformId', 'gameId', 'frameId', 'killId', 'eventId', 'assistingParticipantIds', 'bounty',
-                     'killStreakLength', 'killerId', 'position_x', 'position_y', 'shutdownBounty', 'timestamp'):
+        for attr in ('frameId', 'timelineId', 'assistingParticipantIds', 'bounty', 'killStreakLength',
+                     'killerId', 'position_x', 'position_y', 'shutdownBounty', 'timestamp', 'type', 'victimId'):
             setattr(self, attr, kwargs.get(attr))
 
     def __repr__(self):
@@ -106,13 +106,15 @@ class SQLTimelineKillEvent(Base):
                f"{self.victimId}"
 
 
-class SQLTimelineVictimDamageDealt(Base):
-    __tablename__ = "match_timeline_kill_victimdmgdealt"
-    platformId = mapped_column(String(7), primary_key=True)    # TODO: these 4 rows should be foreign, not primary keys?
-    gameId = mapped_column(BigInteger, primary_key=True)
-    frameId = mapped_column(Integer, primary_key=True)
-    damageId = mapped_column(Integer, Identity(always=True), primary_key=True)
-    #killId = mapped_column(Integer, ForeignKey("match_timeline_event_kill.killId"), nullable=False)
+class SQLTimelineDamageDealt(Base):
+    """
+    damage dealt by the victim of the kill to others
+    """
+    __tablename__ = "dmg_dealt"
+
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    frameId = mapped_column(BigInteger, ForeignKey("frame.id"), nullable=False)
+    killId = mapped_column(BigInteger, ForeignKey("killevent.id"), nullable=False)
     basic = mapped_column(Boolean)
     magicDamage = mapped_column(Integer)
     name = mapped_column(String(30))
@@ -125,23 +127,49 @@ class SQLTimelineVictimDamageDealt(Base):
     timeCreated = mapped_column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, **kwargs):
-        for attr in ('platformId', 'gameId', 'frameId', 'damageId', 'killId', 'magicDamage', 'name', 'participantId',
-                     'physicalDamage', 'spellName', 'spellSlot', 'trueDamage', 'type'):
-            setattr(self, attr, kwargs.get(attr))
+    def __init__(self, frameId: int, killId: int, basic: bool, magicDamage: int, name: str, participantId: int,
+                 physicalDamage: int, spellName: str, spellSlot: int, trueDamage: int, type: str):
+        """
+        name is victim name, participantId is the victims participantId
+
+        :param frameId: id of the frame the kill happened in
+        :param killId: id of the killevent this damage belongs to
+        :param basic: no idea what this is
+        :param magicDamage: how much magic damage the victim dealt with the spell to the attacker(s)
+        :param name: name of the victim
+        :param participantId: id of the attacker
+        :param physicalDamage: how much physical damage the victim dealt with the spell to the attacker(s)
+        :param spellName: spell with which the victim dealt damage
+        :param spellSlot: spell slot used by the victim
+        :param trueDamage: how much true damage the victim dealt with the spell to the attacker(s)
+        :param type: no idea, is always (?) "OTHER"
+        """
+        self.frameId = frameId
+        self.killId = killId
+        self.basic = basic
+        self.magicDamage = magicDamage
+        self.name = name
+        self.participantId = participantId
+        self.physicalDamage = physicalDamage
+        self.spellName = spellName
+        self.spellSlot = spellSlot
+        self.trueDamage = trueDamage
+        self.type = type
 
     def __repr__(self):
         return f"{self.platformId}_{self.gameId} at frame {self.frameId} (id: {self.damageId}) {self.name} " \
                f"dealt damage before being killed"
 
 
-class SQLTimelineVictimDamageReceived(Base):    # TODO: can/should this table be merged with victimdmgdealt?
-    __tablename__ = "match_timeline_kill_victimdmgreceived"
-    platformId = mapped_column(String(7), primary_key=True)    # TODO: these 4 rows should be foreign, not primary keys?
-    gameId = mapped_column(BigInteger, primary_key=True)
-    frameId = mapped_column(Integer, primary_key=True)
-    damageId = mapped_column(Integer, Identity(always=True), primary_key=True)
-    #killId = mapped_column(Integer, ForeignKey("match_timeline_event_kill.killId"), nullable=False)
+class SQLTimelineDamageReceived(Base):
+    """
+    damage received by the victim from others
+    """
+    __tablename__ = "dmg_received"
+
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    frameId = mapped_column(BigInteger, ForeignKey("frame.id"), nullable=False)
+    killId = mapped_column(BigInteger, ForeignKey("killevent.id"), nullable=False)
     basic = mapped_column(Boolean)
     magicDamage = mapped_column(Integer)
     name = mapped_column(String(30))
@@ -154,23 +182,45 @@ class SQLTimelineVictimDamageReceived(Base):    # TODO: can/should this table be
     timeCreated = mapped_column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, **kwargs):
-        for attr in ('platformId', 'gameId', 'frameId', 'damageId', 'killId', 'magicDamage', 'name', 'participantId',
-                     'physicalDamage', 'spellName', 'spellSlot', 'trueDamage', 'type'):
-            setattr(self, attr, kwargs.get(attr))
+    def __init__(self, frameId: int, killId: int, basic: bool, magicDamage: int, name: str, participantId: int,
+                 physicalDamage: int, spellName: str, spellSlot: int, trueDamage: int, type: str):
+        """
+        name is attacker name, participantId is the victims participantId
+
+        :param frameId: id of the frame the kill happened in
+        :param killId: id of the killevent this damage belongs to
+        :param basic: no idea what this is
+        :param magicDamage: how much magic damage the attacker dealt with the spell to the victim
+        :param name: name of the attacker
+        :param participantId: id of the victim (!!)
+        :param physicalDamage: how much physical damage the attacker dealt with the spell to the victim
+        :param spellName: spell with which the attacker dealt damage
+        :param spellSlot: spell slot used by the attacker
+        :param trueDamage: how much true damage the attacker dealt with the spell to the victim
+        :param type: no idea, is always (?) "OTHER"
+        """
+        self.frameId = frameId
+        self.killId = killId
+        self.basic = basic
+        self.magicDamage = magicDamage
+        self.name = name
+        self.participantId = participantId
+        self.physicalDamage = physicalDamage
+        self.spellName = spellName
+        self.spellSlot = spellSlot
+        self.trueDamage = trueDamage
+        self.type = type
 
     def __repr__(self):
-        return f"{self.platformId}_{self.gameId} at frame {self.frameId} (id: {self.damageId}) {self.name} " \
-               f"received fatal damage"
+        return f"damage received by {self.participantId} dealt by {self.name}"
 
 
-class SQLTimelineParticipantFrame(Base):
-    __tablename__ = "match_timeline_participant_frame"
-
-    platformId = mapped_column(String(7), primary_key=True)
-    gameId = mapped_column(BigInteger, primary_key=True)
-    frameId = mapped_column(Integer, primary_key=True)
-    participantId = mapped_column(Integer, primary_key=True)
+class SQLParticipantFrame(Base):
+    __tablename__ = "participant_frame"
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    frameId = mapped_column(BigInteger, ForeignKey("frame.id"), nullable=False)
+    timelineId = mapped_column(BigInteger, ForeignKey("timeline.id"), nullable=False)
+    participantId = mapped_column(Integer, nullable=False)
     abilityHaste = mapped_column(Integer)
     abilityPower = mapped_column(Integer)
     armor = mapped_column(Integer)

@@ -7,10 +7,11 @@ from src.sqlstore.db import Base
 class SQLChampion(Base):
     __tablename__ = "champion"
 
-    championId = mapped_column(Integer, primary_key=True)
-    seasonNumber = mapped_column(Integer, primary_key=True)
-    patchNumber = mapped_column(Integer, primary_key=True)
-    championName = mapped_column(String(100), index=True)
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    championNumber = mapped_column(Integer, nullable=False, index=True)
+    seasonNumber = mapped_column(Integer, nullable=False, index=True)
+    patchNumber = mapped_column(Integer, nullable=False, index=True)
+    championName = mapped_column(String(100), nullable=False, index=True)
     championTitle = mapped_column(String(100))
     infoAttack = mapped_column(Integer)
     infoDefense = mapped_column(Integer)
@@ -49,7 +50,7 @@ class SQLChampion(Base):
         :param role:
         :return:
         """
-        self.championId = championId
+        self.championNumber = championId
         self.championName = championName
         self.championTitle = championTitle
         self.infoAttack = infoAttack
@@ -72,9 +73,9 @@ class SQLChampionStats(Base):
 
     __tablename__ = "champion_stats"
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
-    championId = mapped_column(Integer, nullable=False)
-    patchNumber = mapped_column(Integer, nullable=False)
-    seasonNumber = mapped_column(Integer, nullable=False)
+    championId = mapped_column(Integer, nullable=False, index=True)
+    patchNumber = mapped_column(Integer, nullable=False, index=True)
+    seasonNumber = mapped_column(Integer, nullable=False, index=True)
     hp = mapped_column(Integer)
     hpperlevel = mapped_column(Integer)
     mp = mapped_column(Integer)
@@ -94,6 +95,8 @@ class SQLChampionStats(Base):
     attackdamage = mapped_column(Integer)
     attackdamageperlevel = mapped_column(Float)
     attackspeed = mapped_column(Float)
+    timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
+    lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
     def __init__(self, championId: int, patchNumber: int, seasonNumber: int, hp: int, hpperlevel: int, mp: int, mpperlevel: int, movespeed: int, armor: int,
                  armorperlevel: float, spellblock: int, spellblockperlevel: float, attackrange: int, hpregen: float,
@@ -124,3 +127,21 @@ class SQLChampionStats(Base):
 
     def __repr__(self):
         return f"Champion stats of champion {self.championId}"
+
+
+class SQLChampionRoles(Base):
+    __tablename__ = "champion_roles"
+
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    championId = mapped_column(Integer, ForeignKey("champion.id"), nullable=False)
+    championNumber = mapped_column(Integer, ForeignKey("champion.championNumber"), nullable=False)
+    role = mapped_column()  # enum
+    tags = mapped_column()  # enum
+    timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
+    lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
+
+    def __init__(self):
+        pass
+
+    def __repr__(self):
+        pass

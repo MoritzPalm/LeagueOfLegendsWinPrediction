@@ -141,7 +141,7 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
                                              attackdamageperlevel=championstats['attackdamage'],
                                              attackspeed=championstats['attackspeed'], patchNumber=patch,
                                              seasonNumber=season)
-        #session.add(championStats_obj)
+        session.add(championStats_obj)
 
 
 def parse_participant_data(session: sqlalchemy.orm.Session, platformId: str, gameId: int, participants: dict) -> None:
