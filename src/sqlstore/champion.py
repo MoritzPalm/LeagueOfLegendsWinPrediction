@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Float, Text, CheckConstraint, PickleType, DateTime
+from sqlalchemy import Integer, String, Float, PickleType, DateTime, ForeignKey, Identity, BigInteger
+from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 from src.sqlstore.db import Base
 
@@ -6,32 +7,35 @@ from src.sqlstore.db import Base
 class SQLChampion(Base):
     __tablename__ = "champion"
 
-    championId = Column(Integer, primary_key=True)
-    patchNumber = Column(Integer, primary_key=True)
-    championName = Column(String(100))
-    championTitle = Column(String(100))
-    infoAttack = Column(Integer)
-    infoDefense = Column(Integer)
-    infoMagic = Column(Integer)
-    infoDifficulty = Column(Integer)
-    tags = Column(PickleType)   # serialized list of tags (eg. [Marksman, Support] for Ashe)
-    partype = Column(String(150))   # type of mana or energy (eg. "Blood Well" for Aatrox)
-    patchWinRate = Column(Float, nullable=True)  # Represented as a percent
-    patchPlayRate = Column(Float, nullable=True)  # Represented as a percent
-    # TODO: should this be part of the primary key?
-    primaryRole = Column(String(50), nullable=True)  # Top, Mid...
+    championId = mapped_column(Integer, primary_key=True)
+    seasonNumber = mapped_column(Integer, primary_key=True)
+    patchNumber = mapped_column(Integer, primary_key=True)
+    championName = mapped_column(String(100), index=True)
+    championTitle = mapped_column(String(100))
+    infoAttack = mapped_column(Integer)
+    infoDefense = mapped_column(Integer)
+    infoMagic = mapped_column(Integer)
+    infoDifficulty = mapped_column(Integer)
+    # TODO: make tags not in binary format for easier querying
+    tags = mapped_column(PickleType)   # serialized list of tags (e.g. [Marksman, Support] for Ashe)
+    partype = mapped_column(String(150))   # type of mana or energy (e.g. "Blood Well" for Aatrox)
+    patchWinRate = mapped_column(Float, nullable=True)  # Represented as a percent
+    patchPlayRate = mapped_column(Float, nullable=True)  # Represented as a percent
+    primaryRole = mapped_column(String(50), nullable=True)  # Top, Mid...
     # Maybe counters, abilities, Tier, maybe range, skill-shot-based, or not, cc-level.., trends in winrates,
     # role flexibility, new skin released (higher playrate)
     # -> this should not be saved in db, instead calculated server/analytics side imo
-    timeCreated = Column(DateTime(timezone=True), server_default=func.now())
-    lastUpdate = Column(DateTime(timezone=True), onupdate=func.now())
+    timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
+    lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    def init(self, championId: int, championName: str, championTitle: str, infoAttack: int, infoDefense: int,
-             infoMagic: int, infoDifficulty: int, tags, partype: str, patchWinRate: float = None,
-             patchPlayRate: float = None, patchNumber: int = None, role: str = None):
+    def init(self, championId: int, seasonNumber: int, patchNumber: int, championName: str, championTitle: str,
+             infoAttack: int, infoDefense: int, infoMagic: int, infoDifficulty: int, tags, partype: str,
+             patchWinRate: float = None, patchPlayRate: float = None, role: str = None):
         """
 
         :param championId:
+        :param patchNumber:
+        :param seasonNumber
         :param championName:
         :param championTitle:
         :param infoAttack:
@@ -42,7 +46,6 @@ class SQLChampion(Base):
         :param partype:
         :param patchWinRate:
         :param patchPlayRate:
-        :param patchNumber:
         :param role:
         :return:
         """
@@ -58,6 +61,7 @@ class SQLChampion(Base):
         self.patchWinRate = patchWinRate
         self.patchPlayRate = patchPlayRate
         self.patchNumber = patchNumber
+        self.seasonNumber = seasonNumber
         self.primaryRole = role
 
     def repr(self):
@@ -67,35 +71,37 @@ class SQLChampion(Base):
 class SQLChampionStats(Base):
 
     __tablename__ = "champion_stats"
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    championId = mapped_column(Integer, nullable=False)
+    patchNumber = mapped_column(Integer, nullable=False)
+    seasonNumber = mapped_column(Integer, nullable=False)
+    hp = mapped_column(Integer)
+    hpperlevel = mapped_column(Integer)
+    mp = mapped_column(Integer)
+    mpperlevel = mapped_column(Integer)
+    movespeed = mapped_column(Integer)
+    armor = mapped_column(Integer)
+    armorperlevel = mapped_column(Float)
+    spellblock = mapped_column(Integer)
+    spellblockperlevel = mapped_column(Float)
+    attackrange = mapped_column(Integer)
+    hpregen = mapped_column(Float)
+    hpregenperlevel = mapped_column(Float)
+    mpregen = mapped_column(Float)
+    mpregenperlevel = mapped_column(Float)
+    crit = mapped_column(Integer)
+    critperlevel = mapped_column(Integer)
+    attackdamage = mapped_column(Integer)
+    attackdamageperlevel = mapped_column(Float)
+    attackspeed = mapped_column(Float)
 
-    championId = Column(Integer, primary_key=True)
-    patchNumber = Column(Integer, primary_key=True)
-    hp = Column(Integer)
-    hpperlevel = Column(Integer)
-    mp = Column(Integer)
-    mpperlevel = Column(Integer)
-    movespeed = Column(Integer)
-    armor = Column(Integer)
-    armorperlevel = Column(Float)
-    spellblock = Column(Integer)
-    spellblockperlevel = Column(Float)
-    attackrange = Column(Integer)
-    hpregen = Column(Float)
-    hpregenperlevel = Column(Float)
-    mpregen = Column(Float)
-    mpregenperlevel = Column(Float)
-    crit = Column(Integer)
-    critperlevel = Column(Integer)
-    attackdamage = Column(Integer)
-    attackdamageperlevel = Column(Float)
-    attackspeed = Column(Float)
-
-    def __init__(self, championId: int, patchNumber: int, hp: int, hpperlevel: int, mp: int, mpperlevel: int, movespeed: int, armor: int,
+    def __init__(self, championId: int, patchNumber: int, seasonNumber: int, hp: int, hpperlevel: int, mp: int, mpperlevel: int, movespeed: int, armor: int,
                  armorperlevel: float, spellblock: int, spellblockperlevel: float, attackrange: int, hpregen: float,
                  hpregenperlevel: float, mpregen: float, mpregenperlevel: float, crit: int, critperlevel: int,
                  attackdamage: int, attackdamageperlevel: float, attackspeed: float):
         self.championId = championId
         self.patchNumber = patchNumber
+        self.seasonNumber = seasonNumber
         self.hp = hp
         self.hpperlevel = hpperlevel
         self.mp = mp

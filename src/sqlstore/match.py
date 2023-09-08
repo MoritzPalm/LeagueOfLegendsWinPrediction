@@ -1,31 +1,33 @@
-
-from sqlalchemy import Table, Column, Integer, String, BigInteger, Boolean, ForeignKeyConstraint, Numeric, DateTime
+from sqlalchemy import Integer, String, BigInteger, DateTime
+from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 from src.sqlstore.db import Base
+
+from src.utils import get_patch, get_season
 
 
 class SQLmatch(Base):
     __tablename__ = "match"
-    matchId = Column("matchId", String(20), primary_key=True)
-    platformId = Column("platformId", String(7))
-    gameId = Column("gameId", BigInteger)
-    seasonId = Column("seasonId", Integer)
-    patch = Column(Integer)
-    queueId = Column("queueId", Integer)
-    gameVersion = Column("gameVersion", String(23))
-    mapId = Column("mapId", Integer)
-    gameDuration = Column("gameDuration", Integer)
-    gameCreation = Column("gameCreation", BigInteger)
-    timeCreated = Column("timeCreated", DateTime(timezone=True), server_default=func.now())
-    lastUpdate = Column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
+    matchId = mapped_column("matchId", String(20), primary_key=True)
+    platformId = mapped_column("platformId", String(7))
+    gameId = mapped_column("gameId", BigInteger)
+    seasonId = mapped_column("seasonId", Integer)
+    patch = mapped_column(Integer)
+    queueId = mapped_column("queueId", Integer)
+    gameVersion = mapped_column("gameVersion", String(23))
+    mapId = mapped_column("mapId", Integer)
+    gameDuration = mapped_column("gameDuration", Integer)
+    gameCreation = mapped_column("gameCreation", BigInteger)
+    timeCreated = mapped_column("timeCreated", DateTime(timezone=True), server_default=func.now())
+    lastUpdate = mapped_column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, matchId: str, platformId: str, gameId: int, seasonId: int, queueId: int,
-                 gameVersion: str, mapId: int, gameDuration: int, gameCreation: int, patch: int):
+    def __init__(self, matchId: str, platformId: str, gameId: int, queueId: int,
+                 gameVersion: str, mapId: int, gameDuration: int, gameCreation: int):
         self.matchId = matchId
         self.platformId = platformId
         self.gameId = gameId
-        self.seasonId = seasonId
-        self.patch = patch
+        self.seasonId = get_season(gameVersion)
+        self.patch = get_patch(gameVersion)
         self.queueId = queueId
         self.gameVersion = gameVersion
         self.mapId = mapId

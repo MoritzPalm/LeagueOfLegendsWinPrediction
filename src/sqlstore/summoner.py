@@ -1,19 +1,21 @@
-from sqlalchemy import Column, Integer, String, BigInteger, Boolean, ForeignKeyConstraint, DateTime
+from sqlalchemy.orm import mapped_column
+from sqlalchemy import Integer, String, BigInteger, Boolean, ForeignKeyConstraint, DateTime
 from sqlalchemy.sql import func
+import roman
 from src.sqlstore.db import Base
 
 
 class SQLSummoner(Base):
     __tablename__ = "summoner"
 
-    puuid = Column(String(78), primary_key=True)
-    platformId = Column(String(7))
-    summonerId = Column(String(63))
-    accountId = Column(String(56))
-    name = Column(String(60))
-    summonerLevel = Column(Integer)
-    timeCreated = Column(DateTime(timezone=True), server_default=func.now())
-    lastUpdate = Column(DateTime(timezone=True), onupdate=func.now())
+    puuid = mapped_column(String(78), primary_key=True)
+    platformId = mapped_column(String(7))
+    summonerId = mapped_column(String(63), index=True)
+    accountId = mapped_column(String(56))
+    name = mapped_column(String(60))
+    summonerLevel = mapped_column(Integer)
+    timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
+    lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
     def __init__(self, puuid: str, summonerId: str, accountId: str, name: str, summonerLevel: str):
         self.puuid = puuid
@@ -29,22 +31,22 @@ class SQLSummoner(Base):
 class SQLSummonerLeague(Base):
     __tablename__ = "summoner_league"
 
-    summonerId = Column(String(63), primary_key=True)
-    platformId = Column(String(7), primary_key=True)
-    leagueId = Column(String(70))
-    queueType = Column(String(50))
-    tier = Column(String(20))
-    rank = Column(Integer)  # originally a string, is converted from roman numerals
-    summonerName = Column(String(60))
-    leaguePoints = Column(Integer)
-    wins = Column(Integer)
-    losses = Column(Integer)
-    veteran = Column(Boolean)
-    inactive = Column(Boolean)
-    freshBlood = Column(Boolean)
-    hotStreak = Column(Boolean)
-    timeCreated = Column(DateTime(timezone=True), server_default=func.now())
-    lastUpdate = Column(DateTime(timezone=True), onupdate=func.now())
+    summonerId = mapped_column(String(63), primary_key=True)
+    platformId = mapped_column(String(7), primary_key=True)
+    leagueId = mapped_column(String(70))
+    queueType = mapped_column(String(50))
+    tier = mapped_column(String(20), index=True)
+    rank = mapped_column(Integer, index=True)  # originally a string, is converted from roman numerals
+    summonerName = mapped_column(String(60))
+    leaguePoints = mapped_column(Integer)
+    wins = mapped_column(Integer)
+    losses = mapped_column(Integer)
+    veteran = mapped_column(Boolean)
+    inactive = mapped_column(Boolean)
+    freshBlood = mapped_column(Boolean)
+    hotStreak = mapped_column(Boolean)
+    timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
+    lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
     def __init__(self, summonerId: str, platformId: str, leagueId: str, queueType: str, tier: str, rank: int,
                  summonerName: str, leaguePoints: int, wins: int, losses: int, veteran: bool, inactive: bool,
@@ -54,7 +56,7 @@ class SQLSummonerLeague(Base):
         self.leagueId = leagueId
         self.queueType = queueType
         self.tier = tier
-        self.rank = rank
+        self.rank = roman.fromRoman(rank)
         self.summonerName = summonerName
         self.leaguePoints = leaguePoints
         self.wins = wins
@@ -72,18 +74,18 @@ class SQLSummonerLeague(Base):
 class SQLChampionMastery(Base):
     __tablename__ = "summoner_champion_mastery"
 
-    puuid = Column(String(78), primary_key=True)
-    championId = Column(Integer, primary_key=True)
-    championPointsUntilNextLevel = Column(Integer)
-    chestGranted = Column(Boolean)
-    lastPlayTime = Column(Integer)  # in unix milliseconds time format
-    championLevel = Column(Integer)
-    summonerId = Column(String(63))
-    championPoints = Column(Integer)
-    championPointsSinceLastLevel = Column(Integer)
-    tokensEarned = Column(Integer)  # tokens earned for champion at current championLevel. Is reset to 0 after championLevel increase
-    timeCreated = Column(DateTime(timezone=True), server_default=func.now())
-    lastUpdate = Column(DateTime(timezone=True), onupdate=func.now())
+    puuid = mapped_column(String(78), primary_key=True)
+    championId = mapped_column(Integer, primary_key=True)
+    championPointsUntilNextLevel = mapped_column(Integer)
+    chestGranted = mapped_column(Boolean)
+    lastPlayTime = mapped_column(Integer)  # in unix milliseconds time format
+    championLevel = mapped_column(Integer)
+    summonerId = mapped_column(String(63))
+    championPoints = mapped_column(Integer)
+    championPointsSinceLastLevel = mapped_column(Integer)
+    tokensEarned = mapped_column(Integer)  # tokens earned for champion at current championLevel. Is reset to 0 after championLevel increase
+    timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
+    lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
     def __init__(self, puuid: str, championId: str, championPointsUntilNextlevel: int, chestGranted: bool,
                  lastPlayTime: int, championLevel: int, summonerId: str, championPoints: int,
