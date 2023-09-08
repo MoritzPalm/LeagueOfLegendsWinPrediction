@@ -44,7 +44,7 @@ engine = connect_to_db()
 
 
 @contextlib.contextmanager
-def get_session(cleanup=False):
+def get_session(cleanup=False) -> Session:
     session = Session(bind=engine)
     logger.info(f"creating all tables")
     Base.metadata.create_all(engine)
@@ -52,7 +52,7 @@ def get_session(cleanup=False):
     try:
         yield session
     except exc.SQLAlchemyError as e:
-        logger.critical(e)
+        logger.critical(str(e))
         session.rollback()
     finally:
         session.close()

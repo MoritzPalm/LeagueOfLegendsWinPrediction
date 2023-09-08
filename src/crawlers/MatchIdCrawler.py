@@ -168,15 +168,14 @@ class MatchIdCrawler:
                 # Then fetch puuid for that summonerIds
                 puuid = self.watcher.summoner.by_id(self.region, summonerId)["puuid"]
                 # Then fetch a list of matchIds for that puuid
-                match_list = self.watcher.match.matchlist_by_puuid(self.region, puuid)
+                match_list = self.watcher.match.matchlist_by_puuid(region=self.region, puuid=puuid, count=100, queue=420)
                 for i in range(min(match_per_id, len(match_list))):
                     matchId = match_list[i]
                     if matchId in visited_matchIds:
                         continue
                     if exclude_IDs and matchId in excludingIDs:
                         continue
-                    if self.checkValidMatch(matchID=matchId, region=self.region):
-                        visited_matchIds.add(matchId)
+                    visited_matchIds.add(matchId)
                     if len(visited_matchIds) >= n:
                         break
                 if len(visited_matchIds) >= n:
@@ -184,13 +183,3 @@ class MatchIdCrawler:
             if len(visited_matchIds) >= n:
                 break
         return visited_matchIds
-
-    def checkValidMatch(self, matchID: str, region: str) -> bool:
-        """
-        :param matchID:
-        :param region:
-        :return:
-        """
-        minGameDuration = 960   # 16min in seconds
-        gameDuration = self.watcher.match.by_id(match_id=matchID, region=region)['info']['gameDuration']
-        return gameDuration > minGameDuration
