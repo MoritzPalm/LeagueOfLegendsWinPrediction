@@ -1,0 +1,8 @@
+env
+*.log
+keys.py
+data/
+.idea
+__pycache__
+database.ini
+
