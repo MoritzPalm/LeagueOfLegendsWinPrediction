@@ -32,15 +32,15 @@ class SQLFrame(Base):
     platformId = mapped_column(String(7), nullable=False)
     gameId = mapped_column(BigInteger, nullable=False)
     timelineId = mapped_column(BigInteger, ForeignKey("timeline.id"), nullable=False)
+    timeline = relationship("SQLTimeline", backref="frames")
     frameId = mapped_column(Integer)  # frame id is starting at 0 and counting up per game, encodes order of frames
     timestamp = mapped_column(Integer, nullable=False)  # in milliseconds?
     timeCreated = mapped_column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, platformId: str, gameId: int, timelineId: int, frameId: int, timestamp: int):
+    def __init__(self, platformId: str, gameId: int, frameId: int, timestamp: int):
         self.platformId = platformId
         self.gameId = gameId
-        self.timelineId = timelineId
         self.frameId = frameId
         self.timestamp = timestamp
 
@@ -54,7 +54,7 @@ class SQLEvent(Base):
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     frameId = mapped_column(BigInteger, ForeignKey("frame.id"), nullable=False)
-    timelineId = mapped_column(BigInteger, ForeignKey("timeline.id"), nullable=False)  # TODO: see above
+    frame = relationship("SQLFrame", backref="events")
     eventId = mapped_column(Integer, nullable=False)  # starting at 0 and counting up per game, encodes order of events
     timestamp = mapped_column(Integer, nullable=False)  # in milliseconds?
     type = mapped_column(String(100), nullable=False)  # e.g. SKILL_LEVEL_UP
@@ -69,10 +69,19 @@ class SQLEvent(Base):
     timeCreated = mapped_column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, **kwargs):
-        for attr in ('frameId', 'timelineId', 'eventId', 'timestamp', 'type', 'participantId', 'itemId',
-                     'skillSlot', 'creatorId', 'teamId', 'afterId', 'beforeId', 'wardType'):
-            setattr(self, attr, kwargs.get(attr))
+    def __init__(self, eventId: int, timestamp: int, type: str, participantId: int, itemId: int, skillSlot: int,
+                 creatorId: int, teamId: int, afterId: int, beforeId: int, wardType: str):
+        self.eventId = eventId
+        self.timestamp = timestamp
+        self.type = type
+        self.participantId = participantId
+        self.itemId = itemId
+        self.skillSlot = skillSlot
+        self.creatorId = creatorId
+        self.teamId = teamId
+        self.afterId = afterId
+        self.beforeId = beforeId
+        self.wardType = wardType
 
     def __repr__(self):
         return f"{self.platformId}_{self.gameId} frame {self.frameId} event {self.eventId} at {self.timestamp} of type {self.type}"
@@ -83,24 +92,35 @@ class SQLKillEvent(Base):
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     frameId = mapped_column(BigInteger, ForeignKey("frame.id"), nullable=False)
-    timelineId = mapped_column(BigInteger, ForeignKey("timeline.id"), nullable=False)
+    frame = relationship("SQLFrame", backref="killevents")
     assistingParticipantIds = mapped_column(PickleType)  # serialized list of participant ids
     bounty = mapped_column(Integer)
     killStreakLength = mapped_column(Integer)
     killerId = mapped_column(Integer)
+    laneType = mapped_column((String(30)))
     position_x = mapped_column(Integer)
     position_y = mapped_column(Integer)
     shutdownBounty = mapped_column(Integer)
     timestamp = mapped_column(Integer)
-    type = mapped_column(String(30))
+    type = mapped_column(String(50))
     victimId = mapped_column(Integer)
     timeCreated = mapped_column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, **kwargs):
-        for attr in ('frameId', 'timelineId', 'assistingParticipantIds', 'bounty', 'killStreakLength',
-                     'killerId', 'position_x', 'position_y', 'shutdownBounty', 'timestamp', 'type', 'victimId'):
-            setattr(self, attr, kwargs.get(attr))
+    def __init__(self, assistingParticipantIds: PickleType, bounty: int, killStreakLength: int, killerId: int,
+                 laneType: str, position: dict, shutdownBounty: int, timestamp: int, type: str,
+                 victimId: int):
+        self.assistingParticipantIds = assistingParticipantIds
+        self.bounty = bounty
+        self.killStreakLength = killStreakLength
+        self.killerId = killerId
+        self.laneType = laneType
+        self.position_x = position['x']
+        self.position_y = position['y']
+        self.shutdownBounty = shutdownBounty
+        self.timestamp = timestamp
+        self.type = type
+        self.victimId = victimId
 
     def __repr__(self):
         return f"{self.platformId}_{self.gameId} at frame {self.frameId} (id: {self.killId}) {self.killerId} killed " \
@@ -114,8 +134,8 @@ class SQLTimelineDamageDealt(Base):
     __tablename__ = "dmg_dealt"
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
-    frameId = mapped_column(BigInteger, ForeignKey("frame.id"), nullable=False)
     killId = mapped_column(BigInteger, ForeignKey("killevent.id"), nullable=False)
+    kill = relationship("SQLKillEvent", backref="dmgdealt")
     basic = mapped_column(Boolean)
     magicDamage = mapped_column(Integer)
     name = mapped_column(String(30))
@@ -128,13 +148,11 @@ class SQLTimelineDamageDealt(Base):
     timeCreated = mapped_column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, frameId: int, killId: int, basic: bool, magicDamage: int, name: str, participantId: int,
+    def __init__(self, basic: bool, magicDamage: int, name: str, participantId: int,
                  physicalDamage: int, spellName: str, spellSlot: int, trueDamage: int, type: str):
         """
         name is victim name, participantId is the victims participantId
 
-        :param frameId: id of the frame the kill happened in
-        :param killId: id of the killevent this damage belongs to
         :param basic: no idea what this is
         :param magicDamage: how much magic damage the victim dealt with the spell to the attacker(s)
         :param name: name of the victim
@@ -145,8 +163,6 @@ class SQLTimelineDamageDealt(Base):
         :param trueDamage: how much true damage the victim dealt with the spell to the attacker(s)
         :param type: no idea, is always (?) "OTHER"
         """
-        self.frameId = frameId
-        self.killId = killId
         self.basic = basic
         self.magicDamage = magicDamage
         self.name = name
@@ -169,8 +185,8 @@ class SQLTimelineDamageReceived(Base):
     __tablename__ = "dmg_received"
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
-    frameId = mapped_column(BigInteger, ForeignKey("frame.id"), nullable=False)
     killId = mapped_column(BigInteger, ForeignKey("killevent.id"), nullable=False)
+    kill = relationship("SQLKillEvent", backref="dmgreceived")
     basic = mapped_column(Boolean)
     magicDamage = mapped_column(Integer)
     name = mapped_column(String(30))
@@ -183,13 +199,11 @@ class SQLTimelineDamageReceived(Base):
     timeCreated = mapped_column("timeCreated", DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, frameId: int, killId: int, basic: bool, magicDamage: int, name: str, participantId: int,
+    def __init__(self, basic: bool, magicDamage: int, name: str, participantId: int,
                  physicalDamage: int, spellName: str, spellSlot: int, trueDamage: int, type: str):
         """
         name is attacker name, participantId is the victims participantId
 
-        :param frameId: id of the frame the kill happened in
-        :param killId: id of the killevent this damage belongs to
         :param basic: no idea what this is
         :param magicDamage: how much magic damage the attacker dealt with the spell to the victim
         :param name: name of the attacker
@@ -200,8 +214,6 @@ class SQLTimelineDamageReceived(Base):
         :param trueDamage: how much true damage the attacker dealt with the spell to the victim
         :param type: no idea, is always (?) "OTHER"
         """
-        self.frameId = frameId
-        self.killId = killId
         self.basic = basic
         self.magicDamage = magicDamage
         self.name = name
@@ -220,7 +232,7 @@ class SQLParticipantFrame(Base):
     __tablename__ = "participant_frame"
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     frameId = mapped_column(BigInteger, ForeignKey("frame.id"), nullable=False)
-    timelineId = mapped_column(BigInteger, ForeignKey("timeline.id"), nullable=False)
+    frame = relationship("SQLFrame", backref="participantframe")
     participantId = mapped_column(Integer, nullable=False)
     abilityHaste = mapped_column(Integer)
     abilityPower = mapped_column(Integer)
@@ -270,8 +282,8 @@ class SQLParticipantFrame(Base):
     xp = mapped_column(Integer)
 
     def __init__(self, **kwargs):
-        for attr in ('platformId', 'gameId', 'frameId', 'participantId', 'currentGold', 'goldPerSecond',
-                     'jungleMinionsKilled', 'level', 'minionsKilled', 'timeEnemySpentControlled', 'totalGold', 'xp'):
+        for attr in ('participantId', 'currentGold', 'goldPerSecond', 'jungleMinionsKilled', 'level', 'minionsKilled',
+                     'timeEnemySpentControlled', 'totalGold', 'xp'):
             setattr(self, attr, kwargs.get(attr))
         for attr in ('abilityHaste', 'abilityPower', 'armor', 'armorPen', 'armorPenPercent', 'attackDamage',
                      'attackSpeed', 'bonusArmorPenPercent', 'bonusMagicPenPercent', 'ccReduction', 'cooldownReduction',

@@ -159,7 +159,7 @@ class SQLChampionTags(Base):
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, championId: int, *tags):
+    def __init__(self, championId: int, **tags):
         self.championId = championId
         self.tag1 = tags[0]
         self.tag2 = tags[1]

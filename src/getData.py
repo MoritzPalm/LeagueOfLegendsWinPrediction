@@ -1,24 +1,22 @@
-import sys
-import keys
-import pickle
-import logging
 import argparse
-import pytest
+import logging
+import pickle
+import sys
 
-from riotwatcher import LolWatcher
-from sqlalchemy import insert
-from sqlalchemy.sql import exists
-from sqlalchemy.exc import IntegrityError
 import sqlalchemy.orm.session
+from riotwatcher import LolWatcher
+from sqlalchemy.sql import exists
 
-from src.utils import get_patch, get_season
+import keys
 from src.crawlers.MatchIdCrawler import MatchIdCrawler
+from src.sqlstore.champion import SQLChampion, SQLChampionStats, SQLChampionTags
 from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLmatch
 from src.sqlstore.participant import SQLparticipantStats, SQLChallenges
-from src.sqlstore.timeline import SQLTimeline, SQLEvent, SQLFrame, SQLParticipantFrame
-from src.sqlstore.champion import SQLChampion, SQLChampionStats, SQLChampionRoles, SQLChampionTags
+from src.sqlstore.timeline import SQLTimeline, SQLEvent, SQLFrame, SQLParticipantFrame, SQLKillEvent, \
+    SQLTimelineDamageDealt, SQLTimelineDamageReceived
 from src.sqlstore.utils import champ_patch_present
+from src.utils import get_patch, get_season
 
 
 # TODO: abstract away more logic
@@ -46,7 +44,8 @@ def getData():
                 season = get_season(current_match_info['gameVersion'])
                 patch = get_patch(current_match_info['gameVersion'])
                 if not champ_patch_present(session=session, season=season, patch=patch):
-                    parse_champion_data(session=session, watcher=watcher, season=season, patch=patch)
+                    pass
+                    # parse_champion_data(session=session, watcher=watcher, season=season, patch=patch)
                 current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)['info']
                 current_match = SQLmatch(matchId=matchID,
                                          platformId=current_match_info['platformId'],
@@ -71,16 +70,68 @@ def getData():
                                          gameId=current_match_info['gameId'],
                                          frameId=frameId,
                                          timestamp=current_match_timeline['frames'][frameId]['timestamp'])
+                    current_timeline.frames.append(frame_obj)
                     session.add(frame_obj)
                     for eventId, event in enumerate(current_match_timeline['frames'][frameId]['events']):
                         if event['type'] in {'CHAMPION_KILL', 'CHAMPION_SPECIAL_KILL', 'TURRET_PLATE_DESTROYED',
                                              'BUILDING_KILL'}:
-                            continue
-                        event['platformId'] = current_match_info['platformId']
-                        event['gameId'] = current_match_info['gameId']
-                        event['frameId'] = frameId
-                        event['eventId'] = eventId
-                        event_obj = SQLEvent(**event)
+                            assistingParticipantIds = pickle.dumps(event.get('assistingParticipantIds'),
+                                                                   protocol=pickle.HIGHEST_PROTOCOL)
+                            event_obj = SQLKillEvent(assistingParticipantIds=assistingParticipantIds,
+                                                     bounty=event.get('bounty'),
+                                                     killStreakLength=event.get('killStreakLength'),
+                                                     killerId=event.get('killerId'),
+                                                     laneType=event.get('laneType'),
+                                                     position=event.get('position'),
+                                                     shutdownBounty=event.get('shutdownBounty'),
+                                                     timestamp=event.get('timestamp'),
+                                                     type=event.get('type'),
+                                                     victimId=event.get('victimId')
+                                                     )
+                            dmgDealt = event.get('victimDamageDealt')
+                            if dmgDealt is not None:
+                                for dmg in dmgDealt:
+                                    dmgDealt_obj = SQLTimelineDamageDealt(basic=dmg.get('basic'),
+                                                                          magicDamage=dmg.get('magicDamage'),
+                                                                          name=dmg.get('name'),
+                                                                          participantId=dmg.get('participantId'),
+                                                                          physicalDamage=dmg.get('physicalDamage'),
+                                                                          spellName=dmg.get('spellName'),
+                                                                          spellSlot=dmg.get('SpellSlot'),
+                                                                          trueDamage=dmg.get('trueDamage'),
+                                                                          type=dmg.get('type')
+                                                                          )
+                                    event_obj.dmgdealt.append(dmgDealt_obj)
+                            dmgReceived = event.get('victimDamageReceived')
+                            if dmgReceived is not None:
+                                for dmg in dmgReceived:
+                                    dmgReceived_obj = SQLTimelineDamageReceived(
+                                        basic=dmg.get('basic'),
+                                        magicDamage=dmg.get('magicDamage'),
+                                        name=dmg.get('name'),
+                                        participantId=dmg.get('participantId'),
+                                        physicalDamage=dmg.get('physicalDamage'),
+                                        spellName=dmg.get('spellName'),
+                                        spellSlot=dmg.get('SpellSlot'),
+                                        trueDamage=dmg.get('trueDamage'),
+                                        type=dmg.get('type')
+                                    )
+                                    event_obj.dmgreceived.append(dmgReceived_obj)
+                            frame_obj.killevents.append(event_obj)
+                        else:
+                            event_obj = SQLEvent(eventId=eventId,
+                                                 timestamp=event.get('timestamp'),
+                                                 type=event.get('type'),
+                                                 participantId=event.get('participantId'),
+                                                 itemId=event.get('itemId'),
+                                                 skillSlot=event.get('skillSlot'),
+                                                 creatorId=event.get('creatorId'),
+                                                 teamId=event.get('teamId'),
+                                                 afterId=event.get('afterId'),
+                                                 beforeId=event.get('beforeId'),
+                                                 wardType=event.get('wardType')
+                                                 )
+                            frame_obj.events.append(event_obj)
                         session.add(event_obj)
                     for i, participantFrame in enumerate(
                             current_match_timeline['frames'][frameId]['participantFrames'].items(), start=1):
@@ -90,11 +141,12 @@ def getData():
                         participantFrameData['frameId'] = frameId
                         participantFrameData['participantId'] = i
                         participantFrame_obj = SQLParticipantFrame(**participantFrameData)
+                        frame_obj.participantframe.append(participantFrame_obj)
                         session.add(participantFrame_obj)
             except Exception as e:
                 logger.warning(f"skipping match Id {matchID} because of the following error: ")
                 logger.warning(str(e))
-                continue
+                raise
             try:
                 session.flush()
                 logger.info(f"session commit")
@@ -120,7 +172,6 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
     # the .1 is correct for modern patches, for very old patches (season 4 and older) another solution would be needed
     for champion in data:  # TODO: this can be vastly improved by using bulk inserts
         championdata = data[champion]
-        print(championdata)
         tags = pickle.dumps(championdata['tags'], protocol=pickle.HIGHEST_PROTOCOL)
         champion_obj = SQLChampion(championNumber=int(championdata['key']), championName=championdata['name'],
                                    championTitle=championdata['title'], infoAttack=championdata['info']['attack'],
@@ -147,8 +198,8 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
                                              seasonNumber=season)
         session.add(championStats_obj)
         # TODO: add champion roles with data from webscraping
-        tags = championdata['tags']
-        championTags_obj = SQLChampionTags(champion_obj.id, tags)
+        tags = championdata.get('tags')
+        championTags_obj = SQLChampionTags(champion_obj.id, **tags)
         session.add(championTags_obj)
         session.commit()
     session.commit()
