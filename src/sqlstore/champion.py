@@ -73,7 +73,7 @@ class SQLChampionStats(Base):
 
     __tablename__ = "champion_stats"
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
-    championId = mapped_column(Integer, nullable=False, index=True)
+    championId = mapped_column(Integer, ForeignKey("champion.id"), nullable=False)
     patchNumber = mapped_column(Integer, nullable=False, index=True)
     seasonNumber = mapped_column(Integer, nullable=False, index=True)
     hp = mapped_column(Integer)
@@ -134,14 +134,42 @@ class SQLChampionRoles(Base):
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     championId = mapped_column(Integer, ForeignKey("champion.id"), nullable=False)
-    championNumber = mapped_column(Integer, ForeignKey("champion.championNumber"), nullable=False)
-    role = mapped_column()  # enum
-    tags = mapped_column()  # enum
+    role1 = mapped_column(String(20))
+    role2 = mapped_column(String(20))
+    role3 = mapped_column(String(20))
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self):
-        pass
+    def __init__(self, championId: int, role1: str, role2: str = None, role3: str = None):
+        self.championId = championId
+        self.role1 = role1
+        self.role2 = role2
+        self.role3 = role3
 
     def __repr__(self):
-        pass
+        return f"champion {self.championId} with first role {self.role1}"
+
+
+class SQLChampionTags(Base):
+    __tablename__ = "champion_tags"
+
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    championId = mapped_column(BigInteger, ForeignKey("champion.id"), nullable=False)
+    tag1 = mapped_column(String(20))
+    tag2 = mapped_column(String(20))
+    tag3 = mapped_column(String(20))
+    tag4 = mapped_column(String(20))
+    tag5 = mapped_column(String(20))
+    timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
+    lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
+
+    def __init__(self, championId: int, tag1: str, tag2: str = None, tag3: str = None, tag4: str = None, tag5: str = None):
+        self.championId = championId
+        self.tag1 = tag1
+        self.tag2 = tag2
+        self.tag3 = tag3
+        self.tag4 = tag4
+        self.tag5 = tag5
+
+    def __repr__(self):
+        return f"champion {self.championId} with first tag {self.tag1}"
