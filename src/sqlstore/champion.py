@@ -3,6 +3,7 @@ from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func
 from src.sqlstore.db import Base
 
+
 class SQLChampion(Base):
     __tablename__ = "champion"
 
@@ -70,7 +71,7 @@ class SQLChampionStats(Base):
     __tablename__ = "champion_stats"
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     championId = mapped_column(Integer, ForeignKey("champion.id"), nullable=False)
-    champion = relationship("champion", backref="stats")
+    champion = relationship("SQLChampion", backref="stats")
     patchNumber = mapped_column(Integer, nullable=False, index=True)
     seasonNumber = mapped_column(Integer, nullable=False, index=True)
     hp = mapped_column(Integer)
@@ -131,7 +132,7 @@ class SQLChampionRoles(Base):
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     championId = mapped_column(Integer, ForeignKey("champion.id"), nullable=False)
-    champion = relationship("champion", backref="roles")
+    champion = relationship("SQLChampion", backref="roles")
     role1 = mapped_column(String(20))
     role2 = mapped_column(String(20))
     role3 = mapped_column(String(20))
@@ -153,7 +154,7 @@ class SQLChampionTags(Base):
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     championId = mapped_column(BigInteger, ForeignKey("champion.id"), nullable=False)
-    champion = relationship("champion", backref="tags")
+    champion = relationship("SQLChampion", backref="tags")
     tag1 = mapped_column(String(20))
     tag2 = mapped_column(String(20))
     tag3 = mapped_column(String(20))

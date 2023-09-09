@@ -44,7 +44,7 @@ def getData():
                 patch = get_patch(current_match_info['gameVersion'])
                 if not champ_patch_present(session=session, season=season, patch=patch):
                     pass
-                    # parse_champion_data(session=session, watcher=watcher, season=season, patch=patch)
+                    parse_champion_data(session=session, watcher=watcher, season=season, patch=patch)
                 current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)['info']
                 current_match = SQLmatch(matchId=matchID,
                                          platformId=current_match_info['platformId'],
