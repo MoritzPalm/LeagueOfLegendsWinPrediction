@@ -18,7 +18,6 @@ class SQLChampion(Base):
     infoMagic = mapped_column(Integer)
     infoDifficulty = mapped_column(Integer)
     # TODO: make tags not in binary format for easier querying
-    tags = mapped_column(PickleType)   # serialized list of tags (e.g. [Marksman, Support] for Ashe)
     partype = mapped_column(String(150))   # type of mana or energy (e.g. "Blood Well" for Aatrox)
     patchWinRate = mapped_column(Float, nullable=True)  # Represented as a percent
     patchPlayRate = mapped_column(Float, nullable=True)  # Represented as a percent
@@ -29,8 +28,8 @@ class SQLChampion(Base):
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    def init(self, championId: int, seasonNumber: int, patchNumber: int, championName: str, championTitle: str,
-             infoAttack: int, infoDefense: int, infoMagic: int, infoDifficulty: int, tags, partype: str,
+    def init(self, championNumber: int, seasonNumber: int, patchNumber: int, championName: str, championTitle: str,
+             infoAttack: int, infoDefense: int, infoMagic: int, infoDifficulty: int, partype: str,
              patchWinRate: float = None, patchPlayRate: float = None, role: str = None):
         """
 
@@ -43,21 +42,19 @@ class SQLChampion(Base):
         :param infoDefense:
         :param infoMagic:
         :param infoDifficulty:
-        :param tags:
         :param partype:
         :param patchWinRate:
         :param patchPlayRate:
         :param role:
         :return:
         """
-        self.championNumber = championId
+        self.championNumber = championNumber
         self.championName = championName
         self.championTitle = championTitle
         self.infoAttack = infoAttack
         self.infoDefense = infoDefense
         self.infoMagic = infoMagic
         self.infoDifficulty = infoDifficulty
-        self.tags = tags
         self.partype = partype
         self.patchWinRate = patchWinRate
         self.patchPlayRate = patchPlayRate
@@ -163,13 +160,13 @@ class SQLChampionTags(Base):
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, championId: int, tag1: str, tag2: str = None, tag3: str = None, tag4: str = None, tag5: str = None):
+    def __init__(self, championId: int, *tags):
         self.championId = championId
-        self.tag1 = tag1
-        self.tag2 = tag2
-        self.tag3 = tag3
-        self.tag4 = tag4
-        self.tag5 = tag5
+        self.tag1 = tags[0]
+        self.tag2 = tags[1]
+        self.tag3 = tags[2]
+        self.tag4 = tags[3]
+        self.tag5 = tags[4]
 
     def __repr__(self):
         return f"champion {self.championId} with first tag {self.tag1}"

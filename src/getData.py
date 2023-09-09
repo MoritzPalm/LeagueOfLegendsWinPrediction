@@ -6,6 +6,7 @@ import argparse
 import pytest
 
 from riotwatcher import LolWatcher
+from sqlalchemy import insert
 from sqlalchemy.sql import exists
 from sqlalchemy.exc import IntegrityError
 import sqlalchemy.orm.session
@@ -15,15 +16,15 @@ from src.crawlers.MatchIdCrawler import MatchIdCrawler
 from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLmatch
 from src.sqlstore.participant import SQLparticipantStats, SQLChallenges
-from src.sqlstore.timeline import SQLTimeline, SQLTimelineEvent, SQLTimelineFrame, SQLTimelineParticipantFrame
-from src.sqlstore.champion import SQLChampion, SQLChampionStats
+from src.sqlstore.timeline import SQLTimeline, SQLEvent, SQLFrame, SQLParticipantFrame
+from src.sqlstore.champion import SQLChampion, SQLChampionStats, SQLChampionRoles, SQLChampionTags
 from src.sqlstore.utils import champ_patch_present
 
 
 # TODO: abstract away more logic
 def getData():
     if args.n == 0:
-        args.n = sys.maxsize    # if no maximum number of matches or 0 passed, use maximum number of matches possible
+        args.n = sys.maxsize  # if no maximum number of matches or 0 passed, use maximum number of matches possible
     logger.info(f"initializing matchIdCrawler with api key {api_key}, region {args.region} and tier {args.tier}")
     crawler = MatchIdCrawler(api_key=api_key, region=args.region, tier=args.tier)
     logger.info(f"crawling {args.n} matchIDs")
@@ -59,16 +60,17 @@ def getData():
                 session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
                 # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
                 parse_participant_data(session=session, platformId=current_match_info['platformId'],
-                                       gameId=current_match_info['gameId'], participants=current_match_info['participants'])
+                                       gameId=current_match_info['gameId'],
+                                       participants=current_match_info['participants'])
                 current_timeline = SQLTimeline(platformId=current_match_info['platformId'],
                                                gameId=current_match_info['gameId'],
                                                frameInterval=current_match_timeline['frameInterval'])
                 session.add(current_timeline)
                 for frameId, frame in enumerate(current_match_timeline['frames']):
-                    frame_obj = SQLTimelineFrame(platformId=current_match_info['platformId'],
-                                                 gameId=current_match_info['gameId'],
-                                                 frameId=frameId,
-                                                 timestamp=current_match_timeline['frames'][frameId]['timestamp'])
+                    frame_obj = SQLFrame(platformId=current_match_info['platformId'],
+                                         gameId=current_match_info['gameId'],
+                                         frameId=frameId,
+                                         timestamp=current_match_timeline['frames'][frameId]['timestamp'])
                     session.add(frame_obj)
                     for eventId, event in enumerate(current_match_timeline['frames'][frameId]['events']):
                         if event['type'] in {'CHAMPION_KILL', 'CHAMPION_SPECIAL_KILL', 'TURRET_PLATE_DESTROYED',
@@ -78,7 +80,7 @@ def getData():
                         event['gameId'] = current_match_info['gameId']
                         event['frameId'] = frameId
                         event['eventId'] = eventId
-                        event_obj = SQLTimelineEvent(**event)
+                        event_obj = SQLEvent(**event)
                         session.add(event_obj)
                     for i, participantFrame in enumerate(
                             current_match_timeline['frames'][frameId]['participantFrames'].items(), start=1):
@@ -87,7 +89,7 @@ def getData():
                         participantFrameData['gameId'] = current_match_info['gameId']
                         participantFrameData['frameId'] = frameId
                         participantFrameData['participantId'] = i
-                        participantFrame_obj = SQLTimelineParticipantFrame(**participantFrameData)
+                        participantFrame_obj = SQLParticipantFrame(**participantFrameData)
                         session.add(participantFrame_obj)
             except Exception as e:
                 logger.warning(f"skipping match Id {matchID} because of the following error: ")
@@ -116,32 +118,40 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
     """
     data = watcher.data_dragon.champions(version=f"{season}.{patch}.1", full=False)['data']
     # the .1 is correct for modern patches, for very old patches (season 4 and older) another solution would be needed
-    for champion in data:
+    for champion in data:  # TODO: this can be vastly improved by using bulk inserts
         championdata = data[champion]
-        championstats = championdata['stats']
+        print(championdata)
         tags = pickle.dumps(championdata['tags'], protocol=pickle.HIGHEST_PROTOCOL)
-        champion_obj = SQLChampion(championId=int(championdata['key']), championName=championdata['name'],
+        champion_obj = SQLChampion(championNumber=int(championdata['key']), championName=championdata['name'],
                                    championTitle=championdata['title'], infoAttack=championdata['info']['attack'],
                                    infoDefense=championdata['info']['defense'], infoMagic=championdata['info']['magic'],
-                                   infoDifficulty=championdata['info']['difficulty'], tags=tags, seasonNumber=season,
+                                   infoDifficulty=championdata['info']['difficulty'], seasonNumber=season,
                                    patchNumber=patch)
         session.add(champion_obj)
-        championStats_obj = SQLChampionStats(championId=int(championdata['key']), hp=championstats['hp'],
-                                             hpperlevel=championstats['hpperlevel'], mp=championstats['mp'],
-                                             mpperlevel=championstats['mpperlevel'], movespeed=championstats['movespeed'],
-                                             armor=championstats['armor'], armorperlevel=championstats['armorperlevel'],
-                                             spellblock=championstats['spellblock'],
-                                             spellblockperlevel=championstats['spellblockperlevel'],
-                                             attackrange=championstats['attackrange'], hpregen=championstats['hpregen'],
-                                             hpregenperlevel=championstats['hpregenperlevel'],
-                                             mpregen=championstats['mpregen'],
-                                             mpregenperlevel=championstats['mpregenperlevel'], crit=championstats['crit'],
-                                             critperlevel=championstats['critperlevel'],
-                                             attackdamage=championstats['attackdamage'],
-                                             attackdamageperlevel=championstats['attackdamage'],
-                                             attackspeed=championstats['attackspeed'], patchNumber=patch,
+        session.commit()  # this commit is needed to get the generated champion_obj id
+        stats = data[champion]['stats']
+        championStats_obj = SQLChampionStats(championId=champion_obj.id, hp=stats['hp'],
+                                             hpperlevel=stats['hpperlevel'], mp=stats['mp'],
+                                             mpperlevel=stats['mpperlevel'], movespeed=stats['movespeed'],
+                                             armor=stats['armor'], armorperlevel=stats['armorperlevel'],
+                                             spellblock=stats['spellblock'],
+                                             spellblockperlevel=stats['spellblockperlevel'],
+                                             attackrange=stats['attackrange'], hpregen=stats['hpregen'],
+                                             hpregenperlevel=stats['hpregenperlevel'],
+                                             mpregen=stats['mpregen'],
+                                             mpregenperlevel=stats['mpregenperlevel'], crit=stats['crit'],
+                                             critperlevel=stats['critperlevel'],
+                                             attackdamage=stats['attackdamage'],
+                                             attackdamageperlevel=stats['attackdamage'],
+                                             attackspeed=stats['attackspeed'], patchNumber=patch,
                                              seasonNumber=season)
         session.add(championStats_obj)
+        # TODO: add champion roles with data from webscraping
+        tags = championdata['tags']
+        championTags_obj = SQLChampionTags(champion_obj.id, tags)
+        session.add(championTags_obj)
+        session.commit()
+    session.commit()
 
 
 def parse_participant_data(session: sqlalchemy.orm.Session, platformId: str, gameId: int, participants: dict) -> None:
@@ -169,7 +179,7 @@ def parse_participant_data(session: sqlalchemy.orm.Session, platformId: str, gam
 
 def is_valid_match(match_info: dict) -> bool:
     logger.debug(f"validating match info")
-    if match_info['gameDuration'] < 960:    # 16 min = 960 sec
+    if match_info['gameDuration'] < 960:  # 16 min = 960 sec
         logger.warning(f"match is too short: match length was {match_info['gameDuration']}s, more than 960s expected")
         return False
     if match_info['queueId'] != 420:
@@ -218,7 +228,8 @@ if __name__ == '__main__':
     stdout_handler = logging.StreamHandler(stream=sys.stdout)
     handlers = [file_handler, stdout_handler]
     logging.basicConfig(encoding='utf-8', level=logginglevel,
-                        format="%(asctime)s - %(levelname)s - %(funcName)s() - %(message)s", handlers=handlers)     # TODO: improve logging format
+                        format="%(asctime)s - %(levelname)s - %(funcName)s() - %(message)s",
+                        handlers=handlers)  # TODO: improve logging format
     logger = logging.getLogger(__name__)
     logging.getLogger("sqlalchemy.engine").setLevel(logginglevel)
     logging.getLogger("riotwatcher.LolWatcher").setLevel(logginglevel)
