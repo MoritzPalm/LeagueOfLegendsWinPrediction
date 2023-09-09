@@ -110,7 +110,7 @@ class SQLparticipantStats(Base):
     summoner2Id = mapped_column(Integer)
     summonerId = mapped_column(String(100))
     summonerLevel = mapped_column(Integer)
-    summonerName = mapped_column(String(63))
+    summonerName = mapped_column(String(150))
     teamEarlySurrendered = mapped_column(Boolean)
     teamId = mapped_column(Integer)
     teamPosition = mapped_column(String(20))
