@@ -3,7 +3,6 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 from src.sqlstore.db import Base
 
-
 class SQLChampion(Base):
     __tablename__ = "champion"
 

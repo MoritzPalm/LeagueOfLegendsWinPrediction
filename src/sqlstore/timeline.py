@@ -1,5 +1,6 @@
-from sqlalchemy import Integer, String, BigInteger, Boolean, ForeignKey, DateTime, PickleType, Identity, UniqueConstraint
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Integer, String, BigInteger, Boolean, ForeignKey, DateTime, PickleType, Identity, \
+    UniqueConstraint, Enum
+from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func
 from src.sqlstore.db import Base
 
