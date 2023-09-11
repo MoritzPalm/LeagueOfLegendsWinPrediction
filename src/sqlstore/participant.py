@@ -1,5 +1,5 @@
-from sqlalchemy import Integer, String, BigInteger, Boolean, ForeignKeyConstraint, DateTime, Float
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Integer, String, BigInteger, Boolean, ForeignKey, DateTime, Float, Identity
+from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func
 from src.sqlstore.db import Base
 
@@ -7,12 +7,29 @@ from src.sqlstore.db import Base
 # TODO: should this be a dataclass?
 
 
-class SQLparticipantStats(Base):
-    __tablename__ = "match_participant_stats"
+class SQLParticipant(Base):
+    __tablename__ = "participant"
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    puuid = mapped_column(String(78), nullable=False)
+    matchId = mapped_column(BigInteger, ForeignKey("match.id"), nullable=False)
+    match = relationship("SQLMatch", backref="participantStats")
+    participantId = mapped_column(Integer)
+    timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
+    lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    puuid = mapped_column(String(78), primary_key=True)
-    platformId = mapped_column(String(7), primary_key=True)
-    gameId = mapped_column(BigInteger, primary_key=True)
+    def __init__(self, puuid: str, participantId: int):
+        self.puuid = puuid
+        self.participantId = participantId
+
+    def __repr__(self):
+        return f"Participant {self.participantId} with puuid {self.puuid} in match {self.matchId}"
+
+
+class SQLparticipantStats(Base):
+    __tablename__ = "participant_stats"
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    participantId = mapped_column(BigInteger, ForeignKey("participant.id"), nullable=False)
+    participant = relationship("SQLParticipant", backref="stats")
     allInPings = mapped_column(Integer)
     assistMePings = mapped_column(Integer)
     assists = mapped_column(Integer)
@@ -79,7 +96,7 @@ class SQLparticipantStats(Base):
     objectivesStolen = mapped_column(Integer)
     objectivesStolenAssists = mapped_column(Integer)
     onMyWayPings = mapped_column(Integer)
-    participantId = mapped_column(Integer)  # TODO: should this be part of the primary key?
+    participantId = mapped_column(Integer, nullable=False)
     pentaKills = mapped_column(Integer)
     # TODO: in matchDto are perks, which do not translate well into this table, consider putting those in separate table
     physicalDamageDealt = mapped_column(Integer)
@@ -174,19 +191,18 @@ class SQLparticipantStats(Base):
                      'totalTimeSpentDead', 'totalUnitsHealed', 'tripleKills', 'trueDamageDealt',
                      'trueDamageDealtToChampions', 'trueDamageTaken', 'turretKills', 'turretTakedowns',
                      'turretsLost', 'unrealKills', 'visionClearedPings', 'visionScore', 'visionWardsBoughtInGame',
-                     'wardsKilled', 'wardsPlaced', 'win', 'platformId', 'gameId'):
+                     'wardsKilled', 'wardsPlaced', 'win',):
             setattr(self, attr, kwargs.get(attr))
 
     def __repr__(self):
         return f"{self.platformId}_{self.gameId} player {self.puuid} with number {self.participantId}"
 
 
-class SQLStatPerks(Base):
-    __tablename__ = "match_participant_stat_perks"
-
-    puuid = mapped_column(String(78), primary_key=True)
-    platformId = mapped_column(String(7), primary_key=True)
-    gameId = mapped_column(BigInteger, primary_key=True)
+class SQLStatPerk(Base):
+    __tablename__ = "participant_perk"
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    participantId = mapped_column(BigInteger, ForeignKey("participant.id"), nullable=False)
+    participant = relationship("SQLParticipant", backref="perk")
     defense = mapped_column(Integer)
     flex = mapped_column(Integer)
     offense = mapped_column(Integer)
@@ -205,30 +221,53 @@ class SQLStatPerks(Base):
         return f"{self.platformId}_{self.gameId} player {self.puuid} stats"
 
 
-class SQLStyles(Base):
-    __tablename__ = "match_participant_styles"
-
-    puuid = mapped_column(String(100), primary_key=True)
-    platformId = mapped_column(String(7), primary_key=True)
-    gameId = mapped_column(BigInteger, primary_key=True)
+class SQLStyle(Base):
+    __tablename__ = "participant_style"
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    participantId = mapped_column(BigInteger, ForeignKey("participant.id"), nullable=False)
+    participant = relationship("SQLParticipant", backref="style")
     description = mapped_column(String(80))
     style = mapped_column(Integer)
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self):
-        pass
+    def __init__(self, description: str, style: int):
+        self.description = description
+        self.style = style
 
     def __repr__(self):
-        pass
+        return f"Perk {self.description} by participant {self.participantId}"
+
+
+class SQLStyleSelection(Base):
+    __tablename__ = "style_selection"
+
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    styleId = mapped_column(BigInteger, ForeignKey("participant_style.id"), nullable=False)
+    style = relationship("SQLStyle", backref="selection")
+    perk = mapped_column(Integer)
+    var1 = mapped_column(Integer)
+    var2 = mapped_column(Integer)
+    var3 = mapped_column(Integer)
+    timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
+    lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
+
+    def __init__(self, perk: int, var1: int, var2: int, var3: int):
+        self.perk = perk
+        self.var1 = var1
+        self.var2 = var2
+        self.var3 = var3
+
+    def __repr__(self):
+        return f"Style selection (style id: {self.styleId}) perk: {self.perk}"
 
 
 class SQLChallenges(Base):
-    __tablename__ = "match_participant_challenges"
+    __tablename__ = "participant_challenges"
 
-    puuid = mapped_column(String(78), primary_key=True)
-    platformId = mapped_column(String(7), primary_key=True)
-    gameId = mapped_column(BigInteger, primary_key=True)
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    participantId = mapped_column(BigInteger, ForeignKey("participant.id"), nullable=False)
+    participant = relationship("SQLParticipant", backref="challenges")
     Assist12StreakCount = mapped_column(Integer)
     abilityUses = mapped_column(Integer)
     acesBefore15Minutes = mapped_column(Integer)
