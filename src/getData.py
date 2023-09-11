@@ -15,8 +15,7 @@ import keys
 from src.crawlers.MatchIdCrawler import MatchIdCrawler
 from src.sqlstore.champion import SQLChampion, SQLChampionStats, SQLChampionTags
 from src.sqlstore.db import get_session
-from src.sqlstore.match import SQLmatch
-from src.sqlstore.participant import SQLParticipant, SQLparticipantStats, SQLChallenges, SQLStyle, SQLStyleSelection, \
+from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats, SQLChallenges, SQLStyle, SQLStyleSelection, \
     SQLStatPerk
 from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
 from src.sqlstore.timeline import SQLTimeline, SQLEvent, SQLFrame, SQLParticipantFrame, SQLKillEvent, \
@@ -70,7 +69,7 @@ def getData():
                 except Exception as e:
                     logger.error(f"skipping match Id {matchID} because of the following error: ")
                     logger.error(str(e))
-                    break
+                    raise
                 else:
                     break
             try:
@@ -82,16 +81,16 @@ def getData():
                 logger.error(str(e))
                 logger.error(f"session rollback because something went wrong with parsing matchId {matchID}")
                 session.rollback()
-                continue
+                raise
 
 
 def check_matchId_present(session: sqlalchemy.orm.Session, matchID: str) -> bool:
-    return session.query(exists().where(SQLmatch.matchId == matchID)).scalar()
+    return session.query(exists().where(SQLMatch.matchId == matchID)).scalar()
 
 
 def parse_data(session: sqlalchemy.orm.Session, matchID: str, season: int, patch: int, match_info: dict,
                match_timeline: dict) -> None:
-    current_match = SQLmatch(matchId=matchID,
+    current_match = SQLMatch(matchId=matchID,
                              platformId=match_info['platformId'],
                              gameId=match_info['gameId'],
                              queueId=match_info['queueId'],
@@ -192,75 +191,77 @@ def parse_timeline_data(session: sqlalchemy.orm.Session, platformId: str, gameId
             session.add(participantFrame_obj)
 
 
-def scrape_champion_metrics():
-    # Define the URL containing the metrics
-    url = "https://u.gg/lol/tier-list"
+# def scrape_champion_metrics():
+#     # Define the URL containing the metrics
+#     url = "https://u.gg/lol/tier-list"
+#
+#     # Configure Chrome options for headless browsing
+#     options = Options()
+#     options.add_argument("--headless")
+#     # Path to Chrome executable
+#     # TODO: change path of chrome driver to use path? venv?
+#     options.binary_location = "C:\\Users\\nicol\\Downloads\\chrome-win64\\chrome-win64\\chrome.exe"
+#
+#     # Start Chrome WebDriver service
+#     service = Service("C:\\Users\\nicol\\Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe")
+#     driver = webdriver.Chrome(options=options)
+#
+#     # Open the URL
+#     driver.get(url)
+#
+#     # Initialize WebDriverWait and wait until the rows in the table are loaded
+#     wait = WebDriverWait(driver, 10)
+#     wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.rt-tr-group")))
+#
+#     # Initialize empty list to store data
+#     data = []
+#
+#     # Scroll to the bottom and top of the page to load all rows
+#     while True:
+#         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+#         time.sleep(1)
+#         driver.execute_script("window.scrollTo(0, 0);")
+#         time.sleep(1)
+#
+#         # Find all the rows in the table
+#         rows = driver.find_elements(By.CSS_SELECTOR, "div.rt-tr-group")
+#
+#         # Break if there are no rows or if we've scraped all the rows
+#         if not rows or len(data) == len(rows):
+#             break
+#
+#         # Loop through the new rows and scrape data
+#         for i in range(len(data), len(rows)):
+#             row = rows[i]
+#             try:
+#                 # Extract metrics for each champion
+#                 rank = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(1)").text.strip()
+#                 champion = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(3)").get_attribute(
+#                     "textContent").strip()
+#                 tier = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(4)").text.strip()
+#                 win_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(5)").text.strip()
+#                 pick_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(7)").text.strip()
+#                 ban_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(6)").text.strip()
+#                 matches = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(8)").text.strip()
+#
+#                 # Append metrics to data list
+#                 data.append([rank, champion, tier, win_rate, pick_rate, ban_rate, matches])
+#
+#             except Exception as e:
+#                 print(f"Error in row {i}: {e}")
+#
+#     # Define columns for the DataFrame
+#     columns = ['Rank', 'Champion Name', 'Tier', 'Win rate', 'Pick Rate', 'Ban Rate', 'Matches']
+#
+#     # Create a DataFrame from the scraped data
+#     df_scraped = pd.DataFrame(data, columns=columns)
+#
+#     # Close the browser
+#     driver.quit()
+#
+#     # Return the DataFrame converted to a dictionary, indexed by "Champion Name"
+#     return df_scraped.set_index("Champion Name").to_dict('index')
 
-    # Configure Chrome options for headless browsing
-    options = Options()
-    options.add_argument("--headless")
-    # Path to Chrome executable
-    options.binary_location = "C:\\Users\\nicol\\Downloads\\chrome-win64\\chrome-win64\\chrome.exe"
-
-    # Start Chrome WebDriver service
-    service = Service("C:\\Users\\nicol\\Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe")
-    driver = webdriver.Chrome(service=service, options=options)
-
-    # Open the URL
-    driver.get(url)
-
-    # Initialize WebDriverWait and wait until the rows in the table are loaded
-    wait = WebDriverWait(driver, 10)
-    wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.rt-tr-group")))
-
-    # Initialize empty list to store data
-    data = []
-
-    # Scroll to the bottom and top of the page to load all rows
-    while True:
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(1)
-        driver.execute_script("window.scrollTo(0, 0);")
-        time.sleep(1)
-
-        # Find all the rows in the table
-        rows = driver.find_elements(By.CSS_SELECTOR, "div.rt-tr-group")
-
-        # Break if there are no rows or if we've scraped all the rows
-        if not rows or len(data) == len(rows):
-            break
-
-        # Loop through the new rows and scrape data
-        for i in range(len(data), len(rows)):
-            row = rows[i]
-            try:
-                # Extract metrics for each champion
-                rank = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(1)").text.strip()
-                champion = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(3)").get_attribute(
-                    "textContent").strip()
-                tier = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(4)").text.strip()
-                win_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(5)").text.strip()
-                pick_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(7)").text.strip()
-                ban_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(6)").text.strip()
-                matches = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(8)").text.strip()
-
-                # Append metrics to data list
-                data.append([rank, champion, tier, win_rate, pick_rate, ban_rate, matches])
-
-            except Exception as e:
-                print(f"Error in row {i}: {e}")
-
-    # Define columns for the DataFrame
-    columns = ['Rank', 'Champion Name', 'Tier', 'Win rate', 'Pick Rate', 'Ban Rate', 'Matches']
-
-    # Create a DataFrame from the scraped data
-    df_scraped = pd.DataFrame(data, columns=columns)
-
-    # Close the browser
-    driver.quit()
-
-    # Return the DataFrame converted to a dictionary, indexed by "Champion Name"
-    return df_scraped.set_index("Champion Name").to_dict('index')
 
 def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, season: int, patch: int):
     """ parses champion information provided by datadragon and fill corresponding Champion and ChampionStats tables
@@ -275,7 +276,7 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
     # the .1 is correct for modern patches, for very old patches (season 4 and older) another solution would be needed
 
     # Scrape additional metrics from u.gg
-    scraped_data = scrape_champion_metrics()
+    #scraped_data = scrape_champion_metrics()
 
     for champion in data:  # TODO: this can be vastly improved by using bulk inserts
         championdata = data[champion]
@@ -287,13 +288,13 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
         session.add(champion_obj)
 
         # Use scraped_data to populate fields in SQLChampion
-        if championdata['name'] in scraped_data:
-            metrics = scraped_data[championdata['name']]
-            champion_obj.Tier = metrics.get('Tier')
-            champion_obj.WinRate = metrics.get('Win rate')
-            champion_obj.PickRate = metrics.get('Pick Rate')
-            champion_obj.BanRate = metrics.get('Ban Rate')
-            champion_obj.Matches = metrics.get('Matches')
+        # if championdata['name'] in scraped_data:
+        #     metrics = scraped_data[championdata['name']]
+        #     champion_obj.Tier = metrics.get('Tier')
+        #     champion_obj.WinRate = metrics.get('Win rate')
+        #     champion_obj.PickRate = metrics.get('Pick Rate')
+        #     champion_obj.BanRate = metrics.get('Ban Rate')
+        #     champion_obj.Matches = metrics.get('Matches')
 
         session.commit()  # this commit is needed to get the generated champion_obj id
         stats = data[champion]['stats']
@@ -326,7 +327,7 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
     session.commit()
 
 
-def parse_participant_data(session: sqlalchemy.orm.Session, match: SQLmatch, participants: dict) -> None:
+def parse_participant_data(session: sqlalchemy.orm.Session, match: SQLMatch, participants: dict) -> None:
     """
     parses participant stats and adds it to sqlalchemy session
     :param session: sqlalchemy orm session
@@ -337,7 +338,7 @@ def parse_participant_data(session: sqlalchemy.orm.Session, match: SQLmatch, par
     for participant in participants:
         participant_obj = SQLParticipant(puuid=participant['puuid'], participantId=participant['participantId'])
         session.add(participant_obj)
-        participantStats_obj = SQLparticipantStats(**participant)
+        participantStats_obj = SQLParticipantStats(**participant)
         match.participant.append(participant_obj)  # TODO: double check logic regarding adding match to session
         participant_obj.stats.append(participantStats_obj)
         session.add(participantStats_obj)
@@ -347,13 +348,14 @@ def parse_participant_data(session: sqlalchemy.orm.Session, match: SQLmatch, par
         participant_obj.statPerks.append(participantPerk_obj)
         session.add(participantPerk_obj)
         styles = participant['perks']['styles']
-        participantStyle_obj = SQLStyle(styles['description'], styles['style'])
-        participant_obj.styles.append(participantStyle_obj)
-        for selection in styles['selections']:
-            participantStyleSelection_obj = SQLStyleSelection(selection['perk'], selection['var1'], selection['var2'],
-                                                              selection['var3'])
-            participantStyle_obj.selection.append(participantStyleSelection_obj)
-            session.add(participantStyleSelection_obj)
+        for style in styles:
+            participantStyle_obj = SQLStyle(style['description'], style['style'])
+            participant_obj.styles.append(participantStyle_obj)
+            for selection in style['selections']:
+                participantStyleSelection_obj = SQLStyleSelection(selection['perk'], selection['var1'], selection['var2'],
+                                                                  selection['var3'])
+                participantStyle_obj.selection.append(participantStyleSelection_obj)
+                session.add(participantStyleSelection_obj)
         participant['challenges']['Assist12StreakCount'] = participant['challenges']['12AssistStreakCount']  # rename
         participantChallenges_obj = SQLChallenges(**participant['challenges'])
         participant_obj.challenges.append(participantChallenges_obj)
@@ -407,13 +409,13 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
         summoner_league_obj = SQLSummonerLeague(**summoner_league_data)
         summoner_obj.leagues.append(summoner_league_obj)
         session.add(summoner_league_obj)
-        summoner_champion_data = watcher.champion_mastery.by_summoner(region, SQLSummoner.summonerId)
-        for champion_data in summoner_champion_data:
-            championId = champion_data['championId']
-            summoner_championmastery_obj = SQLChampionMastery(**champion_data)
-            summoner_obj.masteries.append(summoner_championmastery_obj)
-            query = select(SQLChampion).where(SQLChampion.championNumber == championId).order_by(SQLChampion.lastUpdate)
-            champion_obj = session.execute(query)
+#        summoner_champion_data = watcher.champion_mastery.by_summoner(region, SQLSummoner.summonerId)
+#        for champion_data in summoner_champion_data:
+#            championId = champion_data['championId']
+#            summoner_championmastery_obj = SQLChampionMastery(**champion_data)
+#            summoner_obj.masteries.append(summoner_championmastery_obj)
+#            query = select(SQLChampion).where(SQLChampion.championNumber == championId).order_by(SQLChampion.lastUpdate)
+#            champion_obj = session.execute(query)
 
 
 def is_valid_match(match_info: dict) -> bool:

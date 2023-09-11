@@ -35,7 +35,7 @@ class SQLChampion(Base):
 
     def __init__(self, championNumber: int, seasonNumber: int, patchNumber: int, championName: str,
                  championTitle: str, infoAttack: int, infoDefense: int, infoMagic: int, infoDifficulty: int,
-                 partype: str, patchWinRate: float = None, patchPlayRate: float = None, role: str = None,
+                 partype: str = None, patchWinRate: float = None, patchPlayRate: float = None, role: str = None,
                  tier: str = None, win_rate: float = None, pick_rate: float = None, ban_rate: float = None,
                  matches: int = None):
         """
