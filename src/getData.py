@@ -1,15 +1,15 @@
 import argparse
+import datetime
 import logging
 import pickle
 import sys
 import time
-import datetime
 
 import requests.exceptions
 import sqlalchemy.orm.session
 from riotwatcher import LolWatcher
-from sqlalchemy.sql import exists
 from sqlalchemy import select
+from sqlalchemy.sql import exists
 
 import keys
 from src.crawlers.MatchIdCrawler import MatchIdCrawler
@@ -18,9 +18,9 @@ from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLmatch
 from src.sqlstore.participant import SQLParticipant, SQLparticipantStats, SQLChallenges, SQLStyle, SQLStyleSelection, \
     SQLStatPerk
+from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
 from src.sqlstore.timeline import SQLTimeline, SQLEvent, SQLFrame, SQLParticipantFrame, SQLKillEvent, \
     SQLTimelineDamageDealt, SQLTimelineDamageReceived
-from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
 from src.sqlstore.utils import champ_patch_present
 from src.utils import get_patch, get_season
 
@@ -52,7 +52,8 @@ def getData():
                     if not champ_patch_present(session=session, season=season, patch=patch):
                         pass
                         parse_champion_data(session=session, watcher=watcher, season=season, patch=patch)
-                    current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)['info']
+                    current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)[
+                        'info']
                     parse_data(session, matchID, season, patch, current_match_info, current_match_timeline)
                 except requests.exceptions.ConnectionError as e:
                     logger.error(str(e))
@@ -79,7 +80,8 @@ def check_matchId_present(session: sqlalchemy.orm.Session, matchID: str) -> bool
     return session.query(exists().where(SQLmatch.matchId == matchID)).scalar()
 
 
-def parse_data(session: sqlalchemy.orm.Session, matchID: str, season: int, patch: int, match_info: dict, match_timeline: dict) -> None:
+def parse_data(session: sqlalchemy.orm.Session, matchID: str, season: int, patch: int, match_info: dict,
+               match_timeline: dict) -> None:
     current_match = SQLmatch(matchId=matchID,
                              platformId=match_info['platformId'],
                              gameId=match_info['gameId'],
@@ -243,7 +245,7 @@ def parse_participant_data(session: sqlalchemy.orm.Session, match: SQLmatch, par
         participant_obj = SQLParticipant(puuid=participant['puuid'], participantId=participant['participantId'])
         session.add(participant_obj)
         participantStats_obj = SQLparticipantStats(**participant)
-        match.participant.append(participant_obj)   # TODO: double check logic regarding adding match to session
+        match.participant.append(participant_obj)  # TODO: double check logic regarding adding match to session
         participant_obj.stats.append(participantStats_obj)
         session.add(participantStats_obj)
         statPerks = participant['perks']['statPerks']
@@ -259,7 +261,7 @@ def parse_participant_data(session: sqlalchemy.orm.Session, match: SQLmatch, par
                                                               selection['var3'])
             participantStyle_obj.selection.append(participantStyleSelection_obj)
             session.add(participantStyleSelection_obj)
-        participant['challenges']['Assist12StreakCount'] = participant['challenges']['12AssistStreakCount']     # rename
+        participant['challenges']['Assist12StreakCount'] = participant['challenges']['12AssistStreakCount']  # rename
         participantChallenges_obj = SQLChallenges(**participant['challenges'])
         participant_obj.challenges.append(participantChallenges_obj)
         session.add(participantChallenges_obj)
@@ -308,6 +310,17 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
                                    summoner_data['summonerLevel']
                                    )
         session.add(summoner_obj)
+        summoner_league_data = watcher.league.by_summoner(region=region, encrypted_summoner_id=SQLSummoner.summonerId)
+        summoner_league_obj = SQLSummonerLeague(**summoner_league_data)
+        summoner_obj.leagues.append(summoner_league_obj)
+        session.add(summoner_league_obj)
+        summoner_champion_data = watcher.champion_mastery.by_summoner(region, SQLSummoner.summonerId)
+        for champion_data in summoner_champion_data:
+            championId = champion_data['championId']
+            summoner_championmastery_obj = SQLChampionMastery(**champion_data)
+            summoner_obj.masteries.append(summoner_championmastery_obj)
+            query = select(SQLChampion).where(SQLChampion.championNumber == championId).order_by(SQLChampion.lastUpdate)
+            champion_obj = session.execute(query)
 
 
 def is_valid_match(match_info: dict) -> bool:
@@ -324,8 +337,6 @@ def is_valid_match(match_info: dict) -> bool:
         logger.warning(f"match was played on wrong map: played on map {match_info['mapId']}, 1, 2 or 11 expected")
         return False
     return True
-
-
 
 
 if __name__ == '__main__':
