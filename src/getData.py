@@ -18,6 +18,8 @@ from src.sqlstore.participant import SQLparticipantStats, SQLChallenges
 from src.sqlstore.timeline import SQLTimeline, SQLTimelineEvent, SQLTimelineFrame, SQLTimelineParticipantFrame
 from src.sqlstore.champion import SQLChampion, SQLChampionStats
 
+# Scraping
+import time
 
 # TODO: implement update strategy after new patch
 
