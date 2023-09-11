@@ -27,12 +27,18 @@ class SQLChampion(Base):
     # -> this should not be saved in db, instead calculated server/analytics side imo
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
+    tier = mapped_column(String(10), nullable=True)  # Represented as S,A,B,C,D,E, etc.
+    win_rate = mapped_column(Float, nullable=True)  # Represented as a percent
+    pick_rate = mapped_column(Float, nullable=True)  # Represented as a percent
+    ban_rate = mapped_column(Float, nullable=True)  # Represented as a percent
+    matches = mapped_column(Integer, nullable=True)  # Number of matches observed
 
-    def init(self, championNumber: int, seasonNumber: int, patchNumber: int, championName: str, championTitle: str,
-             infoAttack: int, infoDefense: int, infoMagic: int, infoDifficulty: int, partype: str,
-             patchWinRate: float = None, patchPlayRate: float = None, role: str = None):
+    def __init__(self, championNumber: int, seasonNumber: int, patchNumber: int, championName: str,
+                 championTitle: str, infoAttack: int, infoDefense: int, infoMagic: int, infoDifficulty: int,
+                 partype: str, patchWinRate: float = None, patchPlayRate: float = None, role: str = None,
+                 tier: str = None, win_rate: float = None, pick_rate: float = None, ban_rate: float = None,
+                 matches: int = None):
         """
-
         :param championId:
         :param patchNumber:
         :param seasonNumber
@@ -46,6 +52,11 @@ class SQLChampion(Base):
         :param patchWinRate:
         :param patchPlayRate:
         :param role:
+        :param tier:
+        :param win_rate:
+        :param pick_rate:
+        :param ban_rate:
+        :param matches:
         :return:
         """
         self.championNumber = championNumber
@@ -61,6 +72,11 @@ class SQLChampion(Base):
         self.patchNumber = patchNumber
         self.seasonNumber = seasonNumber
         self.primaryRole = role
+        self.tier = tier
+        self.win_rate = win_rate
+        self.pick_rate = pick_rate
+        self.ban_rate = ban_rate
+        self.matches = matches
 
     def repr(self):
         return f"<Champion {self.championName} ({self.key}) - {self.championTitle}>"
