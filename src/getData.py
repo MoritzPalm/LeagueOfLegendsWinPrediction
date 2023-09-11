@@ -24,6 +24,15 @@ from src.sqlstore.timeline import SQLTimeline, SQLEvent, SQLFrame, SQLParticipan
 from src.sqlstore.utils import champ_patch_present
 from src.utils import get_patch, get_season
 
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import pandas as pd
+import time
+
 
 # TODO: abstract away more logic
 def getData():
@@ -183,6 +192,76 @@ def parse_timeline_data(session: sqlalchemy.orm.Session, platformId: str, gameId
             session.add(participantFrame_obj)
 
 
+def scrape_champion_metrics():
+    # Define the URL containing the metrics
+    url = "https://u.gg/lol/tier-list"
+
+    # Configure Chrome options for headless browsing
+    options = Options()
+    options.add_argument("--headless")
+    # Path to Chrome executable
+    options.binary_location = "C:\\Users\\nicol\\Downloads\\chrome-win64\\chrome-win64\\chrome.exe"
+
+    # Start Chrome WebDriver service
+    service = Service("C:\\Users\\nicol\\Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe")
+    driver = webdriver.Chrome(service=service, options=options)
+
+    # Open the URL
+    driver.get(url)
+
+    # Initialize WebDriverWait and wait until the rows in the table are loaded
+    wait = WebDriverWait(driver, 10)
+    wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.rt-tr-group")))
+
+    # Initialize empty list to store data
+    data = []
+
+    # Scroll to the bottom and top of the page to load all rows
+    while True:
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(1)
+        driver.execute_script("window.scrollTo(0, 0);")
+        time.sleep(1)
+
+        # Find all the rows in the table
+        rows = driver.find_elements(By.CSS_SELECTOR, "div.rt-tr-group")
+
+        # Break if there are no rows or if we've scraped all the rows
+        if not rows or len(data) == len(rows):
+            break
+
+        # Loop through the new rows and scrape data
+        for i in range(len(data), len(rows)):
+            row = rows[i]
+            try:
+                # Extract metrics for each champion
+                rank = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(1)").text.strip()
+                champion = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(3)").get_attribute(
+                    "textContent").strip()
+                tier = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(4)").text.strip()
+                win_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(5)").text.strip()
+                pick_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(7)").text.strip()
+                ban_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(6)").text.strip()
+                matches = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(8)").text.strip()
+
+                # Append metrics to data list
+                data.append([rank, champion, tier, win_rate, pick_rate, ban_rate, matches])
+
+            except Exception as e:
+                print(f"Error in row {i}: {e}")
+
+    # Define columns for the DataFrame
+    columns = ['Rank', 'Champion Name', 'Tier', 'Win rate', 'Pick Rate', 'Ban Rate', 'Matches']
+
+    # Create a DataFrame from the scraped data
+    df_scraped = pd.DataFrame(data, columns=columns)
+
+    # Close the browser
+    driver.quit()
+
+    # Return the DataFrame converted to a dictionary, indexed by "Champion Name"
+    return df_scraped.set_index("Champion Name").to_dict('index')
+
 def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, season: int, patch: int):
     """ parses champion information provided by datadragon and fill corresponding Champion and ChampionStats tables
       WARNING: parses only the brief summary of champion data, if additional data is needed this needs to be reworked
@@ -194,6 +273,10 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
     """
     data = watcher.data_dragon.champions(version=f"{season}.{patch}.1", full=False)['data']
     # the .1 is correct for modern patches, for very old patches (season 4 and older) another solution would be needed
+
+    # Scrape additional metrics from u.gg
+    scraped_data = scrape_champion_metrics()
+
     for champion in data:  # TODO: this can be vastly improved by using bulk inserts
         championdata = data[champion]
         champion_obj = SQLChampion(championNumber=int(championdata['key']), championName=championdata['name'],
@@ -202,6 +285,16 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
                                    infoDifficulty=championdata['info']['difficulty'], seasonNumber=season,
                                    patchNumber=patch)
         session.add(champion_obj)
+
+        # Use scraped_data to populate fields in SQLChampion
+        if championdata['name'] in scraped_data:
+            metrics = scraped_data[championdata['name']]
+            champion_obj.Tier = metrics.get('Tier')
+            champion_obj.WinRate = metrics.get('Win rate')
+            champion_obj.PickRate = metrics.get('Pick Rate')
+            champion_obj.BanRate = metrics.get('Ban Rate')
+            champion_obj.Matches = metrics.get('Matches')
+
         session.commit()  # this commit is needed to get the generated champion_obj id
         stats = data[champion]['stats']
         championStats_obj = SQLChampionStats(championId=champion_obj.id, hp=stats['hp'],
