@@ -157,19 +157,14 @@ class SQLChampionTags(Base):
     champion = relationship("SQLChampion", backref="tags")
     tag1 = mapped_column(String(20))
     tag2 = mapped_column(String(20))
-    tag3 = mapped_column(String(20))
-    tag4 = mapped_column(String(20))
-    tag5 = mapped_column(String(20))
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, championId: int, tag1, tag2, tag3, tag4, tag5):
+    def __init__(self, championId: int, tag1, tag2):
         self.championId = championId
         self.tag1 = tag1
         self.tag2 = tag2
-        self.tag3 = tag3
-        self.tag4 = tag4
-        self.tag5 = tag5
+
 
     def __repr__(self):
         return f"champion {self.championId} with first tag {self.tag1}"

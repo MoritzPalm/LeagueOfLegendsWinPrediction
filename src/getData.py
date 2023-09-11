@@ -226,10 +226,7 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
         length = len(tags)
         tag1 = tags[0] if 0 < length else None
         tag2 = tags[1] if 1 < length else None
-        tag3 = tags[2] if 2 < length else None
-        tag4 = tags[3] if 3 < length else None
-        tag5 = tags[4] if 4 < length else None
-        championTags_obj = SQLChampionTags(champion_obj.id, tag1, tag2, tag3, tag4, tag5)
+        championTags_obj = SQLChampionTags(champion_obj.id, tag1, tag2)
         champion_obj.tags.append(championTags_obj)
         session.add(championTags_obj)
         session.commit()
