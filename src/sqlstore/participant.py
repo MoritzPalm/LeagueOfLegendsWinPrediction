@@ -12,7 +12,7 @@ class SQLParticipant(Base):
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     puuid = mapped_column(String(78), nullable=False)
     matchId = mapped_column(BigInteger, ForeignKey("match.id"), nullable=False)
-    match = relationship("SQLMatch", backref="participantStats")
+    match = relationship("SQLMatch", backref="participant")
     participantId = mapped_column(Integer)
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
@@ -202,17 +202,15 @@ class SQLStatPerk(Base):
     __tablename__ = "participant_perk"
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     participantId = mapped_column(BigInteger, ForeignKey("participant.id"), nullable=False)
-    participant = relationship("SQLParticipant", backref="perk")
+    participant = relationship("SQLParticipant", backref="statPerks")
     defense = mapped_column(Integer)
     flex = mapped_column(Integer)
     offense = mapped_column(Integer)
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    def __init(self, puuid: str, platformId: str, gameId: str, defense: int, flex: int, offense: int):
+    def __init(self, puuid: str, defense: int, flex: int, offense: int):
         self.puuid = puuid
-        self.platformId = platformId
-        self.gameId = gameId
         self.defense = defense
         self.flex = flex
         self.offense = offense
@@ -225,7 +223,7 @@ class SQLStyle(Base):
     __tablename__ = "participant_style"
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     participantId = mapped_column(BigInteger, ForeignKey("participant.id"), nullable=False)
-    participant = relationship("SQLParticipant", backref="style")
+    participant = relationship("SQLParticipant", backref="styles")
     description = mapped_column(String(80))
     style = mapped_column(Integer)
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())

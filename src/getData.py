@@ -12,7 +12,8 @@ from src.crawlers.MatchIdCrawler import MatchIdCrawler
 from src.sqlstore.champion import SQLChampion, SQLChampionStats, SQLChampionTags
 from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLmatch
-from src.sqlstore.participant import SQLparticipantStats, SQLChallenges
+from src.sqlstore.participant import SQLParticipant, SQLparticipantStats, SQLChallenges, SQLStyle, SQLStyleSelection, \
+    SQLStatPerk
 from src.sqlstore.timeline import SQLTimeline, SQLEvent, SQLFrame, SQLParticipantFrame, SQLKillEvent, \
     SQLTimelineDamageDealt, SQLTimelineDamageReceived
 from src.sqlstore.utils import champ_patch_present
@@ -217,27 +218,38 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
     session.commit()
 
 
-def parse_participant_data(session: sqlalchemy.orm.Session, platformId: str, gameId: int, participants: dict) -> None:
+def parse_participant_data(session: sqlalchemy.orm.Session, match: SQLmatch, participants: dict) -> None:
     """
     parses participant stats and adds it to sqlalchemy session
     :param session: sqlalchemy orm session
-    :param platformId: platformId string (e.g. "EUW1")
-    :param gameId: game Id int (e.g. 6572642807)
+    :param match: SQLMatch to get id for foreign key
     :param participants: list of dicts containing participant stats
     :return: None
     """
     for participant in participants:
-        participant['platformId'] = platformId
-        participant['gameId'] = gameId
-        # TODO: perks table implementation
+        participant_obj = SQLParticipant(puuid=participant['puuid'], participantId=participant['participantId'])
+        session.add(participant_obj)
         participantStats_obj = SQLparticipantStats(**participant)
+        match.participant.append(participant_obj)   # TODO: double check logic regarding adding match to session
+        participant_obj.stats.append(participantStats_obj)
         session.add(participantStats_obj)
-        participant['challenges']['puuid'] = participant['puuid']
-        participant['challenges']['platformId'] = platformId
-        participant['challenges']['gameId'] = gameId
-        participant['challenges']['Assist12StreakCount'] = participant['challenges']['12AssistStreakCount']
-        curr_participantChallenges = SQLChallenges(**participant['challenges'])
-        session.add(curr_participantChallenges)
+        statPerks = participant['perks']['statPerks']
+        participantPerk_obj = SQLStatPerk(participant['puuid'], statPerks['defense'], statPerks['flex'],
+                                          statPerks['offense'])
+        participant_obj.statPerks.append(participantPerk_obj)
+        session.add(participantPerk_obj)
+        styles = participant['perks']['styles']
+        participantStyle_obj = SQLStyle(styles['description'], styles['style'])
+        participant_obj.styles.append(participantStyle_obj)
+        for selection in styles['selections']:
+            participantStyleSelection_obj = SQLStyleSelection(selection['perk'], selection['var1'], selection['var2'],
+                                                              selection['var3'])
+            participantStyle_obj.selection.append(participantStyleSelection_obj)
+            session.add(participantStyleSelection_obj)
+        participant['challenges']['Assist12StreakCount'] = participant['challenges']['12AssistStreakCount']     # rename
+        participantChallenges_obj = SQLChallenges(**participant['challenges'])
+        participant_obj.challenges.append(participantChallenges_obj)
+        session.add(participantChallenges_obj)
 
 
 def is_valid_match(match_info: dict) -> bool:
