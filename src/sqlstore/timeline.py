@@ -55,7 +55,7 @@ class SQLEvent(Base):
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     frameId = mapped_column(BigInteger, ForeignKey("frame.id"), nullable=False)
     frame = relationship("SQLFrame", backref="events")
-    eventId = mapped_column(Integer, nullable=False)  # starting at 0 and counting up per game, encodes order of events
+    eventId = mapped_column(Integer, nullable=False)  # starting at 0 and counting up per frame, encodes order of events
     timestamp = mapped_column(Integer, nullable=False)  # in milliseconds?
     type = mapped_column(String(100), nullable=False)  # e.g. SKILL_LEVEL_UP
     participantId = mapped_column(Integer)

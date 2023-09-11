@@ -1,5 +1,5 @@
-from sqlalchemy.orm import mapped_column
-from sqlalchemy import Integer, String, BigInteger, Boolean, ForeignKeyConstraint, DateTime
+from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy import Integer, String, BigInteger, Boolean, ForeignKey, DateTime, Identity
 from sqlalchemy.sql import func
 import roman
 from src.sqlstore.db import Base
@@ -9,16 +9,17 @@ class SQLSummoner(Base):
     __tablename__ = "summoner"
 
     puuid = mapped_column(String(78), primary_key=True)
-    platformId = mapped_column(String(7))
+    platformId = mapped_column(String(7), index=True)
     summonerId = mapped_column(String(63), index=True)
     accountId = mapped_column(String(56))
-    name = mapped_column(String(60))
+    name = mapped_column(String(100))
     summonerLevel = mapped_column(Integer)
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, puuid: str, summonerId: str, accountId: str, name: str, summonerLevel: str):
+    def __init__(self, puuid: str, platformId: str, summonerId: str, accountId: str, name: str, summonerLevel: str):
         self.puuid = puuid
+        self.platformId = platformId
         self.summonerId = summonerId
         self.accountId = accountId
         self.name = name
@@ -31,8 +32,9 @@ class SQLSummoner(Base):
 class SQLSummonerLeague(Base):
     __tablename__ = "summoner_league"
 
-    summonerId = mapped_column(String(63), primary_key=True)
-    platformId = mapped_column(String(7), primary_key=True)
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    puuid = mapped_column(String, ForeignKey("summoner.puuid"), nullable=False)
+    summoner = relationship("SQLSummoner", backref="leagues")
     leagueId = mapped_column(String(70))
     queueType = mapped_column(String(50))
     tier = mapped_column(String(20), index=True)
@@ -74,8 +76,11 @@ class SQLSummonerLeague(Base):
 class SQLChampionMastery(Base):
     __tablename__ = "summoner_champion_mastery"
 
-    puuid = mapped_column(String(78), primary_key=True)
-    championId = mapped_column(Integer, primary_key=True)
+    id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
+    puuid = mapped_column(String, ForeignKey("summoner.puuid"), nullable=False)
+    summoner = relationship("SQLSummoner", backref="masteries")
+    championId = mapped_column(BigInteger, ForeignKey("champion.id"), nullable=False)
+    champion = relationship("SQLChampion", backref="masteries")
     championPointsUntilNextLevel = mapped_column(Integer)
     chestGranted = mapped_column(Boolean)
     lastPlayTime = mapped_column(Integer)  # in unix milliseconds time format
@@ -87,11 +92,9 @@ class SQLChampionMastery(Base):
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, puuid: str, championId: str, championPointsUntilNextlevel: int, chestGranted: bool,
+    def __init__(self, championPointsUntilNextlevel: int, chestGranted: bool,
                  lastPlayTime: int, championLevel: int, summonerId: str, championPoints: int,
                  championPointsSinceLastLevel: int, tokensEarned: int):
-        self.puuid = puuid
-        self.championId = championId
         self.championPointsUntilNextLevel = championPointsUntilNextlevel
         self.chestGranted = chestGranted
         self.lastPlayTime = lastPlayTime
@@ -99,6 +102,7 @@ class SQLChampionMastery(Base):
         self.summonerId = summonerId
         self.championPoints = championPoints
         self.championPointsSinceLastLevel = championPointsSinceLastLevel
+        self.tokensEarned = tokensEarned
 
     def __repr__(self):
         return f"player {self.puuid} has level {self.championLevel} on champion {self.championId}"

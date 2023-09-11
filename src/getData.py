@@ -3,11 +3,13 @@ import logging
 import pickle
 import sys
 import time
+import datetime
 
 import requests.exceptions
 import sqlalchemy.orm.session
 from riotwatcher import LolWatcher
 from sqlalchemy.sql import exists
+from sqlalchemy import select
 
 import keys
 from src.crawlers.MatchIdCrawler import MatchIdCrawler
@@ -18,6 +20,7 @@ from src.sqlstore.participant import SQLParticipant, SQLparticipantStats, SQLCha
     SQLStatPerk
 from src.sqlstore.timeline import SQLTimeline, SQLEvent, SQLFrame, SQLParticipantFrame, SQLKillEvent, \
     SQLTimelineDamageDealt, SQLTimelineDamageReceived
+from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
 from src.sqlstore.utils import champ_patch_present
 from src.utils import get_patch, get_season
 
@@ -60,13 +63,11 @@ def getData():
                     break
                 else:
                     break
-
             try:
                 session.flush()
                 logger.info(f"session commit")
                 session.commit()
                 # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
-
             except Exception as e:  # TODO: catch narrow exception
                 logger.error(str(e))
                 logger.error(f"session rollback because something went wrong with parsing matchId {matchID}")
@@ -193,7 +194,6 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
     # the .1 is correct for modern patches, for very old patches (season 4 and older) another solution would be needed
     for champion in data:  # TODO: this can be vastly improved by using bulk inserts
         championdata = data[champion]
-        tags = pickle.dumps(championdata['tags'], protocol=pickle.HIGHEST_PROTOCOL)
         champion_obj = SQLChampion(championNumber=int(championdata['key']), championName=championdata['name'],
                                    championTitle=championdata['title'], infoAttack=championdata['info']['attack'],
                                    infoDefense=championdata['info']['defense'], infoMagic=championdata['info']['magic'],
@@ -265,6 +265,51 @@ def parse_participant_data(session: sqlalchemy.orm.Session, match: SQLmatch, par
         session.add(participantChallenges_obj)
 
 
+def check_summoner_present(session: sqlalchemy.orm.Session, puuid: str) -> bool:
+    return session.query(exists().where(SQLSummoner.puuid == puuid)).scalar()
+
+
+def check_summoner_data_recent(session: sqlalchemy.orm.Session, puuid: str, expiration_time: int) -> bool:
+    """
+    checks if the data in the database for the specified summoner is older than expiration_time
+    :param session: sqlalchemy session
+    :param puuid: encrypted player puuid
+    :param expiration_time: time in days before the data gets updated
+    :return: True if the data has not yet expired, False otherwise
+    """
+    delta = datetime.timedelta(days=expiration_time)
+    today = datetime.date.today()
+    query = session.query(select(SQLSummoner.lastUpdate).where(SQLSummoner.puuid == puuid))
+    result = session.execute(query).one_or_none()
+    lastUpdate: datetime.date = datetime.date.fromtimestamp(result.lastUpdate)
+    if lastUpdate is None:  # has never been updated, need to get first creation time
+        query = session.query(select(SQLSummoner.timeCreated).where(SQLSummoner.puuid == puuid))
+        result = session.execute(query).one()
+        lastUpdate: datetime.date = datetime.date.fromtimestamp(result.lastUpdate)
+    timedelta = today - lastUpdate
+    if timedelta < delta:
+        return True
+    return False
+
+
+def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, region: str, puuids: list):
+    if len(puuids) != 10:
+        raise Exception(f"wrong number of puuids supplied! Expected 10, got {len(puuids)}")
+
+    for puuid in puuids:
+        if check_summoner_present(session, puuid) and check_summoner_data_recent(session, puuid, 14):
+            continue
+        summoner_data = watcher.summoner.by_puuid(region=region, encrypted_puuid=puuid)
+        summoner_obj = SQLSummoner(summoner_data['puuid'],
+                                   region,
+                                   summoner_data['id'],
+                                   summoner_data['accountId'],
+                                   summoner_data['name'],
+                                   summoner_data['summonerLevel']
+                                   )
+        session.add(summoner_obj)
+
+
 def is_valid_match(match_info: dict) -> bool:
     logger.debug(f"validating match info")
     if match_info['gameDuration'] < 960:  # 16 min = 960 sec
@@ -279,6 +324,8 @@ def is_valid_match(match_info: dict) -> bool:
         logger.warning(f"match was played on wrong map: played on map {match_info['mapId']}, 1, 2 or 11 expected")
         return False
     return True
+
+
 
 
 if __name__ == '__main__':
