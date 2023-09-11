@@ -90,12 +90,9 @@ def parse_data(session: sqlalchemy.orm.Session, matchID: str, season: int, patch
                              )
     session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
     # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
-    parse_participant_data(session=session, platformId=match_info['platformId'],
-                           gameId=match_info['gameId'],
-                           participants=match_info['participants'])
+    parse_participant_data(session=session, match=current_match, participants=match_info['participants'])
     parse_timeline_data(session=session, platformId=match_info['platformId'],
                         gameId=match_info['gameId'], timeline=match_timeline)
-
 
 
 def parse_timeline_data(session: sqlalchemy.orm.Session, platformId: str, gameId: int, timeline: dict):
