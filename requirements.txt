@@ -1,6 +1,6 @@
-pytest==7.4.0
 riotwatcher==3.2.5
 SQLAlchemy==2.0.20
 
 tqdm~=4.65.0
-roman~=4.1
+configparser~=5.0.2
+requests~=2.31.0

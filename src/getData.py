@@ -2,7 +2,9 @@ import argparse
 import logging
 import pickle
 import sys
+import time
 
+import requests.exceptions
 import sqlalchemy.orm.session
 from riotwatcher import LolWatcher
 from sqlalchemy.sql import exists
@@ -31,51 +33,68 @@ def getData():
     watcher = LolWatcher(api_key)
     with get_session(cleanup=False) as session:
         for matchID in matchIDs:
-            try:
-                if session.query(exists().where(SQLmatch.matchId == matchID)).scalar():
-                    logger.warning(f"matchID {matchID} already present in database")
-                    continue
-                logger.debug(f"getting match info for match {matchID}")
-                current_match_info = watcher.match.by_id(match_id=matchID, region=args.region)['info']
-                if not is_valid_match(current_match_info):
-                    logger.warning(f"match {matchID} is not valid")
-                    continue
-                season = get_season(current_match_info['gameVersion'])
-                patch = get_patch(current_match_info['gameVersion'])
-                if not champ_patch_present(session=session, season=season, patch=patch):
-                    pass
-                    parse_champion_data(session=session, watcher=watcher, season=season, patch=patch)
-                current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)['info']
-                current_match = SQLmatch(matchId=matchID,
-                                         platformId=current_match_info['platformId'],
-                                         gameId=current_match_info['gameId'],
-                                         queueId=current_match_info['queueId'],
-                                         gameVersion=current_match_info['gameVersion'],
-                                         mapId=current_match_info['mapId'],
-                                         gameDuration=current_match_info['gameDuration'],
-                                         gameCreation=current_match_info['gameCreation'],
-                                         )
-                session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
-                # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
-                parse_participant_data(session=session, platformId=current_match_info['platformId'],
-                                       gameId=current_match_info['gameId'],
-                                       participants=current_match_info['participants'])
-                parse_timeline_data(session=session, platformId=current_match_info['platformId'],
-                                    gameId=current_match_info['gameId'], timeline=current_match_timeline)
-            except Exception as e:
-                logger.warning(f"skipping match Id {matchID} because of the following error: ")
-                logger.warning(str(e))
-                raise
+            for attempt in range(50):
+                try:
+                    if check_matchId_present(session, matchID):
+                        logger.warning(f"matchID {matchID} already present in database")
+                        continue
+                    logger.debug(f"getting match info for match {matchID}")
+                    current_match_info = watcher.match.by_id(match_id=matchID, region=args.region)['info']
+                    if not is_valid_match(current_match_info):
+                        logger.warning(f"match {matchID} is not valid")
+                        continue
+                    season = get_season(current_match_info['gameVersion'])
+                    patch = get_patch(current_match_info['gameVersion'])
+                    if not champ_patch_present(session=session, season=season, patch=patch):
+                        pass
+                        parse_champion_data(session=session, watcher=watcher, season=season, patch=patch)
+                    current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)['info']
+                    parse_data(session, matchID, season, patch, current_match_info, current_match_timeline)
+                except requests.exceptions.ConnectionError as e:
+                    logger.error(str(e))
+                    time.sleep(10)
+                except Exception as e:
+                    logger.error(f"skipping match Id {matchID} because of the following error: ")
+                    logger.error(str(e))
+                    break
+                else:
+                    break
+
             try:
                 session.flush()
                 logger.info(f"session commit")
                 session.commit()
                 # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
+
             except Exception as e:  # TODO: catch narrow exception
                 logger.error(str(e))
                 logger.error(f"session rollback because something went wrong with parsing matchId {matchID}")
                 session.rollback()
-                raise
+                continue
+
+
+def check_matchId_present(session: sqlalchemy.orm.Session, matchID: str) -> bool:
+    return session.query(exists().where(SQLmatch.matchId == matchID)).scalar()
+
+
+def parse_data(session: sqlalchemy.orm.Session, matchID: str, season: int, patch: int, match_info: dict, match_timeline: dict) -> None:
+    current_match = SQLmatch(matchId=matchID,
+                             platformId=match_info['platformId'],
+                             gameId=match_info['gameId'],
+                             queueId=match_info['queueId'],
+                             gameVersion=match_info['gameVersion'],
+                             mapId=match_info['mapId'],
+                             gameDuration=match_info['gameDuration'],
+                             gameCreation=match_info['gameCreation'],
+                             )
+    session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
+    # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
+    parse_participant_data(session=session, platformId=match_info['platformId'],
+                           gameId=match_info['gameId'],
+                           participants=match_info['participants'])
+    parse_timeline_data(session=session, platformId=match_info['platformId'],
+                        gameId=match_info['gameId'], timeline=match_timeline)
+
 
 
 def parse_timeline_data(session: sqlalchemy.orm.Session, platformId: str, gameId: int, timeline: dict):
