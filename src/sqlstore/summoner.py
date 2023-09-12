@@ -76,9 +76,9 @@ class SQLChampionMastery(Base):
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     puuid = mapped_column(String, ForeignKey("summoner.puuid"), nullable=False)
-    summoner = relationship("SQLSummoner", backref="masteries")
+    summoner = relationship("SQLSummoner", backref="mastery")
     championId = mapped_column(BigInteger, ForeignKey("champion.id"), nullable=False)
-    champion = relationship("SQLChampion", backref="masteries")
+    champion = relationship("SQLChampion", backref="mastery")
     championPointsUntilNextLevel = mapped_column(Integer)
     chestGranted = mapped_column(Boolean)
     lastPlayTime = mapped_column(Integer)  # in unix milliseconds time format

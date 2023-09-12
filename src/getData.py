@@ -5,9 +5,14 @@ import pickle
 import sys
 import time
 
+import pandas as pd
 import requests.exceptions
 import sqlalchemy.orm.session
 from riotwatcher import LolWatcher
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 from sqlalchemy import select
 from sqlalchemy.sql import exists
 
@@ -18,20 +23,11 @@ from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats, SQLChallenges, SQLStyle, \
     SQLStyleSelection, \
     SQLStatPerk
-from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
+from src.sqlstore.summoner import SQLSummoner
 from src.sqlstore.timeline import SQLTimeline, SQLEvent, SQLFrame, SQLParticipantFrame, SQLKillEvent, \
     SQLTimelineDamageDealt, SQLTimelineDamageReceived
 from src.sqlstore.utils import champ_patch_present
 from src.utils import get_patch, get_season
-
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-import pandas as pd
-import time
 
 
 # TODO: abstract away more logic
@@ -59,7 +55,6 @@ def getData():
                     season = get_season(current_match_info['gameVersion'])
                     patch = get_patch(current_match_info['gameVersion'])
                     if not champ_patch_present(session=session, season=season, patch=patch):
-                        pass
                         parse_champion_data(session=session, watcher=watcher, season=season, patch=patch)
                     current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)[
                         'info']
@@ -104,7 +99,8 @@ def parse_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, matchID: st
     session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
     # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
     for participant in match_info['participants']:
-        parse_summoner_data(session=session, watcher=watcher, region=region, puuid=participant['puuid'], expiration=14)
+        pass
+        #parse_summoner_data(session=session, watcher=watcher, region=region, puuid=participant['puuid'], expiration=14)
     parse_participant_data(session=session, match=current_match, participants=match_info['participants'])
     parse_timeline_data(session=session, platformId=match_info['platformId'],
                         gameId=match_info['gameId'], timeline=match_timeline)
@@ -195,76 +191,76 @@ def parse_timeline_data(session: sqlalchemy.orm.Session, platformId: str, gameId
             session.add(participantFrame_obj)
 
 
-# def scrape_champion_metrics():
-#     # Define the URL containing the metrics
-#     url = "https://u.gg/lol/tier-list"
-#
-#     # Configure Chrome options for headless browsing
-#     options = Options()
-#     options.add_argument("--headless")
-#     # Path to Chrome executable
-#     # TODO: change path of chrome driver to use path? venv?
-#     options.binary_location = "C:\\Users\\nicol\\Downloads\\chrome-win64\\chrome-win64\\chrome.exe"
-#
-#     # Start Chrome WebDriver service
-#     service = Service("C:\\Users\\nicol\\Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe")
-#     driver = webdriver.Chrome(options=options)
-#
-#     # Open the URL
-#     driver.get(url)
-#
-#     # Initialize WebDriverWait and wait until the rows in the table are loaded
-#     wait = WebDriverWait(driver, 10)
-#     wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.rt-tr-group")))
-#
-#     # Initialize empty list to store data
-#     data = []
-#
-#     # Scroll to the bottom and top of the page to load all rows
-#     while True:
-#         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-#         time.sleep(1)
-#         driver.execute_script("window.scrollTo(0, 0);")
-#         time.sleep(1)
-#
-#         # Find all the rows in the table
-#         rows = driver.find_elements(By.CSS_SELECTOR, "div.rt-tr-group")
-#
-#         # Break if there are no rows or if we've scraped all the rows
-#         if not rows or len(data) == len(rows):
-#             break
-#
-#         # Loop through the new rows and scrape data
-#         for i in range(len(data), len(rows)):
-#             row = rows[i]
-#             try:
-#                 # Extract metrics for each champion
-#                 rank = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(1)").text.strip()
-#                 champion = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(3)").get_attribute(
-#                     "textContent").strip()
-#                 tier = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(4)").text.strip()
-#                 win_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(5)").text.strip()
-#                 pick_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(7)").text.strip()
-#                 ban_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(6)").text.strip()
-#                 matches = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(8)").text.strip()
-#
-#                 # Append metrics to data list
-#                 data.append([rank, champion, tier, win_rate, pick_rate, ban_rate, matches])
-#
-#             except Exception as e:
-#                 print(f"Error in row {i}: {e}")
-#
-#     # Define columns for the DataFrame
-#     columns = ['Rank', 'Champion Name', 'Tier', 'Win rate', 'Pick Rate', 'Ban Rate', 'Matches']
-#
-#     # Create a DataFrame from the scraped data
-#     df_scraped = pd.DataFrame(data, columns=columns)
-#
-#     # Close the browser
-#     driver.quit()
-#
-#     # Return the DataFrame converted to a dictionary, indexed by "Champion Name"
-#     return df_scraped.set_index("Champion Name").to_dict('index')
+def scrape_champion_metrics():
+
+    options = webdriver.ChromeOptions()
+
+    # Define the URL containing the metrics
+    url = "https://u.gg/lol/tier-list"
+
+    # Configure Chrome options for headless browsing
+    options.add_argument("headless")
+    # Path to Chrome executable
+    # TODO: change path of chrome driver to use path? venv?
+
+    # Start Chrome WebDriver service
+    driver = webdriver.Chrome(chrome_options=options)
+
+    # Open the URL
+    driver.get(url)
+
+    # Initialize WebDriverWait and wait until the rows in the table are loaded
+    wait = WebDriverWait(driver, 10)
+    wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.rt-tr-group")))
+
+    # Initialize empty list to store data
+    data = []
+
+    # Scroll to the bottom and top of the page to load all rows
+    while True:
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(1)
+        driver.execute_script("window.scrollTo(0, 0);")
+        time.sleep(1)
+
+        # Find all the rows in the table
+        rows = driver.find_elements(By.CSS_SELECTOR, "div.rt-tr-group")
+
+        # Break if there are no rows or if we've scraped all the rows
+        if not rows or len(data) == len(rows):
+            break
+
+        # Loop through the new rows and scrape data
+        for i in range(len(data), len(rows)):
+            row = rows[i]
+            try:
+                # Extract metrics for each champion
+                rank = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(1)").text.strip()
+                champion = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(3)").get_attribute(
+                    "textContent").strip()
+                tier = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(4)").text.strip()
+                win_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(5)").text.strip()
+                pick_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(7)").text.strip()
+                ban_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(6)").text.strip()
+                matches = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(8)").text.strip()
+
+                # Append metrics to data list
+                data.append([rank, champion, tier, win_rate, pick_rate, ban_rate, matches])
+
+            except Exception as e:
+                print(f"Error in row {i}: {e}")
+
+    # Define columns for the DataFrame
+    columns = ['Rank', 'Champion Name', 'Tier', 'Win rate', 'Pick Rate', 'Ban Rate', 'Matches']
+
+    # Create a DataFrame from the scraped data
+    df_scraped = pd.DataFrame(data, columns=columns)
+    print(df_scraped.head())
+    # Close the browser
+    driver.quit()
+
+    # Return the DataFrame converted to a dictionary, indexed by "Champion Name"
+    return df_scraped.set_index("Champion Name").to_dict('index')
 
 
 def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, season: int, patch: int):
@@ -280,7 +276,7 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
     # the .1 is correct for modern patches, for very old patches (season 4 and older) another solution would be needed
 
     # Scrape additional metrics from u.gg
-    # scraped_data = scrape_champion_metrics()
+    scraped_data = scrape_champion_metrics()
 
     for champion in data:  # TODO: this can be vastly improved by using bulk inserts
         championdata = data[champion]
@@ -292,13 +288,13 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
         session.add(champion_obj)
 
         # Use scraped_data to populate fields in SQLChampion
-        # if championdata['name'] in scraped_data:
-        #     metrics = scraped_data[championdata['name']]
-        #     champion_obj.Tier = metrics.get('Tier')
-        #     champion_obj.WinRate = metrics.get('Win rate')
-        #     champion_obj.PickRate = metrics.get('Pick Rate')
-        #     champion_obj.BanRate = metrics.get('Ban Rate')
-        #     champion_obj.Matches = metrics.get('Matches')
+        if championdata['name'] in scraped_data:
+            metrics = scraped_data[championdata['name']]
+            champion_obj.Tier = metrics.get('Tier')
+            champion_obj.WinRate = metrics.get('Win rate')
+            champion_obj.PickRate = metrics.get('Pick Rate')
+            champion_obj.BanRate = metrics.get('Ban Rate')
+            champion_obj.Matches = metrics.get('Matches')
 
         session.commit()  # this commit is needed to get the generated champion_obj id
         stats = data[champion]['stats']
@@ -394,70 +390,72 @@ def check_summoner_data_recent(session: sqlalchemy.orm.Session, puuid: str, expi
     return False
 
 
-def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, region: str, puuid: str,
-                        expiration: int) -> bool:
-    """
-    checks if summoner data (different Ids, win rates, rank, etc.) is more recent than expiration date
-    if no, updates/ inserts data
-    :param expiration: number of days until data should be updated
-    :param session: sqlalchemy session
-    :param watcher: riotwatcher
-    :param region:
-    :param puuid: encrypted puuid of the summoner
-    :return: True if data has been updated, False otherwise
-    """
-    if check_summoner_present(session, puuid) and check_summoner_data_recent(session, puuid, expiration):
-        return False
-    summoner_data = watcher.summoner.by_puuid(region=region, encrypted_puuid=puuid)
-    summoner_obj = SQLSummoner(summoner_data['puuid'],
-                               region,
-                               summoner_data['id'],
-                               summoner_data['accountId'],
-                               summoner_data['name'],
-                               summoner_data['summonerLevel']
-                               )
-    session.add(summoner_obj)
-    summoner_league_data = watcher.league.by_summoner(region=region, encrypted_summoner_id=summoner_obj.summonerId)
-    summoner_league_obj = None
-    for data in summoner_league_data:
-        if data['queueType'] == 'RANKED_SOLO_5x5':
-            summoner_league_obj = SQLSummonerLeague(leagueId=data['leagueId'],
-                                                    queueType=data['queueType'],
-                                                    tier=data['tier'],
-                                                    rank=data['rank'],
-                                                    summonerName=data['summonerName'],
-                                                    leaguePoints=data['leaguePoints'],
-                                                    wins=data['wins'],
-                                                    losses=data['losses'],
-                                                    veteran=data['veteran'],
-                                                    inactive=data['inactive'],
-                                                    freshBlood=data['freshBlood'],
-                                                    hotStreak=data['hotStreak']
-                                                    )
-    if summoner_league_obj is None:
-        raise Exception(f"no ranked summoner data found!")
-    summoner_obj.leagues.append(summoner_league_obj)
-    session.add(summoner_league_obj)
-
-    summoner_champion_data = watcher.champion_mastery.by_summoner(region, summoner_obj.summonerId)
-    for data in summoner_champion_data:
-        championId = data['championId']
-        summoner_championmastery_obj = SQLChampionMastery(championPointsUntilNextlevel=data['championPointsUntilNextLevel'],
-                                                          chestGranted=data['chestGranted'],
-                                                          lastPlayTime=data['lastPlayTime'],
-                                                          championLevel=data['championLevel'],
-                                                          summonerId=data['summonerId'],
-                                                          championPoints=data['championPoints'],
-                                                          championPointsSinceLastLevel=data['championPointsSinceLastLevel'],
-                                                          tokensEarned=data['tokensEarned']
-                                                          )
-        summoner_obj.masteries.append(summoner_championmastery_obj)
-        query = select(SQLChampion).where("SQLChampion.championNumber" == championId).order_by(SQLChampion.lastUpdate)
-        champion_obj = session.execute(query).one()
-        print(champion_obj)
-        champion_obj.masteries.append(summoner_championmastery_obj)
-        session.add(summoner_championmastery_obj)
-    session.commit()
+# def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, region: str, puuid: str,
+#                         expiration: int) -> bool:
+#     """
+#     checks if summoner data (different Ids, win rates, rank, etc.) is more recent than expiration date
+#     if no, updates/ inserts data
+#     :param expiration: number of days until data should be updated
+#     :param session: sqlalchemy session
+#     :param watcher: riotwatcher
+#     :param region:
+#     :param puuid: encrypted puuid of the summoner
+#     :return: True if data has been updated, False otherwise
+#     """
+#     if check_summoner_present(session, puuid) and check_summoner_data_recent(session, puuid, expiration):
+#         return False
+#     summoner_data = watcher.summoner.by_puuid(region=region, encrypted_puuid=puuid)
+#     summoner_obj = SQLSummoner(summoner_data['puuid'],
+#                                region,
+#                                summoner_data['id'],
+#                                summoner_data['accountId'],
+#                                summoner_data['name'],
+#                                summoner_data['summonerLevel']
+#                                )
+#     session.add(summoner_obj)
+#     summoner_league_data = watcher.league.by_summoner(region=region, encrypted_summoner_id=summoner_obj.summonerId)
+#     summoner_league_obj = None
+#     for data in summoner_league_data:
+#         if data['queueType'] == 'RANKED_SOLO_5x5':
+#             summoner_league_obj = SQLSummonerLeague(leagueId=data['leagueId'],
+#                                                     queueType=data['queueType'],
+#                                                     tier=data['tier'],
+#                                                     rank=data['rank'],
+#                                                     summonerName=data['summonerName'],
+#                                                     leaguePoints=data['leaguePoints'],
+#                                                     wins=data['wins'],
+#                                                     losses=data['losses'],
+#                                                     veteran=data['veteran'],
+#                                                     inactive=data['inactive'],
+#                                                     freshBlood=data['freshBlood'],
+#                                                     hotStreak=data['hotStreak']
+#                                                     )
+#     if summoner_league_obj is None:
+#         raise Exception(f"no ranked summoner data found!")
+#     summoner_obj.leagues.append(summoner_league_obj)
+#     session.add(summoner_league_obj)
+#
+#     summoner_champion_data = watcher.champion_mastery.by_summoner(region, summoner_obj.summonerId)
+#     for data in summoner_champion_data:
+#         with session.no_autoflush:
+#             championId = data['championId']
+#             summoner_championmastery_obj = SQLChampionMastery(championPointsUntilNextlevel=data['championPointsUntilNextLevel'],
+#                                                               chestGranted=data['chestGranted'],
+#                                                               lastPlayTime=data['lastPlayTime'],
+#                                                               championLevel=data['championLevel'],
+#                                                               summonerId=data['summonerId'],
+#                                                               championPoints=data['championPoints'],
+#                                                               championPointsSinceLastLevel=data['championPointsSinceLastLevel'],
+#                                                               tokensEarned=data['tokensEarned']
+#                                                               )
+#             summoner_obj.mastery.append(summoner_championmastery_obj)
+#             query = select(SQLChampion).filter(SQLChampion.championNumber == championId).order_by(SQLChampion.lastUpdate).limit(1)
+#             champion_obj = session.execute(query).one_or_none()
+#             if champion_obj is None:
+#                 continue
+#             #champion_obj.mastery.append(summoner_championmastery_obj)
+#             #session.add(summoner_championmastery_obj)
+#     session.commit()
 
 
 def is_valid_match(match_info: dict) -> bool:

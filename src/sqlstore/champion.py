@@ -1,5 +1,7 @@
+from typing import Any
+
 from sqlalchemy import Integer, String, Float, PickleType, DateTime, ForeignKey, Identity, BigInteger
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy.orm import mapped_column, relationship, MappedColumn
 from sqlalchemy.sql import func
 from src.sqlstore.db import Base
 
@@ -8,7 +10,7 @@ class SQLChampion(Base):
     __tablename__ = "champion"
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
-    championNumber = mapped_column(Integer, nullable=False, index=True)
+    championNumber: MappedColumn[Integer] = mapped_column(Integer, nullable=False, index=True)
     seasonNumber = mapped_column(Integer, nullable=False, index=True)
     patchNumber = mapped_column(Integer, nullable=False, index=True)
     championName = mapped_column(String(100), nullable=False, index=True)
