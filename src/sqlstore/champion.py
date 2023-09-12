@@ -19,11 +19,7 @@ class SQLChampion(Base):
     infoDefense = mapped_column(Integer)
     infoMagic = mapped_column(Integer)
     infoDifficulty = mapped_column(Integer)
-    # TODO: make tags not in binary format for easier querying
-    partype = mapped_column(String(150))   # type of mana or energy (e.g. "Blood Well" for Aatrox)
-    patchWinRate = mapped_column(Float, nullable=True)  # Represented as a percent
-    patchPlayRate = mapped_column(Float, nullable=True)  # Represented as a percent
-    primaryRole = mapped_column(String(50), nullable=True)  # Top, Mid...
+    partype = mapped_column(String(150))   # type of mana or energy (e.g. "Blood Well" for Aatrox)# TODO: fix partype
     # Maybe counters, abilities, Tier, maybe range, skill-shot-based, or not, cc-level.., trends in winrates,
     # role flexibility, new skin released (higher playrate)
     # -> this should not be saved in db, instead calculated server/analytics side imo
