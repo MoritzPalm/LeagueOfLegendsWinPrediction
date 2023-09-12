@@ -228,7 +228,7 @@ def scrape_champion_metrics():
         rows = driver.find_elements(By.CSS_SELECTOR, "div.rt-tr-group")
 
         # Break if there are no rows or if we've scraped all the rows
-        if not rows or len(data) == len(rows):
+        if not rows or len(data) >= len(rows):
             break
 
         # Loop through the new rows and scrape data
@@ -256,12 +256,11 @@ def scrape_champion_metrics():
 
     # Create a DataFrame from the scraped data
     df_scraped = pd.DataFrame(data, columns=columns)
-    print(df_scraped.head())
     # Close the browser
     driver.quit()
 
     # Return the DataFrame converted to a dictionary, indexed by "Champion Name"
-    return df_scraped.set_index("Champion Name").to_dict('index')
+    return df_scraped.reset_index().to_dict('index')
 
 
 def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, season: int, patch: int):
@@ -281,21 +280,15 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
 
     for champion in data:  # TODO: this can be vastly improved by using bulk inserts
         championdata = data[champion]
+        metrics = scraped_data[championdata['name']]
         champion_obj = SQLChampion(championNumber=int(championdata['key']), championName=championdata['name'],
                                    championTitle=championdata['title'], infoAttack=championdata['info']['attack'],
                                    infoDefense=championdata['info']['defense'], infoMagic=championdata['info']['magic'],
                                    infoDifficulty=championdata['info']['difficulty'], seasonNumber=season,
-                                   patchNumber=patch)
-        session.add(champion_obj)
+                                   patchNumber=patch, tier=metrics['Tier'], win_rate=metrics['Win rate'], pick_rate=metrics['Pick Raate'], ban_rate=metrics['Ban rate'], matches=metrics['Matches'])
 
         # Use scraped_data to populate fields in SQLChampion
-        if championdata['name'] in scraped_data:
-            metrics = scraped_data[championdata['name']]
-            champion_obj.Tier = metrics.get('Tier')
-            champion_obj.WinRate = metrics.get('Win rate')
-            champion_obj.PickRate = metrics.get('Pick Rate')
-            champion_obj.BanRate = metrics.get('Ban Rate')
-            champion_obj.Matches = metrics.get('Matches')
+        session.add(champion_obj)
 
         session.commit()  # this commit is needed to get the generated champion_obj id
         stats = data[champion]['stats']
