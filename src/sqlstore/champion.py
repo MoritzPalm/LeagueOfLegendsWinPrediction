@@ -25,13 +25,13 @@ class SQLChampion(Base):
     # Maybe counters, abilities, Tier, maybe range, skill-shot-based, or not, cc-level.., trends in winrates,
     # role flexibility, new skin released (higher playrate)
     # -> this should not be saved in db, instead calculated server/analytics side imo
-    timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
-    lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
     tier = mapped_column(String(10), nullable=True)  # Represented as S,A,B,C,D,E, etc.
     win_rate = mapped_column(Float, nullable=True)  # Represented as a percent
     pick_rate = mapped_column(Float, nullable=True)  # Represented as a percent
     ban_rate = mapped_column(Float, nullable=True)  # Represented as a percent
     matches = mapped_column(Integer, nullable=True)  # Number of matches observed
+    timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
+    lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
     def __init__(self, championNumber: int, seasonNumber: int, patchNumber: int, championName: str,
                  championTitle: str, infoAttack: int, infoDefense: int, infoMagic: int, infoDifficulty: int,

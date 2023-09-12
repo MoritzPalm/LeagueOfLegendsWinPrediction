@@ -50,11 +50,9 @@ class SQLSummonerLeague(Base):
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, summonerId: str, platformId: str, leagueId: str, queueType: str, tier: str, rank: int,
+    def __init__(self, leagueId: str, queueType: str, tier: str, rank: int,
                  summonerName: str, leaguePoints: int, wins: int, losses: int, veteran: bool, inactive: bool,
                  freshBlood: bool, hotStreak: bool):
-        self.summonerId = summonerId
-        self.platformId = platformId
         self.leagueId = leagueId
         self.queueType = queueType
         self.tier = tier

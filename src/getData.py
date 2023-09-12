@@ -15,7 +15,8 @@ import keys
 from src.crawlers.MatchIdCrawler import MatchIdCrawler
 from src.sqlstore.champion import SQLChampion, SQLChampionStats, SQLChampionTags
 from src.sqlstore.db import get_session
-from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats, SQLChallenges, SQLStyle, SQLStyleSelection, \
+from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats, SQLChallenges, SQLStyle, \
+    SQLStyleSelection, \
     SQLStatPerk
 from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
 from src.sqlstore.timeline import SQLTimeline, SQLEvent, SQLFrame, SQLParticipantFrame, SQLKillEvent, \
@@ -62,7 +63,8 @@ def getData():
                         parse_champion_data(session=session, watcher=watcher, season=season, patch=patch)
                     current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)[
                         'info']
-                    parse_data(session, matchID, season, patch, current_match_info, current_match_timeline)
+                    parse_data(session, watcher, matchID, season, patch, current_match_info, current_match_timeline,
+                               args.region)
                 except requests.exceptions.ConnectionError as e:
                     logger.error(str(e))
                     time.sleep(10)
@@ -88,8 +90,8 @@ def check_matchId_present(session: sqlalchemy.orm.Session, matchID: str) -> bool
     return session.query(exists().where(SQLMatch.matchId == matchID)).scalar()
 
 
-def parse_data(session: sqlalchemy.orm.Session, matchID: str, season: int, patch: int, match_info: dict,
-               match_timeline: dict) -> None:
+def parse_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, matchID: str, season: int, patch: int,
+               match_info: dict, match_timeline: dict, region: str) -> None:
     current_match = SQLMatch(matchId=matchID,
                              platformId=match_info['platformId'],
                              gameId=match_info['gameId'],
@@ -101,6 +103,8 @@ def parse_data(session: sqlalchemy.orm.Session, matchID: str, season: int, patch
                              )
     session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
     # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
+    for participant in match_info['participants']:
+        parse_summoner_data(session=session, watcher=watcher, region=region, puuid=participant['puuid'], expiration=14)
     parse_participant_data(session=session, match=current_match, participants=match_info['participants'])
     parse_timeline_data(session=session, platformId=match_info['platformId'],
                         gameId=match_info['gameId'], timeline=match_timeline)
@@ -276,7 +280,7 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
     # the .1 is correct for modern patches, for very old patches (season 4 and older) another solution would be needed
 
     # Scrape additional metrics from u.gg
-    #scraped_data = scrape_champion_metrics()
+    # scraped_data = scrape_champion_metrics()
 
     for champion in data:  # TODO: this can be vastly improved by using bulk inserts
         championdata = data[champion]
@@ -339,7 +343,7 @@ def parse_participant_data(session: sqlalchemy.orm.Session, match: SQLMatch, par
         participant_obj = SQLParticipant(puuid=participant['puuid'], participantId=participant['participantId'])
         session.add(participant_obj)
         participantStats_obj = SQLParticipantStats(**participant)
-        match.participant.append(participant_obj)  # TODO: double check logic regarding adding match to session
+        match.participant.append(participant_obj)
         participant_obj.stats.append(participantStats_obj)
         session.add(participantStats_obj)
         statPerks = participant['perks']['statPerks']
@@ -352,7 +356,8 @@ def parse_participant_data(session: sqlalchemy.orm.Session, match: SQLMatch, par
             participantStyle_obj = SQLStyle(style['description'], style['style'])
             participant_obj.styles.append(participantStyle_obj)
             for selection in style['selections']:
-                participantStyleSelection_obj = SQLStyleSelection(selection['perk'], selection['var1'], selection['var2'],
+                participantStyleSelection_obj = SQLStyleSelection(selection['perk'], selection['var1'],
+                                                                  selection['var2'],
                                                                   selection['var3'])
                 participantStyle_obj.selection.append(participantStyleSelection_obj)
                 session.add(participantStyleSelection_obj)
@@ -389,33 +394,70 @@ def check_summoner_data_recent(session: sqlalchemy.orm.Session, puuid: str, expi
     return False
 
 
-def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, region: str, puuids: list):
-    if len(puuids) != 10:
-        raise Exception(f"wrong number of puuids supplied! Expected 10, got {len(puuids)}")
+def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, region: str, puuid: str,
+                        expiration: int) -> bool:
+    """
+    checks if summoner data (different Ids, win rates, rank, etc.) is more recent than expiration date
+    if no, updates/ inserts data
+    :param expiration: number of days until data should be updated
+    :param session: sqlalchemy session
+    :param watcher: riotwatcher
+    :param region:
+    :param puuid: encrypted puuid of the summoner
+    :return: True if data has been updated, False otherwise
+    """
+    if check_summoner_present(session, puuid) and check_summoner_data_recent(session, puuid, expiration):
+        return False
+    summoner_data = watcher.summoner.by_puuid(region=region, encrypted_puuid=puuid)
+    summoner_obj = SQLSummoner(summoner_data['puuid'],
+                               region,
+                               summoner_data['id'],
+                               summoner_data['accountId'],
+                               summoner_data['name'],
+                               summoner_data['summonerLevel']
+                               )
+    session.add(summoner_obj)
+    summoner_league_data = watcher.league.by_summoner(region=region, encrypted_summoner_id=summoner_obj.summonerId)
+    summoner_league_obj = None
+    for data in summoner_league_data:
+        if data['queueType'] == 'RANKED_SOLO_5x5':
+            summoner_league_obj = SQLSummonerLeague(leagueId=data['leagueId'],
+                                                    queueType=data['queueType'],
+                                                    tier=data['tier'],
+                                                    rank=data['rank'],
+                                                    summonerName=data['summonerName'],
+                                                    leaguePoints=data['leaguePoints'],
+                                                    wins=data['wins'],
+                                                    losses=data['losses'],
+                                                    veteran=data['veteran'],
+                                                    inactive=data['inactive'],
+                                                    freshBlood=data['freshBlood'],
+                                                    hotStreak=data['hotStreak']
+                                                    )
+    if summoner_league_obj is None:
+        raise Exception(f"no ranked summoner data found!")
+    summoner_obj.leagues.append(summoner_league_obj)
+    session.add(summoner_league_obj)
 
-    for puuid in puuids:
-        if check_summoner_present(session, puuid) and check_summoner_data_recent(session, puuid, 14):
-            continue
-        summoner_data = watcher.summoner.by_puuid(region=region, encrypted_puuid=puuid)
-        summoner_obj = SQLSummoner(summoner_data['puuid'],
-                                   region,
-                                   summoner_data['id'],
-                                   summoner_data['accountId'],
-                                   summoner_data['name'],
-                                   summoner_data['summonerLevel']
-                                   )
-        session.add(summoner_obj)
-        summoner_league_data = watcher.league.by_summoner(region=region, encrypted_summoner_id=SQLSummoner.summonerId)
-        summoner_league_obj = SQLSummonerLeague(**summoner_league_data)
-        summoner_obj.leagues.append(summoner_league_obj)
-        session.add(summoner_league_obj)
-#        summoner_champion_data = watcher.champion_mastery.by_summoner(region, SQLSummoner.summonerId)
-#        for champion_data in summoner_champion_data:
-#            championId = champion_data['championId']
-#            summoner_championmastery_obj = SQLChampionMastery(**champion_data)
-#            summoner_obj.masteries.append(summoner_championmastery_obj)
-#            query = select(SQLChampion).where(SQLChampion.championNumber == championId).order_by(SQLChampion.lastUpdate)
-#            champion_obj = session.execute(query)
+    summoner_champion_data = watcher.champion_mastery.by_summoner(region, summoner_obj.summonerId)
+    for data in summoner_champion_data:
+        championId = data['championId']
+        summoner_championmastery_obj = SQLChampionMastery(championPointsUntilNextlevel=data['championPointsUntilNextLevel'],
+                                                          chestGranted=data['chestGranted'],
+                                                          lastPlayTime=data['lastPlayTime'],
+                                                          championLevel=data['championLevel'],
+                                                          summonerId=data['summonerId'],
+                                                          championPoints=data['championPoints'],
+                                                          championPointsSinceLastLevel=data['championPointsSinceLastLevel'],
+                                                          tokensEarned=data['tokensEarned']
+                                                          )
+        summoner_obj.masteries.append(summoner_championmastery_obj)
+        query = select(SQLChampion).where("SQLChampion.championNumber" == championId).order_by(SQLChampion.lastUpdate)
+        champion_obj = session.execute(query).one()
+        print(champion_obj)
+        champion_obj.masteries.append(summoner_championmastery_obj)
+        session.add(summoner_championmastery_obj)
+    session.commit()
 
 
 def is_valid_match(match_info: dict) -> bool:
