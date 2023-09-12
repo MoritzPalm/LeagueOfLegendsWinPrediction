@@ -294,7 +294,6 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
 
     for champion in data:  # TODO: this can be vastly improved by using bulk inserts
         championdata = data[champion]
-        print(championdata)
         metrics = {'Tier': None, 'Win rate': None, 'Pick Rate': None, 'Ban Rate': None, 'Matches': None}
         try:
             for item in scraped_data.items():

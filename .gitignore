@@ -5,4 +5,5 @@ data/
 .idea
 __pycache__
 database.ini
+chromedriver-win64/
 
