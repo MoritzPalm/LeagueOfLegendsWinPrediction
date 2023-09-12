@@ -280,7 +280,11 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
 
     for champion in data:  # TODO: this can be vastly improved by using bulk inserts
         championdata = data[champion]
-        metrics = scraped_data[championdata['name']]
+        try:
+            metrics = scraped_data[championdata['name']]
+        except KeyError as e:
+            logger.warning(str(e))
+            metrics = {'Tier': None, 'Win rate': None, 'Pick Rate': None, 'Ban rate': None, 'Matches': None}
         champion_obj = SQLChampion(championNumber=int(championdata['key']), championName=championdata['name'],
                                    championTitle=championdata['title'], infoAttack=championdata['info']['attack'],
                                    infoDefense=championdata['info']['defense'], infoMagic=championdata['info']['magic'],
