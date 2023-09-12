@@ -13,6 +13,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.chrome.options import Options
 from sqlalchemy import select
 from sqlalchemy.sql import exists
 
@@ -193,7 +194,7 @@ def parse_timeline_data(session: sqlalchemy.orm.Session, platformId: str, gameId
 
 def scrape_champion_metrics():
 
-    options = webdriver.ChromeOptions()
+    options = Options()
 
     # Define the URL containing the metrics
     url = "https://u.gg/lol/tier-list"
@@ -204,7 +205,7 @@ def scrape_champion_metrics():
     # TODO: change path of chrome driver to use path? venv?
 
     # Start Chrome WebDriver service
-    driver = webdriver.Chrome(chrome_options=options)
+    driver = webdriver.Chrome(options=options)
 
     # Open the URL
     driver.get(url)
