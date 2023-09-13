@@ -89,10 +89,22 @@ class SQLChampionMastery(Base):
     tokensEarned = mapped_column(Integer)  # tokens earned for champion at current championLevel. Is reset to 0 after championLevel increase
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
+    winsLoses = mapped_column(String)
+    championWinrate = mapped_column(String)
+    kda = mapped_column(String)
+    killsDeathsAssists = mapped_column(String)
+    lp = mapped_column(String)
+    maxKills = mapped_column(String)
+    maxDeaths = mapped_column(String)
+    cs = mapped_column(String)
+    damage = mapped_column(String)
+    gold = mapped_column(String)
 
     def __init__(self, championPointsUntilNextlevel: int, chestGranted: bool,
                  lastPlayTime: int, championLevel: int, summonerId: str, championPoints: int,
-                 championPointsSinceLastLevel: int, tokensEarned: int):
+                 championPointsSinceLastLevel: int, tokensEarned: int, winsLoses: str, championWinrate: str,
+                 kda: str, killsDeathsAssists: str, lp: str, maxKills: str, maxDeaths: str,
+                 cs : str, damage: str, gold: str):
         self.championPointsUntilNextLevel = championPointsUntilNextlevel
         self.chestGranted = chestGranted
         self.lastPlayTime = lastPlayTime
@@ -101,6 +113,16 @@ class SQLChampionMastery(Base):
         self.championPoints = championPoints
         self.championPointsSinceLastLevel = championPointsSinceLastLevel
         self.tokensEarned = tokensEarned
+        self.winsLoses = winsLoses
+        self.championWinrate = championWinrate
+        self.kda = kda
+        self.killsDeathsAssists = killsDeathsAssists
+        self.lp = lp
+        self.maxKills = maxKills
+        self.maxDeaths = maxDeaths
+        self.cs = cs
+        self.damage = damage
+        self.gold = gold
 
     def __repr__(self):
         return f"player {self.puuid} has level {self.championLevel} on champion {self.championId}"
