@@ -29,6 +29,7 @@ from src.sqlstore.timeline import SQLTimeline, SQLEvent, SQLFrame, SQLParticipan
     SQLTimelineDamageDealt, SQLTimelineDamageReceived
 from src.sqlstore.utils import champ_patch_present
 from src.utils import get_patch, get_season
+from crawlers.scraping import scrape_summonerdata
 
 
 # TODO: abstract away more logic
@@ -110,6 +111,9 @@ def parse_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, matchID: st
     parse_participant_data(session=session, match=current_match, participants=match_info['participants'])
     parse_timeline_data(session=session, platformId=match_info['platformId'],
                         gameId=match_info['gameId'], timeline=match_timeline)
+
+
+
 
 
 def parse_timeline_data(session: sqlalchemy.orm.Session, platformId: str, gameId: int, timeline: dict):

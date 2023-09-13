@@ -60,7 +60,7 @@ class SQLEvent(Base):
     type = mapped_column(String(100), nullable=False)  # e.g. SKILL_LEVEL_UP
     participantId = mapped_column(Integer)
     itemId = mapped_column(Integer)
-    skillSlot = mapped_column(Integer)
+    skillSlot = mapped_column(Integer)  
     creatorId = mapped_column(Integer)
     teamId = mapped_column(Integer)
     afterId = mapped_column(Integer)
