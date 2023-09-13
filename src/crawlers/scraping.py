@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 
+from src import utils
+
 
 def scrape_summonerdata(name: str, region: str) -> pd.DataFrame:
     # URL
@@ -69,3 +71,74 @@ def scrape_summonerdata(name: str, region: str) -> pd.DataFrame:
 
     # Display the DataFrame
     return df_individual
+
+
+def scrape_champion_metrics():
+    options = Options()
+
+    # Define the URL containing the metrics
+    url = "https://u.gg/lol/tier-list"
+
+    # Configure Chrome options for headless browsing
+    options.add_argument("--headless")
+    # Path to Chrome executable
+    # TODO: change path of chrome driver to use path? venv?
+
+    # Start Chrome WebDriver service
+    driver = webdriver.Chrome(options=options)
+
+    # Open the URL
+    driver.get(url)
+
+    # Initialize WebDriverWait and wait until the rows in the table are loaded
+    wait = WebDriverWait(driver, 10)
+    wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.rt-tr-group")))
+
+    # Initialize empty list to store data
+    data = []
+
+    # Scroll to the bottom and top of the page to load all rows
+    while True:
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(1)
+        driver.execute_script("window.scrollTo(0, 0);")
+        time.sleep(1)
+
+        # Find all the rows in the table
+        rows = driver.find_elements(By.CSS_SELECTOR, "div.rt-tr-group")
+
+        # Break if there are no rows or if we've scraped all the rows
+        if not rows or len(data) >= len(rows):
+            break
+
+        # Loop through the new rows and scrape data
+        for i in range(len(data), len(rows)):
+            row = rows[i]
+            try:
+                # Extract metrics for each champion
+                rank = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(1)").text.strip()
+                champion = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(3)").get_attribute(
+                    "textContent").strip()
+                tier = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(4)").text.strip()
+                win_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(5)").text.strip()
+                pick_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(7)").text.strip()
+                ban_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(6)").text.strip()
+                matches = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(8)").text.strip()
+
+                # Append metrics to data list
+                data.append([rank, champion, tier, win_rate, pick_rate, ban_rate, matches])
+
+            except Exception as e:
+                print(f"Error in row {i}: {e}")
+
+    # Define columns for the DataFrame
+    columns = ['Rank', 'Champion Name', 'Tier', 'Win rate', 'Pick Rate', 'Ban Rate', 'Matches']
+
+    # Create a DataFrame from the scraped data
+    df_scraped = pd.DataFrame(data, columns=columns)
+    # Close the browser
+    driver.quit()
+    df_scraped = utils.clean_champion_data(df_scraped)
+    # Return the DataFrame converted to a dictionary, indexed by "Champion Name"
+    return df_scraped.reset_index().to_dict('index')
+

@@ -10,7 +10,7 @@ class SQLChampion(Base):
     __tablename__ = "champion"
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
-    championNumber: MappedColumn[Integer] = mapped_column(Integer, nullable=False, index=True)
+    championNumber = mapped_column(Integer, nullable=False, index=True)
     seasonNumber = mapped_column(Integer, nullable=False, index=True)
     patchNumber = mapped_column(Integer, nullable=False, index=True)
     championName = mapped_column(String(100), nullable=False, index=True)
