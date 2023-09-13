@@ -89,22 +89,22 @@ class SQLChampionMastery(Base):
     tokensEarned = mapped_column(Integer)  # tokens earned for champion at current championLevel. Is reset to 0 after championLevel increase
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
-    winsLoses = mapped_column(String)
+    winsLoses = mapped_column(String)   # TODO: separate into wins and loses as int
     championWinrate = mapped_column(String)
     kda = mapped_column(String)
     killsDeathsAssists = mapped_column(String)
     lp = mapped_column(String)
     maxKills = mapped_column(String)
     maxDeaths = mapped_column(String)
-    cs = mapped_column(String)
-    damage = mapped_column(String)
-    gold = mapped_column(String)
+    cs = mapped_column(String)  # averaged
+    damage = mapped_column(String)  # averaged
+    gold = mapped_column(String)    # averaged
 
     def __init__(self, championPointsUntilNextlevel: int, chestGranted: bool,
                  lastPlayTime: int, championLevel: int, summonerId: str, championPoints: int,
-                 championPointsSinceLastLevel: int, tokensEarned: int, winsLoses: str, championWinrate: str,
-                 kda: str, killsDeathsAssists: str, lp: str, maxKills: str, maxDeaths: str,
-                 cs : str, damage: str, gold: str):
+                 championPointsSinceLastLevel: int, tokensEarned: int, winsLoses: str=None, championWinrate: str=None,
+                 kda: str =None, killsDeathsAssists: str=None, lp: str=None, maxKills: str=None, maxDeaths: str=None,
+                 cs: str=None, damage: str=None, gold: str=None):
         self.championPointsUntilNextLevel = championPointsUntilNextlevel
         self.chestGranted = chestGranted
         self.lastPlayTime = lastPlayTime
