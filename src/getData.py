@@ -29,7 +29,7 @@ from src.sqlstore.timeline import SQLTimeline, SQLEvent, SQLFrame, SQLParticipan
     SQLTimelineDamageDealt, SQLTimelineDamageReceived
 from src.sqlstore.utils import champ_patch_present
 from src.utils import get_patch, get_season
-from crawlers.scraping import scrape_summonerdata
+from src.crawlers.scraping import scrape_summonerdata
 
 
 # TODO: abstract away more logic
