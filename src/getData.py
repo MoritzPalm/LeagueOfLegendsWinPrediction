@@ -106,8 +106,7 @@ def parse_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, matchID: st
     session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
     # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
     for participant in match_info['participants']:
-        pass
-        # parse_summoner_data(session=session, watcher=watcher, region=region, puuid=participant['puuid'], expiration=14)
+        parse_summoner_data(session=session, watcher=watcher, region=region, puuid=participant['puuid'], expiration=14)
     parse_participant_data(session=session, match=current_match, participants=match_info['participants'])
     parse_timeline_data(session=session, platformId=match_info['platformId'],
                         gameId=match_info['gameId'], timeline=match_timeline)
@@ -479,7 +478,7 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
                     gold=scraped['Gold']
                 )
             except KeyError as e:   # TODO: try to scrape normal game data
-                logger.info(f"for champion {championId} no scraped data has been found")
+                logger.warning(f"for champion {championId} no scraped data has been found")
                 summoner_championmastery_obj = SQLChampionMastery(
                     championPointsUntilNextlevel=data['championPointsUntilNextLevel'],
                     chestGranted=data['chestGranted'],
