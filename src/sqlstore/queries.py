@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 import sqlalchemy.exc
 
 from src import sqlstore
+from src.sqlstore.champion import SQLChampion
 from src.sqlstore.summoner import SQLSummoner
 
 
@@ -57,3 +58,10 @@ def check_summoner_data_recent(session: sqlalchemy.orm.Session, puuid: str, expi
     if timedelta < delta:
         return True
     return False
+
+
+def get_last_champion(session: sqlalchemy.orm.Session, championId: int) -> SQLChampion:
+    query = select(SQLChampion).filter(SQLChampion.championNumber == championId).order_by(
+        SQLChampion.lastUpdate)
+    champion_obj = session.execute(query).scalar()
+    return champion_obj

@@ -94,9 +94,7 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
                     tokensEarned=data['tokensEarned']
                 )
             summoner_obj.mastery.append(summoner_championmastery_obj)
-            query = select(SQLChampion).filter(int(SQLChampion.championNumber) == championId).order_by(
-                SQLChampion.lastUpdate).limit(1)
-            champion_obj = session.execute(query).one_or_none()
+            champion_obj = queries.get_last_champion(session, championId)
             if champion_obj is None:
                 continue
             champion_obj.mastery.append(summoner_championmastery_obj)

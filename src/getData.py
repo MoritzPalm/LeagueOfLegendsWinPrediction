@@ -34,7 +34,7 @@ def getData():
     watcher = LolWatcher(api_key)
     with get_session(cleanup=False) as session:
         for matchID in matchIDs:
-            for attempt in range(50):
+            for attempt in range(50):   # re-tries is connection has been dropped   # TODO: test if session will rebuild automatically
                 try:
                     if queries.check_matchId_present(session, matchID):
                         logger.warning(f"matchID {matchID} already present in database")
@@ -117,7 +117,7 @@ if __name__ == '__main__':
                         help='season from which matches get pulled', dest='season')
     parser.add_argument('-p', '--patch', action='store', default=17, type=int,
                         help='patch from which matches are pulled', dest='patch')
-    parser.add_argument('-ll', '-otherloglevel', action='store', default='error', type=str.upper,
+    parser.add_argument('-ll', '-otherloglevel', action='store', default='warning', type=str.upper,
                         choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
                         help='choosing the level of logging used by imported code', dest='otherlogginglevel')
 
