@@ -13,7 +13,7 @@ from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLMatch
 from src import utils
 from src.sqlstore import queries
-from parsers import champion, summoner, timeline, participant
+from src.parsers import champion, summoner, timeline, participant
 
 
 # TODO: review commit strategy
