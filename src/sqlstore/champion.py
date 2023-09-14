@@ -33,14 +33,12 @@ class SQLChampion(Base):
 
     def __init__(self, championNumber: int, seasonNumber: int, patchNumber: int, championName: str,
                  championTitle: str, infoAttack: int, infoDefense: int, infoMagic: int, infoDifficulty: int,
-                 partype: str = None, patchWinRate: float = None, patchPlayRate: float = None, role: str = None,
-                 tier: str = None, win_rate: float = None, pick_rate: float = None, ban_rate: float = None,
-                 matches: int = None):
+                 partype: str = None, role: str = None, tier: str = None, win_rate: float = None,
+                 pick_rate: float = None, ban_rate: float = None, matches: int = None):
         """
-        :param championId:
-        :param patchNumber:
-        :param seasonNumber
-        :param championName:
+        :param patchNumber: patch number identifying the data as champion data changes per patch
+        :param seasonNumber: season number to uniquely identify the patch, see patchNumber
+        :param championName: name of the champion
         :param championTitle:
         :param infoAttack:
         :param infoDefense:
@@ -65,8 +63,6 @@ class SQLChampion(Base):
         self.infoMagic = infoMagic
         self.infoDifficulty = infoDifficulty
         self.partype = partype
-        self.patchWinRate = patchWinRate
-        self.patchPlayRate = patchPlayRate
         self.patchNumber = patchNumber
         self.seasonNumber = seasonNumber
         self.primaryRole = role

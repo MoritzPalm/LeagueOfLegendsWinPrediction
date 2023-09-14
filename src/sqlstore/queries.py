@@ -61,6 +61,12 @@ def check_summoner_data_recent(session: sqlalchemy.orm.Session, puuid: str, expi
 
 
 def get_last_champion(session: sqlalchemy.orm.Session, championId: int) -> SQLChampion:
+    """
+    gets most recent data from champion with id championId
+    :param session: sqlalchemy session with access to champion table with columns championNumber, lastUpdate
+    :param championId: number of the champion defined by riot games
+    :return: sqlstore.champion.SQLChampion object
+    """
     query = select(SQLChampion).filter(SQLChampion.championNumber == championId).order_by(
         SQLChampion.lastUpdate)
     champion_obj = session.execute(query).scalar()
