@@ -13,8 +13,7 @@ from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLMatch
 from src import utils
 from src.sqlstore import queries
-import parsers
-from parsers import champion
+from parsers import champion, summoner, timeline, participant
 
 
 # TODO: review commit strategy
@@ -83,9 +82,9 @@ def parse_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, matchID: st
     session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
     # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
     for participant in match_info['participants']:
-        parsers.summoner.parse_summoner_data(session=session, watcher=watcher, region=region, puuid=participant['puuid'], expiration=14)
-        parsers.participant.parse_participant_data(session=session, match=current_match, participant=participant)
-    parsers.timeline.parse_timeline_data(session=session, platformId=match_info['platformId'],
+        summoner.parse_summoner_data(session=session, watcher=watcher, region=region, puuid=participant['puuid'], expiration=14)
+        participant.parse_participant_data(session=session, match=current_match, participant=participant)
+    timeline.parse_timeline_data(session=session, platformId=match_info['platformId'],
                                          gameId=match_info['gameId'], timeline=match_timeline)
 
 
