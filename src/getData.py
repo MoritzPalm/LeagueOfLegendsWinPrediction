@@ -14,6 +14,7 @@ from src.sqlstore.match import SQLMatch
 from src import utils
 from src.sqlstore import queries
 import parsers
+from parsers import champion
 
 
 # TODO: review commit strategy
@@ -34,34 +35,28 @@ def getData():
     watcher = LolWatcher(api_key)
     with get_session(cleanup=False) as session:
         for matchID in matchIDs:
-            for attempt in range(50):   # re-tries for 500 seconds if connection has been dropped   # TODO: test if session will rebuild automatically
-                try:
-                    if queries.check_matchId_present(session, matchID):
-                        logger.warning(f"matchID {matchID} already present in database")
-                        continue
-                    logger.info(f"getting match info for match {matchID}")
-                    current_match_info = watcher.match.by_id(match_id=matchID, region=args.region)['info']
-                    if not utils.is_valid_match(current_match_info):
-                        logger.warning(f"match {matchID} is not valid")
-                        continue
-                    season = utils.get_season(current_match_info['gameVersion'])
-                    patch = utils.get_patch(current_match_info['gameVersion'])
-                    if not queries.champ_patch_present(session=session, season=season, patch=patch):
-                        logger.info(f"fetching champion data as no data from patch {season}.{patch} in database")
-                        parsers.champion.parse_champion_data(session, watcher, season, patch)
-                    current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)[
-                        'info']
-                    parse_data(session, watcher, matchID, season, patch, current_match_info, current_match_timeline,
-                               args.region)
-                except requests.exceptions.ConnectionError as e:    # retry after wait if connection error
-                    logger.error(str(e))
-                    time.sleep(10)
-                except Exception as e:  # skip match id if other errors were thrown
-                    logger.error(f"skipping match Id {matchID} because of the following error: ")
-                    logger.error(str(e))
+            try:
+                if queries.check_matchId_present(session, matchID):
+                    logger.warning(f"matchID {matchID} already present in database")
                     continue
-                else:   # exit attempt loop if no exception has been thrown
-                    break
+                logger.info(f"getting match info for match {matchID}")
+                current_match_info = watcher.match.by_id(match_id=matchID, region=args.region)['info']
+                if not utils.is_valid_match(current_match_info):
+                    logger.warning(f"match {matchID} is not valid")
+                    continue
+                season = utils.get_season(current_match_info['gameVersion'])
+                patch = utils.get_patch(current_match_info['gameVersion'])
+                if not queries.champ_patch_present(session=session, season=season, patch=patch):
+                    logger.info(f"fetching champion data as no data from patch {season}.{patch} in database")
+                    champion.parse_champion_data(session, watcher, season, patch)
+                current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)[
+                    'info']
+                parse_data(session, watcher, matchID, season, patch, current_match_info, current_match_timeline,
+                           args.region)
+            except Exception as e:  # skip match id if other errors were thrown
+                logger.error(f"skipping match Id {matchID} because of the following error: ")
+                logger.error(str(e))
+                continue
             try:
                 session.flush()
                 logger.info(f"session commit")
