@@ -81,15 +81,16 @@ class SQLChampionMastery(Base):
     champion = relationship("SQLChampion", backref="mastery")
     championPointsUntilNextLevel = mapped_column(Integer)
     chestGranted = mapped_column(Boolean)
-    lastPlayTime = mapped_column(Integer)  # in unix milliseconds time format
+    lastPlayTime = mapped_column(BigInteger)  # in unix milliseconds time format
     championLevel = mapped_column(Integer)
     summonerId = mapped_column(String(63))
     championPoints = mapped_column(Integer)
     championPointsSinceLastLevel = mapped_column(Integer)
-    tokensEarned = mapped_column(Integer)  # tokens earned for champion at current championLevel. Is reset to 0 after championLevel increase
+    tokensEarned = mapped_column(
+        Integer)  # tokens earned for champion at current championLevel. Is reset to 0 after championLevel increase
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
-    winsLoses = mapped_column(String)   # TODO: separate into wins and loses as int
+    winsLoses = mapped_column(String)  # TODO: separate into wins and loses as int
     championWinrate = mapped_column(String)
     kda = mapped_column(String)
     killsDeathsAssists = mapped_column(String)
@@ -98,13 +99,15 @@ class SQLChampionMastery(Base):
     maxDeaths = mapped_column(String)
     cs = mapped_column(String)  # averaged
     damage = mapped_column(String)  # averaged
-    gold = mapped_column(String)    # averaged
+    gold = mapped_column(String)  # averaged
 
     def __init__(self, championPointsUntilNextlevel: int, chestGranted: bool,
                  lastPlayTime: int, championLevel: int, summonerId: str, championPoints: int,
-                 championPointsSinceLastLevel: int, tokensEarned: int, winsLoses: str=None, championWinrate: str=None,
-                 kda: str =None, killsDeathsAssists: str=None, lp: str=None, maxKills: str=None, maxDeaths: str=None,
-                 cs: str=None, damage: str=None, gold: str=None):
+                 championPointsSinceLastLevel: int, tokensEarned: int, winsLoses: str = None,
+                 championWinrate: str = None,
+                 kda: str = None, killsDeathsAssists: str = None, lp: str = None, maxKills: str = None,
+                 maxDeaths: str = None,
+                 cs: str = None, damage: str = None, gold: str = None):
         self.championPointsUntilNextLevel = championPointsUntilNextlevel
         self.chestGranted = chestGranted
         self.lastPlayTime = lastPlayTime
