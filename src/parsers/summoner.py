@@ -60,6 +60,8 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
     for data in summoner_champion_data:
         with session.no_autoflush:
             championId = data['championId']
+            championName = queries.get_champ_name(session, championId)
+            scraped_champ = scraped[scraped['Champion'] == championName]
             try:  # TODO: change logic to prevent writing all none when one scraping field fails
                 summoner_championmastery_obj = SQLChampionMastery(
                     championPointsUntilNextlevel=data['championPointsUntilNextLevel'],
@@ -70,16 +72,16 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
                     championPoints=data['championPoints'],
                     championPointsSinceLastLevel=data['championPointsSinceLastLevel'],
                     tokensEarned=data['tokensEarned'],
-                    winsLoses=scraped['WinLoses'],
-                    championWinrate=scraped['Winrate'],
-                    kda=scraped['KDA'],
-                    killsDeathsAssists=scraped['KillsDeathsAssists'],
-                    lp=scraped['LP'],
-                    maxKills=scraped['MaxKills'],
-                    maxDeaths=scraped['MaxDeaths'],
-                    cs=scraped['CS'],
-                    damage=scraped['Damage'],
-                    gold=scraped['Gold']
+                    winsLoses=scraped_champ['WinLoses'],
+                    championWinrate=scraped_champ['Winrate'],
+                    kda=scraped_champ['KDA'],
+                    killsDeathsAssists=scraped_champ['KillsDeathsAssists'],
+                    lp=scraped_champ['LP'],
+                    maxKills=scraped_champ['MaxKills'],
+                    maxDeaths=scraped_champ['MaxDeaths'],
+                    cs=scraped_champ['CS'],
+                    damage=scraped_champ['Damage'],
+                    gold=scraped_champ['Gold']
                 )
             except KeyError:  # TODO: try to scrape normal game data
                 logging.warning(f"for champion {championId} no scraped data has been found")

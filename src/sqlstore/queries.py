@@ -71,3 +71,8 @@ def get_last_champion(session: sqlalchemy.orm.Session, championId: int) -> SQLCh
         SQLChampion.lastUpdate)
     champion_obj = session.execute(query).scalar()
     return champion_obj
+
+
+def get_champ_name(session: sqlalchemy.orm.Session, championId: int) -> str:
+    query = select(SQLChampion.championName).filter(SQLChampion.championNumber == championId)
+    return session.execute(query).scalar()
