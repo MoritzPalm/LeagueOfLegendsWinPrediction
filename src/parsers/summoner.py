@@ -57,46 +57,46 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
 
     summoner_champion_data = watcher.champion_mastery.by_summoner(region, summoner_obj.summonerId)
     scraped = scrape_summonerdata(name=summoner_data['name'], region=region)
-    # for data in summoner_champion_data:
-    #     with session.no_autoflush:
-    #         championId = data['championId']
-    #         try:  # TODO: change logic to prevent writing all none when one scraping field fails
-    #             summoner_championmastery_obj = SQLChampionMastery(
-    #                 championPointsUntilNextlevel=data['championPointsUntilNextLevel'],
-    #                 chestGranted=data['chestGranted'],
-    #                 lastPlayTime=data['lastPlayTime'],
-    #                 championLevel=data['championLevel'],
-    #                 summonerId=data['summonerId'],
-    #                 championPoints=data['championPoints'],
-    #                 championPointsSinceLastLevel=data['championPointsSinceLastLevel'],
-    #                 tokensEarned=data['tokensEarned'],
-    #                 winsLoses=scraped['WinLoses'],
-    #                 championWinrate=scraped['Winrate'],
-    #                 kda=scraped['KDA'],
-    #                 killsDeathsAssists=scraped['KillsDeathsAssists'],
-    #                 lp=scraped['LP'],
-    #                 maxKills=scraped['MaxKills'],
-    #                 maxDeaths=scraped['MaxDeaths'],
-    #                 cs=scraped['CS'],
-    #                 damage=scraped['Damage'],
-    #                 gold=scraped['Gold']
-    #             )
-    #         except KeyError:  # TODO: try to scrape normal game data
-    #             logging.warning(f"for champion {championId} no scraped data has been found")
-    #             summoner_championmastery_obj = SQLChampionMastery(
-    #                 championPointsUntilNextlevel=data['championPointsUntilNextLevel'],
-    #                 chestGranted=data['chestGranted'],
-    #                 lastPlayTime=data['lastPlayTime'],
-    #                 championLevel=data['championLevel'],
-    #                 summonerId=data['summonerId'],
-    #                 championPoints=data['championPoints'],
-    #                 championPointsSinceLastLevel=data['championPointsSinceLastLevel'],
-    #                 tokensEarned=data['tokensEarned']
-    #             )
-    #         summoner_obj.mastery.append(summoner_championmastery_obj)
-    #         champion_obj = queries.get_last_champion(session, championId)
-    #         if champion_obj is None:
-    #             continue
-    #         champion_obj.mastery.append(summoner_championmastery_obj)
-    #         session.add(summoner_championmastery_obj)
+    for data in summoner_champion_data:
+        with session.no_autoflush:
+            championId = data['championId']
+            try:  # TODO: change logic to prevent writing all none when one scraping field fails
+                summoner_championmastery_obj = SQLChampionMastery(
+                    championPointsUntilNextlevel=data['championPointsUntilNextLevel'],
+                    chestGranted=data['chestGranted'],
+                    lastPlayTime=data['lastPlayTime'],
+                    championLevel=data['championLevel'],
+                    summonerId=data['summonerId'],
+                    championPoints=data['championPoints'],
+                    championPointsSinceLastLevel=data['championPointsSinceLastLevel'],
+                    tokensEarned=data['tokensEarned'],
+                    winsLoses=scraped['WinLoses'],
+                    championWinrate=scraped['Winrate'],
+                    kda=scraped['KDA'],
+                    killsDeathsAssists=scraped['KillsDeathsAssists'],
+                    lp=scraped['LP'],
+                    maxKills=scraped['MaxKills'],
+                    maxDeaths=scraped['MaxDeaths'],
+                    cs=scraped['CS'],
+                    damage=scraped['Damage'],
+                    gold=scraped['Gold']
+                )
+            except KeyError:  # TODO: try to scrape normal game data
+                logging.warning(f"for champion {championId} no scraped data has been found")
+                summoner_championmastery_obj = SQLChampionMastery(
+                    championPointsUntilNextlevel=data['championPointsUntilNextLevel'],
+                    chestGranted=data['chestGranted'],
+                    lastPlayTime=data['lastPlayTime'],
+                    championLevel=data['championLevel'],
+                    summonerId=data['summonerId'],
+                    championPoints=data['championPoints'],
+                    championPointsSinceLastLevel=data['championPointsSinceLastLevel'],
+                    tokensEarned=data['tokensEarned']
+                )
+            summoner_obj.mastery.append(summoner_championmastery_obj)
+            champion_obj = queries.get_last_champion(session, championId)
+            if champion_obj is None:
+                continue
+            champion_obj.mastery.append(summoner_championmastery_obj)
+            session.add(summoner_championmastery_obj)
     session.commit()
