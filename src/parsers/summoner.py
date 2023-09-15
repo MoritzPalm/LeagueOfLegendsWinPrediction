@@ -72,16 +72,16 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
                     championPoints=data['championPoints'],
                     championPointsSinceLastLevel=data['championPointsSinceLastLevel'],
                     tokensEarned=data['tokensEarned'],
-                    winsLoses=scraped_champ['WinLoses'],
-                    championWinrate=scraped_champ['Winrate'],
-                    kda=scraped_champ['KDA'],
-                    killsDeathsAssists=scraped_champ['KillsDeathsAssists'],
-                    lp=scraped_champ['LP'],
-                    maxKills=scraped_champ['MaxKills'],
-                    maxDeaths=scraped_champ['MaxDeaths'],
-                    cs=scraped_champ['CS'],
-                    damage=scraped_champ['Damage'],
-                    gold=scraped_champ['Gold']
+                    winsLoses=scraped_champ['WinsLoses'].values.flatten().tolist(),
+                    championWinrate=scraped_champ['Winrate'].values.flatten().tolist(),
+                    kda=scraped_champ['KDA'].values.flatten().tolist(),
+                    killsDeathsAssists=scraped_champ['KillsDeathsAssists'].values.flatten().tolist(),
+                    lp=scraped_champ['LP'].values.flatten().tolist(),
+                    maxKills=scraped_champ['MaxKills'].values.flatten().tolist(),
+                    maxDeaths=scraped_champ['MaxDeaths'].values.flatten().tolist(),
+                    cs=scraped_champ['CS'].values.flatten().tolist(),
+                    damage=scraped_champ['Damage'].values.flatten().tolist(),
+                    gold=scraped_champ['Gold'].values.flatten().tolist()
                 )
             except KeyError:  # TODO: try to scrape normal game data
                 logging.warning(f"for champion {championId} no scraped data has been found")
