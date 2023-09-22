@@ -6,6 +6,8 @@ from riotwatcher import LolWatcher
 from src.crawlers.scraping import scrape_champion_metrics
 from src.sqlstore.champion import SQLChampionTags, SQLChampion, SQLChampionStats
 
+import re
+
 
 def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, season: int, patch: int):
     """ parses champion information provided by datadragon and fill corresponding Champion and ChampionStats tables
@@ -24,9 +26,17 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
 
     for champion in data:  # TODO: this can be vastly improved by using bulk inserts
         championdata = data[champion]
+
+        # Remove special characters and spaced from scraped data
+        clean_scraped_champion_name = re.sub(r'[^\w\s]', '', championdata['name']).replace(' ', '')
+
         metrics = {'Tier': None, 'Win rate': None, 'Pick Rate': None, 'Ban Rate': None, 'Matches': None}
         try:
             for item in scraped_data.items():
+
+                # Remove special characters and spaces from existing champion name
+                clean_existing_champion_name = re.sub(r'[^\w\s]', '', item[1]['Champion Name']).replace(' ', '')
+
                 if item[1]['Champion Name'] == champion:
                     metrics = item[1]
                     break
