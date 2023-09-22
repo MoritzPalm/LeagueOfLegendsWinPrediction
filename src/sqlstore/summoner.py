@@ -92,9 +92,9 @@ class SQLChampionMastery(Base):
     loses = mapped_column(Integer)
     championWinrate = mapped_column(Float)
     kda = mapped_column(Float)
-    kills = mapped_column(Integer)
-    deaths = mapped_column(Integer)
-    assists = mapped_column(Integer)
+    kills = mapped_column(Float)
+    deaths = mapped_column(Float)
+    assists = mapped_column(Float)
     lp = mapped_column(Integer)
     maxKills = mapped_column(Integer)
     maxDeaths = mapped_column(Integer)
@@ -108,7 +108,7 @@ class SQLChampionMastery(Base):
                  lastPlayTime: int, championLevel: int, summonerId: str, championPoints: int,
                  championPointsSinceLastLevel: int, tokensEarned: int, wins: str = None, loses: str = None,
                  championWinrate: float = None,
-                 kda: str = None, kills: int = None, deaths: int = None, assists: int = None, lp: int = None,
+                 kda: str = None, kills: float = None, deaths: float = None, assists: float = None, lp: int = None,
                  maxKills: int = None,
                  maxDeaths: int = None,
                  cs: float = None, damage: float = None, gold: float = None):
