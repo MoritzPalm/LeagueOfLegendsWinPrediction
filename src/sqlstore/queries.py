@@ -34,7 +34,7 @@ def champ_patch_present(session: Session, season: int, patch: int) -> bool:
 
 
 def check_summoner_present(session: sqlalchemy.orm.Session, puuid: str) -> bool:
-    return session.query(exists().where(SQLSummoner.puuid == puuid)).scalar()
+    return session.query(session.query(SQLSummoner).filter(SQLSummoner.puuid == puuid).exists()).scalar()
 
 
 def check_summoner_data_recent(session: sqlalchemy.orm.Session, puuid: str, expiration_time: int) -> bool:
