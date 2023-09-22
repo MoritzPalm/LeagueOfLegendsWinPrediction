@@ -56,10 +56,13 @@ def scrape_summonerdata(name: str, region: str) -> pd.DataFrame:
             row_data = []
             for key, selector in selectors.items():
                 element = row.select_one(selector)
-                text = element.get_text(strip=True) if element else 'N/A'
+                if element:
+                    text = element.get_text(strip=True)
+                    if key in ['Damage', 'Gold']:
+                        text = text.replace(',', '')
+                else:
+                    text = 'N/A'
                 row_data.append(text)
-
-            data.append(row_data)
 
         except Exception as e:
             print(f"Error in row {i}: {e}")
