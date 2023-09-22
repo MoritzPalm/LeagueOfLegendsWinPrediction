@@ -43,17 +43,18 @@ def check_summoner_data_recent(session: sqlalchemy.orm.Session, puuid: str, expi
     :param session: sqlalchemy session
     :param puuid: encrypted player puuid
     :param expiration_time: time in days before the data gets updated
-    :return: True if the data has not yet expired, False otherwise
+    :return: True if the data has not yet expired, False otherwise or if no summoner with this puuid could be found
     """
     delta = datetime.timedelta(days=expiration_time)
-    today = datetime.date.today()
-    query = session.query(select(SQLSummoner.lastUpdate).where(SQLSummoner.puuid == puuid))
-    result = session.execute(query).one_or_none()
-    lastUpdate: datetime.date = datetime.date.fromtimestamp(result.lastUpdate)
-    if lastUpdate is None:  # has never been updated, need to get first creation time
-        query = session.query(select(SQLSummoner.timeCreated).where(SQLSummoner.puuid == puuid))
-        result = session.execute(query).one()
-        lastUpdate: datetime.date = datetime.date.fromtimestamp(result.lastUpdate)
+    today = datetime.datetime.now(datetime.timezone.utc)
+    query = session.query(SQLSummoner).filter(SQLSummoner.puuid == puuid)
+    result = session.execute(query).first()
+    if result is None:
+        return False
+    if result[0].lastUpdate is None:    # has never been updated, need to get first creation time
+        lastUpdate: datetime.date = result[0].timeCreated
+    else:
+        lastUpdate: datetime.date = result[0].lastUpdate
     timedelta = today - lastUpdate
     if timedelta < delta:
         return True
