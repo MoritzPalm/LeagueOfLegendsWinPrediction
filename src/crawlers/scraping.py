@@ -104,28 +104,25 @@ def scrape_champion_metrics():
         driver.execute_script("window.scrollTo(0, 0);")
         time.sleep(1)
 
-        # Find all the rows in the table
-        rows = driver.find_elements(By.CSS_SELECTOR, "div.rt-tr-group")
+        html_source = driver.page_source
+        soup = BeautifulSoup(html_source, 'html.parser')
+        rows = soup.select("div.rt-tr-group")
 
         # Break if there are no rows or if we've scraped all the rows
         if not rows or len(data) >= len(rows):
             break
 
-        # Loop through the new rows and scrape data
         for i in range(len(data), len(rows)):
             row = rows[i]
             try:
-                # Extract metrics for each champion
-                rank = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(1)").text.strip()
-                champion = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(3)").get_attribute(
-                    "textContent").strip()
-                tier = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(4)").text.strip()
-                win_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(5)").text.strip()
-                pick_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(7)").text.strip()
-                ban_rate = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(6)").text.strip()
-                matches = row.find_element(By.CSS_SELECTOR, "div.rt-td:nth-of-type(8)").text.strip()
+                rank = row.select("div.rt-td:nth-of-type(1)")[0].text.strip()
+                champion = row.select("div.rt-td:nth-of-type(3)")[0].text.strip()
+                tier = row.select("div.rt-td:nth-of-type(4)")[0].text.strip()
+                win_rate = row.select("div.rt-td:nth-of-type(5)")[0].text.strip()
+                pick_rate = row.select("div.rt-td:nth-of-type(6) > span")[0].text.strip()
+                ban_rate = row.select("div.rt-td:nth-of-type(6)")[0].text.strip()
+                matches = row.select("div.rt-td:nth-of-type(8)")[0].text.strip().replace(',', '')
 
-                # Append metrics to data list
                 data.append([rank, champion, tier, win_rate, pick_rate, ban_rate, matches])
 
             except Exception as e:
