@@ -108,4 +108,4 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
                 continue
             champion_obj.mastery.append(summoner_championmastery_obj)
             session.add(summoner_championmastery_obj)
-    session.commit()
+

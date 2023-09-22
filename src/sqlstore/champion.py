@@ -45,8 +45,6 @@ class SQLChampion(Base):
         :param infoMagic:
         :param infoDifficulty:
         :param partype:
-        :param patchWinRate:
-        :param patchPlayRate:
         :param role:
         :param tier:
         :param win_rate:

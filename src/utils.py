@@ -1,4 +1,5 @@
 import logging
+import math
 import re
 import pandas as pd
 from typing import Match
@@ -58,19 +59,20 @@ def is_valid_match(match_info: dict) -> bool:
 
 
 def clean_summoner_data(df: pd.DataFrame) -> pd.DataFrame:
-    df_winsloses = df['WinsLoses'].squeeze().str.extract(r'(\d+)W (\d+)L')  # regex matching 12 and 5 from string "12W 5L"
+    df_winsloses = df['WinsLoses'].squeeze(axis=0).str.extract(r'(\d+)W (\d+)L')  # regex matching 12 and 5 from string "12W 5L"
     df['wins '] = df_winsloses[0]
     df['loses'] = df_winsloses[1]
     df['Winrate'] = df['Winrate'].str.strip('%').astype(float)
-    df['KDA'] = df['KDA'].astype(float)
+    df.loc[df['KDA'] == 'Perfect', 'KDA'] = math.inf   # inf means that perfect kda is achieved (0 deaths and >0 kills)
+    df['KDA'] = df['KDA'].astype(float, errors='ignore')
     df_killsdeathsassists = df['KillsDeathsAssists'].squeeze().str.extract(r'(\d+.\d+)\/(\d+.\d+)\/(\d+.\d+)')  # regex matching 5.2, 4.0 and 5.1 from string "5.2/4.0/5.1"
     df['kills'] = df_killsdeathsassists[0]
     df['deaths'] = df_killsdeathsassists[1]
     df['assists'] = df_killsdeathsassists[0]
-    df['LP'] = df['LP'].str.strip('LP').astype(int)
-    df['MaxKills'] = df['MaxKills'].astype(int)
-    df['MaxDeaths'] = df['MaxDeaths'].astype(int)
-    df['CS'] = df['CS'].astype(float)
+    df['LP'] = df['LP'].str.strip('LP').astype(int, errors='ignore')
+    df['MaxKills'] = df['MaxKills'].astype(int, errors='ignore')
+    df['MaxDeaths'] = df['MaxDeaths'].astype(int, errors='ignore')
+    df['CS'] = df['CS'].astype(float, errors='ignore')
     #df['Damage'] = df['Damage'].astype(float)
-    #df['Gold'] = df['Gold'].str.replace(',', '.').astype(float)    # TODO: change comma display to enlish locale
+    #df['Gold'] = df['Gold'].str.replace(',', '.').astype(float)    # TODO: change comma display to english locale
     return df
