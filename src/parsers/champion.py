@@ -45,7 +45,7 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
                                    infoDefense=championdata['info']['defense'], infoMagic=championdata['info']['magic'],
                                    infoDifficulty=championdata['info']['difficulty'], seasonNumber=season,
                                    patchNumber=patch, tier=metrics['Tier'], win_rate=metrics['Win rate'],
-                                   pick_rate=None, ban_rate=metrics['Ban Rate'],
+                                   pick_rate=metrics['Pick Rate'], ban_rate=metrics['Ban Rate'],
                                    matches=metrics['Matches'])
 
         # Use scraped_data to populate fields in SQLChampion
