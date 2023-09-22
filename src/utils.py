@@ -55,3 +55,22 @@ def is_valid_match(match_info: dict) -> bool:
         logging.warning(f"match was played on wrong map: played on map {match_info['mapId']}, 1, 2 or 11 expected")
         return False
     return True
+
+
+def clean_summoner_data(df: pd.DataFrame) -> pd.DataFrame:
+    winlosesregex = re.compile('(\d+)W (\d+)L')     # regex matching 12 and 5 from string "12W 5L"
+    df['wins '] = re.match(winlosesregex, df['WinsLoses']).group(1).astype(int)
+    df['loses'] = re.match(winlosesregex, df['WinsLoses']).group(2).astype(int)
+    df['championWinrate'] = df['championWinrate'].str.strip('%').astype(float)
+    df['kda'] = df['kda'].astype(float)
+    killsdeathsassistsregex = re.compile('(\d+.\d+)\/(\d+.\d+)\/(\d+.\d+)')  # regex matching 5.2, 4.0 and 5.1 from string "5.2/4.0/5.1"
+    df['kills'] = re.match(killsdeathsassistsregex, df['killsDeathsAssists']).group(1).astype(float)
+    df['deaths'] = re.match(killsdeathsassistsregex, df['killsDeathsAssists']).group(2).astype(float)
+    df['assists'] = re.match(killsdeathsassistsregex, df['killsDeathsAssists']).group(3).astype(float)
+    df['lp'] = df['lp'].astype(int)
+    df['maxKills'] = df['maxKills'].astype(int)
+    df['maxDeaths'] = df['maxDeaths'].astype(int)
+    df['cs'] = df['cd'].astype(float)
+    df['damage'] = df['damage'].astype(float)
+    df['gold'] = df['gold'].astype(float)
+    return df

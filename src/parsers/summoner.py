@@ -4,6 +4,7 @@ import sqlalchemy.orm
 from sqlalchemy.sql import select
 from riotwatcher import LolWatcher
 
+import src.utils
 from src.crawlers.scraping import scrape_summonerdata
 from src.sqlstore import queries
 from src.sqlstore.champion import SQLChampion
@@ -57,6 +58,7 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
 
     summoner_champion_data = watcher.champion_mastery.by_summoner(region, summoner_obj.summonerId)
     scraped = scrape_summonerdata(name=summoner_data['name'], region=region)
+    scraped = src.utils.clean_summoner_data(scraped)
     for data in summoner_champion_data:
         with session.no_autoflush:
             championId = data['championId']
@@ -72,16 +74,16 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
                     championPoints=data['championPoints'],
                     championPointsSinceLastLevel=data['championPointsSinceLastLevel'],
                     tokensEarned=data['tokensEarned'],
-                    winsLoses=scraped_champ['WinsLoses'].values.flatten().tolist(),
-                    championWinrate=scraped_champ['Winrate'].values.flatten().tolist(),
-                    kda=scraped_champ['KDA'].values.flatten().tolist(),
-                    killsDeathsAssists=scraped_champ['KillsDeathsAssists'].values.flatten().tolist(),
-                    lp=scraped_champ['LP'].values.flatten().tolist(),
-                    maxKills=scraped_champ['MaxKills'].values.flatten().tolist(),
-                    maxDeaths=scraped_champ['MaxDeaths'].values.flatten().tolist(),
-                    cs=scraped_champ['CS'].values.flatten().tolist(),
-                    damage=scraped_champ['Damage'].values.flatten().tolist(),
-                    gold=scraped_champ['Gold'].values.flatten().tolist()
+                    winsLoses=scraped_champ['WinsLoses'].values.flatten().tolist()[0],
+                    championWinrate=scraped_champ['Winrate'].values.flatten().tolist()[0],
+                    kda=scraped_champ['KDA'].values.flatten().tolist()[0],
+                    kills=scraped_champ['KillsDeathsAssists'].values.flatten().tolist()[0],
+                    lp=scraped_champ['LP'].values.flatten().tolist()[0],
+                    maxKills=scraped_champ['MaxKills'].values.flatten().tolist()[0],
+                    maxDeaths=scraped_champ['MaxDeaths'].values.flatten().tolist()[0],
+                    cs=scraped_champ['CS'].values.flatten().tolist()[0],
+                    damage=scraped_champ['Damage'].values.flatten().tolist()[0],
+                    gold=scraped_champ['Gold'].values.flatten().tolist()[0]
                 )
             except KeyError:  # TODO: try to scrape normal game data
                 logging.warning(f"for champion {championId} no scraped data has been found")

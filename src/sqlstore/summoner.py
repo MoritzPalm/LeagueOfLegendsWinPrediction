@@ -1,5 +1,5 @@
 from sqlalchemy.orm import mapped_column, relationship
-from sqlalchemy import Integer, String, BigInteger, Boolean, ForeignKey, DateTime, Identity
+from sqlalchemy import Integer, String, BigInteger, Boolean, ForeignKey, DateTime, Identity, Float
 from sqlalchemy.sql import func
 import roman
 from src.sqlstore.db import Base
@@ -88,26 +88,29 @@ class SQLChampionMastery(Base):
     championPointsSinceLastLevel = mapped_column(Integer)
     tokensEarned = mapped_column(
         Integer)  # tokens earned for champion at current championLevel. Is reset to 0 after championLevel increase
+    wins = mapped_column(Integer)
+    loses = mapped_column(Integer)
+    championWinrate = mapped_column(Float)
+    kda = mapped_column(Float)
+    kills = mapped_column(Integer)
+    deaths = mapped_column(Integer)
+    assists = mapped_column(Integer)
+    lp = mapped_column(Integer)
+    maxKills = mapped_column(Integer)
+    maxDeaths = mapped_column(Integer)
+    cs = mapped_column(Float)  # averaged
+    damage = mapped_column(Float)  # averaged
+    gold = mapped_column(Float)  # averaged
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
-    winsLoses = mapped_column(String)  # TODO: separate into wins and loses as int
-    championWinrate = mapped_column(String)
-    kda = mapped_column(String)
-    killsDeathsAssists = mapped_column(String)
-    lp = mapped_column(String)
-    maxKills = mapped_column(String)
-    maxDeaths = mapped_column(String)
-    cs = mapped_column(String)  # averaged
-    damage = mapped_column(String)  # averaged
-    gold = mapped_column(String)  # averaged
 
     def __init__(self, championPointsUntilNextlevel: int, chestGranted: bool,
                  lastPlayTime: int, championLevel: int, summonerId: str, championPoints: int,
                  championPointsSinceLastLevel: int, tokensEarned: int, winsLoses: str = None,
-                 championWinrate: str = None,
-                 kda: str = None, killsDeathsAssists: str = None, lp: str = None, maxKills: str = None,
-                 maxDeaths: str = None,
-                 cs: str = None, damage: str = None, gold: str = None):
+                 championWinrate: float = None,
+                 kda: str = None, kills: int = None, deaths: int = None, assists: int = None, lp: int = None, maxKills: int = None,
+                 maxDeaths: int = None,
+                 cs: float = None, damage: float = None, gold: float = None):
         self.championPointsUntilNextLevel = championPointsUntilNextlevel
         self.chestGranted = chestGranted
         self.lastPlayTime = lastPlayTime
@@ -119,7 +122,9 @@ class SQLChampionMastery(Base):
         self.winsLoses = winsLoses
         self.championWinrate = championWinrate
         self.kda = kda
-        self.killsDeathsAssists = killsDeathsAssists
+        self.kills = kills
+        self.deaths = deaths
+        self.assists = assists
         self.lp = lp
         self.maxKills = maxKills
         self.maxDeaths = maxDeaths
