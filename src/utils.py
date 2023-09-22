@@ -10,7 +10,7 @@ def parse_game_version(gameVersion: str) -> Match[str]:
     :param gameVersion: game version string with format dd.dd.ddd.ddd where d is any digit
     :return: Match object containing 4 match groups: 1 is season, 2 is patch number
     """
-    regex = re.compile('(\d+)\.(\d+)\.(\d+)\.(\d+)')
+    regex = re.compile(r'(\d+)\.(\d+)\.(\d+)\.(\d+)')
     matches = regex.match(gameVersion)
     return matches
 
@@ -26,7 +26,7 @@ def get_patch(gameVersion: str) -> int:
 
 
 def separateMatchID(matchId: str) -> tuple[str, int]:
-    regex = re.compile("(.+)_(\d+)")
+    regex = re.compile(r'(.+)_(\d+)')
     matches = regex.match(matchId)
     platformId = matches.group(1)
     gameId = int(matches.group(2))
@@ -58,19 +58,19 @@ def is_valid_match(match_info: dict) -> bool:
 
 
 def clean_summoner_data(df: pd.DataFrame) -> pd.DataFrame:
-    winlosesregex = re.compile('(\d+)W (\d+)L')     # regex matching 12 and 5 from string "12W 5L"
-    df['wins '] = re.match(winlosesregex, df['WinsLoses']).group(1).astype(int)
-    df['loses'] = re.match(winlosesregex, df['WinsLoses']).group(2).astype(int)
-    df['championWinrate'] = df['championWinrate'].str.strip('%').astype(float)
-    df['kda'] = df['kda'].astype(float)
-    killsdeathsassistsregex = re.compile('(\d+.\d+)\/(\d+.\d+)\/(\d+.\d+)')  # regex matching 5.2, 4.0 and 5.1 from string "5.2/4.0/5.1"
-    df['kills'] = re.match(killsdeathsassistsregex, df['killsDeathsAssists']).group(1).astype(float)
-    df['deaths'] = re.match(killsdeathsassistsregex, df['killsDeathsAssists']).group(2).astype(float)
-    df['assists'] = re.match(killsdeathsassistsregex, df['killsDeathsAssists']).group(3).astype(float)
-    df['lp'] = df['lp'].astype(int)
-    df['maxKills'] = df['maxKills'].astype(int)
-    df['maxDeaths'] = df['maxDeaths'].astype(int)
-    df['cs'] = df['cd'].astype(float)
-    df['damage'] = df['damage'].astype(float)
-    df['gold'] = df['gold'].astype(float)
+    df_winsloses = df['WinsLoses'].squeeze().str.extract(r'(\d+)W (\d+)L')  # regex matching 12 and 5 from string "12W 5L"
+    df['wins '] = df_winsloses[0]
+    df['loses'] = df_winsloses[1]
+    df['Winrate'] = df['Winrate'].str.strip('%').astype(float)
+    df['KDA'] = df['KDA'].astype(float)
+    df_killsdeathsassists = df['KillsDeathsAssists'].squeeze().str.extract(r'(\d+.\d+)\/(\d+.\d+)\/(\d+.\d+)')  # regex matching 5.2, 4.0 and 5.1 from string "5.2/4.0/5.1"
+    df['kills'] = df_killsdeathsassists[0]
+    df['deaths'] = df_killsdeathsassists[1]
+    df['assists'] = df_killsdeathsassists[0]
+    df['LP'] = df['LP'].str.strip('LP').astype(int)
+    df['MaxKills'] = df['MaxKills'].astype(int)
+    df['MaxDeaths'] = df['MaxDeaths'].astype(int)
+    df['CS'] = df['CS'].astype(float)
+    #df['Damage'] = df['Damage'].astype(float)
+    #df['Gold'] = df['Gold'].str.replace(',', '.').astype(float)    # TODO: change comma display to enlish locale
     return df

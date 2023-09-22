@@ -106,9 +106,10 @@ class SQLChampionMastery(Base):
 
     def __init__(self, championPointsUntilNextlevel: int, chestGranted: bool,
                  lastPlayTime: int, championLevel: int, summonerId: str, championPoints: int,
-                 championPointsSinceLastLevel: int, tokensEarned: int, winsLoses: str = None,
+                 championPointsSinceLastLevel: int, tokensEarned: int, wins: str = None, loses: str = None,
                  championWinrate: float = None,
-                 kda: str = None, kills: int = None, deaths: int = None, assists: int = None, lp: int = None, maxKills: int = None,
+                 kda: str = None, kills: int = None, deaths: int = None, assists: int = None, lp: int = None,
+                 maxKills: int = None,
                  maxDeaths: int = None,
                  cs: float = None, damage: float = None, gold: float = None):
         self.championPointsUntilNextLevel = championPointsUntilNextlevel
@@ -119,7 +120,8 @@ class SQLChampionMastery(Base):
         self.championPoints = championPoints
         self.championPointsSinceLastLevel = championPointsSinceLastLevel
         self.tokensEarned = tokensEarned
-        self.winsLoses = winsLoses
+        self.wins = wins
+        self.loses = loses
         self.championWinrate = championWinrate
         self.kda = kda
         self.kills = kills

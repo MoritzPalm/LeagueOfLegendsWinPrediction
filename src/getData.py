@@ -55,7 +55,7 @@ def getData():
             except Exception as e:  # skip match id if other errors were thrown
                 logger.error(f"skipping match Id {matchID} because of the following error: ")
                 logger.error(str(e))
-                continue
+                raise
             try:
                 session.flush()
                 logger.info(f"session commit")
@@ -65,7 +65,7 @@ def getData():
                 logger.error(str(e))
                 logger.error(f"session rollback because something went wrong with parsing matchId {matchID}")
                 session.rollback()
-                continue
+                raise
 
 
 def parse_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, matchID: str, season: int, patch: int,
