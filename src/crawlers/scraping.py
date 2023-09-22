@@ -122,7 +122,6 @@ def scrape_champion_metrics():
                 pick_rate = row.select("div.rt-td:nth-of-type(6) > span")[0].text.strip()
                 ban_rate = row.select("div.rt-td:nth-of-type(6)")[0].text.strip()
                 matches = row.select("div.rt-td:nth-of-type(8)")[0].text.strip().replace(',', '')
-
                 data.append([rank, champion, tier, win_rate, pick_rate, ban_rate, matches])
 
             except Exception as e:
