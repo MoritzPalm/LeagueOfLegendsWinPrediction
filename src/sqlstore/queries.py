@@ -27,7 +27,7 @@ def champ_patch_present(session: Session, season: int, patch: int) -> bool:
         present: bool = session.query(exists()
                                       .where(sqlstore.champion.SQLChampion.seasonNumber == season)
                                       .where(sqlstore.champion.SQLChampion.patchNumber == patch)).scalar()
-    except sqlalchemy.exc.DatabaseError as e:  # TODO: test if this is correct exception
+    except sqlalchemy.exc.DatabaseError as e:
         logging.warning(e)
         return False
     return present

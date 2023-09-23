@@ -32,14 +32,13 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
             for item in scraped_data.items():
 
                 # Remove special characters and spaces from existing champion name
-                clean_existing_champion_name = re.sub(r'[^\w\s]', '', item[1]['Champion Name']).replace(' ', '')    # TODO: use regex to fix champion name issue
+                clean_existing_champion_name = re.sub(r'[^\w\s]', '', item[1]['Champion Name']).replace(' ', '')    # TODO: fix champion name issue, this regex is not sufficient
 
                 if clean_existing_champion_name == champion:
                     metrics = item[1]
                     break
         except KeyError as e:
             logging.warning(str(e))
-        # TODO: include pick rate in scraping
         champion_obj = SQLChampion(championNumber=int(championdata['key']), championName=championdata['name'],
                                    championTitle=championdata['title'], infoAttack=championdata['info']['attack'],
                                    infoDefense=championdata['info']['defense'], infoMagic=championdata['info']['magic'],

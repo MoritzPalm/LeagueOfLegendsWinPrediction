@@ -128,7 +128,6 @@ class SQLParticipantStats(Base):
     objectivesStolenAssists = mapped_column(Integer)
     onMyWayPings = mapped_column(Integer)
     pentaKills = mapped_column(Integer)
-    # TODO: in matchDto are perks, which do not translate well into this table, consider putting those in separate table
     physicalDamageDealt = mapped_column(Integer)
     physicalDamageDealtToChampions = mapped_column(Integer)
     physicalDamageTaken = mapped_column(Integer)
@@ -192,7 +191,7 @@ class SQLParticipantStats(Base):
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, **kwargs):  # TODO: include challenges and perks
+    def __init__(self, **kwargs):
         for attr in ('allInPings', 'assistMePings', 'assists', 'baitPings', 'baronKills', 'basicPings', 'bountyLevel',
                      'champExperience', 'champLevel', 'championId', 'championName', 'championTransform', 'commandPings',
                      'consumablesPurchased', 'damageDealtToBuildings', 'damageDealtToObjectives',

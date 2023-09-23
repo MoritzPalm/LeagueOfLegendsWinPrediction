@@ -16,11 +16,7 @@ from src.sqlstore import queries
 from src.parsers import champion, summoner, timeline, participant
 
 
-# TODO: review commit strategy
-# TODO: review update strategy
 # TODO: review logging
-# TODO: review control flow
-# TODO: remove pandas dependency
 
 
 def getData():
