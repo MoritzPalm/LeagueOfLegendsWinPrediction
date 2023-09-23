@@ -32,6 +32,7 @@ def getData():
     matchIDs: set[str] = crawler.getMatchIDs(n=args.n)
     logger.info(f"{len(matchIDs)} non-unique matchIDs crawled")
     watcher = LolWatcher(api_key)
+    counter = 0
     with get_session(cleanup=False) as session:
         for matchID in matchIDs:
             try:
@@ -52,40 +53,40 @@ def getData():
                     'info']
                 parse_data(session, watcher, matchID, season, patch, current_match_info, current_match_timeline,
                            args.region)
-            except Exception as e:  # skip match id if other errors were thrown
-                logger.error(f"skipping match Id {matchID} because of the following error: ")
-                logger.error(str(e))
-                raise
-            try:
                 session.flush()
                 logger.info(f"session commit")
                 session.commit()
-                # TODO: this should be handled differently, maybe with postgres ON INSERT.. DO NOTHING?
-            except Exception as e:  # TODO: catch narrow exception
+                counter += 1
+            except Exception as e:  # skip match id if other errors were thrown
+                logger.error(f"skipping match Id {matchID} because of the following error: ")
                 logger.error(str(e))
-                logger.error(f"session rollback because something went wrong with parsing matchId {matchID}")
                 session.rollback()
                 raise
 
 
 def parse_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, matchID: str, season: int, patch: int,
                match_info: dict, match_timeline: dict, region: str) -> None:
-    current_match = SQLMatch(matchId=matchID,
-                             platformId=match_info['platformId'],
-                             gameId=match_info['gameId'],
-                             queueId=match_info['queueId'],
-                             gameVersion=match_info['gameVersion'],
-                             mapId=match_info['mapId'],
-                             gameDuration=match_info['gameDuration'],
-                             gameCreation=match_info['gameCreation'],
-                             )
-    session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
-    # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
-    for participant_data in match_info['participants']:
-        summoner.parse_summoner_data(session=session, watcher=watcher, region=region, puuid=participant_data['puuid'], expiration=14)
-        participant.parse_participant_data(session=session, match=current_match, participant=participant_data)
-    timeline.parse_timeline_data(session=session, platformId=match_info['platformId'],
-                                         gameId=match_info['gameId'], timeline=match_timeline)
+    try:
+        current_match = SQLMatch(matchId=matchID,
+                                 platformId=match_info['platformId'],
+                                 gameId=match_info['gameId'],
+                                 queueId=match_info['queueId'],
+                                 gameVersion=match_info['gameVersion'],
+                                 mapId=match_info['mapId'],
+                                 gameDuration=match_info['gameDuration'],
+                                 gameCreation=match_info['gameCreation'],
+                                 )
+        session.add(current_match)  # if performance is an issue, we can still use the core api, see here:
+        # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
+        for participant_data in match_info['participants']:
+            summoner.parse_summoner_data(session=session, watcher=watcher, region=region,
+                                         puuid=participant_data['puuid'], expiration=14)
+            participant.parse_participant_data(session=session, match=current_match, participant=participant_data)
+
+        timeline.parse_timeline_data(session=session, platformId=match_info['platformId'],
+                                     gameId=match_info['gameId'], timeline=match_timeline)
+    except Exception:
+        raise
 
 
 if __name__ == '__main__':
