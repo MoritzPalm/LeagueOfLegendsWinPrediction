@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import pandas as pd
 import time
+import logging
 
 from src import utils
 
@@ -63,9 +64,10 @@ def scrape_summonerdata(name: str, region: str) -> pd.DataFrame:
                 else:
                     text = 'N/A'
                 row_data.append(text)
-
+            data.append(row_data)
         except Exception as e:
-            print(f"Error in row {i}: {e}")
+            logging.warning(f"Error in row {i}: {e}")
+
 
     # Convert the data to a DataFrame
     columns = ['Champion', 'WinsLoses', 'Winrate', 'KDA', 'KillsDeathsAssists', 'LP', 'MaxKills', 'MaxDeaths', 'CS',
