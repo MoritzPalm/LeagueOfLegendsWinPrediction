@@ -54,6 +54,7 @@ def get_session(cleanup=False) -> Session:
     except exc.SQLAlchemyError as e:
         logger.critical(str(e))
         session.rollback()
+        raise
     finally:
         session.close()
 

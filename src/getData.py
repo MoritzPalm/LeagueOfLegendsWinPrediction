@@ -14,6 +14,7 @@ from src.sqlstore.match import SQLMatch
 from src import utils
 from src.sqlstore import queries
 from src.parsers import champion, summoner, timeline, participant
+from src.buildDataset import build_dataset
 
 
 # TODO: review logging
@@ -112,6 +113,8 @@ if __name__ == '__main__':
     parser.add_argument('-ll', '-otherloglevel', action='store', default='warning', type=str.upper,
                         choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
                         help='choosing the level of logging used by imported code', dest='otherlogginglevel')
+    parser.add_argument('-b', '--build-only', action='store', default=False, type=bool,
+                        help='if True, does not download new data', dest='buildOnly')
 
     args = parser.parse_args()
 
@@ -130,4 +133,8 @@ if __name__ == '__main__':
     logging.getLogger("sqlalchemy.engine").setLevel(otherlogginglevel)
     logging.getLogger("riotwatcher.LolWatcher").setLevel(otherlogginglevel)
     logger.info(f'starting getData.py with arguments {sys.argv}')
-    getData()
+    if not args.buildOnly:
+        getData()
+    build_dataset(size=10)
+
+
