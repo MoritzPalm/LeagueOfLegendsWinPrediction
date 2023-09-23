@@ -42,7 +42,7 @@ def getData():
                     continue
                 season = utils.get_season(current_match_info['gameVersion'])
                 patch = utils.get_patch(current_match_info['gameVersion'])
-                if queries.champ_patch_present(session=session, season=season, patch=patch):
+                if not queries.champ_patch_present(session=session, season=season, patch=patch):
                     logger.info(f"fetching champion data as no data from patch {season}.{patch} in database")
                     champion.parse_champion_data(session, watcher, season, patch)
                 current_match_timeline = watcher.match.timeline_by_match(region=args.region, match_id=matchID)[
