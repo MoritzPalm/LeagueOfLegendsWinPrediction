@@ -32,9 +32,9 @@ def parse_champion_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, se
             for item in scraped_data.items():
 
                 # Remove special characters and spaces from existing champion name
-                clean_existing_champion_name = re.sub(r'[^\w\s]', '', item[1]['Champion Name']).replace(' ', '')
+                clean_existing_champion_name = re.sub(r'[^\w\s]', '', item[1]['Champion Name']).replace(' ', '')    # TODO: use regex to fix champion name issue
 
-                if item[1]['Champion Name'] == champion:
+                if clean_existing_champion_name == champion:
                     metrics = item[1]
                     break
         except KeyError as e:
