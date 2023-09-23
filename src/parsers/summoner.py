@@ -21,7 +21,7 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
     :param watcher: riotwatcher
     :param region:
     :param puuid: encrypted puuid of the summoner
-    :return: True if data has been updated, False otherwise
+    :return: True if all data has been updated, False otherwise
     """
     if queries.check_summoner_present(session, puuid) and queries.check_summoner_data_recent(session, puuid, expiration):
         return False
@@ -58,12 +58,16 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
 
     summoner_champion_data = watcher.champion_mastery.by_summoner(region, summoner_obj.summonerId)
     scraped = scrape_summonerdata(name=summoner_data['name'], region=region)
+    if scraped.empty:
+        return False
     scraped = src.utils.clean_summoner_data(scraped)
     for data in summoner_champion_data:
         with session.no_autoflush:
             championId = data['championId']
             championName = queries.get_champ_name(session, championId)
             scraped_champ = scraped[scraped['Champion'] == championName]
+            if scraped_champ.empty:
+                continue
             try:  # TODO: change logic to prevent writing all none when one scraping field fails
                 summoner_championmastery_obj = SQLChampionMastery(
                     championPointsUntilNextlevel=data['championPointsUntilNextLevel'],
@@ -85,10 +89,8 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
                     maxKills=scraped_champ['MaxKills'][0].item(),
                     maxDeaths=scraped_champ['MaxDeaths'][0].item(),
                     cs=scraped_champ['CS'][0].item(),
-                    damage=None,
-                    #damage=scraped_champ['Damage'].values.flatten().tolist()[0],
-                    gold=None
-                    #gold=scraped_champ['Gold'].values.flatten().tolist()[0]    # TODO: re-enable when gold parsing is fixed
+                    damage=scraped_champ['Damage'][0].item(),
+                    gold=scraped_champ['Gold'][0].item()
                 )
             except KeyError:  # TODO: try to scrape normal game data
                 logging.warning(f"for champion {championId} no scraped data has been found")
@@ -108,4 +110,5 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
                 continue
             champion_obj.mastery.append(summoner_championmastery_obj)
             session.add(summoner_championmastery_obj)
+    return True
 
