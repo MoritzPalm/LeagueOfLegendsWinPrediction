@@ -34,5 +34,12 @@ def build_dataset(size: int):
                 summoner = session.query(SQLSummoner).filter(SQLSummoner.puuid == participant.puuid).one()
                 df_summoner = pd.DataFrame([summoner.__dict__])
                 df_summoner.rename(columns=lambda x: f"participant{i}_" + x, inplace=True)
-                mastery = session.query(SQLChampionMastery).filter(SQLChampionMastery.puuid == participant.puuid).all()
+                #mastery = session.query(SQLChampionMastery).filter(SQLChampionMastery.puuid == participant.puuid,
+                                                                #SQLChampionMastery.championId == stat.championId).one()
+                #df_mastery = pd.DataFrame([mastery.__dict__])
+                #df_mastery.rename(columns=lambda x: f"participant{i}_" + x, inplace=True)
+                #appending all dataframes to df_match
+                df_match = pd.concat([df_match, df_participant, df_summoner], axis=1, copy=False)
+                print(df_match.shape)
+    print("test")
 

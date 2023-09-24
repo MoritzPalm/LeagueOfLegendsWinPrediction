@@ -135,6 +135,6 @@ if __name__ == '__main__':
     logger.info(f'starting getData.py with arguments {sys.argv}')
     if not args.buildOnly:
         getData()
-    build_dataset(size=10)
+    build_dataset(size=1)
 
 
