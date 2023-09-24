@@ -19,7 +19,7 @@ class SQLChampion(Base):
     infoDefense = mapped_column(Integer)
     infoMagic = mapped_column(Integer)
     infoDifficulty = mapped_column(Integer)
-    partype = mapped_column(String(150))   # type of mana or energy (e.g. "Blood Well" for Aatrox)# TODO: fix partype
+    partype = mapped_column(String(150))  # type of mana or energy (e.g. "Blood Well" for Aatrox)# TODO: fix partype
     # Maybe counters, abilities, Tier, maybe range, skill-shot-based, or not, cc-level.., trends in winrates,
     # role flexibility, new skin released (higher playrate)
     # -> this should not be saved in db, instead calculated server/analytics side imo
@@ -73,9 +73,18 @@ class SQLChampion(Base):
     def repr(self):
         return f"<Champion {self.championName} ({self.key}) - {self.championTitle}>"
 
+    def get_training_data(self):
+        return {
+            'champion_number': self.championNumber,
+            'tier': self.tier,
+            'win_rate': self.win_rate,
+            'pick_rate': self.pick_rate,
+            'ban_rate': self.ban_rate,
+            'matches': self.matches
+        }
+
 
 class SQLChampionStats(Base):
-
     __tablename__ = "champion_stats"
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     championId = mapped_column(Integer, ForeignKey("champion.id"), nullable=False)
@@ -104,7 +113,8 @@ class SQLChampionStats(Base):
     timeCreated = mapped_column(DateTime(timezone=True), server_default=func.now())
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
-    def __init__(self, championId: int, patchNumber: int, seasonNumber: int, hp: int, hpperlevel: int, mp: int, mpperlevel: int, movespeed: int, armor: int,
+    def __init__(self, championId: int, patchNumber: int, seasonNumber: int, hp: int, hpperlevel: int, mp: int,
+                 mpperlevel: int, movespeed: int, armor: int,
                  armorperlevel: float, spellblock: int, spellblockperlevel: float, attackrange: int, hpregen: float,
                  hpregenperlevel: float, mpregen: float, mpregenperlevel: float, crit: int, critperlevel: int,
                  attackdamage: int, attackdamageperlevel: float, attackspeed: float):
@@ -172,7 +182,6 @@ class SQLChampionTags(Base):
         self.championId = championId
         self.tag1 = tag1
         self.tag2 = tag2
-
 
     def __repr__(self):
         return f"champion {self.championId} with first tag {self.tag1}"

@@ -37,6 +37,9 @@ class SQLMatch(Base):
     def __repr__(self):
         return f'({self.platformId}) ({self.gameId}) ({self.gameCreation})'
 
+    def get_training_data(self):
+        return {'platformId': self.platformId, 'patch': self.patch, 'season': self.seasonId}
+
 
 class SQLParticipant(Base):
     __tablename__ = "participant"
@@ -90,7 +93,8 @@ class SQLParticipantStats(Base):
     firstBloodKill = mapped_column(Boolean)
     firstTowerAssist = mapped_column(Boolean)
     firstTowerKill = mapped_column(Boolean)
-    gameEndedInEarlySurrender = mapped_column(Boolean)  # TODO: this info should be placed in a general team or match table
+    gameEndedInEarlySurrender = mapped_column(
+        Boolean)  # TODO: this info should be placed in a general team or match table
     gameEndedInSurrender = mapped_column(Boolean)  # TODO: this info should be placed in a general team or match table
     getBackPings = mapped_column(Integer)
     goldEarned = mapped_column(Integer)
@@ -120,8 +124,10 @@ class SQLParticipantStats(Base):
     magicDamageTaken = mapped_column(Integer)
     needVisionPings = mapped_column(Integer)
     neutralMinionsKilled = mapped_column(Integer)
-    nexusKills = mapped_column(Integer)  # This mapped_column is probably only important for special gamemodes, consider deleting it
-    nexusLost = mapped_column(Integer)  # This mapped_column is probably only important for special gamemodes, consider deleting it
+    nexusKills = mapped_column(
+        Integer)  # This mapped_column is probably only important for special gamemodes, consider deleting it
+    nexusLost = mapped_column(
+        Integer)  # This mapped_column is probably only important for special gamemodes, consider deleting it
     nexusTakedowns = mapped_column(
         Integer)  # This mapped_column is probably only important for special gamemodes, consider deleting it
     objectivesStolen = mapped_column(Integer)
@@ -247,6 +253,9 @@ class SQLStatPerk(Base):
     def __repr__(self):
         return f"{self.platformId}_{self.gameId} player {self.puuid} stats"
 
+    def get_training_data(self) -> dict:
+        return {'defense': self.defense, 'flex': self.flex, 'offense': self.offense}
+
 
 class SQLStyle(Base):
     __tablename__ = "participant_style"
@@ -353,7 +362,7 @@ class SQLChallenges(Base):
     laneMinionsFirst10Minutes = mapped_column(Integer)
     laningPhaseGoldExpAdvantage = mapped_column(Integer)
     legendaryCount = mapped_column(Integer)
-    lostAnInhibitor = mapped_column(Boolean)   # TODO: investigate if this is really boolean
+    lostAnInhibitor = mapped_column(Boolean)  # TODO: investigate if this is really boolean
     maxCsAdvantageOnLaneOpponent = mapped_column(Integer)
     maxKillDeficit = mapped_column(Integer)
     maxLevelLeadLaneOpponent = mapped_column(Integer)
@@ -457,4 +466,3 @@ class SQLChallenges(Base):
 
     def __repr__(self):
         return f"challenges in match {self.platformId}_{self.gameId} of player {self.puuid} with number {self.participantId}"
-
