@@ -14,7 +14,7 @@ from src.sqlstore.match import SQLMatch
 from src import utils
 from src.sqlstore import queries
 from src.parsers import champion, summoner, timeline, participant
-from src.buildDataset import build_dataset
+from src.buildDataset import build_static_dataset
 
 
 # TODO: review logging
@@ -77,6 +77,7 @@ def parse_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, matchID: st
         # https://towardsdatascience.com/how-to-perform-bulk-inserts-with-sqlalchemy-efficiently-in-python-23044656b97d
         for participant_data in match_info['participants']:
             summoner.parse_summoner_data(session=session, watcher=watcher, region=region,
+                                         championId=participant_data['championId'],
                                          puuid=participant_data['puuid'], expiration=14)
             participant.parse_participant_data(session=session, match=current_match, participant=participant_data)
 
@@ -135,6 +136,4 @@ if __name__ == '__main__':
     logger.info(f'starting getData.py with arguments {sys.argv}')
     if not args.buildOnly:
         getData()
-    build_dataset(size=1)
-
-
+    build_static_dataset(size=2)

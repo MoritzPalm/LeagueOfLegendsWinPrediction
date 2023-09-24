@@ -11,7 +11,7 @@ from src.sqlstore.champion import SQLChampion
 from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
 
 
-def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, region: str, puuid: str,
+def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, region: str, puuid: str, championId: int,
                         expiration: int) -> bool:
     """
     checks if summoner data (different Ids, win rates, rank, etc.) is more recent than expiration date
@@ -23,7 +23,8 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
     :param puuid: encrypted puuid of the summoner
     :return: True if all data has been updated, False otherwise
     """
-    if queries.check_summoner_present(session, puuid) and queries.check_summoner_data_recent(session, puuid, expiration):
+    if queries.check_summoner_present(session, puuid) and queries.check_summoner_data_recent(session, puuid,
+                                                                                             expiration):
         return False
     summoner_data = watcher.summoner.by_puuid(region=region, encrypted_puuid=puuid)
     summoner_obj = SQLSummoner(summoner_data['puuid'],
@@ -56,7 +57,8 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
     summoner_obj.leagues.append(summoner_league_obj)
     session.add(summoner_league_obj)
 
-    summoner_champion_data = watcher.champion_mastery.by_summoner(region, summoner_obj.summonerId)
+    summoner_champion_data = watcher.champion_mastery.by_summoner_by_champion(region, summoner_obj.summonerId,
+                                                                              championId)
     scraped = scrape_summonerdata(name=summoner_data['name'], region=region)
     if scraped.empty:
         return False
@@ -111,4 +113,3 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
             champion_obj.mastery.append(summoner_championmastery_obj)
             session.add(summoner_championmastery_obj)
     return True
-
