@@ -3,7 +3,7 @@ from typing import Tuple, Any
 import sqlalchemy.orm
 from sqlalchemy import select, Row
 from sqlalchemy import func
-from src.sqlstore.match import SQLMatch, SQLParticipant
+from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats
 from src.sqlstore.champion import SQLChampion
 from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
 from src.sqlstore.db import get_session
@@ -21,12 +21,18 @@ def build_dataset(size: int):
     with get_session() as session:
         matches = session.query(SQLMatch).order_by(func.random()).limit(size).all()
         for match in matches:
+            # wrapping the dict in a list to prevent missing index issues, this is hacky and may have unforeseen issues
+            df_match = pd.DataFrame([match.__dict__])
             participants = session.query(SQLParticipant).filter(SQLParticipant.matchId == match.matchId).all()
             assert len(participants) == 10
-            summoners = []
-            for participant in participants:
+            for i, participant in enumerate(participants):
+                stat: SQLParticipantStats = session.query(SQLParticipantStats).filter(
+                    SQLParticipantStats.participantId == participant.id).one()
+                df_participant = pd.DataFrame([stat.__dict__])
+                # renames all columns to have a participant and the number in front of the attribute
+                df_participant.rename(columns=lambda x: f"participant{i}_" + x, inplace=True)
                 summoner = session.query(SQLSummoner).filter(SQLSummoner.puuid == participant.puuid).one()
-                summoners.append(summoner)
-
-
+                df_summoner = pd.DataFrame([summoner.__dict__])
+                df_summoner.rename(columns=lambda x: f"participant{i}_" + x, inplace=True)
+                mastery = session.query(SQLChampionMastery).filter(SQLChampionMastery.puuid == participant.puuid).all()
 
