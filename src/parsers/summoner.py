@@ -5,7 +5,7 @@ from sqlalchemy.sql import select
 from riotwatcher import LolWatcher
 
 import src.utils
-from src.crawlers.scraping import scrape_summonerdata
+from src.crawlers.scraping import run_spider
 from src.sqlstore import queries
 from src.sqlstore.champion import SQLChampion
 from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
