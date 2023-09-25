@@ -9,6 +9,7 @@ from src.crawlers.scraping import run_spider
 from src.sqlstore import queries
 from src.sqlstore.champion import SQLChampion
 from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
+from src.crawlers.scraping import run_spider, result_queue
 
 
 def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, region: str, puuid: str, championId: int,
@@ -59,7 +60,8 @@ def parse_summoner_data(session: sqlalchemy.orm.Session, watcher: LolWatcher, re
 
     summoner_champion_data = watcher.champion_mastery.by_summoner_by_champion(region, summoner_obj.summonerId,
                                                                               championId)
-    scraped = scrape_summonerdata(name=summoner_data['name'], region=region)
+    scraping = run_spider(summoner_name=summoner_data['name'], region=region, champion=championId)
+    scraped = result_queue.get()
     if scraped.empty:
         return False
     scraped = src.utils.clean_summoner_data(scraped)

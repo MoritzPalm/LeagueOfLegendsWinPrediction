@@ -114,7 +114,7 @@ if __name__ == '__main__':
     parser.add_argument('-ll', '-otherloglevel', action='store', default='warning', type=str.upper,
                         choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
                         help='choosing the level of logging used by imported code', dest='otherlogginglevel')
-    parser.add_argument('-b', '--buildOnly', action='store_false',
+    parser.add_argument('-b', '--buildOnly', action='store_true',
                         help='if flag is set, does not fetch new data', dest='buildOnly')
 
     args = parser.parse_args()

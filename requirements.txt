@@ -1,9 +1,13 @@
 riotwatcher==3.2.5
 SQLAlchemy==2.0.20
 
-tqdm~=4.65.0
 requests~=2.31.0
 pandas~=1.5.3
 selenium~=3.141.0
 beautifulsoup4~=4.12.2
 roman~=4.1
+scrapy~=2.8.0
+twisted~=22.10.0
+scrapy-inline-requests~=0.3.1
+configparser~=5.0.2
+numpy~=1.25.2

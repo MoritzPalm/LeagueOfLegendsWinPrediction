@@ -23,6 +23,7 @@ result_queue = Queue()
 class MySpider(Spider):
     name = 'my_spider'
     custom_settings = {'LOG_LEVEL': 'INFO'}
+    data = {}
 
     def __init__(self, summoner_name, region, champion, *args, **kwargs):
         super(MySpider, self).__init__(*args, **kwargs)
@@ -31,11 +32,9 @@ class MySpider(Spider):
 
     @inline_requests
     def parse(self, response):
-        data = {}
         columns = ['rank', 'champion', 'winRate', 'winsLoses', 'kda', 'kills', 'deaths', 'assists', 'lp', 'maxKills',
                    'maxKills', 'cs', 'damage', 'gold']
         row_index = 1
-
         while True:
             try:
                 row = {}
@@ -56,9 +55,7 @@ class MySpider(Spider):
                     f"{base_selector} > div:nth-child(9) > span:nth-child(1)::text",
                     f"{base_selector} > div:nth-child(10) > span:nth-child(1)::text"
                 ]
-
                 is_row_empty = True
-
                 for column, selector in zip(columns, selectors):
                     item = response.css(selector).get()
                     if item:
@@ -68,27 +65,19 @@ class MySpider(Spider):
                             item = item.rstrip("%")
                         elif column in ["damage", "gold"]:
                             item = item.replace(",", "")
-
                         row[column] = item
                     else:
                         row[column] = 'N/A'
-
                 if is_row_empty:
                     break
-
                 if row.get('champion') == self.champion:
-                    data[f"Row {row_index}"] = row
-
+                    self.data[f"Row {row_index}"] = row
                 row_index += 1
-
             except Exception as e:
                 self.log(f"Error: {e}")
                 break
 
-        print("Scraped data as dictionary:")
-        print(data)
-        result_queue.put(data)
-        yield
+        yield self.data
 
 
 def stop_reactor(_):
@@ -101,9 +90,12 @@ def run_spider(summoner_name, region, champion):
     deferred = runner.crawl(MySpider, summoner_name=summoner_name, region=region, champion=champion)
     deferred.addBoth(stop_reactor)
     reactor.run()
+    print("test")
 
-# Get the result from the queueue
-scraped_data = result_queue.get()
+
+# Get the result from the queue
+# scraped_data = result_queue.get()
+
 
 def scrape_champion_metrics():
     options = Options()
