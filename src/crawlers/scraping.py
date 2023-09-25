@@ -10,64 +10,100 @@ import logging
 
 from src import utils
 
-from scrapy import Spider
+from scrapy import Spider, Request
 from scrapy.crawler import CrawlerRunner
 from twisted.internet import reactor
 from scrapy.utils.log import configure_logging
-import csv
-from io import StringIO
-from twisted.internet.defer import inlineCallbacks, returnValue
+from queue import Queue
+from inline_requests import inline_requests
+
+result_queue = Queue()
+
 
 class MySpider(Spider):
     name = 'my_spider'
     custom_settings = {'LOG_LEVEL': 'INFO'}
 
-    def __init__(self, summoner_name, region, *args, **kwargs):
+    def __init__(self, summoner_name, region, champion, *args, **kwargs):
         super(MySpider, self).__init__(*args, **kwargs)
         self.start_urls = [f"https://u.gg/lol/profile/{region}/{summoner_name}/champion-stats"]
-        self.data = {}
-        self.columns = ['Rank', 'Champion', 'Win Rate', 'Wins/Loses', 'Unnamed', 'Kills', 'Deaths', 'Assists', 'LP',
-                        'Max Kills', 'Max Deaths', 'CS', 'Damage', 'Gold']
+        self.champion = champion
 
+    @inline_requests
     def parse(self, response):
-        try:
-            row = {}
-            selectors = [
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(1) > span:nth-child(1)::text",
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > span:nth-child(2)::text",
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > strong:nth-child(1)::text",
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > span:nth-child(3)::text",
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > strong:nth-child(1)::text",
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > span:nth-child(2) > strong:nth-child(1)::text",
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > span:nth-child(2) > strong:nth-child(3)::text",
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > span:nth-child(2) > strong:nth-child(5)::text",
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(5) > span:nth-child(1) > span:nth-child(2)::text",
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(6) > span:nth-child(1)::text",
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(7) > span:nth-child(1)::text",
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(8) > span:nth-child(1)::text",
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(9) > span:nth-child(1)::text",
-                "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(10) > span:nth-child(1)::text",
-            ]
-            for col, selector in zip(self.columns, selectors):
-                item = response.css(selector).get()
-                row[col] = item.strip() if item else 'N/A'
-            self.data.update(row)
+        data = {}
+        columns = ['rank', 'champion', 'winRate', 'winsLoses', 'kda', 'kills', 'deaths', 'assists', 'lp', 'maxKills',
+                   'maxKills', 'cs', 'damage', 'gold']
+        row_index = 1
 
-        except Exception as e:
-            self.log(f"Error: {e}")
+        while True:
+            try:
+                row = {}
+                base_selector = f"div.rt-tr-group:nth-child({row_index}) > div:nth-child(1)"
+                selectors = [
+                    f"{base_selector} > div:nth-child(1) > span:nth-child(1)::text",
+                    f"{base_selector} > div:nth-child(2) > div:nth-child(1) > span:nth-child(2)::text",
+                    f"{base_selector} > div:nth-child(3) > div:nth-child(1) > strong:nth-child(1)::text",
+                    f"{base_selector} > div:nth-child(3) > div:nth-child(1) > span:nth-child(3)::text",
+                    f"{base_selector} > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > strong:nth-child(1)::text",
+                    f"{base_selector} > div:nth-child(4) > div:nth-child(1) > span:nth-child(2) > strong:nth-child(1)::text",
+                    f"{base_selector} > div:nth-child(4) > div:nth-child(1) > span:nth-child(2) > strong:nth-child(3)::text",
+                    f"{base_selector} > div:nth-child(4) > div:nth-child(1) > span:nth-child(2) > strong:nth-child(5)::text",
+                    f"{base_selector} > div:nth-child(5) > span:nth-child(1) > span:nth-child(2)::text",
+                    f"{base_selector} > div:nth-child(6) > span:nth-child(1)::text",
+                    f"{base_selector} > div:nth-child(7) > span:nth-child(1)::text",
+                    f"{base_selector} > div:nth-child(8) > span:nth-child(1)::text",
+                    f"{base_selector} > div:nth-child(9) > span:nth-child(1)::text",
+                    f"{base_selector} > div:nth-child(10) > span:nth-child(1)::text"
+                ]
 
-    def closed(self, reason):
-        reactor.stop()
+                is_row_empty = True
 
-def run_spider(summoner_name, region):
+                for column, selector in zip(columns, selectors):
+                    item = response.css(selector).get()
+                    if item:
+                        is_row_empty = False
+                        item = item.strip()
+                        if column == "winRate":
+                            item = item.rstrip("%")
+                        elif column in ["damage", "gold"]:
+                            item = item.replace(",", "")
+
+                        row[column] = item
+                    else:
+                        row[column] = 'N/A'
+
+                if is_row_empty:
+                    break
+
+                if row.get('champion') == self.champion:
+                    data[f"Row {row_index}"] = row
+
+                row_index += 1
+
+            except Exception as e:
+                self.log(f"Error: {e}")
+                break
+
+        print("Scraped data as dictionary:")
+        print(data)
+        result_queue.put(data)
+        yield
+
+
+def stop_reactor(_):
+    reactor.stop()
+
+
+def run_spider(summoner_name, region, champion):
     configure_logging({'LOG_LEVEL': 'INFO'})
     runner = CrawlerRunner()
-    spider = MySpider(summoner_name=summoner_name, region=region)
-    d = runner.crawl(spider)
-    d.addBoth(lambda _: reactor.stop())
+    deferred = runner.crawl(MySpider, summoner_name=summoner_name, region=region, champion=champion)
+    deferred.addBoth(stop_reactor)
     reactor.run()
 
-    return spider.data
+# Get the result from the queueue
+scraped_data = result_queue.get()
 
 def scrape_champion_metrics():
     options = Options()
