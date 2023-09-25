@@ -16,23 +16,22 @@ from twisted.internet import reactor
 from scrapy.utils.log import configure_logging
 import csv
 from io import StringIO
-
+from twisted.internet.defer import inlineCallbacks, returnValue
 
 class MySpider(Spider):
     name = 'my_spider'
     custom_settings = {'LOG_LEVEL': 'INFO'}
 
-    def __init__(self, summoner_name, *args, **kwargs):
+    def __init__(self, summoner_name, region, *args, **kwargs):
         super(MySpider, self).__init__(*args, **kwargs)
-        self.start_urls = [f"https://u.gg/lol/profile/euw1/{summoner_name}/champion-stats"]
+        self.start_urls = [f"https://u.gg/lol/profile/{region}/{summoner_name}/champion-stats"]
+        self.data = {}
+        self.columns = ['Rank', 'Champion', 'Win Rate', 'Wins/Loses', 'Unnamed', 'Kills', 'Deaths', 'Assists', 'LP',
+                        'Max Kills', 'Max Deaths', 'CS', 'Damage', 'Gold']
 
     def parse(self, response):
-        data = []
-        columns = ['Rank', 'Champion', 'Win Rate', 'Wins/Loses', 'Unnamed', 'Kills', 'Deaths', 'Assists', 'LP',
-                   'Max Kills', 'Max Deaths', 'CS', 'Damage', 'Gold']
-
         try:
-            row = []
+            row = {}
             selectors = [
                 "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(1) > span:nth-child(1)::text",
                 "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > span:nth-child(2)::text",
@@ -49,30 +48,26 @@ class MySpider(Spider):
                 "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(9) > span:nth-child(1)::text",
                 "div.rt-tr-group:nth-child(1) > div:nth-child(1) > div:nth-child(10) > span:nth-child(1)::text",
             ]
-            for selector in selectors:
+            for col, selector in zip(self.columns, selectors):
                 item = response.css(selector).get()
-                row.append(item.strip() if item else 'N/A')
-            data.append(row)
+                row[col] = item.strip() if item else 'N/A'
+            self.data.update(row)
 
         except Exception as e:
             self.log(f"Error: {e}")
 
+    def closed(self, reason):
+        reactor.stop()
 
-def run_spider(summoner_name):
+def run_spider(summoner_name, region):
     configure_logging({'LOG_LEVEL': 'INFO'})
     runner = CrawlerRunner()
-    d = runner.crawl(MySpider, summoner_name=summoner_name)
+    spider = MySpider(summoner_name=summoner_name, region=region)
+    d = runner.crawl(spider)
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
 
-    # Convert the data to a DataFrame
-    columns = ['Champion', 'WinsLoses', 'Winrate', 'KDA', 'KillsDeathsAssists', 'LP', 'MaxKills', 'MaxDeaths', 'CS',
-               'Damage', 'Gold']
-    df_individual = pd.DataFrame(data, columns=columns)
-
-    # Display the DataFrame
-    return df_individual
-
+    return spider.data
 
 def scrape_champion_metrics():
     options = Options()
