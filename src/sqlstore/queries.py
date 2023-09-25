@@ -12,7 +12,9 @@ from src.sqlstore.summoner import SQLSummoner
 
 
 def check_matchId_present(session: Session, matchID: str) -> bool:
-    return session.query(exists().where(sqlstore.match.SQLMatch.matchId == matchID)).scalar()
+    return session.query(
+        exists().where(sqlstore.match.SQLMatch.matchId == matchID)
+    ).scalar()
 
 
 def champ_patch_present(session: Session, season: int, patch: int) -> bool:
@@ -24,9 +26,11 @@ def champ_patch_present(session: Session, season: int, patch: int) -> bool:
     :return: True if champion data is already present in table, False otherwise or if no table has been found
     """
     try:
-        present: bool = session.query(exists()
-                                      .where(sqlstore.champion.SQLChampion.seasonNumber == season)
-                                      .where(sqlstore.champion.SQLChampion.patchNumber == patch)).scalar()
+        present: bool = session.query(
+            exists()
+            .where(sqlstore.champion.SQLChampion.seasonNumber == season)
+            .where(sqlstore.champion.SQLChampion.patchNumber == patch)
+        ).scalar()
     except sqlalchemy.exc.DatabaseError as e:
         logging.warning(e)
         return False
@@ -34,10 +38,14 @@ def champ_patch_present(session: Session, season: int, patch: int) -> bool:
 
 
 def check_summoner_present(session: sqlalchemy.orm.Session, puuid: str) -> bool:
-    return session.query(session.query(SQLSummoner).filter(SQLSummoner.puuid == puuid).exists()).scalar()
+    return session.query(
+        session.query(SQLSummoner).filter(SQLSummoner.puuid == puuid).exists()
+    ).scalar()
 
 
-def check_summoner_data_recent(session: sqlalchemy.orm.Session, puuid: str, expiration_time: int) -> bool:
+def check_summoner_data_recent(
+    session: sqlalchemy.orm.Session, puuid: str, expiration_time: int
+) -> bool:
     """
     checks if the data in the database for the specified summoner is older than expiration_time
     :param session: sqlalchemy session
@@ -51,7 +59,9 @@ def check_summoner_data_recent(session: sqlalchemy.orm.Session, puuid: str, expi
     result = session.execute(query).first()
     if result is None:
         return False
-    if result[0].lastUpdate is None:    # has never been updated, need to get first creation time
+    if (
+        result[0].lastUpdate is None
+    ):  # has never been updated, need to get first creation time
         lastUpdate: datetime.date = result[0].timeCreated
     else:
         lastUpdate: datetime.date = result[0].lastUpdate
@@ -68,12 +78,17 @@ def get_last_champion(session: sqlalchemy.orm.Session, championId: int) -> SQLCh
     :param championId: number of the champion defined by riot games
     :return: sqlstore.champion.SQLChampion object
     """
-    query = select(SQLChampion).filter(SQLChampion.championNumber == championId).order_by(
-        SQLChampion.lastUpdate)
+    query = (
+        select(SQLChampion)
+        .filter(SQLChampion.championNumber == championId)
+        .order_by(SQLChampion.lastUpdate)
+    )
     champion_obj = session.execute(query).scalar()
     return champion_obj
 
 
 def get_champ_name(session: sqlalchemy.orm.Session, championId: int) -> str:
-    query = select(SQLChampion.championName).filter(SQLChampion.championNumber == championId)
+    query = select(SQLChampion.championName).filter(
+        SQLChampion.championNumber == championId
+    )
     return session.execute(query).scalar()

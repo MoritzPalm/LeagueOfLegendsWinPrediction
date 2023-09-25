@@ -9,7 +9,7 @@ from configparser import ConfigParser
 logger = logging.getLogger(__name__)
 
 
-def db_config(filename='src/database.ini', section='postgresql') -> dict:
+def db_config(filename="src/database.ini", section="postgresql") -> dict:
     db_configparser = ConfigParser()
     try:
         with open(filename) as f:
@@ -29,12 +29,13 @@ def db_config(filename='src/database.ini', section='postgresql') -> dict:
 def connect_to_db():
     """Connect to db and return the engine object"""
     config: dict = db_config()
-    url_object = URL.create('postgresql+psycopg2',
-                            username=config['user'],
-                            password=config['password'],
-                            host=config['host'],
-                            database=config['database'],
-                            )
+    url_object = URL.create(
+        "postgresql+psycopg2",
+        username=config["user"],
+        password=config["password"],
+        host=config["host"],
+        database=config["database"],
+    )
     logger.info(f"creating engine object with {url_object}")
     return create_engine(url_object)
 

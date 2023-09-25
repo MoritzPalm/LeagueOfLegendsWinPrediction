@@ -21,24 +21,42 @@ result_queue = Queue()
 
 
 class MySpider(Spider):
-    name = 'my_spider'
-    custom_settings = {'LOG_LEVEL': 'INFO'}
+    name = "my_spider"
+    custom_settings = {"LOG_LEVEL": "INFO"}
     data = {}
 
     def __init__(self, summoner_name, region, champion, *args, **kwargs):
         super(MySpider, self).__init__(*args, **kwargs)
-        self.start_urls = [f"https://u.gg/lol/profile/{region}/{summoner_name}/champion-stats"]
+        self.start_urls = [
+            f"https://u.gg/lol/profile/{region}/{summoner_name}/champion-stats"
+        ]
         self.champion = champion
 
     @inline_requests
     def parse(self, response):
-        columns = ['rank', 'champion', 'winRate', 'winsLoses', 'kda', 'kills', 'deaths', 'assists', 'lp', 'maxKills',
-                   'maxKills', 'cs', 'damage', 'gold']
+        columns = [
+            "rank",
+            "champion",
+            "winRate",
+            "winsLoses",
+            "kda",
+            "kills",
+            "deaths",
+            "assists",
+            "lp",
+            "maxKills",
+            "maxKills",
+            "cs",
+            "damage",
+            "gold",
+        ]
         row_index = 1
         while True:
             try:
                 row = {}
-                base_selector = f"div.rt-tr-group:nth-child({row_index}) > div:nth-child(1)"
+                base_selector = (
+                    f"div.rt-tr-group:nth-child({row_index}) > div:nth-child(1)"
+                )
                 selectors = [
                     f"{base_selector} > div:nth-child(1) > span:nth-child(1)::text",
                     f"{base_selector} > div:nth-child(2) > div:nth-child(1) > span:nth-child(2)::text",
@@ -53,7 +71,7 @@ class MySpider(Spider):
                     f"{base_selector} > div:nth-child(7) > span:nth-child(1)::text",
                     f"{base_selector} > div:nth-child(8) > span:nth-child(1)::text",
                     f"{base_selector} > div:nth-child(9) > span:nth-child(1)::text",
-                    f"{base_selector} > div:nth-child(10) > span:nth-child(1)::text"
+                    f"{base_selector} > div:nth-child(10) > span:nth-child(1)::text",
                 ]
                 is_row_empty = True
                 for column, selector in zip(columns, selectors):
@@ -67,10 +85,10 @@ class MySpider(Spider):
                             item = item.replace(",", "")
                         row[column] = item
                     else:
-                        row[column] = 'N/A'
+                        row[column] = "N/A"
                 if is_row_empty:
                     break
-                if row.get('champion') == self.champion:
+                if row.get("champion") == self.champion:
                     self.data[f"Row {row_index}"] = row
                 row_index += 1
             except Exception as e:
@@ -85,9 +103,11 @@ def stop_reactor(_):
 
 
 def run_spider(summoner_name, region, champion):
-    configure_logging({'LOG_LEVEL': 'INFO'})
+    configure_logging({"LOG_LEVEL": "INFO"})
     runner = CrawlerRunner()
-    deferred = runner.crawl(MySpider, summoner_name=summoner_name, region=region, champion=champion)
+    deferred = runner.crawl(
+        MySpider, summoner_name=summoner_name, region=region, champion=champion
+    )
     deferred.addBoth(stop_reactor)
     reactor.run()
     print("test")
@@ -116,7 +136,9 @@ def scrape_champion_metrics():
 
     # Initialize WebDriverWait and wait until the rows in the table are loaded
     wait = WebDriverWait(driver, 10)
-    wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.rt-tr-group")))
+    wait.until(
+        EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.rt-tr-group"))
+    )
 
     # Initialize empty list to store data
     data = []
@@ -129,7 +151,7 @@ def scrape_champion_metrics():
         time.sleep(1)
 
         html_source = driver.page_source
-        soup = BeautifulSoup(html_source, 'html.parser')
+        soup = BeautifulSoup(html_source, "html.parser")
         rows = soup.select("div.rt-tr-group")
 
         # Break if there are no rows or if we've scraped all the rows
@@ -143,16 +165,32 @@ def scrape_champion_metrics():
                 champion = row.select("div.rt-td:nth-of-type(3)")[0].text.strip()
                 tier = row.select("div.rt-td:nth-of-type(4)")[0].text.strip()
                 win_rate = row.select("div.rt-td:nth-of-type(5)")[0].text.strip()
-                pick_rate = row.select("div.rt-td:nth-of-type(6) > span")[0].text.strip()
+                pick_rate = row.select("div.rt-td:nth-of-type(6) > span")[
+                    0
+                ].text.strip()
                 ban_rate = row.select("div.rt-td:nth-of-type(6)")[0].text.strip()
-                matches = row.select("div.rt-td:nth-of-type(8)")[0].text.strip().replace(',', '')
-                data.append([rank, champion, tier, win_rate, pick_rate, ban_rate, matches])
+                matches = (
+                    row.select("div.rt-td:nth-of-type(8)")[0]
+                    .text.strip()
+                    .replace(",", "")
+                )
+                data.append(
+                    [rank, champion, tier, win_rate, pick_rate, ban_rate, matches]
+                )
 
             except Exception as e:
                 print(f"Error in row {i}: {e}")
 
     # Define columns for the DataFrame
-    columns = ['Rank', 'Champion Name', 'Tier', 'Win rate', 'Pick Rate', 'Ban Rate', 'Matches']
+    columns = [
+        "Rank",
+        "Champion Name",
+        "Tier",
+        "Win rate",
+        "Pick Rate",
+        "Ban Rate",
+        "Matches",
+    ]
 
     # Create a DataFrame from the scraped data
     df_scraped = pd.DataFrame(data, columns=columns)
@@ -160,4 +198,4 @@ def scrape_champion_metrics():
     driver.quit()
     df_scraped = utils.clean_champion_data(df_scraped)
     # Return the DataFrame converted to a dictionary, indexed by "Champion Name"
-    return df_scraped.reset_index().to_dict('index')
+    return df_scraped.reset_index().to_dict("index")
