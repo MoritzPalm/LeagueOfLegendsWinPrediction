@@ -70,20 +70,20 @@ class MatchIdCrawler:
     queue_options_ = ["RANKED_SOLO_5x5", "RANKED_FLEX_SR", "RANKED_FLEX_TT"]
 
     def __init__(
-        self,
-        api_key: str,
-        region: str = "euw1",
-        tier: str = "CHALLENGER",
-        queue: str = "RANKED_SOLO_5x5",
+            self,
+            api_key: str,
+            region: str = "euw1",
+            tier: str = "CHALLENGER",
+            queue: str = "RANKED_SOLO_5x5",
     ):
         # Error checking
         # api_key
-        if type(api_key) != str:
+        if not isinstance(api_key, str):
             raise TypeError("Invalid API key.")
         else:
             self.api_key = api_key
         # region
-        if type(region) != str:
+        if not isinstance(region, str):
             raise TypeError("Invalid type for region.")
         elif region not in self.region_options_:
             raise ValueError(
@@ -93,7 +93,7 @@ class MatchIdCrawler:
         else:
             self.region = region
         # tier
-        if type(tier) != str:
+        if not isinstance(tier, str):
             raise TypeError("Invalid type for tier.")
         elif tier not in self.tier_options_:
             raise ValueError(
@@ -103,7 +103,7 @@ class MatchIdCrawler:
         else:
             self.tier = tier
         # queue
-        if type(queue) != str:
+        if not isinstance(queue, str):
             raise TypeError("Invalid type for queue.")
         elif queue not in self.queue_options_:
             raise ValueError(
@@ -116,7 +116,7 @@ class MatchIdCrawler:
         self.watcher = LolWatcher(api_key=self.api_key)
 
     def getMatchIDs(
-        self, n: int, match_per_id: int = 15, cutoff: int = 16, excludingIDs: set = None
+            self, n: int, match_per_id: int = 15, cutoff: int = 16, excludingIDs: set = None
     ) -> set:
         """
         n : int
