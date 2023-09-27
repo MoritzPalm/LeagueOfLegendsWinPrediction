@@ -32,7 +32,7 @@ def getData():
     logger.info(f"{len(matchIDs)} non-unique matchIDs crawled")
     watcher = LolWatcher(api_key)
     counter = 0
-    with get_session(cleanup=True) as session:
+    with get_session(cleanup=False) as session:
         for matchID in matchIDs:
             try:
                 if queries.check_matchId_present(session, matchID):
