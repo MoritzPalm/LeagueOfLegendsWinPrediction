@@ -8,7 +8,7 @@ import pandas as pd
 import src.utils
 from src.sqlstore import queries
 from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
-from src.scraping.spider import MySpider
+from src.scraping.myspider import MySpider
 
 
 def parse_summoner_data(
