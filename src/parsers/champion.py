@@ -3,7 +3,7 @@ import logging
 import sqlalchemy.orm
 from riotwatcher import LolWatcher
 
-from src.scraping.spider import scrape_champion_metrics
+from src.scraping.myspider import scrape_champion_metrics
 from src.sqlstore.champion import SQLChampionTags, SQLChampion, SQLChampionStats
 
 import re
