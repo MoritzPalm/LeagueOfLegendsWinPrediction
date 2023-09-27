@@ -10,8 +10,8 @@ import time
 
 from src import utils
 
-from scrapy import Item, Field
 from scrapy.spiders import Spider, Request
+from scrapy.item import Item, Field
 
 
 class MySpider(Spider):
