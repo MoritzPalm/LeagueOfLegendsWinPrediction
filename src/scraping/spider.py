@@ -1,3 +1,4 @@
+import scrapy
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -6,24 +7,17 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import pandas as pd
 import time
-import logging
 
 from src import utils
 
-from scrapy import Spider, Request
-from scrapy.crawler import CrawlerRunner
-from twisted.internet import reactor
-from scrapy.utils.log import configure_logging
-from queue import Queue
-from inline_requests import inline_requests
-
-result_queue = Queue()
+from scrapy import Spider, Request, Item, Field
 
 
 class MySpider(Spider):
     name = "my_spider"
-    custom_settings = {"LOG_LEVEL": "INFO"}
-    data = {}
+    custom_settings = {
+        "ITEM_PIPELINES": {"src.scraping.pipeline.DataPipeline": 300},
+    }
 
     def __init__(self, summoner_name, region, champion, *args, **kwargs):
         super(MySpider, self).__init__(*args, **kwargs)
@@ -31,8 +25,12 @@ class MySpider(Spider):
             f"https://u.gg/lol/profile/{region}/{summoner_name}/champion-stats"
         ]
         self.champion = champion
+        self.data = {}
 
-    @inline_requests
+    def start_requests(self):
+        for url in self.start_urls:
+            yield Request(url=url, callback=self.parse)
+
     def parse(self, response):
         columns = [
             "rank",
@@ -89,32 +87,42 @@ class MySpider(Spider):
                 if is_row_empty:
                     break
                 if row.get("champion") == self.champion:
-                    self.data[f"Row {row_index}"] = row
+                    item = SummonerItem()
+                    item['rank'] = row['rank']
+                    item['champion'] = row['champion']
+                    item['winRate'] = row['winRate']
+                    item['winsLoses'] = row['winsLoses']
+                    item['kda'] = row['kda']
+                    item['kills'] = row['kills']
+                    item['deaths'] = row['deaths']
+                    item['assists'] = row['assists']
+                    item['lp'] = row['lp']
+                    item['maxKills'] = row['maxKills']
+                    item['cs'] = row['cs']
+                    item['damage'] = row['damage']
+                    item['gold'] = row['gold']
+                    yield item
                 row_index += 1
             except Exception as e:
                 self.log(f"Error: {e}")
                 break
-
-        yield self.data
-
-
-def stop_reactor(_):
-    reactor.stop()
+        return self.data
 
 
-def run_spider(summoner_name, region, champion):
-    configure_logging({"LOG_LEVEL": "INFO"})
-    runner = CrawlerRunner()
-    deferred = runner.crawl(
-        MySpider, summoner_name=summoner_name, region=region, champion=champion
-    )
-    deferred.addBoth(stop_reactor)
-    reactor.run()
-    print("test")
-
-
-# Get the result from the queue
-# scraped_data = result_queue.get()
+class SummonerItem(Item):
+    rank = Field()
+    champion = Field()
+    winRate = Field()
+    winsLoses = Field()
+    kda = Field()
+    kills = Field()
+    deaths = Field()
+    assists = Field()
+    lp = Field()
+    maxKills = Field()
+    cs = Field()
+    damage = Field()
+    gold = Field()
 
 
 def scrape_champion_metrics():

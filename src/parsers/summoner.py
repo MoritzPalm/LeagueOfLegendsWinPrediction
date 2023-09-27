@@ -1,24 +1,22 @@
 import logging
 
 import sqlalchemy.orm
-from sqlalchemy.sql import select
 from riotwatcher import LolWatcher
+from scrapy.crawler import CrawlerProcess
 
 import src.utils
-from src.crawlers.scraping import run_spider
 from src.sqlstore import queries
-from src.sqlstore.champion import SQLChampion
 from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
-from src.crawlers.scraping import run_spider, result_queue
+from src.scraping.spider import MySpider
 
 
 def parse_summoner_data(
-    session: sqlalchemy.orm.Session,
-    watcher: LolWatcher,
-    region: str,
-    puuid: str,
-    championId: int,
-    expiration: int,
+        session: sqlalchemy.orm.Session,
+        watcher: LolWatcher,
+        region: str,
+        puuid: str,
+        championId: int,
+        expiration: int,
 ) -> bool:
     """
     checks if summoner data (different Ids, win rates, rank, etc.) is more recent than expiration date
@@ -31,7 +29,7 @@ def parse_summoner_data(
     :return: True if all data has been updated, False otherwise
     """
     if queries.check_summoner_present(
-        session, puuid
+            session, puuid
     ) and queries.check_summoner_data_recent(session, puuid, expiration):
         return False
     summoner_data = watcher.summoner.by_puuid(region=region, encrypted_puuid=puuid)
@@ -72,11 +70,12 @@ def parse_summoner_data(
     summoner_champion_data = watcher.champion_mastery.by_summoner_by_champion(
         region, summoner_obj.summonerId, championId
     )
-    scraping = run_spider(
-        summoner_name=summoner_data["name"], region=region, champion=championId
-    )
-    scraped = result_queue.get()
-    if scraped.empty:
+    championName = queries.get_champ_name(session, championId)
+    process = CrawlerProcess()
+    process.crawl(MySpider, summoner_obj.name, region, championName)
+    scraped = process.crawlers.pop().spider.data
+    process.start()
+    if not scraped:
         return False
     scraped = src.utils.clean_summoner_data(scraped)
     for data in summoner_champion_data:

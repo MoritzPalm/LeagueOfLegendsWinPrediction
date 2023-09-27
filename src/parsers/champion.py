@@ -3,14 +3,14 @@ import logging
 import sqlalchemy.orm
 from riotwatcher import LolWatcher
 
-from src.crawlers.scraping import scrape_champion_metrics
+from src.scraping.spider import scrape_champion_metrics
 from src.sqlstore.champion import SQLChampionTags, SQLChampion, SQLChampionStats
 
 import re
 
 
 def parse_champion_data(
-    session: sqlalchemy.orm.Session, watcher: LolWatcher, season: int, patch: int
+        session: sqlalchemy.orm.Session, watcher: LolWatcher, season: int, patch: int
 ):
     """parses champion information provided by datadragon and fill corresponding Champion and ChampionStats tables
       WARNING: parses only the brief summary of champion data, if additional data is needed this needs to be reworked

@@ -1,9 +1,7 @@
 import argparse
 import logging
 import sys
-import time
 
-import requests.exceptions
 import sqlalchemy.orm.session
 from riotwatcher import LolWatcher
 
@@ -50,7 +48,7 @@ def getData():
                 season = utils.get_season(current_match_info["gameVersion"])
                 patch = utils.get_patch(current_match_info["gameVersion"])
                 if not queries.champ_patch_present(
-                    session=session, season=season, patch=patch
+                        session=session, season=season, patch=patch
                 ):
                     logger.info(
                         f"fetching champion data as no data from patch {season}.{patch} in database"
@@ -70,7 +68,7 @@ def getData():
                     args.region,
                 )
                 session.flush()
-                logger.info(f"session commit")
+                logger.info("session commit")
                 session.commit()
                 counter += 1
             except Exception as e:  # skip match id if other errors were thrown
@@ -83,14 +81,14 @@ def getData():
 
 
 def parse_data(
-    session: sqlalchemy.orm.Session,
-    watcher: LolWatcher,
-    matchID: str,
-    season: int,
-    patch: int,
-    match_info: dict,
-    match_timeline: dict,
-    region: str,
+        session: sqlalchemy.orm.Session,
+        watcher: LolWatcher,
+        matchID: str,
+        season: int,
+        patch: int,
+        match_info: dict,
+        match_timeline: dict,
+        region: str,
 ) -> None:
     try:
         current_match = SQLMatch(
