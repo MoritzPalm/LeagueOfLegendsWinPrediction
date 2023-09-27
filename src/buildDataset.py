@@ -1,14 +1,8 @@
-from typing import Tuple, Any
-
-import sqlalchemy.orm
-from sqlalchemy import select, Row
 from sqlalchemy import func
-from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats
-from src.sqlstore.champion import SQLChampion
-from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
+from src.sqlstore.match import SQLMatch, SQLParticipant
+from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague
 from src.sqlstore.db import get_session
 import pandas as pd
-import numpy as np
 
 
 def build_static_dataset(size: int) -> pd.DataFrame:
