@@ -3,6 +3,7 @@ import logging
 import sqlalchemy.orm
 from riotwatcher import LolWatcher
 from scrapy.crawler import CrawlerProcess
+import pandas as pd
 
 import src.utils
 from src.sqlstore import queries
@@ -73,60 +74,53 @@ def parse_summoner_data(
     championName = queries.get_champ_name(session, championId)
     process = CrawlerProcess()
     process.crawl(MySpider, summoner_obj.name, region, championName)
-    scraped = process.crawlers.pop().spider.data
+    scraped = next(iter(process.crawlers)).spider.data
     process.start()
-    if not scraped:
+    df_scraped = pd.DataFrame(scraped).T
+    if df_scraped.empty:
         return False
-    scraped = src.utils.clean_summoner_data(scraped)
-    for data in summoner_champion_data:
-        with session.no_autoflush:
-            championId = data["championId"]
-            championName = queries.get_champ_name(session, championId)
-            scraped_champ = scraped[scraped["Champion"] == championName]
-            if scraped_champ.empty:
-                continue
-            try:  # TODO: change logic to prevent writing all none when one scraping field fails
-                summoner_championmastery_obj = SQLChampionMastery(
-                    championPointsUntilNextlevel=data["championPointsUntilNextLevel"],
-                    chestGranted=data["chestGranted"],
-                    lastPlayTime=data["lastPlayTime"],
-                    championLevel=data["championLevel"],
-                    summonerId=data["summonerId"],
-                    championPoints=data["championPoints"],
-                    championPointsSinceLastLevel=data["championPointsSinceLastLevel"],
-                    tokensEarned=data["tokensEarned"],
-                    wins=scraped_champ["wins"][0].item(),
-                    loses=scraped_champ["loses"][0].item(),
-                    championWinrate=scraped_champ["Winrate"][0].item(),
-                    kda=scraped_champ["KDA"][0].item(),
-                    kills=scraped_champ["kills"][0].item(),
-                    deaths=scraped_champ["deaths"][0].item(),
-                    assists=scraped_champ["assists"][0].item(),
-                    lp=scraped_champ["LP"][0].item(),
-                    maxKills=scraped_champ["MaxKills"][0].item(),
-                    maxDeaths=scraped_champ["MaxDeaths"][0].item(),
-                    cs=scraped_champ["CS"][0].item(),
-                    damage=scraped_champ["Damage"][0].item(),
-                    gold=scraped_champ["Gold"][0].item(),
-                )
-            except KeyError:  # TODO: try to scrape normal game data
-                logging.warning(
-                    f"for champion {championId} no scraped data has been found"
-                )
-                summoner_championmastery_obj = SQLChampionMastery(
-                    championPointsUntilNextlevel=data["championPointsUntilNextLevel"],
-                    chestGranted=data["chestGranted"],
-                    lastPlayTime=data["lastPlayTime"],
-                    championLevel=data["championLevel"],
-                    summonerId=data["summonerId"],
-                    championPoints=data["championPoints"],
-                    championPointsSinceLastLevel=data["championPointsSinceLastLevel"],
-                    tokensEarned=data["tokensEarned"],
-                )
-            summoner_obj.mastery.append(summoner_championmastery_obj)
-            champion_obj = queries.get_last_champion(session, championId)
-            if champion_obj is None:
-                continue
-            champion_obj.mastery.append(summoner_championmastery_obj)
-            session.add(summoner_championmastery_obj)
+    df_scraped = src.utils.clean_summoner_data(df_scraped)
+    data = summoner_champion_data
+    with session.no_autoflush:
+        try:  # TODO: change logic to prevent writing all none when one scraping field fails
+            summoner_championmastery_obj = SQLChampionMastery(
+                championPointsUntilNextlevel=data["championPointsUntilNextLevel"],
+                chestGranted=data["chestGranted"],
+                lastPlayTime=data["lastPlayTime"],
+                championLevel=data["championLevel"],
+                summonerId=data["summonerId"],
+                championPoints=data["championPoints"],
+                championPointsSinceLastLevel=data["championPointsSinceLastLevel"],
+                tokensEarned=data["tokensEarned"],
+                wins=df_scraped["wins"].item(),
+                loses=df_scraped["loses"].item(),
+                championWinrate=df_scraped["winRate"].item(),
+                kda=df_scraped["kda"].item(),
+                kills=df_scraped["kills"].item(),
+                deaths=df_scraped["deaths"].item(),
+                assists=df_scraped["assists"].item(),
+                lp=df_scraped["lp"].item(),
+                maxKills=df_scraped["maxKills"].item(),
+                cs=df_scraped["cs"].item(),
+                damage=df_scraped["damage"].item(),
+                gold=df_scraped["gold"].item(),
+            )
+        except KeyError:  # TODO: try to scrape normal game data
+            logging.warning(
+                f"for champion {championId} no scraped data has been found"
+            )
+            summoner_championmastery_obj = SQLChampionMastery(
+                championPointsUntilNextlevel=data["championPointsUntilNextLevel"],
+                chestGranted=data["chestGranted"],
+                lastPlayTime=data["lastPlayTime"],
+                championLevel=data["championLevel"],
+                summonerId=data["summonerId"],
+                championPoints=data["championPoints"],
+                championPointsSinceLastLevel=data["championPointsSinceLastLevel"],
+                tokensEarned=data["tokensEarned"],
+            )
+        summoner_obj.mastery.append(summoner_championmastery_obj)
+        champion_obj = queries.get_last_champion(session, championId)
+        champion_obj.mastery.append(summoner_championmastery_obj)
+        session.add(summoner_championmastery_obj)
     return True

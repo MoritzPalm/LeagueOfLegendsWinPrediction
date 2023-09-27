@@ -71,36 +71,18 @@ def clean_summoner_data(df: pd.DataFrame) -> pd.DataFrame:
     'KillsDeathsAssists', 'LP', 'MaxKills', 'MaxDeaths', 'CS', 'Damage', 'Gold']
     :return: cleaned dataframe
     """
-    if df.shape[0] == 1:
-        df_winsloses = df["WinsLoses"].str.extract(r"(\d+)W (\d+)L")
-        df["Winrate"] = df["Winrate"].str.strip("%").astype(float, errors="ignore")
-        df_killsdeathsassists = df["KillsDeathsAssists"].str.extract(
-            r"(\d+.\d+)\/(\d+.\d+)\/(\d+.\d+)"
-        )  # regex matching 5.2, 4.0 and 5.1 from string "5.2/4.0/5.1"
-        df["LP"] = df["LP"].str.strip("LP").astype(int, errors="ignore")
-    else:
-        df_winsloses = (
-            df["WinsLoses"].squeeze(axis=0).str.extract(r"(\d+)W (\d+)L")
-        )  # regex matching 12 and 5 from string "12W 5L"
-        df["Winrate"] = df["Winrate"].str.strip("%").astype(float, errors="ignore")
-        df_killsdeathsassists = (
-            df["KillsDeathsAssists"]
-            .squeeze()
-            .str.extract(r"(\d+.\d+)\/(\d+.\d+)\/(\d+.\d+)")
-        )  # regex matching 5.2, 4.0 and 5.1 from string "5.2/4.0/5.1"
-        df["LP"] = df["LP"].str.strip("LP").astype(int, errors="ignore")
-    df["wins"] = df_winsloses[0].astype(int, errors="ignore")
-    df["loses"] = df_winsloses[1].astype(int, errors="ignore")
+    df["winRate"] = df["winRate"].astype(float, errors="ignore")
+    df["lp"] = df["lp"].astype(int, errors="ignore")
+    df["wins"] = df["winsLoses"].astype(int, errors="ignore")
     df.loc[
-        df["KDA"] == "Perfect", "KDA"
+        df["kda"] == "Perfect", "KDA"
     ] = math.inf  # inf means that perfect kda is achieved (0 deaths and >0 kills)
-    df["KDA"] = df["KDA"].astype(float, errors="ignore")
-    df["kills"] = df_killsdeathsassists[0].astype(float, errors="ignore")
-    df["deaths"] = df_killsdeathsassists[1].astype(float, errors="ignore")
-    df["assists"] = df_killsdeathsassists[0].astype(float, errors="ignore")
-    df["MaxKills"] = df["MaxKills"].astype(int, errors="ignore")
-    df["MaxDeaths"] = df["MaxDeaths"].astype(int, errors="ignore")
-    df["CS"] = df["CS"].astype(float, errors="ignore")
-    df["Damage"] = df["Damage"].astype(float, errors="ignore")
-    df["Gold"] = df["Gold"].astype(float, errors="ignore")
+    df["kda"] = df["KDA"].astype(float, errors="ignore")
+    df["kills"] = df["kills"].astype(float, errors="ignore")
+    df["deaths"] = df["deaths"].astype(float, errors="ignore")
+    df["assists"] = df["assists"].astype(float, errors="ignore")
+    df["maxKills"] = df["maxKills"].astype(int, errors="ignore")
+    df["cs"] = df["cs"].astype(float, errors="ignore")
+    df["damage"] = df["damage"].astype(float, errors="ignore")
+    df["gold"] = df["gold"].astype(float, errors="ignore")
     return df
