@@ -13,6 +13,7 @@ from src import utils
 from src.sqlstore import queries
 from src.parsers import champion, summoner, timeline, participant
 from src.buildDataset import build_static_dataset
+from src.parsers.summoner import scrape_champion_masteries
 
 
 # TODO: review logging
@@ -78,6 +79,7 @@ def getData():
                 logger.error(str(e))
                 session.rollback()
                 raise
+        scrape_champion_masteries(session)
 
 
 def parse_data(

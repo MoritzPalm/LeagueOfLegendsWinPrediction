@@ -20,13 +20,14 @@ class MySpider(Spider):
         "ITEM_PIPELINES": {"src.scraping.pipeline.DataPipeline": 300},
     }
 
-    def __init__(self, summoner_name, region, champion, *args, **kwargs):
+    def __init__(self, init_data, *args, **kwargs):
         super(MySpider, self).__init__(*args, **kwargs)
-        self.start_urls = [
-            f"https://u.gg/lol/profile/{region}/{summoner_name}/champion-stats"
-        ]
-        self.champion = champion
-        self.data = {}
+        self.champions = []
+        for data in init_data:
+            self.start_urls.append(
+                f"https://u.gg/lol/profile/{data['region']}/{data['summonerName']}/champion-stats"
+            )
+            self.champions.append(data['champion'])
 
     def start_requests(self):
         for url in self.start_urls:
@@ -87,30 +88,30 @@ class MySpider(Spider):
                         row[column] = "N/A"
                 if is_row_empty:
                     break
-                if row.get("champion") == self.champion:
-                    item = SummonerItem()
-                    item['rank'] = row['rank']
-                    item['champion'] = row['champion']
-                    item['winRate'] = row['winRate']
-                    item['winsLoses'] = row['winsLoses']
-                    item['kda'] = row['kda']
-                    item['kills'] = row['kills']
-                    item['deaths'] = row['deaths']
-                    item['assists'] = row['assists']
-                    item['lp'] = row['lp']
-                    item['maxKills'] = row['maxKills']
-                    item['cs'] = row['cs']
-                    item['damage'] = row['damage']
-                    item['gold'] = row['gold']
-                    yield item
+                item = SummonerItem()
+                item['url'] = response.request.url
+                item['rank'] = row['rank']
+                item['champion'] = row['champion']
+                item['winRate'] = row['winRate']
+                item['winsLoses'] = row['winsLoses']
+                item['kda'] = row['kda']
+                item['kills'] = row['kills']
+                item['deaths'] = row['deaths']
+                item['assists'] = row['assists']
+                item['lp'] = row['lp']
+                item['maxKills'] = row['maxKills']
+                item['cs'] = row['cs']
+                item['damage'] = row['damage']
+                item['gold'] = row['gold']
+                yield item
                 row_index += 1
             except Exception as e:
                 self.log(f"Error: {e}")
                 break
-        return self.data
 
 
 class SummonerItem(Item):
+    url = Field()
     rank = Field()
     champion = Field()
     winRate = Field()

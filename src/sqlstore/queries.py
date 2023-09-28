@@ -1,14 +1,15 @@
 import logging
 import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.sql import exists
 from sqlalchemy.orm import Session
 import sqlalchemy.exc
+from scrapy.item import Item
 
 from src import sqlstore
 from src.sqlstore.champion import SQLChampion
-from src.sqlstore.summoner import SQLSummoner
+from src.sqlstore.summoner import SQLSummoner, SQLChampionMastery
 
 
 def check_matchId_present(session: Session, matchID: str) -> bool:
@@ -44,7 +45,7 @@ def check_summoner_present(session: sqlalchemy.orm.Session, puuid: str) -> bool:
 
 
 def check_summoner_data_recent(
-    session: sqlalchemy.orm.Session, puuid: str, expiration_time: int
+        session: sqlalchemy.orm.Session, puuid: str, expiration_time: int
 ) -> bool:
     """
     checks if the data in the database for the specified summoner is older than expiration_time
@@ -60,7 +61,7 @@ def check_summoner_data_recent(
     if result is None:
         return False
     if (
-        result[0].lastUpdate is None
+            result[0].lastUpdate is None
     ):  # has never been updated, need to get first creation time
         lastUpdate: datetime.date = result[0].timeCreated
     else:
@@ -92,3 +93,69 @@ def get_champ_name(session: sqlalchemy.orm.Session, championId: int) -> str:
         SQLChampion.championNumber == championId
     )
     return session.execute(query).scalar()
+
+
+def get_missing_masteries(session: sqlalchemy.orm.Session) -> list:
+    """
+    gets all summoner championmastery objects that have not yet been updated with scraped champion mastery data
+    :param session:
+    :return: list of SQLChampionMastery objects
+    """
+    query = select(SQLChampionMastery).filter(or_(SQLChampionMastery.championWinrate == None,
+                                                  SQLChampionMastery.kda == None,
+                                                  SQLChampionMastery.cs == None,
+                                                  SQLChampionMastery.damage == None,
+                                                  SQLChampionMastery.gold == None,
+                                                  SQLChampionMastery.maxKills == None,
+                                                  SQLChampionMastery.lp == None,
+                                                  SQLChampionMastery.wins == None,
+                                                  SQLChampionMastery.kills == None,
+                                                  SQLChampionMastery.deaths == None,
+                                                  SQLChampionMastery.assists == None,
+                                                  ))
+    return session.scalars(query).all()
+
+
+def scraping_needed(session: sqlalchemy.orm.Session, region: str, summonerName: str, championName: str) -> bool:
+    """
+    checks if the champion-summoner combination has already been scraped
+    and if there is at least one match played by the summoner playing the champion
+    :param session: sqlalchemy session
+    :param region: region the summoner is playing in
+    :param summonerName:
+    :param championName:
+    :return: True if scraping is needed, False otherwise
+    """
+    summoner_query = select(SQLSummoner).filter(SQLSummoner.name == summonerName,
+                                                SQLSummoner.platformId == region)
+    # there should only be one summoner with this name in this region
+    summoner = session.scalars(summoner_query).one()
+    mastery_query = select(SQLChampionMastery).filter(SQLChampionMastery.puuid == summoner.puuid)
+    masteries = session.scalars(mastery_query).all()
+    # the only time multiple masteries should be found if we have multiple games by the summoner in the database
+    for mastery in masteries:
+        if mastery.champion.championName == championName:
+            if any(x is None for x in mastery.__dict__.values()):
+                return True
+            else:
+                return False
+    # if no champion mastery could be found, something went wrong, but scraping is needed
+    logging.error(
+        f"no champion mastery found for summoner {summonerName} in region {region} and champion {championName}")
+    return True
+
+
+def update_mastery(session: sqlalchemy.orm.Session, scraped: Item, region: str, summonerName: str, championName: str):
+    """
+    updates the champion mastery data for the specified summoner and champion
+    :param session:
+    :param scraped:
+    :param region:
+    :param summonerName:
+    :param championName:
+    :return:
+    """
+    query = session.query(SQLSummoner).filter(SQLSummoner.name == summonerName,
+                                              SQLSummoner.platformId == region).update(scraped.__dict__)
+    session.execute(query)
+    print("test")

@@ -71,56 +71,41 @@ def parse_summoner_data(
     summoner_champion_data = watcher.champion_mastery.by_summoner_by_champion(
         region, summoner_obj.summonerId, championId
     )
-    championName = queries.get_champ_name(session, championId)
-    process = CrawlerProcess()
-    process.crawl(MySpider, summoner_obj.name, region, championName)
-    scraped = next(iter(process.crawlers)).spider.data
-    process.start()
-    df_scraped = pd.DataFrame(scraped).T
-    if df_scraped.empty:
-        return False
-    df_scraped = src.utils.clean_summoner_data(df_scraped)
-    data = summoner_champion_data
     with session.no_autoflush:
-        try:  # TODO: change logic to prevent writing all none when one scraping field fails
-            summoner_championmastery_obj = SQLChampionMastery(
-                championPointsUntilNextlevel=data["championPointsUntilNextLevel"],
-                chestGranted=data["chestGranted"],
-                lastPlayTime=data["lastPlayTime"],
-                championLevel=data["championLevel"],
-                summonerId=data["summonerId"],
-                championPoints=data["championPoints"],
-                championPointsSinceLastLevel=data["championPointsSinceLastLevel"],
-                tokensEarned=data["tokensEarned"],
-                wins=df_scraped["wins"].item(),
-                loses=df_scraped["loses"].item(),
-                championWinrate=df_scraped["winRate"].item(),
-                kda=df_scraped["kda"].item(),
-                kills=df_scraped["kills"].item(),
-                deaths=df_scraped["deaths"].item(),
-                assists=df_scraped["assists"].item(),
-                lp=df_scraped["lp"].item(),
-                maxKills=df_scraped["maxKills"].item(),
-                cs=df_scraped["cs"].item(),
-                damage=df_scraped["damage"].item(),
-                gold=df_scraped["gold"].item(),
-            )
-        except KeyError:  # TODO: try to scrape normal game data
-            logging.warning(
-                f"for champion {championId} no scraped data has been found"
-            )
-            summoner_championmastery_obj = SQLChampionMastery(
-                championPointsUntilNextlevel=data["championPointsUntilNextLevel"],
-                chestGranted=data["chestGranted"],
-                lastPlayTime=data["lastPlayTime"],
-                championLevel=data["championLevel"],
-                summonerId=data["summonerId"],
-                championPoints=data["championPoints"],
-                championPointsSinceLastLevel=data["championPointsSinceLastLevel"],
-                tokensEarned=data["tokensEarned"],
-            )
+        summoner_championmastery_obj = SQLChampionMastery(
+            championPointsUntilNextlevel=summoner_champion_data["championPointsUntilNextLevel"],
+            chestGranted=summoner_champion_data["chestGranted"],
+            lastPlayTime=summoner_champion_data["lastPlayTime"],
+            championLevel=summoner_champion_data["championLevel"],
+            summonerId=summoner_champion_data["summonerId"],
+            championPoints=summoner_champion_data["championPoints"],
+            championPointsSinceLastLevel=summoner_champion_data["championPointsSinceLastLevel"],
+            tokensEarned=summoner_champion_data["tokensEarned"],
+        )
         summoner_obj.mastery.append(summoner_championmastery_obj)
         champion_obj = queries.get_last_champion(session, championId)
         champion_obj.mastery.append(summoner_championmastery_obj)
-        session.add(summoner_championmastery_obj)
+    session.add(summoner_championmastery_obj)
     return True
+
+
+def scrape_champion_masteries(session: sqlalchemy.orm.Session):
+    """
+    scrapes champion masteries for all summoners in data
+    :param session: sqlalchemy session
+    :return:
+    """
+    objs = queries.get_missing_masteries(session)
+    init_data = []
+    for obj in objs:
+        championName = queries.get_champ_name(session, obj.championId)
+        init_data.append(
+            {
+                "champion": championName,
+                "summonerName": obj.summoner.name,
+                "region": obj.summoner.platformId,
+            }
+        )
+    process = CrawlerProcess()
+    process.crawl(MySpider, init_data)
+    process.start()
