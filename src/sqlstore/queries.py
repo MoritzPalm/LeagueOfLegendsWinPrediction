@@ -155,7 +155,11 @@ def update_mastery(session: sqlalchemy.orm.Session, scraped: Item, region: str, 
     :param championName:
     :return:
     """
-    query = session.query(SQLSummoner).filter(SQLSummoner.name == summonerName,
-                                              SQLSummoner.platformId == region).update(scraped.__dict__)
-    session.execute(query)
+    puuid = session.scalars(
+        select(SQLSummoner.puuid).filter(SQLSummoner.name == summonerName, SQLSummoner.platformId == region)).one()
+    championId = session.scalars(select(SQLChampion).filter(SQLChampion.championName == championName).order_by(
+        SQLChampion.patchNumber.desc())).one()
+    mastery_query = select(SQLChampionMastery).filter(SQLChampionMastery.puuid == puuid,
+                                                      SQLChampionMastery.championId == championId)
+    mastery = session.scalars(mastery_query).one()
     print("test")
