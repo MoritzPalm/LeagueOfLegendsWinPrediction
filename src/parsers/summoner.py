@@ -98,10 +98,8 @@ def scrape_champion_masteries(session: sqlalchemy.orm.Session):
     objs = queries.get_missing_masteries(session)
     init_data = []
     for obj in objs:
-        championName = queries.get_champ_name(session, obj.championId)
         init_data.append(
             {
-                "champion": championName,
                 "summonerName": obj.summoner.name,
                 "region": obj.summoner.platformId,
             }

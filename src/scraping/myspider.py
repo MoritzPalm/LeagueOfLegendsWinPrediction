@@ -22,16 +22,14 @@ class MySpider(Spider):
 
     def __init__(self, init_data, *args, **kwargs):
         super(MySpider, self).__init__(*args, **kwargs)
-        self.champions = []
         for data in init_data:
             self.start_urls.append(
                 f"https://u.gg/lol/profile/{data['region']}/{data['summonerName']}/champion-stats"
             )
-            self.champions.append(data['champion'])
 
     def start_requests(self):
         for url in self.start_urls:
-            yield Request(url=url, callback=self.parse)
+            yield Request(url=url, callback=self.parse, meta={'url': url})
 
     def parse(self, response):
         columns = [
@@ -89,7 +87,7 @@ class MySpider(Spider):
                 if is_row_empty:
                     break
                 item = SummonerItem()
-                item['url'] = response.request.url
+                item['url'] = response.meta['url']
                 item['rank'] = row['rank']
                 item['champion'] = row['champion']
                 item['winRate'] = row['winRate']
