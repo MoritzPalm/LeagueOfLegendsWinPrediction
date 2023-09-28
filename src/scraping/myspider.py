@@ -23,15 +23,18 @@ class MySpider(Spider):
     def __init__(self, init_data, *args, **kwargs):
         super(MySpider, self).__init__(*args, **kwargs)
         self.champions = []
+        self.start_urls = []
         for data in init_data:
-            self.start_urls.append(
-                f"https://u.gg/lol/profile/{data['region']}/{data['summonerName']}/champion-stats"
-            )
+            self.start_urls.append({
+                'url': f"https://u.gg/lol/profile/{data['region']}/{data['summonerName']}/champion-stats",
+                'alternative_url': f"https://u.gg/lol/profile/{data['region']}/{data['summonerName']}/champion-stats?queueType=normal_draft_5x5",
+                'tried_alternative': False  # To track whether the alternative URL has been tried
+            })
             self.champions.append(data['champion'])
 
     def start_requests(self):
-        for url in self.start_urls:
-            yield Request(url=url, callback=self.parse)
+        for url_data in self.start_urls:
+            yield Request(url=url_data['url'], callback=self.parse, meta={'url_data': url_data})
 
     def parse(self, response):
         columns = [
@@ -51,6 +54,8 @@ class MySpider(Spider):
             "gold",
         ]
         row_index = 1
+        url_data = response.meta['url_data']
+        is_row_empty = True
         while True:
             try:
                 row = {}
@@ -87,7 +92,12 @@ class MySpider(Spider):
                     else:
                         row[column] = "N/A"
                 if is_row_empty:
+                    if not url_data['tried_alternative']:
+                        # If no data and haven't tried the alternative URL, then try it.
+                        url_data['tried_alternative'] = True
+                        yield Request(url=url_data['alternative_url'], callback=self.parse, meta={'url_data': url_data})
                     break
+
                 item = SummonerItem()
                 item['url'] = response.request.url
                 item['rank'] = row['rank']
