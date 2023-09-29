@@ -22,7 +22,6 @@ class MySpider(Spider):
 
     def __init__(self, init_data, *args, **kwargs):
         super(MySpider, self).__init__(*args, **kwargs)
-        self.champions = []
         self.start_urls = []
         for data in init_data:
             self.start_urls.append({
@@ -30,7 +29,6 @@ class MySpider(Spider):
                 'alternative_url': f"https://u.gg/lol/profile/{data['region']}/{data['summonerName']}/champion-stats?queueType=normal_draft_5x5",
                 'tried_alternative': False  # To track whether the alternative URL has been tried
             })
-            self.champions.append(data['champion'])
 
     def start_requests(self):
         for url_data in self.start_urls:
@@ -55,7 +53,6 @@ class MySpider(Spider):
         ]
         row_index = 1
         url_data = response.meta['url_data']
-        is_row_empty = True
         while True:
             try:
                 row = {}
@@ -99,7 +96,7 @@ class MySpider(Spider):
                     break
 
                 item = SummonerItem()
-                item['url'] = response.request.url
+                item['url'] = response.meta['url_data']['url']
                 item['rank'] = row['rank']
                 item['champion'] = row['champion']
                 item['winRate'] = row['winRate']
