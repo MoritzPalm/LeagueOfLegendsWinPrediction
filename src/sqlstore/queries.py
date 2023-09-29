@@ -96,6 +96,13 @@ def get_champ_name(session: sqlalchemy.orm.Session, championId: int) -> str:
     return session.execute(query).scalar()
 
 
+def get_champ_id(session: sqlalchemy.orm.Session, championName: str) -> int:
+    query = select(SQLChampion.id).filter(
+        SQLChampion.championName == championName
+    ).order_by(SQLChampion.patchNumber.desc())
+    return session.execute(query).scalar()
+
+
 def get_missing_masteries(session: sqlalchemy.orm.Session) -> list:
     """
     gets all summoner championmastery objects that have not yet been updated with scraped champion mastery data
@@ -142,8 +149,9 @@ def scraping_needed(session: sqlalchemy.orm.Session, region: str, summonerName: 
                                                       SQLParticipantStats.championName == championName)).scalar()
     if not match_exists:  # no match played by summoner with champion championName found
         return False  # thus no scraping needed
+    champId = get_champ_id(session, championName)
     mastery_query = select(SQLChampionMastery).filter(SQLChampionMastery.puuid == summoner.puuid,
-                                                      SQLChampionMastery.champion.championName == championName)
+                                                      SQLChampionMastery.championId == champId)
     mastery = session.scalars(mastery_query).one_or_none()
     if not mastery:
         logging.error(
@@ -167,9 +175,13 @@ def update_mastery(session: sqlalchemy.orm.Session, scraped: Item, region: str, 
     """
     puuid = session.scalars(
         select(SQLSummoner.puuid).filter(SQLSummoner.name == summonerName, SQLSummoner.platformId == region)).one()
-    championId = session.scalars(select(SQLChampion).filter(SQLChampion.championName == championName).order_by(
+    championId = session.scalars(select(SQLChampion.id).filter(SQLChampion.championName == championName).order_by(
         SQLChampion.patchNumber.desc())).first()
     mastery_query = select(SQLChampionMastery).filter(SQLChampionMastery.puuid == puuid,
                                                       SQLChampionMastery.championId == championId)
     mastery = session.scalars(mastery_query).one()
+    for key, value in scraped.items():
+        if key == "url":
+            continue
+        setattr(mastery, key, value)
     print("test")
