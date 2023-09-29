@@ -181,7 +181,7 @@ def update_mastery(session: sqlalchemy.orm.Session, scraped: Item, region: str, 
                                                       SQLChampionMastery.championId == championId)
     mastery = session.scalars(mastery_query).one()
     for key, value in scraped.items():
-        if key == "url":
+        if key == "url" or key == "champion":
             continue
         setattr(mastery, key, value)
-    print("test")
+    session.commit()
