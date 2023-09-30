@@ -1,4 +1,13 @@
-from sqlalchemy import Integer, String, BigInteger, DateTime, Identity, ForeignKey, Boolean, Float
+from sqlalchemy import (
+    Integer,
+    String,
+    BigInteger,
+    DateTime,
+    Identity,
+    ForeignKey,
+    Boolean,
+    Float,
+)
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func
 from src.sqlstore.db import Base
@@ -18,11 +27,24 @@ class SQLMatch(Base):
     mapId = mapped_column("mapId", Integer)
     gameDuration = mapped_column("gameDuration", Integer)
     gameCreation = mapped_column("gameCreation", BigInteger)
-    timeCreated = mapped_column("timeCreated", DateTime(timezone=True), server_default=func.now())
-    lastUpdate = mapped_column("lastUpdate", DateTime(timezone=True), onupdate=func.now())
+    timeCreated = mapped_column(
+        "timeCreated", DateTime(timezone=True), server_default=func.now()
+    )
+    lastUpdate = mapped_column(
+        "lastUpdate", DateTime(timezone=True), onupdate=func.now()
+    )
 
-    def __init__(self, matchId: str, platformId: str, gameId: int, queueId: int,
-                 gameVersion: str, mapId: int, gameDuration: int, gameCreation: int):
+    def __init__(
+        self,
+        matchId: str,
+        platformId: str,
+        gameId: int,
+        queueId: int,
+        gameVersion: str,
+        mapId: int,
+        gameDuration: int,
+        gameCreation: int,
+    ):
         self.matchId = matchId
         self.platformId = platformId
         self.gameId = gameId
@@ -35,10 +57,7 @@ class SQLMatch(Base):
         self.gameCreation = gameCreation
 
     def __repr__(self):
-        return f'({self.platformId}) ({self.gameId}) ({self.gameCreation})'
-
-    def get_training_data(self):
-        return {'platformId': self.platformId, 'patch': self.patch, 'season': self.seasonId}
+        return f"({self.platformId}) ({self.gameId}) ({self.gameCreation})"
 
 
 class SQLParticipant(Base):
@@ -62,7 +81,9 @@ class SQLParticipant(Base):
 class SQLParticipantStats(Base):
     __tablename__ = "participant_stats"
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
-    participantId = mapped_column(BigInteger, ForeignKey("participant.id"), nullable=False)
+    participantId = mapped_column(
+        BigInteger, ForeignKey("participant.id"), nullable=False
+    )
     participant = relationship("SQLParticipant", backref="stats")
     allInPings = mapped_column(Integer)
     assistMePings = mapped_column(Integer)
@@ -94,8 +115,11 @@ class SQLParticipantStats(Base):
     firstTowerAssist = mapped_column(Boolean)
     firstTowerKill = mapped_column(Boolean)
     gameEndedInEarlySurrender = mapped_column(
-        Boolean)  # TODO: this info should be placed in a general team or match table
-    gameEndedInSurrender = mapped_column(Boolean)  # TODO: this info should be placed in a general team or match table
+        Boolean
+    )  # TODO: this info should be placed in a general team or match table
+    gameEndedInSurrender = mapped_column(
+        Boolean
+    )  # TODO: this info should be placed in a general team or match table
     getBackPings = mapped_column(Integer)
     goldEarned = mapped_column(Integer)
     goldSpent = mapped_column(Integer)
@@ -125,11 +149,14 @@ class SQLParticipantStats(Base):
     needVisionPings = mapped_column(Integer)
     neutralMinionsKilled = mapped_column(Integer)
     nexusKills = mapped_column(
-        Integer)  # This mapped_column is probably only important for special gamemodes, consider deleting it
+        Integer
+    )  # This mapped_column is probably only important for special gamemodes, consider deleting it
     nexusLost = mapped_column(
-        Integer)  # This mapped_column is probably only important for special gamemodes, consider deleting it
+        Integer
+    )  # This mapped_column is probably only important for special gamemodes, consider deleting it
     nexusTakedowns = mapped_column(
-        Integer)  # This mapped_column is probably only important for special gamemodes, consider deleting it
+        Integer
+    )  # This mapped_column is probably only important for special gamemodes, consider deleting it
     objectivesStolen = mapped_column(Integer)
     objectivesStolenAssists = mapped_column(Integer)
     onMyWayPings = mapped_column(Integer)
@@ -198,35 +225,136 @@ class SQLParticipantStats(Base):
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
     def __init__(self, **kwargs):
-        for attr in ('allInPings', 'assistMePings', 'assists', 'baitPings', 'baronKills', 'basicPings', 'bountyLevel',
-                     'champExperience', 'champLevel', 'championId', 'championName', 'championTransform', 'commandPings',
-                     'consumablesPurchased', 'damageDealtToBuildings', 'damageDealtToObjectives',
-                     'damageDealtToTurrets',
-                     'damageSelfMitigated', 'dangerPings', 'deaths', 'detectorWardsPlaced', 'doubleKills',
-                     'dragonKills',
-                     'eligibleForProgression', 'enemyMissingPings', 'enemyVisionPings', 'firstBloodAssist',
-                     'firstBloodKill', 'firstTowerAssist', 'firstTowerKill', 'gameEndedInEarlySurrender',
-                     'gameEndedInSurrender', 'getBackPings', 'goldEarned', 'goldSpent', 'holdPings',
-                     'individualPosition', 'inhibitorKills', 'inhibitorTakedowns', 'inhibitorsLost', 'item0', 'item1',
-                     'item2', 'item3', 'item4', 'item5', 'item6', 'itemsPurchased', 'killingSprees', 'kills', 'lane',
-                     'largestCriticalStrike', 'largestKillingSpree', 'largestMultiKill', 'longestTimeSpentLiving',
-                     'magicDamageDealt', 'magicDamageDealtToChampions', 'magicDamageTaken', 'needVisionPings',
-                     'neutralMinionsKilled', 'nexusKills', 'nexusLost', 'nexusTakedowns', 'objectivesStolen',
-                     'objectivesStolenAssists', 'onMyWayPings', 'participantId', 'pentaKills', 'physicalDamageDealt',
-                     'physicalDamageDealtToChampions', 'physicalDamageTaken', 'placement', 'playerAugment1',
-                     'playerAugment2', 'playerAugment3', 'playerAugment4', 'playerSubteamId', 'profileIcon',
-                     'pushPings',
-                     'puuid', 'quadraKills', 'riotIdName', 'riotIdTagline', 'role', 'sightWardsBoughtInGame',
-                     'spell1Casts', 'spell2Casts', 'spell3Casts', 'spell4Casts', 'subteamPlacement', 'summoner1Casts',
-                     'summoner1Id', 'summoner2Casts', 'summoner2Id', 'summonerId', 'summonerLevel', 'summonerName',
-                     'teamEarlySurrendered', 'teamId', 'teamPosition', 'timeCCingOthers', 'timePlayed',
-                     'totalAllyJungleMinionsKilled', 'totalDamageDealt', 'totalDamageDealtToChampions',
-                     'totalDamageShieldedOnTeammates', 'totalDamageTaken', 'totalEnemyJungleMinionsKilled',
-                     'totalHeal', 'totalHealsOnTeammates', 'totalMinionsKilled', 'totalTimeCCDealt',
-                     'totalTimeSpentDead', 'totalUnitsHealed', 'tripleKills', 'trueDamageDealt',
-                     'trueDamageDealtToChampions', 'trueDamageTaken', 'turretKills', 'turretTakedowns',
-                     'turretsLost', 'unrealKills', 'visionClearedPings', 'visionScore', 'visionWardsBoughtInGame',
-                     'wardsKilled', 'wardsPlaced', 'win',):
+        for attr in (
+            "allInPings",
+            "assistMePings",
+            "assists",
+            "baitPings",
+            "baronKills",
+            "basicPings",
+            "bountyLevel",
+            "champExperience",
+            "champLevel",
+            "championId",
+            "championName",
+            "championTransform",
+            "commandPings",
+            "consumablesPurchased",
+            "damageDealtToBuildings",
+            "damageDealtToObjectives",
+            "damageDealtToTurrets",
+            "damageSelfMitigated",
+            "dangerPings",
+            "deaths",
+            "detectorWardsPlaced",
+            "doubleKills",
+            "dragonKills",
+            "eligibleForProgression",
+            "enemyMissingPings",
+            "enemyVisionPings",
+            "firstBloodAssist",
+            "firstBloodKill",
+            "firstTowerAssist",
+            "firstTowerKill",
+            "gameEndedInEarlySurrender",
+            "gameEndedInSurrender",
+            "getBackPings",
+            "goldEarned",
+            "goldSpent",
+            "holdPings",
+            "individualPosition",
+            "inhibitorKills",
+            "inhibitorTakedowns",
+            "inhibitorsLost",
+            "item0",
+            "item1",
+            "item2",
+            "item3",
+            "item4",
+            "item5",
+            "item6",
+            "itemsPurchased",
+            "killingSprees",
+            "kills",
+            "lane",
+            "largestCriticalStrike",
+            "largestKillingSpree",
+            "largestMultiKill",
+            "longestTimeSpentLiving",
+            "magicDamageDealt",
+            "magicDamageDealtToChampions",
+            "magicDamageTaken",
+            "needVisionPings",
+            "neutralMinionsKilled",
+            "nexusKills",
+            "nexusLost",
+            "nexusTakedowns",
+            "objectivesStolen",
+            "objectivesStolenAssists",
+            "onMyWayPings",
+            "participantId",
+            "pentaKills",
+            "physicalDamageDealt",
+            "physicalDamageDealtToChampions",
+            "physicalDamageTaken",
+            "placement",
+            "playerAugment1",
+            "playerAugment2",
+            "playerAugment3",
+            "playerAugment4",
+            "playerSubteamId",
+            "profileIcon",
+            "pushPings",
+            "puuid",
+            "quadraKills",
+            "riotIdName",
+            "riotIdTagline",
+            "role",
+            "sightWardsBoughtInGame",
+            "spell1Casts",
+            "spell2Casts",
+            "spell3Casts",
+            "spell4Casts",
+            "subteamPlacement",
+            "summoner1Casts",
+            "summoner1Id",
+            "summoner2Casts",
+            "summoner2Id",
+            "summonerId",
+            "summonerLevel",
+            "summonerName",
+            "teamEarlySurrendered",
+            "teamId",
+            "teamPosition",
+            "timeCCingOthers",
+            "timePlayed",
+            "totalAllyJungleMinionsKilled",
+            "totalDamageDealt",
+            "totalDamageDealtToChampions",
+            "totalDamageShieldedOnTeammates",
+            "totalDamageTaken",
+            "totalEnemyJungleMinionsKilled",
+            "totalHeal",
+            "totalHealsOnTeammates",
+            "totalMinionsKilled",
+            "totalTimeCCDealt",
+            "totalTimeSpentDead",
+            "totalUnitsHealed",
+            "tripleKills",
+            "trueDamageDealt",
+            "trueDamageDealtToChampions",
+            "trueDamageTaken",
+            "turretKills",
+            "turretTakedowns",
+            "turretsLost",
+            "unrealKills",
+            "visionClearedPings",
+            "visionScore",
+            "visionWardsBoughtInGame",
+            "wardsKilled",
+            "wardsPlaced",
+            "win",
+        ):
             setattr(self, attr, kwargs.get(attr))
 
     def __repr__(self):
@@ -236,7 +364,9 @@ class SQLParticipantStats(Base):
 class SQLStatPerk(Base):
     __tablename__ = "participant_perk"
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
-    participantId = mapped_column(BigInteger, ForeignKey("participant.id"), nullable=False)
+    participantId = mapped_column(
+        BigInteger, ForeignKey("participant.id"), nullable=False
+    )
     participant = relationship("SQLParticipant", backref="statPerks")
     defense = mapped_column(Integer)
     flex = mapped_column(Integer)
@@ -253,14 +383,13 @@ class SQLStatPerk(Base):
     def __repr__(self):
         return f"{self.platformId}_{self.gameId} player {self.puuid} stats"
 
-    def get_training_data(self) -> dict:
-        return {'defense': self.defense, 'flex': self.flex, 'offense': self.offense}
-
 
 class SQLStyle(Base):
     __tablename__ = "participant_style"
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
-    participantId = mapped_column(BigInteger, ForeignKey("participant.id"), nullable=False)
+    participantId = mapped_column(
+        BigInteger, ForeignKey("participant.id"), nullable=False
+    )
     participant = relationship("SQLParticipant", backref="styles")
     description = mapped_column(String(80))
     style = mapped_column(Integer)
@@ -279,7 +408,9 @@ class SQLStyleSelection(Base):
     __tablename__ = "style_selection"
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
-    styleId = mapped_column(BigInteger, ForeignKey("participant_style.id"), nullable=False)
+    styleId = mapped_column(
+        BigInteger, ForeignKey("participant_style.id"), nullable=False
+    )
     style = relationship("SQLStyle", backref="selection")
     perk = mapped_column(Integer)
     var1 = mapped_column(Integer)
@@ -302,7 +433,9 @@ class SQLChallenges(Base):
     __tablename__ = "participant_challenges"
 
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
-    participantId = mapped_column(BigInteger, ForeignKey("participant.id"), nullable=False)
+    participantId = mapped_column(
+        BigInteger, ForeignKey("participant.id"), nullable=False
+    )
     participant = relationship("SQLParticipant", backref="challenges")
     Assist12StreakCount = mapped_column(Integer)
     abilityUses = mapped_column(Integer)
@@ -362,7 +495,9 @@ class SQLChallenges(Base):
     laneMinionsFirst10Minutes = mapped_column(Integer)
     laningPhaseGoldExpAdvantage = mapped_column(Integer)
     legendaryCount = mapped_column(Integer)
-    lostAnInhibitor = mapped_column(Boolean)  # TODO: investigate if this is really boolean
+    lostAnInhibitor = mapped_column(
+        Boolean
+    )  # TODO: investigate if this is really boolean
     maxCsAdvantageOnLaneOpponent = mapped_column(Integer)
     maxKillDeficit = mapped_column(Integer)
     maxLevelLeadLaneOpponent = mapped_column(Integer)
@@ -400,7 +535,9 @@ class SQLChallenges(Base):
     takedowns = mapped_column(Integer)
     takedownsAfterGainingLevelAdvantage = mapped_column(Integer)
     takedownsBeforeJungleMinionSpawn = mapped_column(Integer)
-    takedownsFirstXMinutes = mapped_column(Integer)  # TODO: investigate how many minutes (10?)
+    takedownsFirstXMinutes = mapped_column(
+        Integer
+    )  # TODO: investigate how many minutes (10?)
     takedownsInAlcove = mapped_column(Integer)
     takedownsInEnemyFountain = mapped_column(Integer)
     teamBaronKills = mapped_column(Integer)
@@ -423,43 +560,137 @@ class SQLChallenges(Base):
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
     def __init__(self, **kwargs):
-        for attr in ('puuid', 'platformId', 'gameId', 'Assist12StreakCount', 'abilityUses', 'acesBefore15Minutes',
-                     'alliedJungleMonsterKills', 'baronBuffGoldAdvantageOverThreshold', 'baronTakedowns',
-                     'blastConeOppositeOpponentCount', 'bountyGold', 'buffsStolen', 'completeSupportQuestOnTime',
-                     'controlWardsPlaced', 'damagePerMinute', 'damageTakenOnTeamPercentage', 'dancedWithRiftHerald',
-                     'deathsByEnemyChamps', 'dodgeSkillShotsSmallWindow', 'doubleAces', 'dragonTakedowns',
-                     'earliestBaron', 'earlyLaningPhaseGoldExpAdvantage', 'effectiveHealAndShielding',
-                     'elderDragonKillsWithOpposingSoul', 'elderDragonMultikills', 'enemyChampionImmobilizations',
-                     'enemyJungleMonsterKills', 'epicMonsterKillsNearEnemyJungler',
-                     'epicMonsterKillsWithin30SecondsOfSpawn', 'epicMonsterSteals', 'epicMonsterStolenWithoutSmite',
-                     'firstTurretKilled', 'flawlessAces', 'fullTeamTakedown', 'gameLength',
-                     'getTakedownsInAllLanesEarlyJungleAsLaner', 'goldPerMinute', 'hadOpenNexus',
-                     'highestCrowdControlScore', 'immobilizeAndKillWithAlly', 'initialBuffCount', 'initialCrabCount',
-                     'jungleCsBefore10Minutes', 'junglerTakedownsNearDamagedEpicMonster',
-                     'kTurretsDestroyedBeforePlatesFall', 'kda', 'killAfterHiddenWithAlly', 'killParticipation',
-                     'killedChampTookFullTeamDamageSurvived', 'killingSprees', 'killsNearEnemyTurret',
-                     'killsOnOtherLanesEarlyJungleAsLaner', 'killsOnRecentlyHealedByAramPack', 'killsUnderOwnTurret',
-                     'killsWithHelpFromEpicMonster', 'knockEnemyIntoTeamAndKill', 'landSkillShotsEarlyGame',
-                     'laneMinionsFirst10Minutes', 'laningPhaseGoldExpAdvantage', 'legendaryCount', 'lostAnInhibitor',
-                     'maxCsAdvantageOnLaneOpponent', 'maxKillDeficit', 'maxLevelLeadLaneOpponent',
-                     'mejaisFullStackInTime', 'moreEnemyJungleThanOpponent', 'multiKillOneSpell',
-                     'multiTurretRiftHeraldCount', 'multikills', 'multikillsAfterAggressiveFlash', 'mythicItemUsed',
-                     'outerTurretExecutesBefore10Minutes', 'outnumberedKills', 'outnumberedNexusKill',
-                     'perfectDragonSoulsTaken', 'perfectGame', 'pickKillWithAlly', 'playedChampSelectPosition',
-                     'poroExplosions', 'quickCleanse', 'quickFirstTurret', 'quickSoloKills', 'riftHeraldTakedowns',
-                     'saveAllyFromDeath', 'scuttleCrabKills', 'shortestTimeToAceFromFirstTakedown', 'skillshotsDodged',
-                     'skillshotsHit', 'snowballsHit', 'soloBaronKills', 'soloKills', 'stealthWardsPlaced',
-                     'survivedSingleDigitHpCount', 'survivedThreeImmobilizesInFight', 'takedownOnFirstTurret',
-                     'takedowns', 'takedownsAfterGainingLevelAdvantage', 'takedownsBeforeJungleMinionSpawn',
-                     'takedownsFirstXMinutes', 'takedownsInAlcove', 'takedownsInEnemyFountain', 'teamBaronKills',
-                     'teamDamagePercentage', 'teamElderDragonKills', 'teamRiftHeraldKills',
-                     'tookLargeDamageSurvived', 'turretPlatesTaken', 'turretTakedowns', 'turretsTakenWithRiftHerald',
-                     'twentyMinionsIn3SecondsCount', 'twoWardsOneSweeperCount', 'unseenRecalls',
-                     'visionScoreAdvantageLaneOpponent', 'visionScorePerMinute', 'wardTakedowns',
-                     'wardTakedownsBefore20M', 'wardsGuarded'):
-            if attr in ['completeSupportQuestOnTime', 'firstTurretKilled', 'getTakedownsInAllLanesEarlyJungleAsLaner',
-                        'hadOpenNexus', 'lostAnInhibitor', 'outnumberedNexusKill', 'perfectGame',
-                        'playedChampSelectPosition', 'quickFirstTurret']:
+        for attr in (
+            "puuid",
+            "platformId",
+            "gameId",
+            "Assist12StreakCount",
+            "abilityUses",
+            "acesBefore15Minutes",
+            "alliedJungleMonsterKills",
+            "baronBuffGoldAdvantageOverThreshold",
+            "baronTakedowns",
+            "blastConeOppositeOpponentCount",
+            "bountyGold",
+            "buffsStolen",
+            "completeSupportQuestOnTime",
+            "controlWardsPlaced",
+            "damagePerMinute",
+            "damageTakenOnTeamPercentage",
+            "dancedWithRiftHerald",
+            "deathsByEnemyChamps",
+            "dodgeSkillShotsSmallWindow",
+            "doubleAces",
+            "dragonTakedowns",
+            "earliestBaron",
+            "earlyLaningPhaseGoldExpAdvantage",
+            "effectiveHealAndShielding",
+            "elderDragonKillsWithOpposingSoul",
+            "elderDragonMultikills",
+            "enemyChampionImmobilizations",
+            "enemyJungleMonsterKills",
+            "epicMonsterKillsNearEnemyJungler",
+            "epicMonsterKillsWithin30SecondsOfSpawn",
+            "epicMonsterSteals",
+            "epicMonsterStolenWithoutSmite",
+            "firstTurretKilled",
+            "flawlessAces",
+            "fullTeamTakedown",
+            "gameLength",
+            "getTakedownsInAllLanesEarlyJungleAsLaner",
+            "goldPerMinute",
+            "hadOpenNexus",
+            "highestCrowdControlScore",
+            "immobilizeAndKillWithAlly",
+            "initialBuffCount",
+            "initialCrabCount",
+            "jungleCsBefore10Minutes",
+            "junglerTakedownsNearDamagedEpicMonster",
+            "kTurretsDestroyedBeforePlatesFall",
+            "kda",
+            "killAfterHiddenWithAlly",
+            "killParticipation",
+            "killedChampTookFullTeamDamageSurvived",
+            "killingSprees",
+            "killsNearEnemyTurret",
+            "killsOnOtherLanesEarlyJungleAsLaner",
+            "killsOnRecentlyHealedByAramPack",
+            "killsUnderOwnTurret",
+            "killsWithHelpFromEpicMonster",
+            "knockEnemyIntoTeamAndKill",
+            "landSkillShotsEarlyGame",
+            "laneMinionsFirst10Minutes",
+            "laningPhaseGoldExpAdvantage",
+            "legendaryCount",
+            "lostAnInhibitor",
+            "maxCsAdvantageOnLaneOpponent",
+            "maxKillDeficit",
+            "maxLevelLeadLaneOpponent",
+            "mejaisFullStackInTime",
+            "moreEnemyJungleThanOpponent",
+            "multiKillOneSpell",
+            "multiTurretRiftHeraldCount",
+            "multikills",
+            "multikillsAfterAggressiveFlash",
+            "mythicItemUsed",
+            "outerTurretExecutesBefore10Minutes",
+            "outnumberedKills",
+            "outnumberedNexusKill",
+            "perfectDragonSoulsTaken",
+            "perfectGame",
+            "pickKillWithAlly",
+            "playedChampSelectPosition",
+            "poroExplosions",
+            "quickCleanse",
+            "quickFirstTurret",
+            "quickSoloKills",
+            "riftHeraldTakedowns",
+            "saveAllyFromDeath",
+            "scuttleCrabKills",
+            "shortestTimeToAceFromFirstTakedown",
+            "skillshotsDodged",
+            "skillshotsHit",
+            "snowballsHit",
+            "soloBaronKills",
+            "soloKills",
+            "stealthWardsPlaced",
+            "survivedSingleDigitHpCount",
+            "survivedThreeImmobilizesInFight",
+            "takedownOnFirstTurret",
+            "takedowns",
+            "takedownsAfterGainingLevelAdvantage",
+            "takedownsBeforeJungleMinionSpawn",
+            "takedownsFirstXMinutes",
+            "takedownsInAlcove",
+            "takedownsInEnemyFountain",
+            "teamBaronKills",
+            "teamDamagePercentage",
+            "teamElderDragonKills",
+            "teamRiftHeraldKills",
+            "tookLargeDamageSurvived",
+            "turretPlatesTaken",
+            "turretTakedowns",
+            "turretsTakenWithRiftHerald",
+            "twentyMinionsIn3SecondsCount",
+            "twoWardsOneSweeperCount",
+            "unseenRecalls",
+            "visionScoreAdvantageLaneOpponent",
+            "visionScorePerMinute",
+            "wardTakedowns",
+            "wardTakedownsBefore20M",
+            "wardsGuarded",
+        ):
+            if attr in [
+                "completeSupportQuestOnTime",
+                "firstTurretKilled",
+                "getTakedownsInAllLanesEarlyJungleAsLaner",
+                "hadOpenNexus",
+                "lostAnInhibitor",
+                "outnumberedNexusKill",
+                "perfectGame",
+                "playedChampSelectPosition",
+                "quickFirstTurret",
+            ]:
                 setattr(self, attr, bool(kwargs.get(attr)))
             else:
                 setattr(self, attr, kwargs.get(attr))
