@@ -7,99 +7,117 @@ logger = logging.getLogger(__name__)
 
 class MatchIdCrawler:
     """An automatic crawler for Riot MatchIDs.
-       The crawler runs ``riotwatcher.LolWatcher`` under the hood.
+    The crawler runs ``riotwatcher.LolWatcher`` under the hood.
 
-       Attributes
-       ----------
-       api_key : str
-           Your Riot API key. You must have a valid API key to access
-           information through the Riot API. Defaults to None.
-       region : str
-           The region of interest, defaults to None.
-       tier : str
-           Tier level of the matches, defaults to None.
-       queue : str
-           The queue type of the matches, defaults to None.
+    Attributes
+    ----------
+    api_key : str
+        Your Riot API key. You must have a valid API key to access
+        information through the Riot API. Defaults to None.
+    region : str
+        The region of interest, defaults to None.
+    tier : str
+        Tier level of the matches, defaults to None.
+    queue : str
+        The queue type of the matches, defaults to None.
 
-       Notes
-       -----
-           The available options for ``region`` are
+    Notes
+    -----
+        The available options for ``region`` are
 
-           >>> ["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2",
-           ...  "na1", "oc1", "ru", "tr1"]
+        >>> ["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2",
+        ...  "na1", "oc1", "ru", "tr1"]
 
-           The available options for ``tier`` are
+        The available options for ``tier`` are
 
-           >>> ["CHALLENGER", "GRANDMASTER", "MASTER",
-           ...  "DIAMOND", "EMERALD", "PLATINUM", "GOLD", "SILVER",
-           ...  "BRONZE", "IRON"]
+        >>> ["CHALLENGER", "GRANDMASTER", "MASTER",
+        ...  "DIAMOND", "EMERALD", "PLATINUM", "GOLD", "SILVER",
+        ...  "BRONZE", "IRON"]
 
-           The available options for ``queue`` are
+        The available options for ``queue`` are
 
-           >>> ["RANKED_SOLO_5x5", "RANKED_FLEX_SR",
-           ...  "RANKED_FLEX_TT"]
-       """
+        >>> ["RANKED_SOLO_5x5", "RANKED_FLEX_SR",
+        ...  "RANKED_FLEX_TT"]
+    """
 
-    region_options_ = ["br1",
-                       "eun1", "euw1",
-                       "jp1", "kr",
-                       "la1", "la2",
-                       "na1",
-                       "oc1",
-                       "ru",
-                       "tr1"]
+    region_options_ = [
+        "br1",
+        "eun1",
+        "euw1",
+        "jp1",
+        "kr",
+        "la1",
+        "la2",
+        "na1",
+        "oc1",
+        "ru",
+        "tr1",
+    ]
 
-    tier_options_ = ["CHALLENGER",
-                     "GRANDMASTER",
-                     "MASTER",
-                     "DIAMOND",
-                     "EMERALD",
-                     "PLATINUM",
-                     "GOLD",
-                     "SILVER",
-                     "BRONZE",
-                     "IRON"]
+    tier_options_ = [
+        "CHALLENGER",
+        "GRANDMASTER",
+        "MASTER",
+        "DIAMOND",
+        "EMERALD",
+        "PLATINUM",
+        "GOLD",
+        "SILVER",
+        "BRONZE",
+        "IRON",
+    ]
 
-    queue_options_ = ["RANKED_SOLO_5x5",
-                      "RANKED_FLEX_SR",
-                      "RANKED_FLEX_TT"]
+    queue_options_ = ["RANKED_SOLO_5x5", "RANKED_FLEX_SR", "RANKED_FLEX_TT"]
 
-    def __init__(self, api_key: str, region: str = "euw1", tier: str = "CHALLENGER", queue: str = "RANKED_SOLO_5x5"):
+    def __init__(
+            self,
+            api_key: str,
+            region: str = "euw1",
+            tier: str = "CHALLENGER",
+            queue: str = "RANKED_SOLO_5x5",
+    ):
         # Error checking
         # api_key
-        if type(api_key) != str:
+        if not isinstance(api_key, str):
             raise TypeError("Invalid API key.")
         else:
             self.api_key = api_key
         # region
-        if type(region) != str:
+        if not isinstance(region, str):
             raise TypeError("Invalid type for region.")
         elif region not in self.region_options_:
-            raise ValueError("Invalid value for region. Must be one of " +
-                             f"{self.region_options_} (case sensitive).")
+            raise ValueError(
+                "Invalid value for region. Must be one of "
+                + f"{self.region_options_} (case sensitive)."
+            )
         else:
             self.region = region
         # tier
-        if type(tier) != str:
+        if not isinstance(tier, str):
             raise TypeError("Invalid type for tier.")
         elif tier not in self.tier_options_:
-            raise ValueError("Invalid value for tier. Must be one of " +
-                             f"{self.tier_options_} (case sensitive).")
+            raise ValueError(
+                "Invalid value for tier. Must be one of "
+                + f"{self.tier_options_} (case sensitive)."
+            )
         else:
             self.tier = tier
         # queue
-        if type(queue) != str:
+        if not isinstance(queue, str):
             raise TypeError("Invalid type for queue.")
         elif queue not in self.queue_options_:
-            raise ValueError("Invalid value for queue. Must be one of " +
-                             f"{self.queue_options_} (case sensitive).")
+            raise ValueError(
+                "Invalid value for queue. Must be one of "
+                + f"{self.queue_options_} (case sensitive)."
+            )
         else:
             self.queue = queue
 
         self.watcher = LolWatcher(api_key=self.api_key)
 
-    def getMatchIDs(self, n: int, match_per_id: int = 15,
-                    cutoff: int = 16, excludingIDs: set = None) -> set:
+    def getMatchIDs(
+            self, n: int, match_per_id: int = 15, cutoff: int = 16, excludingIDs: set = None
+    ) -> set:
         """
         n : int
             Number of matchIDs to be returned. If not enough matches can be found,
@@ -137,38 +155,40 @@ class MatchIdCrawler:
         if self.tier in ["CHALLENGER", "GRANDMASTER", "MASTER"]:
             # For challengers
             if self.tier == "CHALLENGER":
-                league_list = self.watcher.league \
-                    .challenger_by_queue(self.region,
-                                         self.queue)
+                league_list = self.watcher.league.challenger_by_queue(
+                    self.region, self.queue
+                )
                 # For grandmasters
             elif self.tier == "GRANDMASTER":
-                league_list = self.watcher.league \
-                    .grandmaster_by_queue(self.region,
-                                          self.queue)
+                league_list = self.watcher.league.grandmaster_by_queue(
+                    self.region, self.queue
+                )
             # For masters
             else:
-                league_list = self.watcher.league \
-                    .masters_by_queue(self.region,
-                                      self.queue)
+                league_list = self.watcher.league.masters_by_queue(
+                    self.region, self.queue
+                )
             leagueIds = {league_list["leagueId"]}
         # For all others - LeagueEntries
         else:
-            league_entries_set = self.watcher.league \
-                .entries(self.region, self.queue,
-                         self.tier, "I")
+            league_entries_set = self.watcher.league.entries(
+                self.region, self.queue, self.tier, "I"
+            )
             leagueIds = set([entry["leagueId"] for entry in league_entries_set])
 
         visited_matchIds = set()
         # Iterate over the leagueIds to fetch leagueEntries
         for leagueId in leagueIds:
-            entries = self.watcher.league.by_id(self.region, leagueId)['entries']
+            entries = self.watcher.league.by_id(self.region, leagueId)["entries"]
             # Then fetch summonerIds for each LeagueEntry
             for entry in entries:
-                summonerId = entry['summonerId']
+                summonerId = entry["summonerId"]
                 # Then fetch puuid for that summonerIds
                 puuid = self.watcher.summoner.by_id(self.region, summonerId)["puuid"]
                 # Then fetch a list of matchIds for that puuid
-                match_list = self.watcher.match.matchlist_by_puuid(region=self.region, puuid=puuid, count=100, queue=420)
+                match_list = self.watcher.match.matchlist_by_puuid(
+                    region=self.region, puuid=puuid, count=100, queue=420
+                )
                 for i in range(min(match_per_id, len(match_list))):
                     matchId = match_list[i]
                     if matchId in visited_matchIds:
