@@ -101,6 +101,7 @@ class SQLChampion(Base):
 
 
 class SQLChampionStats(Base):
+
     __tablename__ = "champion_stats"
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     championId = mapped_column(Integer, ForeignKey("champion.id"), nullable=False)

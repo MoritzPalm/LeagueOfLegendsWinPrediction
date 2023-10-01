@@ -45,6 +45,9 @@ class SQLSummoner(Base):
     def __repr__(self):
         return f"summoner {self.name} with puuid {self.puuid}"
 
+    def get_training_data(self):
+        return {'level': self.summonerLevel}
+
 
 class SQLSummonerLeague(Base):
     __tablename__ = "summoner_league"
@@ -102,6 +105,19 @@ class SQLSummonerLeague(Base):
             f"summoner {self.summonerName} with id {self.summonerId} has rank {self.tier} {self.rank} in queue "
             f"{self.queueType} "
         )
+
+    def get_training_data(self):
+        return {
+            'tier': self.tier,
+            'rank': self.rank,
+            'leaguePoints': self.leaguePoints,
+            'wins': self.wins,
+            'losses': self.losses,
+            'veteran': self.veteran,
+            'inactive': self.inactive,
+            'freshBlood': self.freshBlood,
+            'hotStreak': self.hotStreak
+        }
 
 
 class SQLChampionMastery(Base):
@@ -184,3 +200,25 @@ class SQLChampionMastery(Base):
 
     def __repr__(self):
         return f"player {self.puuid} has level {self.championLevel} on champion {self.championId}"
+
+    def get_training_data(self):
+        return {
+            'lastPlayTime': self.lastPlayTime,
+            'championLevel': self.championLevel,
+            'championPoints': self.championPoints,
+            'championPointsSinceLastLevel': self.championPointsSinceLastLevel,
+            'tokensEarned': self.tokensEarned,
+            'wins': self.wins,
+            'loses': self.loses,
+            'championWinrate': self.championWinrate,
+            'kda': self.kda,
+            'kills': self.kills,
+            'deaths': self.deaths,
+            'assists': self.assists,
+            'lp': self.lp,
+            'maxKills': self.maxKills,
+            'maxDeaths': self.maxDeaths,
+            'cs': self.cs,
+            'damage': self.damage,
+            'gold': self.gold,
+        }

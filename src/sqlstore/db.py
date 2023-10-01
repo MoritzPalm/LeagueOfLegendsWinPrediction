@@ -47,7 +47,7 @@ engine = connect_to_db()
 @contextlib.contextmanager
 def get_session(cleanup=False) -> Session:
     session = Session(bind=engine)
-    logger.info(f"creating all tables")
+    logger.info(f"building database session")
     Base.metadata.create_all(engine)
 
     try:
