@@ -163,7 +163,6 @@ class SQLChampionMastery(Base):
             championPointsSinceLastLevel: int,
             tokensEarned: int,
             wins: str = None,
-            loses: str = None,
             championWinrate: float = None,
             kda: str = None,
             kills: float = None,
@@ -185,7 +184,6 @@ class SQLChampionMastery(Base):
         self.championPointsSinceLastLevel = championPointsSinceLastLevel
         self.tokensEarned = tokensEarned
         self.wins = wins
-        self.loses = loses
         self.championWinrate = championWinrate
         self.kda = kda
         self.kills = kills
@@ -209,7 +207,6 @@ class SQLChampionMastery(Base):
             'championPointsSinceLastLevel': self.championPointsSinceLastLevel,
             'tokensEarned': self.tokensEarned,
             'wins': self.wins,
-            'loses': self.loses,
             'championWinrate': self.championWinrate,
             'kda': self.kda,
             'kills': self.kills,

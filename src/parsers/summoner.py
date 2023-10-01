@@ -22,6 +22,7 @@ def parse_summoner_data(
     """
     checks if summoner data (different Ids, win rates, rank, etc.) is more recent than expiration date
     if no, updates/ inserts data
+    :param championId:
     :param expiration: number of days until data should be updated
     :param session: sqlalchemy session
     :param watcher: riotwatcher

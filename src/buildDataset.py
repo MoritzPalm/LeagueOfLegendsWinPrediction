@@ -12,6 +12,7 @@ import numpy as np
 
 import logging
 
+
 def build_static_dataset(size: int) -> pd.DataFrame:
     """
     Builds a dataset with all static information (info available prior to match start) from the database.
@@ -48,25 +49,27 @@ def build_static_dataset(size: int) -> pd.DataFrame:
                     df_summoner.rename(columns=lambda x: f"participant{i}_" + x, inplace=True)
                     logging.info("Summoner data fetched.")
 
-                    # Fetch championId from ParticipantStats
-                    champion_id = session.query(SQLParticipantStats.championId).filter(
-                        SQLParticipantStats.puuid == participant.puuid).one()
-                    logging.info(f"Fetched champion ID: {champion_id}")
+                # Fetch championId from ParticipantStats
+                champion_id = session.query(SQLParticipantStats.championId).filter(
+                    SQLParticipantStats.participantId == participant.id).scalar()
+                logging.info(f"Fetched champion ID: {champion_id}")
 
-                    # Fetch Summoner League data
-                    summonerLeague = session.query(SQLSummonerLeague).filter(
-                        SQLSummonerLeague.puuid == participant.puuid).one()
-                    df_summonerLeague = pd.DataFrame([summonerLeague.get_training_data()])
-                    df_summonerLeague.rename(columns=lambda x: f"participant{i}_" + x, inplace=True)
-                    logging.info("Summoner League data fetched.")
+                # Fetch Summoner League data
+                summonerLeague = session.query(SQLSummonerLeague).filter(
+                    SQLSummonerLeague.puuid == participant.puuid).one()
+                df_summonerLeague = pd.DataFrame([summonerLeague.get_training_data()])
+                df_summonerLeague.rename(columns=lambda x: f"participant{i}_" + x, inplace=True)
+                logging.info("Summoner League data fetched.")
 
-                    # Fetch Mastery data
-                    mastery = session.query(SQLChampionMastery).filter(
-                        SQLChampionMastery.puuid == participant.puuid,
-                        SQLChampionMastery.championId == champion_id).one()
+                # Fetch Mastery data
+                mastery = session.query(SQLChampionMastery).filter(
+                    SQLChampionMastery.puuid == participant.puuid,
+                    SQLChampionMastery.championId == champion_id).scalar()
+                if mastery is None:
+                    df_mastery = pd.DataFrame([np.nan])
+                else:
                     df_mastery = pd.DataFrame([mastery.get_training_data()])
                     df_mastery.rename(columns=lambda x: f"participant{i}_" + x, inplace=True)
-                    logging.info("Mastery data fetched.")
 
                     # Concatenate Summoner, Summoner League, and Mastery data to the match DataFrame
                     df_match = pd.concat([df_match, df_summoner, df_summonerLeague, df_mastery], axis=1, copy=False)
@@ -74,10 +77,7 @@ def build_static_dataset(size: int) -> pd.DataFrame:
                 # Append this match's DataFrame to the overall DataFrame
                 data = pd.concat([data, df_match], axis=0, copy=False)
                 logging.info(f"Successfully processed match with ID: {match.matchId}")
-
             except Exception as e:
                 logging.error(f"An error occurred for match with ID {match.matchId}: {e}")
-                continue # Skip match and continue with next match
+                continue  # Skip match and continue with next match
     return data
-
-
