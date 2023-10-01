@@ -40,6 +40,10 @@ def build_static_dataset(size: int) -> pd.DataFrame:
                 df_summoner = pd.DataFrame([summoner.get_training_data()])
                 df_summoner.rename(columns=lambda x: f"participant{i}_" + x, inplace=True)
 
+                # Fetch championId from ParticipantStats
+                champion_id = session.query(SQLParticipantStats.championId).filter(
+                    SQLParticipantStats.puuid == participant.puuid).one()
+
                 # Fetch Summoner League data
                 summonerLeague = session.query(SQLSummonerLeague).filter(
                     SQLSummonerLeague.puuid == participant.puuid).one()
@@ -47,7 +51,6 @@ def build_static_dataset(size: int) -> pd.DataFrame:
                 df_summonerLeague.rename(columns=lambda x: f"participant{i}_" + x, inplace=True)
 
                 # Fetch Mastery data
-                champion_id = participant.championId
                 mastery = session.query(SQLChampionMastery).filter(
                     SQLChampionMastery.puuid == participant.puuid,
                     SQLChampionMastery.championId == champion_id).one()
@@ -61,4 +64,3 @@ def build_static_dataset(size: int) -> pd.DataFrame:
             data = pd.concat([data, df_match], axis=0, copy=False)
             print(build_static_dataset(size=2))
     return data
-
