@@ -40,6 +40,12 @@ def champ_patch_present(session: Session, season: int, patch: int) -> bool:
 
 
 def check_summoner_present(session: sqlalchemy.orm.Session, puuid: str) -> bool:
+    """
+    checks if a summoner with the specified puuid is already present in the database
+    :param session:
+    :param puuid:
+    :return:
+    """
     return session.query(
         session.query(SQLSummoner).filter(SQLSummoner.puuid == puuid).exists()
     ).scalar()
@@ -96,10 +102,18 @@ def get_champ_name(session: sqlalchemy.orm.Session, championId: int) -> str:
     return session.execute(query).scalar()
 
 
-def get_champ_id(session: sqlalchemy.orm.Session, championName: str) -> int:
+def get_champ_id(session: sqlalchemy.orm.Session, championName: str, season: int, patch: int) -> int:
+    """
+    gets the champion id for the specified champion name from the most recent patch
+    :param patch:
+    :param season:
+    :param session:
+    :param championName:
+    :return:
+    """
     query = select(SQLChampion.id).filter(
-        SQLChampion.championName == championName
-    ).order_by(SQLChampion.patchNumber.desc())
+        SQLChampion.championName == championName, SQLChampion.seasonNumber == season, SQLChampion.patchNumber == patch
+    )
     return session.execute(query).scalar()
 
 
@@ -138,7 +152,11 @@ def scraping_needed(session: sqlalchemy.orm.Session, region: str, summonerName: 
     summoner_query = select(SQLSummoner).filter(SQLSummoner.name == summonerName,
                                                 SQLSummoner.platformId == region)
     # there should only be one summoner with this name in this region
-    summoner = session.scalars(summoner_query).one_or_none()
+    try:
+        summoner = session.scalars(summoner_query).one_or_none()
+    except sqlalchemy.orm.exc.MultipleResultsFound:
+        logging.error(f"multiple summoners with name {summonerName} found in region {region}")
+        return False
     if summoner is None:
         logging.error(f"no summoner with name {summonerName} found in region {region}")
         return False
@@ -149,11 +167,11 @@ def scraping_needed(session: sqlalchemy.orm.Session, region: str, summonerName: 
                                                       SQLParticipantStats.championName == championName)).scalar()
     if not match_exists:  # no match played by summoner with champion championName found
         return False  # thus no scraping needed
-    champId = get_champ_id(session, championName)
+    champId = get_champ_id(session, championName)  # TODO: get patch and season from match
     mastery_query = select(SQLChampionMastery).filter(SQLChampionMastery.puuid == summoner.puuid,
                                                       SQLChampionMastery.championId == champId)
     mastery = session.scalars(mastery_query).one_or_none()
-    if not mastery:
+    if mastery is None:
         logging.error(
             f"no champion mastery found for summoner {summonerName} in region {region} with champion {championName}")
         return False  # no champion mastery object found, something went wrong

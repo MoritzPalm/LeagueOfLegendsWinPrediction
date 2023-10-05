@@ -98,7 +98,7 @@ class SQLParticipantStats(Base):
     bountyLevel = mapped_column(Integer)
     champExperience = mapped_column(Integer)
     champLevel = mapped_column(Integer)
-    championId = mapped_column(Integer)
+    championId = mapped_column(BigInteger)
     championName = mapped_column(String(30))
     championTransform = mapped_column(Integer)
     commandPings = mapped_column(Integer)

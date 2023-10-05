@@ -18,6 +18,7 @@ class MySpider(Spider):
     name = "my_spider"
     custom_settings = {
         "ITEM_PIPELINES": {"src.scraping.pipeline.DataPipeline": 300},
+        "LOG_LEVEL": "WARNING",
     }
 
     def __init__(self, init_data, *args, **kwargs):

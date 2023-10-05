@@ -1,6 +1,5 @@
 from typing import Tuple, Any
 import pickle
-import os
 
 import sqlalchemy.orm
 from sqlalchemy import select, Row
@@ -27,7 +26,7 @@ def build_static_dataset(size: int) -> pd.DataFrame:
 
         # Fetch a specific number of random matches from the SQLMatch table
         matches = session.query(SQLMatch).order_by(func.random()).limit(size).all()
-
+        logging.info(f"Fetched {len(matches)} matches from the database.")
         for match in matches:
             try:
                 logging.info(f"Processing match with ID: {match.matchId}")
@@ -69,7 +68,10 @@ def build_static_dataset(size: int) -> pd.DataFrame:
                         SQLChampionMastery.puuid == participant.puuid,
                         SQLChampionMastery.championId == champion_id).scalar()
                     if mastery is None:
-                        df_mastery = pd.DataFrame([np.nan])
+                        logging.error(
+                            f"No mastery data found for participant {j} with puuid: {participant.puuid} and championId: {champion_id}")
+                        # df_mastery = pd.DataFrame([np.nan])
+                        df_mastery = None
                     else:
                         df_mastery = pd.DataFrame([mastery.get_training_data()])
                         df_mastery.rename(columns=lambda x: f"participant{j}_" + x, inplace=True)
@@ -81,8 +83,9 @@ def build_static_dataset(size: int) -> pd.DataFrame:
                 data = pd.concat([data, df_match], axis=0, copy=False)
             except Exception as e:
                 logging.error(f"An error occurred when processing match with ID {match.matchId}: {e}")
+                raise
                 continue  # Skip match and continue with next match
             logging.info(f"Successfully processed match with ID: {match.matchId}")
-    path = os.getcwd()
+    logging.info(f"Successfully processed all matches, length of dataframe: {len(data)}")
     data.to_pickle("data/static_dataset.pkl")
     return data

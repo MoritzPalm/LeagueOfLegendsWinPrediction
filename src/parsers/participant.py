@@ -9,10 +9,11 @@ from src.sqlstore.match import (
     SQLStyleSelection,
     SQLChallenges,
 )
+from src.sqlstore.queries import get_champ_id
 
 
 def parse_participant_data(
-    session: sqlalchemy.orm.Session, match: SQLMatch, participant: dict
+        session: sqlalchemy.orm.Session, match: SQLMatch, participant: dict
 ) -> None:
     """
     parses participant stats and adds it to sqlalchemy session
@@ -27,6 +28,9 @@ def parse_participant_data(
         )
         match.participant.append(participant_obj)
         session.add(participant_obj)
+        championId = get_champ_id(session, participant["championName"], match.seasonId,
+                                  match.patch)
+        participant["championId"] = championId
         participantStats_obj = SQLParticipantStats(**participant)
         participant_obj.stats.append(participantStats_obj)
         session.add(participantStats_obj)
