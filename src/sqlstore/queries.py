@@ -117,6 +117,10 @@ def get_champ_id(session: sqlalchemy.orm.Session, championName: str, season: int
     return session.execute(query).scalar()
 
 
+def get_champ_number_from_name(session: sqlalchemy.orm.session, championName: str):
+    return session.query(SQLChampion.championNumber).filter(SQLChampion.championName == championName).scalar()
+
+
 def get_missing_masteries(session: sqlalchemy.orm.Session) -> list:
     """
     gets all summoner championmastery objects that have not yet been updated with scraped champion mastery data
@@ -135,6 +139,17 @@ def get_missing_masteries(session: sqlalchemy.orm.Session) -> list:
                                                   SQLChampionMastery.deaths == None,
                                                   SQLChampionMastery.assists == None,
                                                   ))
+    return session.scalars(query).all()
+
+
+def get_all_champIds_for_number(session: sqlalchemy.orm.Session, championNumber: int) -> list:
+    """
+    gets all champion ids for the specified champion number
+    :param session:
+    :param championNumber:
+    :return:
+    """
+    query = select(SQLChampion.id).filter(SQLChampion.championNumber == championNumber)
     return session.scalars(query).all()
 
 
@@ -166,10 +181,12 @@ def scraping_needed(session: sqlalchemy.orm.Session, region: str, summonerName: 
     match_exists: bool = session.query(exists().where(SQLParticipantStats.participantId.in_(participantIds),
                                                       SQLParticipantStats.championName == championName)).scalar()
     if not match_exists:  # no match played by summoner with champion championName found
+        logging.info(f"no match found for summoner {summonerName} in region {region} with champion {championName}")
         return False  # thus no scraping needed
-    champId = get_champ_id(session, championName)  # TODO: get patch and season from match
+    championNumber = get_champ_number_from_name(session, championName)  # the number of the champion played
+    champIds = get_all_champIds_for_number(session, championNumber)     # all champion Ids matching the champion number
     mastery_query = select(SQLChampionMastery).filter(SQLChampionMastery.puuid == summoner.puuid,
-                                                      SQLChampionMastery.championId == champId)
+                                                      SQLChampionMastery.championId.in_(champIds))
     mastery = session.scalars(mastery_query).one_or_none()
     if mastery is None:
         logging.error(
@@ -200,6 +217,9 @@ def update_mastery(session: sqlalchemy.orm.Session, scraped: Item, region: str, 
     mastery = session.scalars(mastery_query).one()
     for key, value in scraped.items():
         if key == "url" or key == "champion":
+            continue
+        if value == 'N/A':
+            setattr(mastery, key, None)
             continue
         setattr(mastery, key, value)
     session.commit()

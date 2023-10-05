@@ -1,4 +1,5 @@
 import re
+import logging
 
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
@@ -25,6 +26,7 @@ class DataPipeline:
             if scraping_needed(session, region, summonerName, champion):
                 # update database entry with data from item
                 update_mastery(session, item, region, summonerName, champion)
+                logging.info(f"updated champion mastery for {region} {summonerName} {champion}")
                 return item
             else:
                 raise DropItem(f"Scraping not needed for {region} {summonerName} {champion}")
