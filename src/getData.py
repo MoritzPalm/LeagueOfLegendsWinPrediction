@@ -78,7 +78,7 @@ def getData():
                 )
                 logger.error(str(e))
                 session.rollback()
-                raise
+                continue
         scrape_champion_masteries(session)
 
 

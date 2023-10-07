@@ -11,6 +11,7 @@ from src import sqlstore
 from src.sqlstore.champion import SQLChampion
 from src.sqlstore.summoner import SQLSummoner, SQLChampionMastery
 from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats
+from src.utils import clean_champion_name
 
 
 def check_matchId_present(session: Session, matchID: str) -> bool:
@@ -111,6 +112,7 @@ def get_champ_id(session: sqlalchemy.orm.Session, championName: str, season: int
     :param championName:
     :return:
     """
+    championName = clean_champion_name(championName)
     query = select(SQLChampion.id).filter(
         SQLChampion.championName == championName, SQLChampion.seasonNumber == season, SQLChampion.patchNumber == patch
     )
@@ -118,6 +120,7 @@ def get_champ_id(session: sqlalchemy.orm.Session, championName: str, season: int
 
 
 def get_champ_number_from_name(session: sqlalchemy.orm.session, championName: str):
+    championName = clean_champion_name(championName)
     return session.query(SQLChampion.championNumber).filter(SQLChampion.championName == championName).scalar()
 
 
@@ -163,7 +166,7 @@ def scraping_needed(session: sqlalchemy.orm.Session, region: str, summonerName: 
     :param championName:
     :return: True if scraping is needed, False otherwise
     """
-    mastery_present = False
+    championName = clean_champion_name(championName)
     summoner_query = select(SQLSummoner).filter(SQLSummoner.name == summonerName,
                                                 SQLSummoner.platformId == region)
     # there should only be one summoner with this name in this region
@@ -176,15 +179,13 @@ def scraping_needed(session: sqlalchemy.orm.Session, region: str, summonerName: 
         logging.error(f"no summoner with name {summonerName} found in region {region}")
         return False
     # check if there is at least one match played by the summoner with champion championName
-    participant_query = select(SQLParticipant.id).filter(SQLParticipant.puuid == summoner.puuid)
-    participantIds = session.scalars(participant_query).all()
-    match_exists: bool = session.query(exists().where(SQLParticipantStats.participantId.in_(participantIds),
+    match_exists: bool = session.query(exists().where(SQLParticipantStats.summonerId == summoner.summonerId,
                                                       SQLParticipantStats.championName == championName)).scalar()
     if not match_exists:  # no match played by summoner with champion championName found
         logging.info(f"no match found for summoner {summonerName} in region {region} with champion {championName}")
         return False  # thus no scraping needed
     championNumber = get_champ_number_from_name(session, championName)  # the number of the champion played
-    champIds = get_all_champIds_for_number(session, championNumber)     # all champion Ids matching the champion number
+    champIds = get_all_champIds_for_number(session, championNumber)  # all champion Ids matching the champion number
     mastery_query = select(SQLChampionMastery).filter(SQLChampionMastery.puuid == summoner.puuid,
                                                       SQLChampionMastery.championId.in_(champIds))
     mastery = session.scalars(mastery_query).one_or_none()
@@ -208,6 +209,7 @@ def update_mastery(session: sqlalchemy.orm.Session, scraped: Item, region: str, 
     :param championName:
     :return:
     """
+    championName = clean_champion_name(championName)
     puuid = session.scalars(
         select(SQLSummoner.puuid).filter(SQLSummoner.name == summonerName, SQLSummoner.platformId == region)).one()
     championId = session.scalars(select(SQLChampion.id).filter(SQLChampion.championName == championName).order_by(
@@ -218,6 +220,8 @@ def update_mastery(session: sqlalchemy.orm.Session, scraped: Item, region: str, 
     for key, value in scraped.items():
         if key == "url" or key == "champion":
             continue
+        if key == "wins" or key == "championWinrate":
+            continue  # TODO: as soon as the scraping of these is working, comment this and the columns in the table back in
         if value == 'N/A':
             setattr(mastery, key, None)
             continue

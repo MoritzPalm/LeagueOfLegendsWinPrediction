@@ -49,21 +49,20 @@ def parse_summoner_data(
         )
         summoner_league_obj = None
         for data in summoner_league_data:
-            if data["queueType"] == "RANKED_SOLO_5x5":
-                summoner_league_obj = SQLSummonerLeague(
-                    leagueId=data["leagueId"],
-                    queueType=data["queueType"],
-                    tier=data["tier"],
-                    rank=data["rank"],
-                    summonerName=data["summonerName"],
-                    leaguePoints=data["leaguePoints"],
-                    wins=data["wins"],
-                    losses=data["losses"],
-                    veteran=data["veteran"],
-                    inactive=data["inactive"],
-                    freshBlood=data["freshBlood"],
-                    hotStreak=data["hotStreak"],
-                )
+            summoner_league_obj = SQLSummonerLeague(
+                leagueId=data["leagueId"],
+                queueType=data["queueType"],
+                tier=data["tier"],
+                rank=data["rank"],
+                summonerName=data["summonerName"],
+                leaguePoints=data["leaguePoints"],
+                wins=data["wins"],
+                losses=data["losses"],
+                veteran=data["veteran"],
+                inactive=data["inactive"],
+                freshBlood=data["freshBlood"],
+                hotStreak=data["hotStreak"],
+            )
         if summoner_league_obj is None:
             raise Exception(f"no ranked summoner data found!")
         summoner_obj.leagues.append(summoner_league_obj)

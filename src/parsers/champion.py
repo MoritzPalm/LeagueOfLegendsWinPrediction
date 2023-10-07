@@ -5,6 +5,7 @@ from riotwatcher import LolWatcher
 
 from src.scraping.myspider import scrape_champion_metrics
 from src.sqlstore.champion import SQLChampionTags, SQLChampion, SQLChampionStats
+from src.utils import clean_champion_name
 
 import re
 
@@ -40,18 +41,7 @@ def parse_champion_data(
         }
         try:
             for item in scraped_data.items():
-                # Remove special characters and spaces from existing champion name
-                clean_existing_champion_name = (
-                    re.sub(r"[^\w\s]", "", item[1]["Champion Name"])
-                    .replace(" ", "")
-                    .lower()
-                )
-                if clean_existing_champion_name == "wukong":
-                    clean_existing_champion_name = "monkeyking"
-                if clean_existing_champion_name == "nunuwillump":
-                    clean_existing_champion_name = "nunu"
-                if clean_existing_champion_name == "renataglasc":
-                    clean_existing_champion_name = "renata"
+                clean_existing_champion_name = clean_champion_name(item[1]["Champion Name"])
                 if clean_existing_champion_name == champion.lower():
                     metrics = item[1]
                     break
@@ -59,7 +49,7 @@ def parse_champion_data(
             logging.warning(str(e))
         champion_obj = SQLChampion(
             championNumber=int(championdata["key"]),
-            championName=championdata["name"],
+            championName=clean_champion_name(championdata["name"]),
             championTitle=championdata["title"],
             infoAttack=championdata["info"]["attack"],
             infoDefense=championdata["info"]["defense"],

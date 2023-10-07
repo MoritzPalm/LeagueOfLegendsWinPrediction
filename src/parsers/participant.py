@@ -10,6 +10,7 @@ from src.sqlstore.match import (
     SQLChallenges,
 )
 from src.sqlstore.queries import get_champ_id
+from src.utils import clean_champion_name
 
 
 def parse_participant_data(
@@ -31,6 +32,7 @@ def parse_participant_data(
         championId = get_champ_id(session, participant["championName"], match.seasonId,
                                   match.patch)
         participant["championId"] = championId
+        participant['championName'] = clean_champion_name(participant['championName'])
         participantStats_obj = SQLParticipantStats(**participant)
         participant_obj.stats.append(participantStats_obj)
         session.add(participantStats_obj)

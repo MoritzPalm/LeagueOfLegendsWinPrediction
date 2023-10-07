@@ -52,8 +52,13 @@ def build_static_dataset(size: int) -> pd.DataFrame:
                     logging.info("Summoner data fetched.")
 
                     # Fetch championId from ParticipantStats
-                    champion_id = session.query(SQLParticipantStats.championId).filter(
+                    participant_stats = session.query(SQLParticipantStats).filter(
                         SQLParticipantStats.participantId == participant.id).scalar()
+                    champion_id: int = participant_stats.championId
+                    win: bool = participant_stats.win
+                    se_win = pd.Series([win], name=f"participant{j}_win")
+                    teamId = participant_stats.teamId
+                    se_teamId = pd.Series([teamId], name=f"participant{j}_teamId")
                     logging.info(f"Fetched champion ID: {champion_id}")
 
                     # Fetch Summoner League data
@@ -74,16 +79,17 @@ def build_static_dataset(size: int) -> pd.DataFrame:
                         df_mastery = None
                     else:
                         df_mastery = pd.DataFrame([mastery.get_training_data()])
-                        df_mastery.rename(columns=lambda x: f"participant{j}_" + x, inplace=True)
+                        df_mastery.rename(columns=lambda x: f"participant{j}_champion_" + x, inplace=True)
 
                     # Concatenate Summoner, Summoner League, and Mastery data to the match DataFrame
-                    df_match = pd.concat([df_match, df_summoner, df_summonerLeague, df_mastery], axis=1, copy=False)
+                    df_match = pd.concat([df_match, df_summoner, df_summonerLeague, df_mastery, se_teamId, se_win],
+                                         axis=1,
+                                         copy=False)
 
                 # Append this match's DataFrame to the overall DataFrame
                 data = pd.concat([data, df_match], axis=0, copy=False)
             except Exception as e:
                 logging.error(f"An error occurred when processing match with ID {match.matchId}: {e}")
-                raise
                 continue  # Skip match and continue with next match
             logging.info(f"Successfully processed match with ID: {match.matchId}")
     logging.info(f"Successfully processed all matches, length of dataframe: {len(data)}")

@@ -12,13 +12,13 @@ from src import utils
 
 from scrapy import Spider, Request
 from scrapy.item import Item, Field
+from scrapy.utils.project import get_project_settings
 
 
 class MySpider(Spider):
     name = "my_spider"
     custom_settings = {
         "ITEM_PIPELINES": {"src.scraping.pipeline.DataPipeline": 300},
-        "LOG_LEVEL": "WARNING",
     }
 
     def __init__(self, init_data, *args, **kwargs):
@@ -36,6 +36,7 @@ class MySpider(Spider):
             yield Request(url=url_data['url'], callback=self.parse, meta={'url_data': url_data})
 
     def parse(self, response):
+        settings = get_project_settings()
         columns = [
             "rank",
             "champion",

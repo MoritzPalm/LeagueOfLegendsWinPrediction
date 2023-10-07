@@ -86,3 +86,19 @@ def clean_summoner_data(df: pd.DataFrame) -> pd.DataFrame:
     df["damage"] = df["damage"].astype(float, errors="ignore")
     df["gold"] = df["gold"].astype(float, errors="ignore")
     return df
+
+
+def clean_champion_name(name: str) -> str:
+    """
+    Removes special characters and spaces from existing champion name
+    :param name:
+    :return:
+    """
+    cleaned = re.sub(r'[^\w\s]', "", name).replace(" ", "").lower()
+    if cleaned == "wukong":
+        cleaned = "monkeyking"
+    if cleaned == "nunuwillump":
+        cleaned = "nunu"
+    if cleaned == "renataglasc":
+        cleaned = "renata"
+    return cleaned

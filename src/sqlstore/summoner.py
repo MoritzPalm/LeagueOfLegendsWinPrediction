@@ -138,8 +138,8 @@ class SQLChampionMastery(Base):
     tokensEarned = mapped_column(
         Integer
     )  # tokens earned for champion at current championLevel. Is reset to 0 after championLevel increase
-    wins = mapped_column(Integer)
-    championWinrate = mapped_column(Float)
+    # wins = mapped_column(Integer)
+    # championWinrate = mapped_column(Float)
     kda = mapped_column(Float)
     kills = mapped_column(Float)
     deaths = mapped_column(Float)
@@ -162,8 +162,8 @@ class SQLChampionMastery(Base):
             championPoints: int,
             championPointsSinceLastLevel: int,
             tokensEarned: int,
-            wins: str = None,
-            championWinrate: float = None,
+            # wins: str = None,
+            # championWinrate: float = None,
             kda: str = None,
             kills: float = None,
             deaths: float = None,
@@ -183,8 +183,8 @@ class SQLChampionMastery(Base):
         self.championPoints = championPoints
         self.championPointsSinceLastLevel = championPointsSinceLastLevel
         self.tokensEarned = tokensEarned
-        self.wins = wins
-        self.championWinrate = championWinrate
+        # self.wins = wins
+        # self.championWinrate = championWinrate
         self.kda = kda
         self.kills = kills
         self.deaths = deaths
@@ -206,8 +206,8 @@ class SQLChampionMastery(Base):
             'championPoints': self.championPoints,
             'championPointsSinceLastLevel': self.championPointsSinceLastLevel,
             'tokensEarned': self.tokensEarned,
-            'championWins': self.wins,
-            'championWinrate': self.championWinrate,
+            # 'championWins': self.wins,
+            # 'championWinrate': self.championWinrate,
             'kda': self.kda,
             'kills': self.kills,
             'deaths': self.deaths,
