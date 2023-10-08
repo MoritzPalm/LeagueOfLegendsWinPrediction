@@ -130,18 +130,17 @@ def get_missing_masteries(session: sqlalchemy.orm.Session) -> list:
     :param session:
     :return: list of SQLChampionMastery objects
     """
-    query = select(SQLChampionMastery).filter(or_(SQLChampionMastery.championWinrate == None,
-                                                  SQLChampionMastery.kda == None,
-                                                  SQLChampionMastery.cs == None,
-                                                  SQLChampionMastery.damage == None,
-                                                  SQLChampionMastery.gold == None,
-                                                  SQLChampionMastery.maxKills == None,
-                                                  SQLChampionMastery.lp == None,
-                                                  SQLChampionMastery.wins == None,
-                                                  SQLChampionMastery.kills == None,
-                                                  SQLChampionMastery.deaths == None,
-                                                  SQLChampionMastery.assists == None,
-                                                  ))
+    query = select(SQLChampionMastery).filter(or_(
+        SQLChampionMastery.kda == None,
+        SQLChampionMastery.cs == None,
+        SQLChampionMastery.damage == None,
+        SQLChampionMastery.gold == None,
+        SQLChampionMastery.maxKills == None,
+        SQLChampionMastery.lp == None,
+        SQLChampionMastery.kills == None,
+        SQLChampionMastery.deaths == None,
+        SQLChampionMastery.assists == None,
+    ))
     return session.scalars(query).all()
 
 
