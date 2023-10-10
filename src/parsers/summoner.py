@@ -68,24 +68,25 @@ def parse_summoner_data(
         summoner_obj.leagues.append(summoner_league_obj)
         session.add(summoner_league_obj)
 
-    summoner_champion_data = watcher.champion_mastery.by_summoner_by_champion(
-        region, summoner_obj.summonerId, championId
-    )
-    with session.no_autoflush:
-        summoner_championmastery_obj = SQLChampionMastery(
-            championPointsUntilNextlevel=summoner_champion_data["championPointsUntilNextLevel"],
-            chestGranted=summoner_champion_data["chestGranted"],
-            lastPlayTime=summoner_champion_data["lastPlayTime"],
-            championLevel=summoner_champion_data["championLevel"],
-            summonerId=summoner_champion_data["summonerId"],
-            championPoints=summoner_champion_data["championPoints"],
-            championPointsSinceLastLevel=summoner_champion_data["championPointsSinceLastLevel"],
-            tokensEarned=summoner_champion_data["tokensEarned"],
+    if not queries.champion_mastery_present(session, puuid, championId):
+        summoner_champion_data = watcher.champion_mastery.by_summoner_by_champion(
+            region, summoner_obj.summonerId, championId
         )
-        summoner_obj.mastery.append(summoner_championmastery_obj)
-        champion_obj = queries.get_last_champion(session, championId)
-        champion_obj.mastery.append(summoner_championmastery_obj)
-    session.add(summoner_championmastery_obj)
+        with session.no_autoflush:
+            summoner_championmastery_obj = SQLChampionMastery(
+                championPointsUntilNextlevel=summoner_champion_data["championPointsUntilNextLevel"],
+                chestGranted=summoner_champion_data["chestGranted"],
+                lastPlayTime=summoner_champion_data["lastPlayTime"],
+                championLevel=summoner_champion_data["championLevel"],
+                summonerId=summoner_champion_data["summonerId"],
+                championPoints=summoner_champion_data["championPoints"],
+                championPointsSinceLastLevel=summoner_champion_data["championPointsSinceLastLevel"],
+                tokensEarned=summoner_champion_data["tokensEarned"],
+            )
+            summoner_obj.mastery.append(summoner_championmastery_obj)
+            champion_obj = queries.get_last_champion(session, championId)
+            champion_obj.mastery.append(summoner_championmastery_obj)
+        session.add(summoner_championmastery_obj)
     return True
 
 

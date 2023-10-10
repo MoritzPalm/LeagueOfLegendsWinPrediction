@@ -71,7 +71,7 @@ def build_static_dataset(size: int) -> pd.DataFrame:
                     # Fetch Mastery data
                     mastery = session.query(SQLChampionMastery).filter(
                         SQLChampionMastery.puuid == participant.puuid,
-                        SQLChampionMastery.championId == champion_id).scalar()
+                        SQLChampionMastery.championId == champion_id).limit(1).scalar()
                     if mastery is None:
                         logging.error(
                             f"No mastery data found for participant {j} with puuid: {participant.puuid} and championId: {champion_id}")
@@ -90,7 +90,7 @@ def build_static_dataset(size: int) -> pd.DataFrame:
                 data = pd.concat([data, df_match], axis=0, copy=False)
             except Exception as e:
                 logging.error(f"An error occurred when processing match with ID {match.matchId}: {e}")
-                continue  # Skip match and continue with next match
+                raise  # Skip match and continue with next match
             logging.info(f"Successfully processed match with ID: {match.matchId}")
     logging.info(f"Successfully processed all matches, length of dataframe: {len(data)}")
     data.to_pickle("data/static_dataset.pkl")

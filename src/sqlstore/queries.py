@@ -226,3 +226,17 @@ def update_mastery(session: sqlalchemy.orm.Session, scraped: Item, region: str, 
             continue
         setattr(mastery, key, value)
     session.commit()
+
+
+def champion_mastery_present(session: sqlalchemy.orm.Session, puuid: str, championId: int) -> bool:
+    """
+    checks if a champion mastery object for the specified summoner and champion is already present in the database
+    :param session:
+    :param puuid:
+    :param championId:
+    :return:
+    """
+    return session.query(
+        session.query(SQLChampionMastery).filter(SQLChampionMastery.puuid == puuid,
+                                                 SQLChampionMastery.championId == championId).exists()
+    ).scalar()
