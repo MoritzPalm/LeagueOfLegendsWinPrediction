@@ -121,7 +121,7 @@ def get_champ_id(session: sqlalchemy.orm.Session, championName: str, season: int
 
 def get_champ_number_from_name(session: sqlalchemy.orm.session, championName: str):
     championName = clean_champion_name(championName)
-    return session.query(SQLChampion.championNumber).filter(SQLChampion.championName == championName).scalar()
+    return session.query(SQLChampion.championNumber).filter(SQLChampion.championName == championName).limit(1).scalar()
 
 
 def get_missing_masteries(session: sqlalchemy.orm.Session) -> list:
@@ -236,7 +236,8 @@ def champion_mastery_present(session: sqlalchemy.orm.Session, puuid: str, champi
     :param championId:
     :return:
     """
+    championNumbers = get_all_champIds_for_number(session, championId)
     return session.query(
         session.query(SQLChampionMastery).filter(SQLChampionMastery.puuid == puuid,
-                                                 SQLChampionMastery.championId == championId).exists()
+                                                 SQLChampionMastery.championId.in_(championNumbers)).exists()
     ).scalar()
