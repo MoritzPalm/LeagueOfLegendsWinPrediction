@@ -10,11 +10,11 @@ from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMas
 from src.sqlstore.db import get_session
 import pandas as pd
 import numpy as np
-
+from joblib import Parallel
 import logging
 
 
-def build_static_dataset(size: int) -> pd.DataFrame:
+def build_static_dataset(size: int, save: bool) -> pd.DataFrame:
     """
     Builds a dataset with all static information (info available prior to match start) from the database.
     :param size: Number of matches in the dataset
@@ -27,7 +27,7 @@ def build_static_dataset(size: int) -> pd.DataFrame:
         # Fetch a specific number of random matches from the SQLMatch table
         matches = session.query(SQLMatch).order_by(func.random()).limit(size).all()
         logging.info(f"Fetched {len(matches)} matches from the database.")
-        for match in matches:
+        for match in matches:   # TODO: parallelize with joblib
             try:
                 logging.info(f"Processing match with ID: {match.matchId}")
 
@@ -93,5 +93,17 @@ def build_static_dataset(size: int) -> pd.DataFrame:
                 raise  # Skip match and continue with next match
             logging.info(f"Successfully processed match with ID: {match.matchId}")
     logging.info(f"Successfully processed all matches, length of dataframe: {len(data)}")
-    data.to_pickle("data/static_dataset.pkl")
+    if save:
+        data.to_pickle("data/static_dataset.pkl")
     return data
+
+
+def build_timeline_dataset(n: int) -> pd.DataFrame:
+    """
+    Builds a dataset with all timeline information (info available after match start) from the database.
+    :param n: number of matches in the dataset
+    :return:
+    """
+    df_static = build_static_dataset(n, save=False)
+    with get_session() as session:
+        pass
