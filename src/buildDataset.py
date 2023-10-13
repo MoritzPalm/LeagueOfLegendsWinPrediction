@@ -1,22 +1,20 @@
-from typing import Tuple, Any
-import pickle
-
-import sqlalchemy.orm
-from sqlalchemy import select, Row
-from sqlalchemy import func
-from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats
-from src.sqlstore.champion import SQLChampion
-from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
-from src.sqlstore.db import get_session
-import pandas as pd
-import numpy as np
-from joblib import Parallel
 import logging
+
+import pandas as pd
+from sqlalchemy import func
+from tqdm import tqdm
+
+from src.sqlstore import queries
+from src.sqlstore.champion import SQLChampion
+from src.sqlstore.db import get_session
+from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats
+from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
 
 
 def build_static_dataset(size: int, save: bool) -> pd.DataFrame:
     """
     Builds a dataset with all static information (info available prior to match start) from the database.
+    :param save:
     :param size: Number of matches in the dataset
     :return: DataFrame with a large number of columns (features)
     """
@@ -27,7 +25,7 @@ def build_static_dataset(size: int, save: bool) -> pd.DataFrame:
         # Fetch a specific number of random matches from the SQLMatch table
         matches = session.query(SQLMatch).order_by(func.random()).limit(size).all()
         logging.info(f"Fetched {len(matches)} matches from the database.")
-        for match in matches:   # TODO: parallelize with joblib
+        for i, match in enumerate(tqdm(matches)):  # TODO: parallelize with joblib
             try:
                 logging.info(f"Processing match with ID: {match.matchId}")
 
@@ -55,6 +53,8 @@ def build_static_dataset(size: int, save: bool) -> pd.DataFrame:
                     participant_stats = session.query(SQLParticipantStats).filter(
                         SQLParticipantStats.participantId == participant.id).scalar()
                     champion_id: int = participant_stats.championId
+                    champion: SQLChampion = session.query(SQLChampion).filter(SQLChampion.id == champion_id).scalar()
+                    df_champion = pd.DataFrame([champion.get_training_data()])
                     win: bool = participant_stats.win
                     se_win = pd.Series([win], name=f"participant{j}_win")
                     teamId = participant_stats.teamId
@@ -69,9 +69,11 @@ def build_static_dataset(size: int, save: bool) -> pd.DataFrame:
                     logging.info("Summoner League data fetched.")
 
                     # Fetch Mastery data
+                    championNumber = queries.get_champ_number_from_name(session, participant_stats.championName)
+                    championIds = queries.get_all_champIds_for_number(session, championNumber)
                     mastery = session.query(SQLChampionMastery).filter(
                         SQLChampionMastery.puuid == participant.puuid,
-                        SQLChampionMastery.championId == champion_id).limit(1).scalar()
+                        SQLChampionMastery.championId.in_(championIds)).limit(1).scalar()
                     if mastery is None:
                         logging.error(
                             f"No mastery data found for participant {j} with puuid: {participant.puuid} and championId: {champion_id}")
@@ -82,9 +84,8 @@ def build_static_dataset(size: int, save: bool) -> pd.DataFrame:
                         df_mastery.rename(columns=lambda x: f"participant{j}_champion_" + x, inplace=True)
 
                     # Concatenate Summoner, Summoner League, and Mastery data to the match DataFrame
-                    df_match = pd.concat([df_match, df_summoner, df_summonerLeague, df_mastery, se_teamId, se_win],
-                                         axis=1,
-                                         copy=False)
+                    df_match = pd.concat([df_match, df_summoner, df_summonerLeague, df_mastery, df_champion,
+                                          se_teamId, se_win], axis=1, copy=False)
 
                 # Append this match's DataFrame to the overall DataFrame
                 data = pd.concat([data, df_match], axis=0, copy=False)

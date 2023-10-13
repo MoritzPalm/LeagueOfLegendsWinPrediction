@@ -1,16 +1,16 @@
-import logging
 import datetime
+import logging
 
-from sqlalchemy import select, or_
-from sqlalchemy.sql import exists
-from sqlalchemy.orm import Session
 import sqlalchemy.exc
 from scrapy.item import Item
+from sqlalchemy import select, or_
+from sqlalchemy.orm import Session
+from sqlalchemy.sql import exists
 
 from src import sqlstore
 from src.sqlstore.champion import SQLChampion
+from src.sqlstore.match import SQLMatch, SQLParticipantStats
 from src.sqlstore.summoner import SQLSummoner, SQLChampionMastery
-from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats
 from src.utils import clean_champion_name
 
 
@@ -228,16 +228,16 @@ def update_mastery(session: sqlalchemy.orm.Session, scraped: Item, region: str, 
     session.commit()
 
 
-def champion_mastery_present(session: sqlalchemy.orm.Session, puuid: str, championId: int) -> bool:
+def champion_mastery_present(session: sqlalchemy.orm.Session, puuid: str, championNumber: int) -> bool:
     """
     checks if a champion mastery object for the specified summoner and champion is already present in the database
     :param session:
     :param puuid:
-    :param championId:
+    :param championNumber:
     :return:
     """
-    championNumbers = get_all_champIds_for_number(session, championId)
+    championIds = get_all_champIds_for_number(session, championNumber)
     return session.query(
         session.query(SQLChampionMastery).filter(SQLChampionMastery.puuid == puuid,
-                                                 SQLChampionMastery.championId.in_(championNumbers)).exists()
+                                                 SQLChampionMastery.championId.in_(championIds)).exists()
     ).scalar()

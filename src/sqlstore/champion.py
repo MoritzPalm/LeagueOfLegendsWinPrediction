@@ -1,17 +1,15 @@
-from typing import Any
-
 from sqlalchemy import (
     Integer,
     String,
     Float,
-    PickleType,
     DateTime,
     ForeignKey,
     Identity,
     BigInteger,
 )
-from sqlalchemy.orm import mapped_column, relationship, MappedColumn
+from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func
+
 from src.sqlstore.db import Base
 
 
@@ -43,23 +41,23 @@ class SQLChampion(Base):
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
     def __init__(
-        self,
-        championNumber: int,
-        seasonNumber: int,
-        patchNumber: int,
-        championName: str,
-        championTitle: str,
-        infoAttack: int,
-        infoDefense: int,
-        infoMagic: int,
-        infoDifficulty: int,
-        partype: str = None,
-        role: str = None,
-        tier: str = None,
-        win_rate: float = None,
-        pick_rate: float = None,
-        ban_rate: float = None,
-        matches: int = None,
+            self,
+            championNumber: int,
+            seasonNumber: int,
+            patchNumber: int,
+            championName: str,
+            championTitle: str,
+            infoAttack: int,
+            infoDefense: int,
+            infoMagic: int,
+            infoDifficulty: int,
+            partype: str = None,
+            role: str = None,
+            tier: str = None,
+            win_rate: float = None,
+            pick_rate: float = None,
+            ban_rate: float = None,
+            matches: int = None,
     ):
         """
         :param patchNumber: patch number identifying the data as champion data changes per patch
@@ -99,9 +97,22 @@ class SQLChampion(Base):
     def repr(self):
         return f"<Champion {self.championName} ({self.key}) - {self.championTitle}>"
 
+    def get_training_data(self):
+        return {
+            "championNumber": self.championNumber,
+            "infoAttack": self.infoAttack,
+            "infoDefense": self.infoDefense,
+            "infoMagic": self.infoMagic,
+            "infoDifficulty": self.infoDifficulty,
+            "tier": self.tier,
+            "win_rate": self.win_rate,
+            "pick_rate": self.pick_rate,
+            "ban_rate": self.ban_rate,
+            "matches": self.matches,
+        }
+
 
 class SQLChampionStats(Base):
-
     __tablename__ = "champion_stats"
     id = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     championId = mapped_column(Integer, ForeignKey("champion.id"), nullable=False)
@@ -131,29 +142,29 @@ class SQLChampionStats(Base):
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
     def __init__(
-        self,
-        championId: int,
-        patchNumber: int,
-        seasonNumber: int,
-        hp: int,
-        hpperlevel: int,
-        mp: int,
-        mpperlevel: int,
-        movespeed: int,
-        armor: int,
-        armorperlevel: float,
-        spellblock: int,
-        spellblockperlevel: float,
-        attackrange: int,
-        hpregen: float,
-        hpregenperlevel: float,
-        mpregen: float,
-        mpregenperlevel: float,
-        crit: int,
-        critperlevel: int,
-        attackdamage: int,
-        attackdamageperlevel: float,
-        attackspeed: float,
+            self,
+            championId: int,
+            patchNumber: int,
+            seasonNumber: int,
+            hp: int,
+            hpperlevel: int,
+            mp: int,
+            mpperlevel: int,
+            movespeed: int,
+            armor: int,
+            armorperlevel: float,
+            spellblock: int,
+            spellblockperlevel: float,
+            attackrange: int,
+            hpregen: float,
+            hpregenperlevel: float,
+            mpregen: float,
+            mpregenperlevel: float,
+            crit: int,
+            critperlevel: int,
+            attackdamage: int,
+            attackdamageperlevel: float,
+            attackspeed: float,
     ):
         self.championId = championId
         self.patchNumber = patchNumber
@@ -195,7 +206,7 @@ class SQLChampionRoles(Base):
     lastUpdate = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
     def __init__(
-        self, championId: int, role1: str, role2: str = None, role3: str = None
+            self, championId: int, role1: str, role2: str = None, role3: str = None
     ):
         self.championId = championId
         self.role1 = role1

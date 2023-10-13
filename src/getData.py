@@ -6,14 +6,14 @@ import sqlalchemy.orm.session
 from riotwatcher import LolWatcher
 
 import keys
+from src import utils
+from src.buildDataset import build_static_dataset
 from src.crawlers.MatchIdCrawler import MatchIdCrawler
+from src.parsers import champion, summoner, timeline, participant
+from src.parsers.summoner import scrape_champion_masteries
+from src.sqlstore import queries
 from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLMatch
-from src import utils
-from src.sqlstore import queries
-from src.parsers import champion, summoner, timeline, participant
-from src.buildDataset import build_static_dataset
-from src.parsers.summoner import scrape_champion_masteries
 
 
 # TODO: review logging
@@ -271,4 +271,4 @@ if __name__ == "__main__":
     logger.info(f"starting getData.py with arguments {sys.argv}")
     if not args.buildOnly:
         getData()
-    build_static_dataset(size=500, save=True)
+    build_static_dataset(size=100000, save=True)
