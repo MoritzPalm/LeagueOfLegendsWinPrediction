@@ -6,4 +6,7 @@ data/
 __pycache__
 database.ini
 chromedriver-win64/
+wandb/
+*.aux
+*.synctex.gz
 

@@ -8,10 +8,10 @@ from sqlalchemy import (
     PickleType,
     Identity,
     UniqueConstraint,
-    Enum,
 )
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func
+
 from src.sqlstore.db import Base
 
 
@@ -70,6 +70,16 @@ class SQLFrame(Base):
             f"at {self.timestamp}"
         )
 
+    def get_training_data(self):
+        """
+        returns a dict with the frameId and timestamp of the frame
+        :return:
+        """
+        return {
+            "frameId": self.frameId,
+            "timestamp": self.timestamp,
+        }
+
 
 class SQLEvent(Base):
     __tablename__ = "event"
@@ -98,18 +108,18 @@ class SQLEvent(Base):
     )
 
     def __init__(
-        self,
-        eventId: int,
-        timestamp: int,
-        type: str,
-        participantId: int,
-        itemId: int,
-        skillSlot: int,
-        creatorId: int,
-        teamId: int,
-        afterId: int,
-        beforeId: int,
-        wardType: str,
+            self,
+            eventId: int,
+            timestamp: int,
+            type: str,
+            participantId: int,
+            itemId: int,
+            skillSlot: int,
+            creatorId: int,
+            teamId: int,
+            afterId: int,
+            beforeId: int,
+            wardType: str,
     ):
         self.eventId = eventId
         self.timestamp = timestamp
@@ -124,7 +134,22 @@ class SQLEvent(Base):
         self.wardType = wardType
 
     def __repr__(self):
-        return f"{self.platformId}_{self.gameId} frame {self.frameId} event {self.eventId} at {self.timestamp} of type {self.type}"
+        return f"frame {self.frameId} event {self.eventId} at {self.timestamp} of type {self.type}"
+
+    def get_training_data(self):
+        return {
+            "eventId": self.eventId,
+            "timestamp": self.timestamp,
+            "type": self.type,
+            "participantId": self.participantId,
+            "itemId": self.itemId,
+            "skillSlot": self.skillSlot,
+            "creatorId": self.creatorId,
+            "teamId": self.teamId,
+            "afterId": self.afterId,
+            "beforeId": self.beforeId,
+            "wardType": self.wardType,
+        }
 
 
 class SQLKillEvent(Base):
@@ -154,17 +179,17 @@ class SQLKillEvent(Base):
     )
 
     def __init__(
-        self,
-        assistingParticipantIds: PickleType,
-        bounty: int,
-        killStreakLength: int,
-        killerId: int,
-        laneType: str,
-        position: dict,
-        shutdownBounty: int,
-        timestamp: int,
-        type: str,
-        victimId: int,
+            self,
+            assistingParticipantIds: PickleType,
+            bounty: int,
+            killStreakLength: int,
+            killerId: int,
+            laneType: str,
+            position: dict,
+            shutdownBounty: int,
+            timestamp: int,
+            type: str,
+            victimId: int,
     ):
         self.assistingParticipantIds = assistingParticipantIds
         self.bounty = bounty
@@ -180,9 +205,24 @@ class SQLKillEvent(Base):
 
     def __repr__(self):
         return (
-            f"{self.platformId}_{self.gameId} at frame {self.frameId} (id: {self.killId}) {self.killerId} killed "
+            f"frame {self.frameId} (id: {self.killId}) {self.killerId} killed "
             f"{self.victimId}"
         )
+
+    def get_training_data(self):
+        return {
+            "assistingParticipantIds": self.assistingParticipantIds,
+            "bounty": self.bounty,
+            "killStreakLength": self.killStreakLength,
+            "killerId": self.killerId,
+            "laneType": self.laneType,
+            "position_x": self.position_x,
+            "position_y": self.position_y,
+            "shutdownBounty": self.shutdownBounty,
+            "timestamp": self.timestamp,
+            "type": self.type,
+            "victimId": self.victimId,
+        }
 
 
 class SQLTimelineDamageDealt(Base):
@@ -212,16 +252,16 @@ class SQLTimelineDamageDealt(Base):
     )
 
     def __init__(
-        self,
-        basic: bool,
-        magicDamage: int,
-        name: str,
-        participantId: int,
-        physicalDamage: int,
-        spellName: str,
-        spellSlot: int,
-        trueDamage: int,
-        type: str,
+            self,
+            basic: bool,
+            magicDamage: int,
+            name: str,
+            participantId: int,
+            physicalDamage: int,
+            spellName: str,
+            spellSlot: int,
+            trueDamage: int,
+            type: str,
     ):
         """
         name is victim name, participantId is the victims participantId
@@ -248,9 +288,22 @@ class SQLTimelineDamageDealt(Base):
 
     def __repr__(self):
         return (
-            f"{self.platformId}_{self.gameId} at frame {self.frameId} (id: {self.damageId}) {self.name} "
+            f"frame {self.frameId} (id: {self.damageId}) {self.name} "
             f"dealt damage before being killed"
         )
+
+    def get_training_data(self):
+        return {
+            "basic": self.basic,
+            "magicDamage": self.magicDamage,
+            "name": self.name,
+            "participantId": self.participantId,
+            "physicalDamage": self.physicalDamage,
+            "spellName": self.spellName,
+            "spellSlot": self.spellSlot,
+            "trueDamage": self.trueDamage,
+            "type": self.type,
+        }
 
 
 class SQLTimelineDamageReceived(Base):
@@ -280,16 +333,16 @@ class SQLTimelineDamageReceived(Base):
     )
 
     def __init__(
-        self,
-        basic: bool,
-        magicDamage: int,
-        name: str,
-        participantId: int,
-        physicalDamage: int,
-        spellName: str,
-        spellSlot: int,
-        trueDamage: int,
-        type: str,
+            self,
+            basic: bool,
+            magicDamage: int,
+            name: str,
+            participantId: int,
+            physicalDamage: int,
+            spellName: str,
+            spellSlot: int,
+            trueDamage: int,
+            type: str,
     ):
         """
         name is attacker name, participantId is the victims participantId
@@ -316,6 +369,19 @@ class SQLTimelineDamageReceived(Base):
 
     def __repr__(self):
         return f"damage received by {self.participantId} dealt by {self.name}"
+
+    def get_training_data(self):
+        return {
+            "basic": self.basic,
+            "magicDamage": self.magicDamage,
+            "name": self.name,
+            "participantId": self.participantId,
+            "physicalDamage": self.physicalDamage,
+            "spellName": self.spellName,
+            "spellSlot": self.spellSlot,
+            "trueDamage": self.trueDamage,
+            "type": self.type,
+        }
 
 
 class SQLParticipantFrame(Base):
@@ -373,62 +439,113 @@ class SQLParticipantFrame(Base):
 
     def __init__(self, **kwargs):
         for attr in (
-            "participantId",
-            "currentGold",
-            "goldPerSecond",
-            "jungleMinionsKilled",
-            "level",
-            "minionsKilled",
-            "timeEnemySpentControlled",
-            "totalGold",
-            "xp",
+                "participantId",
+                "currentGold",
+                "goldPerSecond",
+                "jungleMinionsKilled",
+                "level",
+                "minionsKilled",
+                "timeEnemySpentControlled",
+                "totalGold",
+                "xp",
         ):
             setattr(self, attr, kwargs.get(attr))
         for attr in (
-            "abilityHaste",
-            "abilityPower",
-            "armor",
-            "armorPen",
-            "armorPenPercent",
-            "attackDamage",
-            "attackSpeed",
-            "bonusArmorPenPercent",
-            "bonusMagicPenPercent",
-            "ccReduction",
-            "cooldownReduction",
-            "health",
-            "healthMax",
-            "healthRegen",
-            "lifesteal",
-            "magicPen",
-            "magicPenPercent",
-            "magicResist",
-            "movementSpeed",
-            "omnivamp",
-            "physicalVamp",
-            "power",
-            "powerMax",
-            "powerRegen",
-            "spellVamp",
+                "abilityHaste",
+                "abilityPower",
+                "armor",
+                "armorPen",
+                "armorPenPercent",
+                "attackDamage",
+                "attackSpeed",
+                "bonusArmorPenPercent",
+                "bonusMagicPenPercent",
+                "ccReduction",
+                "cooldownReduction",
+                "health",
+                "healthMax",
+                "healthRegen",
+                "lifesteal",
+                "magicPen",
+                "magicPenPercent",
+                "magicResist",
+                "movementSpeed",
+                "omnivamp",
+                "physicalVamp",
+                "power",
+                "powerMax",
+                "powerRegen",
+                "spellVamp",
         ):
             setattr(self, attr, kwargs["championStats"].get(attr))
         for attr in (
-            "magicDamageDone",
-            "magicDamageDoneToChampions",
-            "magicDamageTaken",
-            "physicalDamageDone",
-            "physicalDamageDoneToChampions",
-            "physicalDamageTaken",
-            "totalDamageDone",
-            "totalDamageTaken",
-            "totalDamageDoneToChampions",
-            "trueDamageDone",
-            "trueDamageDoneToChampions",
-            "trueDamageTaken",
+                "magicDamageDone",
+                "magicDamageDoneToChampions",
+                "magicDamageTaken",
+                "physicalDamageDone",
+                "physicalDamageDoneToChampions",
+                "physicalDamageTaken",
+                "totalDamageDone",
+                "totalDamageTaken",
+                "totalDamageDoneToChampions",
+                "trueDamageDone",
+                "trueDamageDoneToChampions",
+                "trueDamageTaken",
         ):
             setattr(self, attr, kwargs["damageStats"].get(attr))
         self.position_x = kwargs["position"]["x"]
         self.position_y = kwargs["position"]["y"]
 
     def __repr__(self):
-        return f"{self.platformId}_{self.gameId} frame {self.frameId} participant {self.participantId}"
+        return f"frame {self.frameId} participant {self.participantId}"
+
+    def get_training_data(self):
+        return {
+            "participantId": self.participantId,
+            "abilityHaste": self.abilityHaste,
+            "abilityPower": self.abilityPower,
+            "armor": self.armor,
+            "armorPen": self.armorPen,
+            "armorPenPercent": self.armorPenPercent,
+            "attackDamage": self.attackDamage,
+            "attackSpeed": self.attackSpeed,
+            "bonusArmorPenPercent": self.bonusArmorPenPercent,
+            "bonusMagicPenPercent": self.bonusMagicPenPercent,
+            "ccReduction": self.ccReduction,
+            "cooldownReduction": self.cooldownReduction,
+            "health": self.health,
+            "healthMax": self.healthMax,
+            "healthRegen": self.healthRegen,
+            "lifesteal": self.lifesteal,
+            "magicPen": self.magicPen,
+            "magicPenPercent": self.magicPenPercent,
+            "magicResist": self.magicResist,
+            "movementSpeed": self.movementSpeed,
+            "omnivamp": self.omnivamp,
+            "physicalVamp": self.physicalVamp,
+            "power": self.power,
+            "powerRegen": self.powerRegen,
+            "spellVamp": self.spellVamp,
+            "currentGold": self.currentGold,
+            "magicDamageDone": self.magicDamageDone,
+            "magicDamageDoneToChampions": self.magicDamageDoneToChampions,
+            "magicDamageTaken": self.magicDamageTaken,
+            "physicalDamageDone": self.physicalDamageDone,
+            "physicalDamageDoneToChampions": self.physicalDamageDoneToChampions,
+            "physicalDamageTaken": self.physicalDamageTaken,
+            "totalDamageDone": self.totalDamageDone,
+            "totalDamageDoneToChampions": self.totalDamageDoneToChampions,
+            "totalDamageTaken": self.totalDamageTaken,
+            "trueDamageDone": self.trueDamageDone,
+            "trueDamageDoneToChampions": self.trueDamageDoneToChampions,
+            "trueDamageTaken": self.trueDamageTaken,
+            "goldPerSecond": self.goldPerSecond,
+            "jungleMinionsKilled": self.jungleMinionsKilled,
+            "level": self.level,
+            "minionsKilled": self.minionsKilled,
+            "position_x": self.position_x,
+            "position_y": self.position_y,
+            "timeEnemySpentControlled": self.timeEnemySpentControlled,
+            "totalGold": self.totalGold,
+            "xp": self.xp,
+        }
