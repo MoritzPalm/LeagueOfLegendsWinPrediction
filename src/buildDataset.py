@@ -25,7 +25,7 @@ def build_static_dataset(size: int, save: bool) -> pd.DataFrame:
         # Fetch a specific number of random matches from the SQLMatch table
         matches = session.query(SQLMatch).order_by(func.random()).limit(size).all()
         logging.info(f"Fetched {len(matches)} matches from the database.")
-        for i, match in enumerate(tqdm(matches)):  # TODO: parallelize with joblib
+        for match in tqdm(matches):  # TODO: parallelize with joblib
             try:
                 logging.info(f"Processing match with ID: {match.matchId}")
 
@@ -55,6 +55,7 @@ def build_static_dataset(size: int, save: bool) -> pd.DataFrame:
                     champion_id: int = participant_stats.championId
                     champion: SQLChampion = session.query(SQLChampion).filter(SQLChampion.id == champion_id).scalar()
                     df_champion = pd.DataFrame([champion.get_training_data()])
+                    df_champion.rename(columns=lambda x: f"participant{j}_champion_" + x, inplace=True)
                     win: bool = participant_stats.win
                     se_win = pd.Series([win], name=f"participant{j}_win")
                     teamId = participant_stats.teamId
