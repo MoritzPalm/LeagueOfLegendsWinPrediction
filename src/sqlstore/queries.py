@@ -209,12 +209,12 @@ def update_mastery(session: sqlalchemy.orm.Session, scraped: Item, region: str, 
     :return:
     """
     championName = clean_champion_name(championName)
+    championNumber = get_champ_number_from_name(session, championName)
+    championIds = get_all_champIds_for_number(session, championNumber)
     puuid = session.scalars(
         select(SQLSummoner.puuid).filter(SQLSummoner.name == summonerName, SQLSummoner.platformId == region)).one()
-    championId = session.scalars(select(SQLChampion.id).filter(SQLChampion.championName == championName).order_by(
-        SQLChampion.patchNumber.desc())).first()
     mastery_query = select(SQLChampionMastery).filter(SQLChampionMastery.puuid == puuid,
-                                                      SQLChampionMastery.championId == championId)
+                                                      SQLChampionMastery.championId.in_(championIds))
     mastery = session.scalars(mastery_query).one()
     for key, value in scraped.items():
         if key == "url" or key == "champion":

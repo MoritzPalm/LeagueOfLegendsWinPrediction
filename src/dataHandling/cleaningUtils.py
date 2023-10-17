@@ -101,10 +101,10 @@ def fix_rank(df: pd.DataFrame):
     :return: None
     """
     for i in range(1, 11):
-        df[f'participant{i}_tier'] = df[f'participant{i}_tier'].apply(lambda x: Tier[x].value)
-        df[:, f'participant{i}_tier'] = df.apply(
+        df.loc[f'participant{i}_tier'] = df.loc[f'participant{i}_tier'].apply(lambda x: Tier[x].value)
+        df.loc[:, f'participant{i}_tier'] = df.apply(
             lambda x: format_rank(x[f'participant{i}_tier'], x[f'participant{i}_rank']), axis=1)
-        df[f'participant{i}_tier'] = df[f'participant{i}_tier'].astype(float)
+        df.loc[f'participant{i}_tier'] = df.loc[f'participant{i}_tier'].astype(float)
         df.drop(columns=[f'participant{i}_rank'], inplace=True)
 
 
@@ -147,5 +147,5 @@ def convert_lastPlayTime(df: pd.DataFrame):
     :return: None
     """
     for i in range(1, 11):
-        df[f'participant{i}_champion_lastPlayTime'] = df[f'participant{i}_champion_lastPlayTime'].apply(
+        df.loc[f'participant{i}_champion_lastPlayTime'] = df.loc[f'participant{i}_champion_lastPlayTime'].apply(
             lambda x: int((datetime.now() - datetime.fromtimestamp(x / 1000)).total_seconds()))
