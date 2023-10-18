@@ -79,7 +79,8 @@ def getData():
                 logger.error(str(e))
                 session.rollback()
                 continue
-        scrape_champion_masteries(session)
+        if not args.noScraping:
+            scrape_champion_masteries(session)
 
 
 def parse_data(
@@ -247,6 +248,13 @@ if __name__ == "__main__":
         action="store_true",
         help="if flag is set, does not fetch new data",
         dest="buildOnly",
+    )
+
+    parser.add_argument(
+        "--noScraping",
+        action="store_true",
+        help="if flag is set, does not scrape u.gg for champion data",
+        dest="noScraping",
     )
 
     args = parser.parse_args()
