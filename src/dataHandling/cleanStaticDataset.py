@@ -9,16 +9,16 @@ import src.dataHandling.cleaningUtils as clean
 with open("data/raw/static_dataset.pkl", "rb") as f:
     df = pickle.load(f)
 
-clean.drop_missing(df)
-clean.get_winning_team(df)
-clean.drop_wrong_data(df)
-clean.drop_irrelevant(df)
+df = clean.drop_missing(df)
+df = clean.get_winning_team(df)
+df = clean.drop_wrong_data(df)
+df = clean.drop_irrelevant(df)
 df.reset_index(drop=True, inplace=True)
-clean.fix_rank(df)
-clean.calc_winrate(df)
-clean.fix_teamId(df)
-clean.convert_booleans(df)
-clean.convert_lastPlayTime(df)
+df = clean.fix_rank(df)
+df = clean.calc_winrate(df)
+df = clean.fix_teamId(df)
+df = clean.convert_booleans(df)
+df = clean.convert_lastPlayTime(df)
 
 X_train, X_test, y_train, y_test = train_test_split(df.iloc[:, :-1], df.iloc[:, -1], test_size=0.2, random_state=42,
                                                     shuffle=True)
