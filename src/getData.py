@@ -277,6 +277,7 @@ if __name__ == "__main__":
     logging.getLogger("sqlalchemy.engine").setLevel(otherlogginglevel)
     logging.getLogger("riotwatcher.LolWatcher").setLevel(otherlogginglevel)
     logger.info(f"starting getData.py with arguments {sys.argv}")
-    if not args.buildOnly:
+    if args.buildOnly:
+        build_static_dataset(size=100000, save=True)
+    else:
         getData()
-    build_static_dataset(size=100000, save=True)
