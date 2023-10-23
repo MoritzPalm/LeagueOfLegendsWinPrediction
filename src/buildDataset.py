@@ -4,6 +4,7 @@ import pandas as pd
 from sqlalchemy import func
 from tqdm import tqdm
 
+from src.dataHandling.cleanTimelineDataset import cleanTimelineDataset
 from src.sqlstore import queries
 from src.sqlstore.champion import SQLChampion
 from src.sqlstore.db import get_session
@@ -147,5 +148,6 @@ def build_frame_dataset(size: int = None, save: bool = True):
 
 
 if __name__ == "__main__":
-    build_static_dataset(1000, True)
+    build_static_dataset(None, True)
     build_frame_dataset(None, True)
+    cleanTimelineDataset()
