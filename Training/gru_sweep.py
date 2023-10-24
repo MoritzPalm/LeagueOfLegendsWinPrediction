@@ -61,9 +61,6 @@ sweep_config = {
         'output_size': {
             'value': 2
         },
-        'regularization_lambda': {
-            'values': [0.0, 0.0001, 0.001, 0.01, 0.1]
-        },
         'regularization_type': {
             'value': 'l2'
         },
@@ -185,14 +182,15 @@ class GRU(nn.Module):
 
 
 def train(config):
-    with wandb.init(config=config):
+    with (wandb.init(config=config)):
         config = wandb.config
         train_data, val_data = get_train_data()
         train_loader = make_loader(train_data, config.batch_size)
         val_loader = make_loader(val_data, config.batch_size)
         model = GRU(config.input_size, config.hidden_size, config.output_size,
                     config.num_layers, config.bidirectional, config.dropout, config.activation).to(device)
-        optimizer = build_optimizer(model, config.optimizer, config.learning_rate)
+        optimizer = build_optimizer(model, config.optimizer,
+                                    config.learning_rate, config.weight_decay)
         criterion = nn.CrossEntropyLoss()
 
         wandb.watch(model, criterion, log='all', log_freq=10)
@@ -200,18 +198,33 @@ def train(config):
         total_batches = len(train_loader) * config.epochs
         example_count = 0
         batch_count = 0
+        loss_vals = []
         for epoch in tqdm(range(config.epochs)):
+            model.train()
+            epoch_loss = []
             for _, (matches, labels) in enumerate(train_loader):
                 output, h = model(matches)  # hidden state is not passed to re-init at each batch
                 loss = criterion(output, labels)
                 optimizer.zero_grad()
                 loss.backward()
+                if config.gradient_clipping:
+                    nn.utils.clip_grad_norm_(model.parameters(), max_norm=2.0, norm_type=2)
                 optimizer.step()
                 example_count += len(matches)
                 batch_count += 1
                 if (batch_count + 1) % 25 == 0:
                     train_log(loss, example_count, epoch)
-        validate(model, val_loader)
+                epoch_loss.append(loss.item() * matches.size(0))
+            loss_vals.append(np.mean(epoch_loss))
+            val_loss = validate(model, val_loader, criterion)
+            wandb.log({"train_loss": np.mean(epoch_loss)})
+            wandb.log({"val_loss": val_loss})
+            if config.early_stopping:
+                if EarlyStopper(config.early_stopping_patience,
+                                config.early_stopping_min_delta
+                                ).early_stop(val_loss):
+                    wandb.log({'has_early_stopped': True})
+                    break
 
 
 def train_log(loss, example_count, epoch):
@@ -226,27 +239,31 @@ def train_log(loss, example_count, epoch):
     print(f"Loss after {str(example_count).zfill(5)} examples: {loss:.3f}")
 
 
-def validate(model, test_loader):
+def validate(model, val_loader, criterion) -> float:
     """
     Tests the model
-    :param model:
-    :param test_loader:
-    :return:
+    :param criterion: the loss function
+    :param model: the model
+    :param val_loader: the test data loader
+    :return: the loss averaged over the validation set
     """
     with torch.no_grad():
         correct, total = 0, 0
         y_true = []
         y_pred = []
-        for matches, labels in test_loader:
+        running_loss = 0.0
+        for matches, labels in val_loader:
             print(f'matches: {matches.shape}, labels: {labels.shape}')
             matches, labels = matches.to(device), labels.to(device)
             model.eval()
             output, h = model(matches)
+            loss = criterion(output, labels)
             _, predicted = torch.max(output, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
             y_true.extend(labels.tolist())
             y_pred.extend(predicted.tolist())
+            running_loss += loss.item() * matches.size(0)
 
         accuracy = correct / total
         f1 = f1_score(y_true, y_pred)
@@ -256,22 +273,24 @@ def validate(model, test_loader):
               f"validation matches: {f1}")
         wandb.log({"val_accuracy": correct / total})
         wandb.log({"val_f1": f1})
+        return running_loss / total
 
 
-def build_optimizer(network, optimizer, learning_rate) -> optim.Optimizer:
+def build_optimizer(network, optimizer, learning_rate, weight_decay) -> optim.Optimizer:
     """
     Builds the optimizer, either SGD or Adam
+    :param weight_decay:
     :param network:
-    :param optimizer:
+    :param optimizer: the optimizer to use (sgd, adam)
     :param learning_rate:
     :return:
     """
     if optimizer == "sgd":
         optimizer = optim.SGD(network.parameters(),
-                              lr=learning_rate, momentum=0.9)
+                              lr=learning_rate, weight_decay=weight_decay)
     elif optimizer == "adam":
         optimizer = optim.Adam(network.parameters(),
-                               lr=learning_rate)
+                               lr=learning_rate, weight_decay=weight_decay)
     else:
         raise ValueError("Optimizer not supported")
     return optimizer
@@ -295,6 +314,33 @@ def build_activation(activation) -> nn.Module:
         return nn.Tanh()
     else:
         raise ValueError("Activation function not supported")
+
+
+class EarlyStopper:
+    """
+    Early stopping class
+    """
+
+    def __init__(self, patience=1, min_delta=0):
+        self.patience = patience
+        self.min_delta = min_delta
+        self.counter = 0
+        self.min_validation_loss = float('inf')
+
+    def early_stop(self, validation_loss) -> bool:
+        """
+        Checks if the model should be stopped early
+        :param validation_loss:
+        :return:
+        """
+        if validation_loss < self.min_validation_loss:
+            self.min_validation_loss = validation_loss
+            self.counter = 0
+        elif validation_loss > (self.min_validation_loss + self.min_delta):
+            self.counter += 1
+            if self.counter >= self.patience:
+                return True
+        return False
 
 
 if __name__ == '__main__':
