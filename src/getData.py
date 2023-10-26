@@ -7,7 +7,6 @@ from riotwatcher import LolWatcher
 
 import keys
 from src import utils
-from src.buildDataset import build_static_dataset
 from src.crawlers.MatchIdCrawler import MatchIdCrawler
 from src.parsers import champion, summoner, timeline, participant
 from src.parsers.summoner import scrape_champion_masteries
@@ -277,7 +276,3 @@ if __name__ == "__main__":
     logging.getLogger("sqlalchemy.engine").setLevel(otherlogginglevel)
     logging.getLogger("riotwatcher.LolWatcher").setLevel(otherlogginglevel)
     logger.info(f"starting getData.py with arguments {sys.argv}")
-    if args.buildOnly:
-        build_static_dataset(size=100000, save=True)
-    else:
-        getData()
