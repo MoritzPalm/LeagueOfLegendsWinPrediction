@@ -276,3 +276,4 @@ if __name__ == "__main__":
     logging.getLogger("sqlalchemy.engine").setLevel(otherlogginglevel)
     logging.getLogger("riotwatcher.LolWatcher").setLevel(otherlogginglevel)
     logger.info(f"starting getData.py with arguments {sys.argv}")
+    getData()
