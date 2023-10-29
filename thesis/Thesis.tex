@@ -1,0 +1,266 @@
+\documentclass[12pt, a4paper, headinclude, twoside, plainheadsepline, open=right, numbers=noenddot, hidelinks, toc=listof, toc=bibliography]{scrreprt}
+
+	
+%\usepackage{showframe}
+
+
+% WICHTIG: Hier wird nicht BibTeX sondern BibLateX verwendet!!
+% Deshalb nicht mit bibtex uebersetzen, sondern mit biber
+% Das kann man in jedem Tool wie TexMaker oder TexShop als Option einstellen
+%
+%% Spezielle Einstellungen, insbesondere fuer das Literaturverzeichnis,
+% aber auch Packages wie amsmath, Groessenanpassungen etc.
+\input{Preferences.tex}
+%
+
+% Hier werden die Referenzen in einer separaten Datei gespeichert
+\addbibresource{Thesis.bib}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------
+%  Informationen
+%----------------------------------------------------------------------------------
+\author{Moritz Palm}
+\title{Comparative Analysis of Predictive Performance: Neural Networks vs. GRU in League of
+Legends Match Outcome Prediction}
+\date{\today}
+
+
+\input{abbreviations} % Abkuerzungen
+ 
+%----------------------------------------------------------------------------------
+%  Anfang des Dokuments
+%----------------------------------------------------------------------------------
+\begin{document}
+\pagenumbering{Roman} % grosse Roemische Seitenummerierung
+\pagestyle{empty}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ********************** Titelseite *********************** %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\begin{titlepage}
+\begin{figure}[thb]
+       \includegraphics[height=2.3cm]{./images/logo/FakIM_Logo} 
+\end{figure}
+\begin{center}
+\rule{0pt}{0pt}
+\vfill
+\vfill
+\vfill
+\vfill
+
+\begin{huge}
+\@title\\[0.75ex]
+\end{huge}
+
+\vfill
+\vfill
+
+
+Bachelorarbeit\\ von\\
+
+\vspace*{.5cm}
+\textbf{\@author}\\
+Matrikelnummer: 1234567
+\vspace{.5cm}
+
+\vfill
+\vfill
+\textbf{\large Fakultät Informatik und Mathematik\\
+Ostbayerische Technische Hochschule Regensburg\\
+(OTH Regensburg)}
+\vfill
+\vfill
+
+\begin{tabular}{rl}
+Gutachter:   		& Prof. Dr. Brijnesh Jain\\
+Zweitgutachter:   	& Prof. Dr. Timo Baumann\\
+%Betreuer:   		& Dr. Max Mustermann\\
+\\Abgabedatum:& \@date
+\end{tabular}
+\end{center}
+\end{titlepage}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ****************** Erklärung zur Arbeit ***************** %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\text{~}
+\vspace{11cm}
+
+\noindent
+Herr\\
+\@author\\
+Konrad-Adenauer-Allee 55\\
+93051 Regensburg\\
+\smallskip
+
+\noindent
+Studiengang: Künstliche Intelligenz \& Data Science
+\bigskip
+
+\begin{enumerate}
+\item Mir ist bekannt, dass dieses Exemplar der Bachelorarbeit als Prüfungsleistung in das Eigentum des Freistaates Bayern übergeht.
+\item Ich erkläre hiermit, dass ich diese Bachelorarbeit selbstständig verfasst, noch nicht anderweitig für Prüfungszwecke vorgelegt, keine anderen als die angegebenen Quellen und Hilfsmittel benutzt sowie wörtlich und sinngemäße Zitate als solche gekennzeichnet habe.
+\end{enumerate}
+\vspace{1cm}
+Regensburg, den \@date\\
+\medskip
+\medskip
+
+\noindent
+\underline{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}\\
+\@author
+
+\makeatother
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ******************* Inhaltsverzeichnis ****************** %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cleardoublepage
+\pdfbookmark{\contentsname}{toc}\tableofcontents 										% Inhaltsverzeichnis
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ******************* Beginn des Textes ******************* %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{scrheadings} 																% normale Kopf- und Fusszeilen fuer den Rest
+\cleardoublepage
+\pagenumbering{arabic} 																	% ab jetzt arabische Nummerierung
+
+
+\chapter{Introduction}
+\label{chap:intro}
+
+
+esports is highly relevant due to it being a huge and strongly growing market.
+many games are hard to understand, due to lots of information being displayed with very little explanation
+a win predicition graph can help viewers understand the action and the significance of certain plays better, thus increasing engagement and enjoyment.
+riot games has already implemented their own proprietary win prediction
+a win prediction model can also help players make more informed decisions about what the optimal path of actions is
+
+
+\chapter{Background}
+\label{chap:background}
+
+\section{League of Legends}
+\label{sec:LoL}
+
+League of Legends is a \ac{moba} game developed by Riot Games.
+MOBA games are a subgenre of real-time strategy games in which two teams, typically consisting of five players ('summoners') each, compete against each other with each player controlling a single character \cite{mora-cantallopsMOBAGamesLiterature2018a}, called 'champion'.
+It is one of the most played video game genres CITATION NEEDED and attracts millions of players and fans watching the professional scene.
+Most \acp{moba} differ only slightly in terms of basic gameplay or map layout, but vary in details such as champions, abilities, graphics etc.
+As League of Legends is the most played game in the \ac{moba} genre, we will focus on it.
+At the start of the game, each player picks a champion from a pool of currently 165 champions, each with distinct abilities and characteristics.
+The map consists of two bases which are connected by three lanes.
+Each base contains a large structure, the so called 'nexus', which is protected by two turrets. 
+The goal of the game is to destroy the enemy nexus.
+The bases are connected by three lanes, separated by a jungle.
+\Acp{npc}, so called 'minions', spawn in regular intervals and advance down the lanes.
+Killing minions grants gold and \ac{xp}, which are used to improve different attributes by buying items or increasing ones level.
+It is conventional that the players split up at the start of the game, with one player going to the top lane, one to the mid lane and two players to the bottom lane.
+The last player gets his gold and \ac{xp} from killing neutral monsters in the area between each lane, commonly referred to as 'the jungle'.
+It also contains two large neutral monsters, Baron Nashor and a dragon, which require multiple team member to be killed and grant improvements to the whole team.
+Larger fights are usually centered around either destroying a turret or killing a large neutral monster.
+Every year, the game enters a new 'season', where it undergoes major challenges. 
+In between seasons, the developers release smaller patches every two weeks, which are usually aimed at changing the strength of different champions.
+
+The players need to pick a champion that fits best into the team, taking into account the team strategy, the damage composition, the role the player has been assigned etc., while also selecting a champion the player has played before and can play well.
+
+league of legends is a zero sum game
+
+Esports and mobas in particular are hard to understand and follow. A live game prediction view can help fans understand the action and decisions made better and help immerse the audience by detecting upsets and swings in win probability.
+
+patches can alter the game significantly, so it is important to train only(or mostly) on recent data
+
+
+the model should be able to answer the question, if team a is far enough ahead to win or if team b with their hyperscaling heroes can come back and win
+
+
+\section{Definitions and notations}
+\label{sec:defandnot}
+
+
+\section{Related work}
+\label{sec:related}
+
+Utilizing machine learning methods to extract information from data generated by e-sport games is an area of ongoing research.
+Most scientific research focuses on the similar \ac{moba} DotA 2, which has easier and more fine-grained data collection methods (see section \ref{sec:datacoll}).
+Due to the high similarity between these two games, it is to be expected that any findings for one game can be replicated and used for the other game with minimal adaptations.
+
+\Citeauthor{silvaContinuousOutcomePrediction2018} have used \acp{rnn} to predicting the winner using data of different time intervals. They achieved an accuracy of 75\% when using data from between the 10 and 15 minute mark.
+An evaluation of LSTM resulted in lower accuracy, most likely due to the large amount of data required \cite{silvaContinuousOutcomePrediction2018}.
+
+
+
+
+
+
+\chapter{Experiments}
+\label{chap:experiments}
+
+\section{Data Collection}
+\label{sec:datacoll}
+
+
+Most of the data is available from Riot Games API. 
+For data not available directly from Riot Games, a web-scraping approach has been chosen.
+All of the data is saved first to a PostgreSQL-Database, from which the different datasets are constructed.
+
+
+\section{Neural Networks}
+\label{sec:nn}
+
+\section{GRU}
+\label{sec:gru}
+
+\Acp{rnn} have been developed to model sequential data, such as speech. 
+The main problem with \acp{rnn} are that the gradient is very likely to either explode or vanish.
+Over time, different architectures have been developed to mitigate this issue, such as the LSTM.
+\Ac{gru} is a simplification of the LSTM which can learn faster and require less data due to its less complex internal structure.
+
+\section{Combination of static and temporal data}
+\label{sec:combination}
+
+
+\chapter{Results}
+\label{chap:results}
+
+
+\chapter{Discussion}
+\label{chap:discussion}
+
+
+\chapter{Conclusion}
+\label{chap:conclusion}
+
+%\bibliographystyle{natdin}
+%\bibliographystyle{naturemag}
+%\bibliographystyle{geralpha}
+\printbibliography
+
+
+% Anhang
+\include{appendix}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ********************* Verzeichnisse ********************* %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\listoffigures																			% Abbildungsverzeichnis
+\listoftables																			% Tabellenverzeichnis
+\cleardoublepage\phantomsection\addcontentsline{toc}{chapter}{List of Abbreviations}	% Abkürzungsverzeichnis
+\printacronyms[heading={chapter*}, name={List of Abbreviations}]
+
+
+
+\end{document}
