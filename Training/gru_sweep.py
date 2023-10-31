@@ -11,7 +11,7 @@ wandb.login()
 
 # Hyperparameters
 sweep_config = {
-    'method': 'grid',
+    'method': 'random',
     'metric': {
         'name': 'val_accuracy',
         'goal': 'maximize'

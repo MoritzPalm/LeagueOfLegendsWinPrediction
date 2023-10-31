@@ -12,21 +12,29 @@ def cleanStaticDataset():
     Cleans the static dataset and saves it to data/processed
     :return: None
     """
+    print("Cleaning static dataset...")
     with open("data/raw/static_dataset.pkl", "rb") as f:
         df = pickle.load(f)
-
+    print(f'Found {len(df)} rows')
     df = clean.drop_missing(df)
-    df = clean.get_winning_team(df)
+    print(f'Found {len(df)} rows after dropping missing values')
     df = clean.drop_wrong_data(df)
-    df = clean.drop_irrelevant(df)
     df.reset_index(drop=True, inplace=True)
     df = clean.fix_rank(df)
     df = clean.calc_winrate(df)
     df = clean.fix_teamId(df)
     df = clean.convert_booleans(df)
     df = clean.convert_lastPlayTime(df)
-
-    X_train, X_test, y_train, y_test = train_test_split(df.iloc[:, :-1], df.iloc[:, -1], test_size=0.2, random_state=42,
+    df = clean.convert_championTier(df)
+    df = clean.get_winning_team(df)  # this has to be the last step where a column is inserted
+    df = clean.drop_wrong_teamIds(df)
+    df = clean.drop_irrelevant(df)
+    assert df.columns[-1] == 'label'
+    print(f'Found {len(df)} rows after cleaning')
+    X_train, X_test, y_train, y_test = train_test_split(df.iloc[:, :-1],
+                                                        df.iloc[:, -1],
+                                                        test_size=0.2,
+                                                        random_state=42,
                                                         shuffle=True)
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
@@ -37,3 +45,9 @@ def cleanStaticDataset():
 
     np.save('data/processed/train_static', X_train)
     np.save('data/processed/test_static', X_test)
+    print(f'X_train shape: {X_train.shape}')
+    print(f'X_test shape: {X_test.shape}')
+
+
+if __name__ == '__main__':
+    cleanStaticDataset()
