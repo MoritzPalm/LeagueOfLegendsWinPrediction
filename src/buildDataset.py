@@ -139,15 +139,16 @@ def build_frame_dataset(size: int = None, save: bool = True):
                                             participantFrameTrainingData.items()}
                     frameDict.update(participantFrameDict)
                 frameData.append(frameDict)
-        index = pd.MultiIndex.from_tuples(matchIds, names=['matchId', 'frameId'])
+            index = pd.MultiIndex.from_tuples(matchIds, names=['matchId', 'frameId'])
+            dfTimelines = pd.DataFrame(frameData, index=index)
+            if save:
+                dfTimelines.to_pickle('data/raw/timelines.pkl')
+        print("finished")
         print(f"len of framedata: {len(frameData)}")
         print(f"shape of index: {index.shape}")
-        dfTimelines = pd.DataFrame(frameData, index=index)
-        if save:
-            dfTimelines.to_pickle('data/raw/timelines.pkl')
 
 
 if __name__ == "__main__":
-    build_static_dataset(None, True)
-    build_frame_dataset(None, True)
+    build_static_dataset(0, True)
+    build_frame_dataset(5000, True)
     cleanTimelineDataset()
