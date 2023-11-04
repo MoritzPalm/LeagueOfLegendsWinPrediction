@@ -1,6 +1,5 @@
 \documentclass[12pt, a4paper, headinclude, twoside, plainheadsepline, open=right, numbers=noenddot, hidelinks, toc=listof, toc=bibliography]{scrreprt}
 
-	
 %\usepackage{showframe}
 
 
@@ -155,7 +154,7 @@ a win prediction model can also help players make more informed decisions about 
 \label{sec:LoL}
 
 League of Legends is a \ac{moba} game developed by Riot Games.
-MOBA games are a subgenre of real-time strategy games in which two teams, typically consisting of five players ('summoners') each, compete against each other with each player controlling a single character \cite{mora-cantallopsMOBAGamesLiterature2018a}, called 'champion'.
+MOBA games are a subgenre of real-time strategy games in which two teams, typically consisting of five players ('summoners') each, compete against each other with each player controlling a single character \cite{mora-cantallopsMOBAGamesLiterature2018}, called 'champion'.
 It is one of the most played video game genres CITATION NEEDED and attracts millions of players and fans watching the professional scene.
 Most \acp{moba} differ only slightly in terms of basic gameplay or map layout, but vary in details such as champions, abilities, graphics etc.
 As League of Legends is the most played game in the \ac{moba} genre, we will focus on it.
@@ -183,6 +182,88 @@ patches can alter the game significantly, so it is important to train only(or mo
 
 
 the model should be able to answer the question, if team a is far enough ahead to win or if team b with their hyperscaling heroes can come back and win
+
+
+\section{Neural Networks}
+\label{sec:nn}
+
+\Acp{ann} have been originally designed to simulate the way the human brain processes information.
+The fundamental unit in an \ac{ann} is called a neuron, first proposed by McCulloch and Pitts  \cite{mccullochLogicalCalculusIdeas1943}.
+A neuron is a function which takes a number of values $ \mathbf{x} = (x_1, x_2, ... , x_m), m \in \mathbb{N}$ and outputs a single value $\hat{y}$.
+Each input $x_i$ is individually weighted by the learnable weights $\mathbf{w} = (w_1, w_2, ... , w_m)$ and added to a bias term $w_0$: $z = w_0 + w_1 x_1 + ... + w_m x_m = \mathbf{w}^T \mathbf{x}$.
+$z$ is then passed through an activation function $\phi$, which provides non-linearity: $\hat{y} = \phi(z)$.
+Common activation functions include sigmoid functions, \ac{relu} and more.
+The \ac{mlp}, first introduced by Rosenblatt \cite{rosenblattPerceptronProbabilisticModel1958a} organizes neurons in layers.
+Input data is fed into the input layer, and computations propagate forward through the hidden layers to produce an output. In the simplest form of an ANN, every neuron in a layer is connected to every neuron in the subsequent layer, forming a fully connected architecture. There are no other connections, making it a feed-forward network, and it constitutes a directed acyclic graph. 
+To allow the network to approximate any measurable function, at least one hidden layer is required \cite{hornikMultilayerFeedforwardNetworks1989}.
+During the training process, the weights and biases are iteratively adjusted using the backpropagation algorithm to minimize the loss function $E$.
+For regression tasks, a commonly used loss function is the \ac{mse} Loss
+\begin{equation}
+E_N = \frac{1}{N} \sum_{i=1}^{N}(y_{i} - \hat{y}_{i})^2
+\end{equation}
+where $N$ is the number of samples \cite{lianoRobustErrorMeasure1996a}.
+ For binary classification, the \ac{cel}
+\begin{equation}
+E_N = \frac{1}{N} \sum_{k=1}^{N} y_k \ln{\hat{y}_k} + (1-y_k) \ln{(1-\hat{y}_k)}
+\end{equation}
+is widely used \cite{zhangGeneralizedCrossEntropy2018}.
+
+
+
+\section{Recurrent Neural Networks}
+\label{sec:rnn}
+\Acp{rnn} build upon the foundation of feed-forward neural networks. They are designed to handle sequential data by introducing the concept of recurrence. In a \ac{rnn}, the output at each time step depends not only on the current input but also on the network's previous internal state or hidden state. This allows \acp{rnn} to capture dependencies over time, making them suitable for tasks involving sequential input such as speech and language \cite{lecunDeepLearning2015}.
+The first fully connected \ac{rnn} was proposed by Elman \cite{elmanFindingStructureTime1990}.
+The sructure of the Elman Network Cell can be seen in REFERENCE MISSING.
+RNNs, however, have challenges with vanishing gradients, especially in long sequences, which can affect their ability to capture long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}. To address this, more advanced RNN architectures, such as Long Short-Term Memory (LSTM) and Gated Recurrent Unit (GRU) networks have been developed. These architectures introduce gating mechanisms to mitigate the vanishing gradient problem and enhance the modeling of sequences.
+
+\begin{figure}
+\centering
+\label{fig:rnn_unroll}
+\begin{tikzpicture}[item/.style={circle,draw,thick,align=center},
+itemc/.style={item,on chain,join}]
+ \begin{scope}[start chain=going right,nodes=itemc,every
+ join/.style={-latex,very thick},local bounding box=chain]
+ \path node (A0) {$A$} node (A1) {$A$} node (A2) {$A$} node[xshift=2em] (At)
+ {$A$};
+ \end{scope}
+ \node[left=1em of chain,scale=2] (eq) {$=$};
+ \node[left=2em of eq,item] (AL) {$A$};
+ \path (AL.west) ++ (-1em,2em) coordinate (aux);
+ \draw[very thick,-latex,rounded corners] (AL.east) -| ++ (1em,2em) -- (aux) 
+ |- (AL.west);
+ \foreach \X in {0,1,2,t} 
+ {\draw[very thick,-latex] (A\X.north) -- ++ (0,2em)
+ node[above,item,fill=gray!10] (h\X) {$h_\X$};
+ \draw[very thick,latex-] (A\X.south) -- ++ (0,-2em)
+ node[below,item,fill=gray!10] (x\X) {$x_\X$};}
+ \draw[white,line width=0.8ex] (AL.north) -- ++ (0,1.9em);
+ \draw[very thick,-latex] (AL.north) -- ++ (0,2em)
+ node[above,item,fill=gray!10] {$h_t$};
+ \draw[very thick,latex-] (AL.south) -- ++ (0,-2em)
+ node[below,item,fill=gray!10] {$x_t$};
+ \path (x2) -- (xt) node[midway,scale=2,font=\bfseries] {\dots};
+\end{tikzpicture}
+\caption{Unrolling of a \ac{rnn} over time}
+
+\end{figure}
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\draw[rounded corners] (0, 0) rectangle (8, 4) {};
+\draw[rounded corners, dashed] (1.5,1.5) rectangle (2.5,2.5) {};
+\draw[rounded corners, dashed] (5.5,1.5) rectangle (6.5,2.5) {};
+\end{tikzpicture}
+\caption{Elman Recurrent Unit}
+\end{figure}
+
+
+\section{GRU}
+\label{sec:gru}
+
+Explain and define GRU, especially in comparison to LSTMs
 
 
 \section{Definitions and notations}
@@ -216,16 +297,6 @@ For data not available directly from Riot Games, a web-scraping approach has bee
 All of the data is saved first to a PostgreSQL-Database, from which the different datasets are constructed.
 
 
-\section{Neural Networks}
-\label{sec:nn}
-
-\section{GRU}
-\label{sec:gru}
-
-\Acp{rnn} have been developed to model sequential data, such as speech. 
-The main problem with \acp{rnn} are that the gradient is very likely to either explode or vanish.
-Over time, different architectures have been developed to mitigate this issue, such as the LSTM.
-\Ac{gru} is a simplification of the LSTM which can learn faster and require less data due to its less complex internal structure.
 
 \section{Combination of static and temporal data}
 \label{sec:combination}
