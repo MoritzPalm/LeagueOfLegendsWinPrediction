@@ -85,7 +85,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Zeichnungen/Plots
 \usepackage{pgfplots}						% Plots
-\usetikzlibrary{matrix, positioning, arrows.meta, chains}						% Matrizen zeichnen
+\usetikzlibrary{matrix, positioning, arrows, chains, shapes}						% Matrizen zeichnen
 \usepackage{tikz}							% tikz picture
 \usepackage{tikz-qtree,tikz-qtree-compat}	% Bäume
 \usepackage{dirtree}						% Dateistrukutr
@@ -341,3 +341,13 @@
 % Silbentrennung
 %\hyphenation{Über-le-bens-wahr-schein-lich-keit}
 
+\tikzset{
+block/.style={
+  rectangle,
+  draw,
+  text centered,
+  rounded corners,
+ },
+line/.style={draw, -latex'},
+edge/.style={draw}
+}

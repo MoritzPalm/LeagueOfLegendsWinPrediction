@@ -82,7 +82,7 @@ def drop_irrelevant(df: pd.DataFrame) -> pd.DataFrame:
                               'champion_infoDifficulty', 'champion_matches', 'teamId', 'champion_championLevel',
                               'champion_kills', 'champion_deaths', 'champion_assists', 'champion_maxKills',
                               'champion_cs', 'champion_damage', 'champion_gold', 'champion_championNumber',
-                              'champion_pick_rate', 'champion_ban_rate', 'leaguePoints']
+                              'champion_pick_rate', 'champion_ban_rate', 'leaguePoints', 'champion_tier']
     for i in range(1, 11):
         for col in participant_irrelevant:
             irrelevant_cols.append(f'participant{i}_{col}')

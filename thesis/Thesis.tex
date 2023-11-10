@@ -183,18 +183,34 @@ patches can alter the game significantly, so it is important to train only(or mo
 
 the model should be able to answer the question, if team a is far enough ahead to win or if team b with their hyperscaling heroes can come back and win
 
+a modified elo system  is used to determine the skill of an individual player, which is the most important factor in which players get matched against each other
+
 
 \section{Neural Networks}
 \label{sec:nn}
 
 \Acp{ann} have been originally designed to simulate the way the human brain processes information.
 The fundamental unit in an \ac{ann} is called a neuron, first proposed by McCulloch and Pitts  \cite{mccullochLogicalCalculusIdeas1943}.
-A neuron is a function which takes a number of values $ \mathbf{x} = (x_1, x_2, ... , x_m), m \in \mathbb{N}$ and outputs a single value $\hat{y}$.
-Each input $x_i$ is individually weighted by the learnable weights $\mathbf{w} = (w_1, w_2, ... , w_m)$ and added to a bias term $w_0$: $z = w_0 + w_1 x_1 + ... + w_m x_m = \mathbf{w}^T \mathbf{x}$.
-$z$ is then passed through an activation function $\phi$, which provides non-linearity: $\hat{y} = \phi(z)$.
+A neuron is a function which takes a number of values $ \mathbf{x} = (x_1, x_2, ... , x_m), m \in \mathbb{N}$ and outputs its activation $a$.
+The weighted input $z$ is calculated as the dot product of the input vector $\mathbf{x}$ and the weight vector $\mathbf{w} = (w_1, w_2, ... , w_m)$ with the bias $b$ added:
+\begin{equation}
+z = w_1 x_1 + ... + w_m x_m + b = \mathbf{w}^T \mathbf{x} + b.
+\end{equation}
+$z$ is then passed through an activation function $\phi$, which provides non-linearity: 
+$a = \phi(z) = \phi(\mathbf{w}^T \mathbf{x})$.
 Common activation functions include sigmoid functions, \ac{relu} and more.
 The \ac{mlp}, first introduced by Rosenblatt \cite{rosenblattPerceptronProbabilisticModel1958a} organizes neurons in layers.
-Input data is fed into the input layer, and computations propagate forward through the hidden layers to produce an output. In the simplest form of an ANN, every neuron in a layer is connected to every neuron in the subsequent layer, forming a fully connected architecture. There are no other connections, making it a feed-forward network, and it constitutes a directed acyclic graph. 
+Input data is fed into the input layer, and computations propagate forward through the hidden layers to produce an output.
+In the simplest form of an ANN, every neuron in a layer is connected to every neuron in the subsequent layer, forming a fully connected architecture.
+There are no other connections, making it a feed-forward network, and it constitutes a directed acyclic graph. 
+A fully connected feed-forward network network can be described as a series of matrix-vector multiplications for each layer $l$:
+\begin{equation}
+\label{eq:nn}
+\mathbf{a}^{(l)} = \phi (\mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)})
+\end{equation}
+In equation \ref{eq:nn}, $\mathbf{a}^{(l)}$ denotes the activation of layer $l$, $\mathbf{W}^{(l)}$ denotes the weight matrix of layer $l$ and $\mathbf{b}^{(l)}$ is the corresponding bias vector with $d$ being the number of neurons per layer.
+If $l$ is the output layer $L$, the vector $\mathbf{a}^{(L)}$ represents the predicted output $\hat{y}$ of the network.
+
 To allow the network to approximate any measurable function, at least one hidden layer is required \cite{hornikMultilayerFeedforwardNetworks1989}.
 During the training process, the weights and biases are iteratively adjusted using the backpropagation algorithm to minimize the loss function $E$.
 For regression tasks, a commonly used loss function is the \ac{mse} Loss
@@ -210,64 +226,118 @@ is widely used \cite{zhangGeneralizedCrossEntropy2018}.
 
 
 
+
+
 \section{Recurrent Neural Networks}
 \label{sec:rnn}
-\Acp{rnn} build upon the foundation of feed-forward neural networks. They are designed to handle sequential data by introducing the concept of recurrence. In a \ac{rnn}, the output at each time step depends not only on the current input but also on the network's previous internal state or hidden state. This allows \acp{rnn} to capture dependencies over time, making them suitable for tasks involving sequential input such as speech and language \cite{lecunDeepLearning2015}.
+\Acp{rnn} build upon the foundation of feed-forward neural networks. They are designed to handle sequential data by introducing the concept of recurrence. In an \ac{rnn}, the output at each time step depends not only on the current input but also on the network's previous internal state or hidden state. This allows \acp{rnn} to capture dependencies over time, making them suitable for tasks involving sequential input such as speech and language \cite{lecunDeepLearning2015}.
 The first fully connected \ac{rnn} was proposed by Elman \cite{elmanFindingStructureTime1990}.
-The sructure of the Elman Network Cell can be seen in REFERENCE MISSING.
-RNNs, however, have challenges with vanishing gradients, especially in long sequences, which can affect their ability to capture long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}. To address this, more advanced RNN architectures, such as Long Short-Term Memory (LSTM) and Gated Recurrent Unit (GRU) networks have been developed. These architectures introduce gating mechanisms to mitigate the vanishing gradient problem and enhance the modeling of sequences.
+\Acp{rnn} maintain a 'state vector' in their hidden units (see figure \ref{fig:elman}), implicitly containing information extracted from all the past elements of the sequence \cite{lecunDeepLearning2015}.
+The output $\hat{y}$ of a neural net can be calculated by
+\begin{equation}
+\label{eq:rnn_output}
+\hat{y}_t = \tanh(V h_t + b_o)
+\end{equation}
+where $V$ and $b_o$ are the weight matrix and the bias vector of the cell output.
+In addition to calculating the output, the forward propagation involves updating the hidden state $h_t$ at every timestep $t$:
+\begin{equation}
+\label{eq:rnn_update}
+h_t = 
+\begin{cases}
+	0, & \text{if}\ t = 0 \\
+	\sigma (W x_t + U h_{t-1} +  b_h), & \text{otherwise}
+\end{cases}
+\end{equation}
+where $\sigma$ is the sigmoid function, $U$ and $b_h$ are the weight matrix and the bias of the hidden state and $W$ is the weight matrix of the input.
+For an \ac{rnn} with just one recurrent layer, one hidden weight matrix $W_h$ is sufficient, as the weights are shared across timesteps.
+
+\Citeauthor{bengioLearningLongtermDependencies1994a} \cite{bengioLearningLongtermDependencies1994a} showed, however, that \acp{rnn} have challenges with exploding or vanishing gradients, especially in long sequences, which can affect their ability to capture long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}.
 
 \begin{figure}
 \centering
-\label{fig:rnn_unroll}
 \begin{tikzpicture}[item/.style={circle,draw,thick,align=center},
 itemc/.style={item,on chain,join}]
  \begin{scope}[start chain=going right,nodes=itemc,every
  join/.style={-latex,very thick},local bounding box=chain]
- \path node (A0) {$A$} node (A1) {$A$} node (A2) {$A$} node[xshift=2em] (At)
+ \path node (A0) {$h_{t-1}$} node (A1) {$h_t$} node (A2) {$A$} node[xshift=2em] (At)
  {$A$};
  \end{scope}
  \node[left=1em of chain,scale=2] (eq) {$=$};
- \node[left=2em of eq,item] (AL) {$A$};
+ \node[left=2em of eq,item] (AL) {$h$};
  \path (AL.west) ++ (-1em,2em) coordinate (aux);
  \draw[very thick,-latex,rounded corners] (AL.east) -| ++ (1em,2em) -- (aux) 
  |- (AL.west);
  \foreach \X in {0,1,2,t} 
  {\draw[very thick,-latex] (A\X.north) -- ++ (0,2em)
- node[above,item,fill=gray!10] (h\X) {$h_\X$};
+ node[above,item,fill=gray!10] (h\X) {$y_\X$};
  \draw[very thick,latex-] (A\X.south) -- ++ (0,-2em)
- node[below,item,fill=gray!10] (x\X) {$x_\X$};}
+ node[below,item,fill=gray!10] (x\X) {$y_\X$};}
  \draw[white,line width=0.8ex] (AL.north) -- ++ (0,1.9em);
  \draw[very thick,-latex] (AL.north) -- ++ (0,2em)
- node[above,item,fill=gray!10] {$h_t$};
+ node[above,item,fill=gray!10] {$y_t$};
  \draw[very thick,latex-] (AL.south) -- ++ (0,-2em)
  node[below,item,fill=gray!10] {$x_t$};
  \path (x2) -- (xt) node[midway,scale=2,font=\bfseries] {\dots};
 \end{tikzpicture}
 \caption{Unrolling of a \ac{rnn} over time}
+\label{fig:rnn_unroll}
+\end{figure}
 
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\draw[rounded corners] (0, 0) rectangle (8, 4) {};
+\draw[rounded corners, dashed] (1.5,1.5) rectangle (2.5,2.5) node[pos=.5] {$h_t$};
+\draw[rounded corners, dashed] (5.5,1.5) rectangle (6.5,2.5) node[pos=.5] {$Z_t$};
+\end{tikzpicture}
+\caption{Elman Recurrent Unit}
+\label{fig:elman}
 \end{figure}
 
 
 \begin{figure}
 \centering
 \begin{tikzpicture}
-\draw[rounded corners] (0, 0) rectangle (8, 4) {};
-\draw[rounded corners, dashed] (1.5,1.5) rectangle (2.5,2.5) {};
-\draw[rounded corners, dashed] (5.5,1.5) rectangle (6.5,2.5) {};
+\node[block, draw=black, minimum width=8cm, minimum height=4cm](border) {};
+%\coordinate (center east) at (border.shape center -| border.east);
+\node[block, draw=black, minimum width=1cm, minimum height=1cm,align=left] (1) {$h_t$};
+\node[block, draw=black, minimum width=1cm, minimum height=1cm, right=of 1] (2) {$Z_t$};
 \end{tikzpicture}
-\caption{Elman Recurrent Unit}
+\caption{Gated Recurrent Unit}
+\label{fig:gru}
 \end{figure}
-
 
 \section{GRU}
 \label{sec:gru}
+In order to overcome the exploding/vanishing gradient problem of vanilla \acp{rnn}, gated networks like the \ac{lstm} \cite{hochreiterLongShortTermMemory1997} and \ac{gru} \cite{choLearningPhraseRepresentations2014} have been developed \cite{vanhoudtReviewLongShortterm2020}.
+As they introduce an increased number of parameters compared to traditional \acp{rnn}, gated networks like the \ac{lstm} and \ac{gru} demand greater computational power \cite{deyGatevariantsGatedRecurrent2017}.
+Compared to the \ac{lstm} network, \ac{gru} reduces the number of gate networks to two, thus being simpler to implement and compute \cite{choLearningPhraseRepresentations2014}.
+\Citeauthor{chungEmpiricalEvaluationGated2014} even found that \ac{gru} is at least comparable to \ac{lstm} most of the time \cite{chungEmpiricalEvaluationGated2014}.
+The gates control the activation of each hidden unit. 
+The reset gate is calculated by
+\begin{equation}
+\label{eq:gru_reset}
+r_t = \sigma (W_r x_t + U_r h_{t-1} + b_r)
+\end{equation}
+and the update gate $z_j$ by
+\begin{equation}
+\label{eq:gru_update}
+z_t = \sigma (W_z x_t + U_z h_{t-1} + b_z)
+\end{equation}
+\cite{deyGatevariantsGatedRecurrent2017}.
+The hidden state update is a linear interpolation between the previous activation $h_{t-1}$ and the candidate activation $\tilde{h}_t$, where the update gate $z_t$ influences how much the hidden state is changed \cite{chungEmpiricalEvaluationGated2014}:
+\begin{equation}
+\label{eq:gru_h}
+h_t = (1-z_t) \odot h_t + z_t \odot \tilde{h}_t
+\end{equation}
+with
+\begin{equation}
+\label{eq_gru_h_tilde}
+\tilde{h}_t = g(W_h x_t + U_h (r_t \odot h_{t-1} + b_h)
+\end{equation}
+. 
+In equations \ref{eq:gru_h} and \ref{eq_gru_h_tilde} $\odot$ denotes the elementwise (Hadamard) multiplication and the function $g$ in equation \ref{eq_gru_h_tilde} is the activation function.
 
-Explain and define GRU, especially in comparison to LSTMs
-
-
-\section{Definitions and notations}
-\label{sec:defandnot}
 
 
 \section{Related work}
@@ -288,18 +358,38 @@ An evaluation of LSTM resulted in lower accuracy, most likely due to the large a
 \chapter{Experiments}
 \label{chap:experiments}
 
+As two very different experiments are compared against each other, two different datasets need to be constructed: one dataset containing all relevant information prior to the start of the game and one dataset containing only the temporal information from the beginning of the game.
+
+
 \section{Data Collection}
 \label{sec:datacoll}
 
+\paragraph{High-Rank Matches}
+The focus of data acquisition was directed towards high-rank matches, in which a mix of excellent amateur and professional players play.
+Lower rank matches are not considered due to their higher unpredictability as less skilled players make huge, game-changing mistakes way more often.
+Pro matches, defined as professional players playing with their respective teams in an esport tournament or league, were not included as there are way less matches and they are not available through the official Riot Games API.
+High rank matches in this context are defined as having at least one player holding the rank of Master, Grandmaster or Challenger.
+Riot Games themselves considers any rank above Diamond 3 as 'Elite' \cite{riotgamesDevBalanceFramework2020}, but we raise this bar just slightly to only include any rank above Diamond 1.
+Due to the fact that for a match to be included in the dataset, only one out of ten players needs to hold one of the aforementioned highest ranks, some slightly lower ranked players are also present in the dataset.
+These ranks combined account for the top $0.2\%$ of all players \cite{riotgamesRankedTiersDivisions2023}.
+\paragraph{Riot Games API}
+The primary source of data stemmed from the Riot Games API, a comprehensive repository of information pertaining to League of Legends gameplay.
+The Riot Games API provided access to a plethora of essential data points, including champion statistics, general match information, timeline details, and player-specific information.
+These variables collectively form a comprehensive and multifaceted dataset crucial for the development of an effective predictive model.
+\paragraph{Other Data Sources}
+However, not all pertinent data were available directly from the Riot Games API. 
+These include the winning chance of each champion and statistics on how each player performs on each relevant champion.
+To address this limitation, a web-scraping approach was employed to gather additional relevant information. The amalgamation of Riot Games API data and web-scraped data was meticulously organized and stored in a Database. 
+This central repository served as the foundational storehouse from which distinct datasets were constructed, ensuring an organized and structured approach to data management.
+\paragraph{Regions}
+Multiple regions were included in the data collection process, including Europe West (EUW), Europe Nordic \& East (EUN), Korea (KR), and North America (NA). 
+This regional diversity contributes to the model's generalizability across different player bases and playing styles.\\ \  \\
+In summary, the data collection process for this study involved a dual-pronged approach, leveraging the extensive resources provided by the Riot Games API alongside a targeted web-scraping strategy. 
+The resulting dataset, stored in a PostgreSQL Database, reflects a comprehensive and meticulously curated compilation of high-rank amateur League of Legends matches.
 
-Most of the data is available from Riot Games API. 
-For data not available directly from Riot Games, a web-scraping approach has been chosen.
-All of the data is saved first to a PostgreSQL-Database, from which the different datasets are constructed.
+\section{Data Processing}
+\label{sec:data_processing}
 
-
-
-\section{Combination of static and temporal data}
-\label{sec:combination}
 
 
 \chapter{Results}
