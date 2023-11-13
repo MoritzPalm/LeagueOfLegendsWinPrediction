@@ -405,14 +405,13 @@ General Information about the match (i.e. patch number) is only used for validat
 \paragraph{Player Information}
 Player Information feature $x_p$ is a two-dimensional vector containing information about the player: the account level as an indication of how many games the player has played and the rank of the player as a measure of how good the player is
 \paragraph{Champion Information}
-The Champion Information feature $\mathbf{x}_c$ is composed of three parts: 
+The Champion Information feature $\mathbf{x}_c$ is composed of 
 
 \paragraph{Player-Champion Information}
- containing both general information about the match, including the platform id, the patch or the type of game played (i.e. rated or unrated game) and $36$ columns per player containing information about each individual player.
-These include the level of the account, the rank and various stats about the specific selected champion.
-Various columns containg different IDs are removed as they contain no relevant information about the game.
-The column containing the duration of the game is removed, as this information is not known until the game concludes.
-All columns are converted into a floating point number representation to 
+This feature vector contains information about the player on this particular champion.
+This includes the average amount of gold earned by the player over all his matches played on this champion in season 13.
+
+
 
 
 \chapter{Results}
