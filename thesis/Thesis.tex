@@ -141,11 +141,13 @@ Regensburg, den \@date\\
 
 
 esports is highly relevant due to it being a huge and strongly growing market.
+Esports and mobas in particular are hard to understand and follow. A live game prediction view can help fans understand the action and decisions made better and help immerse the audience by detecting upsets and swings in win probability.
 many games are hard to understand, due to lots of information being displayed with very little explanation
 a win predicition graph can help viewers understand the action and the significance of certain plays better, thus increasing engagement and enjoyment.
 riot games has already implemented their own proprietary win prediction
 a win prediction model can also help players make more informed decisions about what the optimal path of actions is
 
+the model should be able to answer the question, if team a is far enough ahead to win or if team b with their hyperscaling heroes can come back and win
 
 \chapter{Background}
 \label{chap:background}
@@ -171,17 +173,13 @@ It also contains two large neutral monsters, Baron Nashor and a dragon, which re
 Larger fights are usually centered around either destroying a turret or killing a large neutral monster.
 Every year, the game enters a new 'season', where it undergoes major challenges. 
 In between seasons, the developers release smaller patches every two weeks, which are usually aimed at changing the strength of different champions.
+These patches have the potential to cause major disruption to the best way the game is played (the so called 'meta'),  for example by introducing a new champion.
 
 The players need to pick a champion that fits best into the team, taking into account the team strategy, the damage composition, the role the player has been assigned etc., while also selecting a champion the player has played before and can play well.
-
-league of legends is a zero sum game
-
-Esports and mobas in particular are hard to understand and follow. A live game prediction view can help fans understand the action and decisions made better and help immerse the audience by detecting upsets and swings in win probability.
-
-patches can alter the game significantly, so it is important to train only(or mostly) on recent data
+This is a very critical, yet highly difficult choice, as in theory there are $\binom{165}{10} = \frac{165!}{10! \cdot (165-10)!}$ different combinations of champions.
 
 
-the model should be able to answer the question, if team a is far enough ahead to win or if team b with their hyperscaling heroes can come back and win
+
 
 a modified elo system  is used to determine the skill of an individual player, which is the most important factor in which players get matched against each other
 
@@ -196,13 +194,13 @@ The weighted input $z$ is calculated as the dot product of the input vector $\ma
 \begin{equation}
 z = w_1 x_1 + ... + w_m x_m + b = \mathbf{w}^T \mathbf{x} + b.
 \end{equation}
-$z$ is then passed through an activation function $\phi$, which provides non-linearity: 
+$z$ is then passed through an activation function $\phi$, which provides non-linearity:
 $a = \phi(z) = \phi(\mathbf{w}^T \mathbf{x})$.
 Common activation functions include sigmoid functions, \ac{relu} and more.
-The \ac{mlp}, first introduced by Rosenblatt \cite{rosenblattPerceptronProbabilisticModel1958a} organizes neurons in layers.
+The \ac{mlp}, first introduced by Rosenblatt \cite{rosenblattPerceptronProbabilisticModel1958} organizes neurons in layers.
 Input data is fed into the input layer, and computations propagate forward through the hidden layers to produce an output.
 In the simplest form of an ANN, every neuron in a layer is connected to every neuron in the subsequent layer, forming a fully connected architecture.
-There are no other connections, making it a feed-forward network, and it constitutes a directed acyclic graph. 
+There are no other connections, making it a feed-forward network, and it constitutes a directed acyclic graph.
 A fully connected feed-forward network network can be described as a series of matrix-vector multiplications for each layer $l$:
 \begin{equation}
 \label{eq:nn}
@@ -217,7 +215,7 @@ For regression tasks, a commonly used loss function is the \ac{mse} Loss
 \begin{equation}
 E_N = \frac{1}{N} \sum_{i=1}^{N}(y_{i} - \hat{y}_{i})^2
 \end{equation}
-where $N$ is the number of samples \cite{lianoRobustErrorMeasure1996a}.
+where $N$ is the number of samples \cite{lianoRobustErrorMeasure1996}.
  For binary classification, the \ac{cel}
 \begin{equation}
 E_N = \frac{1}{N} \sum_{k=1}^{N} y_k \ln{\hat{y}_k} + (1-y_k) \ln{(1-\hat{y}_k)}
@@ -242,7 +240,7 @@ where $V$ and $b_o$ are the weight matrix and the bias vector of the cell output
 In addition to calculating the output, the forward propagation involves updating the hidden state $h_t$ at every timestep $t$:
 \begin{equation}
 \label{eq:rnn_update}
-h_t = 
+h_t =
 \begin{cases}
 	0, & \text{if}\ t = 0 \\
 	\sigma (W x_t + U h_{t-1} +  b_h), & \text{otherwise}
@@ -251,7 +249,7 @@ h_t =
 where $\sigma$ is the sigmoid function, $U$ and $b_h$ are the weight matrix and the bias of the hidden state and $W$ is the weight matrix of the input.
 For an \ac{rnn} with just one recurrent layer, one hidden weight matrix $W_h$ is sufficient, as the weights are shared across timesteps.
 
-\Citeauthor{bengioLearningLongtermDependencies1994a} \cite{bengioLearningLongtermDependencies1994a} showed, however, that \acp{rnn} have challenges with exploding or vanishing gradients, especially in long sequences, which can affect their ability to capture long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}.
+\Citeauthor{bengioLearningLongtermDependencies1994} \cite{bengioLearningLongtermDependencies1994} showed, however, that \acp{rnn} have challenges with exploding or vanishing gradients, especially in long sequences, which can affect their ability to capture long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}.
 
 \begin{figure}
 \centering
@@ -265,9 +263,9 @@ itemc/.style={item,on chain,join}]
  \node[left=1em of chain,scale=2] (eq) {$=$};
  \node[left=2em of eq,item] (AL) {$h$};
  \path (AL.west) ++ (-1em,2em) coordinate (aux);
- \draw[very thick,-latex,rounded corners] (AL.east) -| ++ (1em,2em) -- (aux) 
+ \draw[very thick,-latex,rounded corners] (AL.east) -| ++ (1em,2em) -- (aux)
  |- (AL.west);
- \foreach \X in {0,1,2,t} 
+ \foreach \X in {0,1,2,t}
  {\draw[very thick,-latex] (A\X.north) -- ++ (0,2em)
  node[above,item,fill=gray!10] (h\X) {$y_\X$};
  \draw[very thick,latex-] (A\X.south) -- ++ (0,-2em)
@@ -313,7 +311,7 @@ In order to overcome the exploding/vanishing gradient problem of vanilla \acp{rn
 As they introduce an increased number of parameters compared to traditional \acp{rnn}, gated networks like the \ac{lstm} and \ac{gru} demand greater computational power \cite{deyGatevariantsGatedRecurrent2017}.
 Compared to the \ac{lstm} network, \ac{gru} reduces the number of gate networks to two, thus being simpler to implement and compute \cite{choLearningPhraseRepresentations2014}.
 \Citeauthor{chungEmpiricalEvaluationGated2014} even found that \ac{gru} is at least comparable to \ac{lstm} most of the time \cite{chungEmpiricalEvaluationGated2014}.
-The gates control the activation of each hidden unit. 
+The gates control the activation of each hidden unit.
 The reset gate is calculated by
 \begin{equation}
 \label{eq:gru_reset}
@@ -335,7 +333,7 @@ with
 \label{eq_gru_h_tilde}
 \tilde{h}_t = g(W_h x_t + U_h (r_t \odot h_{t-1} + b_h)
 \end{equation}
-. 
+.
 In equations \ref{eq:gru_h} and \ref{eq_gru_h_tilde} $\odot$ denotes the elementwise (Hadamard) multiplication and the function $g$ in equation \ref{eq_gru_h_tilde} is the activation function.
 
 
@@ -344,8 +342,13 @@ In equations \ref{eq:gru_h} and \ref{eq_gru_h_tilde} $\odot$ denotes the element
 \label{sec:related}
 
 Utilizing machine learning methods to extract information from data generated by e-sport games is an area of ongoing research.
-Most scientific research focuses on the similar \ac{moba} DotA 2, which has easier and more fine-grained data collection methods (see section \ref{sec:datacoll}).
+A lot of scientific research focuses on the similar \ac{moba} DotA 2, which has easier and more fine-grained data collection methods (see section \ref{sec:datacoll}).
 Due to the high similarity between these two games, it is to be expected that any findings for one game can be replicated and used for the other game with minimal adaptations.
+
+In DotA 2, a wide variety of algorithms have been used.  
+\Citeauthor{yuMOBASliceTimeSlice2018} \cite{yuMOBASliceTimeSlice2018} trained a \ac{rnn} on 71,355 matches and achieved an accuracy of $0.7083$ at the half-way point of a match, which according to their analysis is on average at 20 minutes.
+\Citeauthor{wangPredictingMultiplayerOnline2016} \cite{wangPredictingMultiplayerOnline2016} compared Logistic Regression with a \ac{fnn} trained on up to 911,468 matches, with \ac{lr} achieving a slightly better accuracy ($0.6104$) than the \ac{fnn} ($0.588$).
+
 
 \Citeauthor{silvaContinuousOutcomePrediction2018} have used \acp{rnn} to predicting the winner using data of different time intervals. They achieved an accuracy of 75\% when using data from between the 10 and 15 minute mark.
 An evaluation of LSTM resulted in lower accuracy, most likely due to the large amount of data required \cite{silvaContinuousOutcomePrediction2018}.
@@ -377,15 +380,20 @@ The primary source of data stemmed from the Riot Games API, a comprehensive repo
 The Riot Games API provided access to a plethora of essential data points, including champion statistics, general match information, timeline details, and player-specific information.
 These variables collectively form a comprehensive and multifaceted dataset crucial for the development of an effective predictive model.
 \paragraph{Other Data Sources}
-However, not all pertinent data were available directly from the Riot Games API. 
+However, not all pertinent data were available directly from the Riot Games API.
 These include the winning chance of each champion and statistics on how each player performs on each relevant champion.
-To address this limitation, a web-scraping approach was employed to gather additional relevant information. The amalgamation of Riot Games API data and web-scraped data was meticulously organized and stored in a Database. 
+To address this limitation, a web-scraping approach was employed to gather additional relevant information. The amalgamation of Riot Games API data and web-scraped data was meticulously organized and stored in a Database.
 This central repository served as the foundational storehouse from which distinct datasets were constructed, ensuring an organized and structured approach to data management.
 \paragraph{Regions}
-Multiple regions were included in the data collection process, including Europe West (EUW), Europe Nordic \& East (EUN), Korea (KR), and North America (NA). 
-This regional diversity contributes to the model's generalizability across different player bases and playing styles.\\ \  \\
-In summary, the data collection process for this study involved a dual-pronged approach, leveraging the extensive resources provided by the Riot Games API alongside a targeted web-scraping strategy. 
+Multiple regions were included in the data collection process, including Europe West (EUW), Europe Nordic \& East (EUN), Korea (KR), and North America (NA).
+This regional diversity contributes to the model's generalizability across different player bases and playing styles.
+\paragraph{Period of Time}
+All matches included in the dataset were played in season 13 and on patch 20.
+It is important that all matches are played on the same patch, as a patch may cause major shifts in the balance of the game, thus making certain strategies and champions way better than others.
+\\ \  \\
+In summary, the data collection process for this study involved a dual-pronged approach, leveraging the extensive resources provided by the Riot Games API alongside a targeted web-scraping strategy.
 The resulting dataset, stored in a PostgreSQL Database, reflects a comprehensive and meticulously curated compilation of high-rank amateur League of Legends matches.
+
 
 \section{Data Processing}
 \label{sec:data_processing}
