@@ -197,7 +197,7 @@ z = w_1 x_1 + ... + w_m x_m + b = \mathbf{w}^T \mathbf{x} + b.
 $z$ is then passed through an activation function $\phi$, which provides non-linearity:
 $a = \phi(z) = \phi(\mathbf{w}^T \mathbf{x})$.
 Common activation functions include sigmoid functions, \ac{relu} and more.
-The \ac{mlp}, first introduced by Rosenblatt \cite{rosenblattPerceptronProbabilisticModel1958a} organizes neurons in layers.
+The \ac{mlp}, first introduced by Rosenblatt \cite{rosenblattPerceptronProbabilisticModel1958} organizes neurons in layers.
 Input data is fed into the input layer, and computations propagate forward through the hidden layers to produce an output.
 In the simplest form of an ANN, every neuron in a layer is connected to every neuron in the subsequent layer, forming a fully connected architecture.
 There are no other connections, making it a feed-forward network, and it constitutes a directed acyclic graph.
@@ -215,7 +215,7 @@ For regression tasks, a commonly used loss function is the \ac{mse} Loss
 \begin{equation}
 E_N = \frac{1}{N} \sum_{i=1}^{N}(y_{i} - \hat{y}_{i})^2
 \end{equation}
-where $N$ is the number of samples \cite{lianoRobustErrorMeasure1996a}.
+where $N$ is the number of samples \cite{lianoRobustErrorMeasure1996}.
  For binary classification, the \ac{cel}
 \begin{equation}
 E_N = \frac{1}{N} \sum_{k=1}^{N} y_k \ln{\hat{y}_k} + (1-y_k) \ln{(1-\hat{y}_k)}
@@ -249,7 +249,7 @@ h_t =
 where $\sigma$ is the sigmoid function, $U$ and $b_h$ are the weight matrix and the bias of the hidden state and $W$ is the weight matrix of the input.
 For an \ac{rnn} with just one recurrent layer, one hidden weight matrix $W_h$ is sufficient, as the weights are shared across timesteps.
 
-\Citeauthor{bengioLearningLongtermDependencies1994a} \cite{bengioLearningLongtermDependencies1994a} showed, however, that \acp{rnn} have challenges with exploding or vanishing gradients, especially in long sequences, which can affect their ability to capture long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}.
+\Citeauthor{bengioLearningLongtermDependencies1994} \cite{bengioLearningLongtermDependencies1994} showed, however, that \acp{rnn} have challenges with exploding or vanishing gradients, especially in long sequences, which can affect their ability to capture long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}.
 
 \begin{figure}
 \centering
@@ -281,29 +281,58 @@ itemc/.style={item,on chain,join}]
 \label{fig:rnn_unroll}
 \end{figure}
 
+
 \begin{figure}
 \centering
 \begin{tikzpicture}
-\draw[rounded corners] (0, 0) rectangle (8, 4) {};
-\draw[rounded corners, dashed] (1.5,1.5) rectangle (2.5,2.5) node[pos=.5] {$h_t$};
-\draw[rounded corners, dashed] (5.5,1.5) rectangle (6.5,2.5) node[pos=.5] {$Z_t$};
+[
+%Styles
+cell/.style={% For the main box
+        rectangle, 
+        rounded corners=5mm, 
+        draw,
+        very thick,
+        },
+state/.style={ %for internal States
+		rectangle,
+		rounded corners=3mm,
+		draw,
+		dashed,
+		minimum size=10mm,
+		},
+arrow/.style={ %for arrows
+		->,
+		thick,
+		-{Stealth[length=3mm]},
+		line width=0.5mm,
+		},
+]
+
+%Cell
+\node [cell, minimum height =4cm, minimum width=6cm] at (0,0){} ;
+
+%States
+
+\node[] (ht1) at (-4.5,0) {$h_{t-1}$};
+\node[state] (ht) [right=2.5cm of ht1]	{$h_t$};
+\node[state] 	(Zt) [right=1cm of ht] {$Z_t$};
+\node[] 	(xt) [below=2.5cm of ht] {$x_t$};
+\node[] (Zt2) [above=2.5cm of Zt] {$Z_t$};
+
+%Arrows
+\draw[arrow] (xt.north) to (ht.south);
+\draw[arrow] (ht1.east) to (ht.west);
+\draw[arrow] (ht.east) to (Zt.west);
+\draw[arrow] (Zt.north) to (Zt2.south);
+
+%Other
+\node[]  [right=3cm of Zt] {}; % this is just to add some space on the right side to center the caption on the cell
+
 \end{tikzpicture}
 \caption{Elman Recurrent Unit}
 \label{fig:elman}
 \end{figure}
 
-
-\begin{figure}
-\centering
-\begin{tikzpicture}
-\node[block, draw=black, minimum width=8cm, minimum height=4cm](border) {};
-%\coordinate (center east) at (border.shape center -| border.east);
-\node[block, draw=black, minimum width=1cm, minimum height=1cm,align=left] (1) {$h_t$};
-\node[block, draw=black, minimum width=1cm, minimum height=1cm, right=of 1] (2) {$Z_t$};
-\end{tikzpicture}
-\caption{Gated Recurrent Unit}
-\label{fig:gru}
-\end{figure}
 
 \section{GRU}
 \label{sec:gru}
@@ -337,6 +366,71 @@ with
 In equations \ref{eq:gru_h} and \ref{eq_gru_h_tilde} $\odot$ denotes the elementwise (Hadamard) multiplication and the function $g$ in equation \ref{eq_gru_h_tilde} is the activation function.
 
 
+\begin{figure}
+\centering
+\begin{tikzpicture}[
+    % Styles
+    cell/.style={% For the main box
+        rectangle, 
+        rounded corners=5mm, 
+        draw,
+        very thick,
+        },
+    operator/.style={%For operators like +  and  x
+        circle,
+        draw,
+        inner sep=-0.5pt,
+        minimum height =.2cm,
+        },
+    function/.style={%For functions
+        ellipse,
+        draw,
+        inner sep=1pt
+        },
+    ct/.style={% For external inputs and outputs
+        circle,
+        draw,
+        line width = .75pt,
+        minimum width=1cm,
+        inner sep=1pt,
+        },
+    gt/.style={% For internal inputs
+        rectangle,
+        draw,
+        minimum width=4mm,
+        minimum height=3mm,
+        inner sep=1pt
+        },
+    ArrowC1/.style={% Arrows with rounded corners
+        rounded corners=.25cm,
+        thick,
+        },
+    ArrowC2/.style={% Arrows with big rounded corners
+        rounded corners=.5cm,
+        thick,
+        },
+    ]
+    
+   %Start drawing the thing...    
+    % Draw the cell: 
+    \node [cell, minimum height =4cm, minimum width=6cm] at (0,0){} ;
+
+   % Draw inputs named ibox#
+    \node [gt] (ibox1) at (-2,-0.75) {$\sigma$};
+    \node [gt] (ibox2) at (-1.5,-0.75) {$\sigma$};
+    \node [gt, minimum width=1cm] (ibox3) at (-0.5,-0.75) {Tanh};
+	
+	
+	\node [operator] (mux1) at (-2,1.5) {$\times$};
+    \node [operator] (add1) at (-0.5,1.5) {+};
+    \node [operator] (mux2) at (-0.5,0) {$\times$};
+    \node [operator] (mux3) at (1.5,0) {$\times$};
+    
+    
+\end{tikzpicture}
+\caption{Gated Recurrent Unit}
+\label{fig:gru}
+\end{figure}
 
 \section{Related work}
 \label{sec:related}
@@ -359,8 +453,8 @@ An evaluation of LSTM resulted in lower accuracy, most likely due to the large a
 
 
 
-\chapter{Experiments}
-\label{chap:experiments}
+\chapter{Data}
+\label{chap:data}
 
 As two very different experiments are compared against each other, two different datasets need to be constructed: one dataset containing all relevant information prior to the start of the game and one dataset containing only the temporal information from the beginning of the game.
 
@@ -399,20 +493,34 @@ The resulting raw dataset containing $20,513$ and  $3,972$ matches in the pre-ga
 \section{Data Processing}
 \label{sec:data_processing}
 
-\subsection{Game Dataset}
-The raw pre-game dataset contains $368$ columns which can be categorized into three distinct groups: General Match Information, Player Information, Champion Information and Player-Champion Information.
-General Information about the match (i.e. patch number) is only used for validation purposes and not included in the final dataset.
+\subsection{Pre-Game Dataset}
+\label{ssec:pre_game_data}
+The raw pre-game dataset contains $368$ columns which can be categorized into four distinct groups: General Match Information, Player Information, Champion Information and Player-Champion Information.
+General match details, such as the patch number, are exclusively utilized for validation purposes and are excluded from the final dataset.
 \paragraph{Player Information}
-Player Information feature $x_p$ is a two-dimensional vector containing information about the player: the account level as an indication of how many games the player has played and the rank of the player as a measure of how good the player is
+Player Information feature $x_p$ is a two-dimensional vector containing information about the player. This includes the account level, serving as an indicator of the player's accumulated gaming experience, and the player's rank, functioning as a metric for assessing the player's skill level.
 \paragraph{Champion Information}
 The Champion Information feature $\mathbf{x}_c$ is composed of 
 
+However, it is noteworthy that a limitation inherent in these metrics lies in their aggregation across all player ranks, reducing their specificity to the ranks under analysis.
 \paragraph{Player-Champion Information}
-This feature vector contains information about the player on this particular champion.
-This includes the average amount of gold earned by the player over all his matches played on this champion in season 13.
+This feature vector contains information about the player on a specific champion.
+It encompasses metrics such as the average amount of gold earned by the player across all matches played on the champion during Season 13. 
+\Citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021} found that  the most pivotal feature within this category is the player's win rate while piloting this champion.
+Unfortunately, this information is not readily available to be extracted by our web scraper,  necessitating its omission from the dataset.
+
+
+\subsection{In-Game Dataset}
+\label{ssec:in_game_data}
+
+The raw in-game dataset contains $381$ features describing the current state of the game after every minute.
+It only consists of statistics of each player like the damage done by him to other champions, the level of his champion or his total gold earned thus far.
 
 
 
+
+\chapter{Experiments}
+\label{chap:experiments}
 
 \chapter{Results}
 \label{chap:results}
