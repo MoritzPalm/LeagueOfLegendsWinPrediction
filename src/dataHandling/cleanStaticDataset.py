@@ -7,10 +7,10 @@ from sklearn.preprocessing import StandardScaler
 import src.dataHandling.cleaningUtils as clean
 
 
-def cleanStaticDataset():
+def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray):
     """
     Cleans the static dataset and saves it to data/processed
-    :return: None
+    :return: X_train, X_val, X_test
     """
     print("Cleaning static dataset...")
     with open("data/raw/static_dataset.pkl", "rb") as f:
@@ -33,21 +33,31 @@ def cleanStaticDataset():
     print(f'Found {len(df)} rows after cleaning')
     X_train, X_test, y_train, y_test = train_test_split(df.iloc[:, :-1],
                                                         df.iloc[:, -1],
-                                                        test_size=0.2,
+                                                        test_size=0.1,
                                                         random_state=42,
                                                         shuffle=True)
+    X_train, X_val, y_train, y_val = train_test_split(X_train,
+                                                      y_train,
+                                                      test_size=0.1,
+                                                      random_state=42,
+                                                      shuffle=True)
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
-
+    X_val = scaler.transform(X_val)
     X_train = np.append(X_train, np.expand_dims(y_train, axis=1), axis=1)
     X_test = np.append(X_test, np.expand_dims(y_test, axis=1), axis=1)
-
-    np.save('data/processed/train_static', X_train)
-    np.save('data/processed/test_static', X_test)
+    X_val = np.append(X_val, np.expand_dims(y_val, axis=1), axis=1)
+    if save:
+        np.save('data/processed/train_static', X_train)
+        np.save('data/processed/test_static', X_test)
+        np.save('data/processed/val_static', X_val)
     print(f'X_train shape: {X_train.shape}')
     print(f'X_test shape: {X_test.shape}')
+    print(f'X_val shape: {X_val.shape}')
+    print("Done cleaning static dataset")
+    return X_train, X_val, X_test
 
 
 if __name__ == '__main__':
-    cleanStaticDataset()
+    cleanStaticDataset(save=True)

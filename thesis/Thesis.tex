@@ -250,38 +250,6 @@ where $\sigma$ is the sigmoid function, $U$ and $b_h$ are the weight matrix and 
 For an \ac{rnn} with just one recurrent layer, one hidden weight matrix $W_h$ is sufficient, as the weights are shared across timesteps.
 
 \Citeauthor{bengioLearningLongtermDependencies1994} \cite{bengioLearningLongtermDependencies1994} showed, however, that \acp{rnn} have challenges with exploding or vanishing gradients, especially in long sequences, which can affect their ability to capture long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}.
-
-\begin{figure}
-\centering
-\begin{tikzpicture}[item/.style={circle,draw,thick,align=center},
-itemc/.style={item,on chain,join}]
- \begin{scope}[start chain=going right,nodes=itemc,every
- join/.style={-latex,very thick},local bounding box=chain]
- \path node (A0) {$h_{t-1}$} node (A1) {$h_t$} node (A2) {$A$} node[xshift=2em] (At)
- {$A$};
- \end{scope}
- \node[left=1em of chain,scale=2] (eq) {$=$};
- \node[left=2em of eq,item] (AL) {$h$};
- \path (AL.west) ++ (-1em,2em) coordinate (aux);
- \draw[very thick,-latex,rounded corners] (AL.east) -| ++ (1em,2em) -- (aux)
- |- (AL.west);
- \foreach \X in {0,1,2,t}
- {\draw[very thick,-latex] (A\X.north) -- ++ (0,2em)
- node[above,item,fill=gray!10] (h\X) {$y_\X$};
- \draw[very thick,latex-] (A\X.south) -- ++ (0,-2em)
- node[below,item,fill=gray!10] (x\X) {$y_\X$};}
- \draw[white,line width=0.8ex] (AL.north) -- ++ (0,1.9em);
- \draw[very thick,-latex] (AL.north) -- ++ (0,2em)
- node[above,item,fill=gray!10] {$y_t$};
- \draw[very thick,latex-] (AL.south) -- ++ (0,-2em)
- node[below,item,fill=gray!10] {$x_t$};
- \path (x2) -- (xt) node[midway,scale=2,font=\bfseries] {\dots};
-\end{tikzpicture}
-\caption{Unrolling of a \ac{rnn} over time}
-\label{fig:rnn_unroll}
-\end{figure}
-
-
 \begin{figure}
 \centering
 \begin{tikzpicture}
@@ -332,6 +300,41 @@ arrow/.style={ %for arrows
 \caption{Elman Recurrent Unit}
 \label{fig:elman}
 \end{figure}
+\begin{figure}
+\centering
+%TODO add U matrix between hidden states
+\begin{tikzpicture}[
+item/.style={circle,draw,thick,align=center, minimum size=1.2cm},
+hidden/.style={item,on chain,join}]
+
+ \begin{scope}[start chain=going right,nodes=hidden,every
+ join/.style={-latex,very thick},local bounding box=chain]
+ \draw node (A0) {$h_0$} node (A1) {$h_1$} node (A2) {$h_2$} node[xshift=2em] (At)
+ {$h_t$};
+ \end{scope}
+ \node[left=1em of chain,scale=2] (eq) {$=$};
+ \node[left=2em of eq,item] (AL) {$h$};
+ \path (AL.west) ++ (-1em,2em) coordinate (aux);
+ \draw[very thick,-latex,rounded corners] (AL.east) -| ++ (1em,2em) -- (aux)
+ |- (AL.west) node[midway, left] {$U$};
+ \foreach \X in {0,1,2,t}
+ {\draw[very thick,-latex] (A\X.north) -- ++ (0,2em) node[midway, right] {$V$}
+ node[above,item,fill=gray!10] (h\X) {$y_\X$};
+ \draw[very thick,latex-] (A\X.south) -- ++ (0,-2em) node[midway, right] {$W$}
+ node[below,item,fill=gray!10] (x\X) {$x_\X$};}
+ 
+ \draw[white,line width=0.8ex] (AL.north) -- ++ (0,1.9em);
+ \draw[very thick,-latex] (AL.north) -- ++ (0,2em) node[midway, right] {$V$}
+ node[above,item,fill=gray!10] {$y_t$};
+ \draw[very thick,latex-] (AL.south) -- ++ (0,-2em) node[midway, right] {$W$}
+ node[below,item,fill=gray!10] {$x_t$};
+ \path (x2) -- (xt) node[midway,scale=2,font=\bfseries] {\dots};
+\end{tikzpicture}
+\caption{Unrolling of an \ac{rnn} over time}
+\label{fig:rnn_unroll}
+\end{figure}
+
+
 
 
 \section{GRU}
@@ -447,9 +450,6 @@ In DotA 2, a wide variety of algorithms have been used.
 
 \Citeauthor{silvaContinuousOutcomePrediction2018} have used \acp{rnn} to predicting the winner using data of different time intervals. They achieved an accuracy of 75\% when using data from between the 10 and 15 minute mark.
 An evaluation of LSTM resulted in lower accuracy, most likely due to the large amount of data required \cite{silvaContinuousOutcomePrediction2018}.
-
-
-
 
 
 
