@@ -155,101 +155,104 @@ the model should be able to answer the question, if team a is far enough ahead t
 \section{League of Legends}
 \label{sec:LoL}
 
-League of Legends is a \ac{moba} game developed by Riot Games.
-MOBA games are a subgenre of real-time strategy games in which two teams, typically consisting of five players ('summoners') each, compete against each other with each player controlling a single character \cite{mora-cantallopsMOBAGamesLiterature2018}, called 'champion'.
-It is one of the most played video game genres CITATION NEEDED and attracts millions of players and fans watching the professional scene.
-Most \acp{moba} differ only slightly in terms of basic gameplay or map layout, but vary in details such as champions, abilities, graphics etc.
-As League of Legends is the most played game in the \ac{moba} genre, we will focus on it.
-At the start of the game, each player picks a champion from a pool of currently 165 champions, each with distinct abilities and characteristics.
-The map consists of two bases which are connected by three lanes.
-Each base contains a large structure, the so called 'nexus', which is protected by two turrets. 
-The goal of the game is to destroy the enemy nexus.
-The bases are connected by three lanes, separated by a jungle.
-\Acp{npc}, so called 'minions', spawn in regular intervals and advance down the lanes.
-Killing minions grants gold and \ac{xp}, which are used to improve different attributes by buying items or increasing ones level.
-It is conventional that the players split up at the start of the game, with one player going to the top lane, one to the mid lane and two players to the bottom lane.
-The last player gets his gold and \ac{xp} from killing neutral monsters in the area between each lane, commonly referred to as 'the jungle'.
-It also contains two large neutral monsters, Baron Nashor and a dragon, which require multiple team member to be killed and grant improvements to the whole team.
-Larger fights are usually centered around either destroying a turret or killing a large neutral monster.
-Every year, the game enters a new 'season', where it undergoes major challenges. 
-In between seasons, the developers release smaller patches every two weeks, which are usually aimed at changing the strength of different champions.
-These patches have the potential to cause major disruption to the best way the game is played (the so called 'meta'),  for example by introducing a new champion.
+\ac{lol} is a \ac{moba} game developed by Riot Games. 
+\Ac{moba} games, a subgenre of real-time strategy games, typically feature two teams, each consisting of five players known as 'summoners'. 
+These players compete against each other, with each controlling a unique character, referred to as a 'champion' \cite{mora-cantallopsMOBAGamesLiterature2018}. 
+\ac{lol} is among the most popular video games in this genre, drawing millions of players worldwide and a substantial viewership in professional esports tournaments [CITATION NEEDED].
 
-The players need to pick a champion that fits best into the team, taking into account the team strategy, the damage composition, the role the player has been assigned etc., while also selecting a champion the player has played before and can play well.
-This is a very critical, yet highly difficult choice, as in theory there are $\binom{165}{10} = \frac{165!}{10! \cdot (165-10)!}$ different combinations of champions.
+While most \ac{moba} games share similar basic gameplay elements and map layouts, they differ in aspects such as available champions, abilities, and graphical styles. 
+Given its prominence in the \ac{moba} genre, this thesis will primarily focus on League of Legends. 
+In \ac{lol}, players begin each match by selecting a champion from a roster of 165, each with distinct abilities and characteristics. 
+The game map is divided into two bases connected by three lanes, with each base housing a critical structure called the 'nexus', defended by turrets. 
+The primary objective is to destroy the opposing team's nexus.
 
+The game's map also features a jungle area, which contains neutral monsters and two significant creatures, Baron Nashor and the Dragon. 
+These monsters provide team-wide benefits upon defeat. The game's strategic complexity is heightened by the need for players to earn gold and \ac{xp} by defeating minions, neutral monsters, or opposing champions. 
+This currency is used to purchase items and level up, enhancing a champion's capabilities.
 
+Player roles are traditionally distributed with one player in the top lane, one in the mid lane, two in the bottom lane, and one in the jungle. This distribution allows for strategic diversity and specialization. 
+Each year, \ac{lol} enters a new 'season', introducing significant changes. Additionally, Riot Games releases bi-weekly patches to adjust champion balance, potentially altering the prevailing game strategies, or 'meta'.
 
+Champion selection is a critical aspect of \ac{lol} gameplay. 
+Players must consider various factors such as team composition, damage types, assigned roles, and personal proficiency with specific champions. 
+Theoretically, the number of possible champion combinations in a game is $\binom{165}{10} = \frac{165!}{10! \cdot (165-10)!}$, highlighting the game's strategic depth.
 
-a modified elo system  is used to determine the skill of an individual player, which is the most important factor in which players get matched against each other
+To assess individual player skill, \ac{lol} employs a modified Elo rating system. This system is crucial for matchmaking, ensuring players are paired with and against others of similar skill levels.
 
 
 \section{Neural Networks}
 \label{sec:nn}
 
-\Acp{ann} have been originally designed to simulate the way the human brain processes information.
-The fundamental unit in an \ac{ann} is called a neuron, first proposed by McCulloch and Pitts  \cite{mccullochLogicalCalculusIdeas1943}.
-A neuron is a function which takes a number of values $ \mathbf{x} = (x_1, x_2, ... , x_m), m \in \mathbb{N}$ and outputs its activation $a$.
-The weighted input $z$ is calculated as the dot product of the input vector $\mathbf{x}$ and the weight vector $\mathbf{w} = (w_1, w_2, ... , w_m)$ with the bias $b$ added:
+\Acp{ann} are computational models that emulate the processing patterns of the human brain. The fundamental computational unit of an ANN is the neuron, a concept first proposed by \citeauthor{mccullochLogicalCalculusIdeas1943} \cite{mccullochLogicalCalculusIdeas1943}. 
+A neuron computes an output activation $a$ from a set of input values $\mathbf{x} = (x_1, x_2, \ldots, x_m)$, where $m$ denotes the number of inputs. 
+The neuron's weighted input $z$ is calculated as the dot product of the input vector $\mathbf{x}$ and the weight vector $\mathbf{w} = (w_1, w_2, \ldots, w_m)$, plus a bias term $b$:
 \begin{equation}
-z = w_1 x_1 + ... + w_m x_m + b = \mathbf{w}^T \mathbf{x} + b.
+z = \sum_{i=1}^{m} w_i x_i + b = \mathbf{w}^\top \mathbf{x} + b.
 \end{equation}
-$z$ is then passed through an activation function $\phi$, which provides non-linearity:
-$a = \phi(z) = \phi(\mathbf{w}^T \mathbf{x})$.
-Common activation functions include sigmoid functions, \ac{relu} and more.
-The \ac{mlp}, first introduced by Rosenblatt \cite{rosenblattPerceptronProbabilisticModel1958} organizes neurons in layers.
-Input data is fed into the input layer, and computations propagate forward through the hidden layers to produce an output.
-In the simplest form of an ANN, every neuron in a layer is connected to every neuron in the subsequent layer, forming a fully connected architecture.
-There are no other connections, making it a feed-forward network, and it constitutes a directed acyclic graph.
-A fully connected feed-forward network network can be described as a series of matrix-vector multiplications for each layer $l$:
+The weighted sum $z$ is then passed through an activation function $\phi$, such as a sigmoid or \ac{relu}, to introduce non-linearity:
 \begin{equation}
-\label{eq:nn}
-\mathbf{a}^{(l)} = \phi (\mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)})
+a = \phi(z) = \phi(\mathbf{w}^\top \mathbf{x} + b).
 \end{equation}
-In equation \ref{eq:nn}, $\mathbf{a}^{(l)}$ denotes the activation of layer $l$, $\mathbf{W}^{(l)}$ denotes the weight matrix of layer $l$ and $\mathbf{b}^{(l)}$ is the corresponding bias vector with $d$ being the number of neurons per layer.
-If $l$ is the output layer $L$, the vector $\mathbf{a}^{(L)}$ represents the predicted output $\hat{y}$ of the network.
 
-To allow the network to approximate any measurable function, at least one hidden layer is required \cite{hornikMultilayerFeedforwardNetworks1989}.
-During the training process, the weights and biases are iteratively adjusted using the backpropagation algorithm to minimize the loss function $E$.
-For regression tasks, a commonly used loss function is the \ac{mse} Loss
+The \ac{mlp} introduced by \citeauthor{rosenblattPerceptronProbabilisticModel1958} \cite{rosenblattPerceptronProbabilisticModel1958}, organizes neurons into layers. 
+Data flows from the input layer, through one or more hidden layers, to the output layer. In a fully connected feed-forward network, the computation in each layer $l$ is:
 \begin{equation}
-E_N = \frac{1}{N} \sum_{i=1}^{N}(y_{i} - \hat{y}_{i})^2
+\mathbf{a}^{(l)} = \phi (\mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}),
 \end{equation}
-where $N$ is the number of samples \cite{lianoRobustErrorMeasure1996}.
- For binary classification, the \ac{cel}
+where $\mathbf{a}^{(l)}$ represents the activation of layer $l$, $\mathbf{W}^{(l)}$ is the weight matrix, and $\mathbf{b}^{(l)}$ is the bias vector. 
+The output layer $L$ produces the network's prediction $\hat{y}$.
+
+To approximate any measurable function, an \ac{ann} requires at least one hidden layer \cite{hornikMultilayerFeedforwardNetworks1989}. 
+The network's weights and biases are adjusted during training to minimize a loss function $E$. Common loss functions include \ac{mse} for regression tasks:
 \begin{equation}
-E_N = \frac{1}{N} \sum_{k=1}^{N} y_k \ln{\hat{y}_k} + (1-y_k) \ln{(1-\hat{y}_k)}
+E_N = \frac{1}{N} \sum_{k=1}^{N}(y_{k} - \hat{y}_{k})^2,
 \end{equation}
-is widely used \cite{zhangGeneralizedCrossEntropy2018}.
+and \ac{cel} for binary classification tasks:
+\begin{equation}
+E_N = -\frac{1}{N} \sum_{k=1}^{N} \left( y_k \ln{\hat{y}_k} + (1-y_k) \ln{(1-\hat{y}_k)} \right),
+\end{equation}
+where $N$ is the number of samples, $y_k$ is the true label, and $\hat{y}_i$ or $\hat{y}_k$ is the predicted value or probability.
 
+Backpropagation is a key algorithm for training \acp{ann}, involving a forward pass to compute activations and a backward pass to compute gradients. 
+The gradients of the loss function with respect to the weights and biases are computed using the chain rule of calculus. For a given layer $l$, the gradient of the loss $E$ with respect to the weights $\mathbf{W}^{(l)}$is:
+\begin{equation}
+\frac{\partial E}{\partial \mathbf{W}^{(l)}} = \frac{\partial E}{\partial \mathbf{a}^{(l)}} \cdot \frac{\partial \mathbf{a}^{(l)}}{\partial \mathbf{z}^{(l)}} \cdot \frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{W}^{(l)}},
+\end{equation}
+where $\mathbf{z}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}$and $\mathbf{a}^{(l)} = \phi(\mathbf{z}^{(l)})$. 
+The gradients are then used to update the weights and biases, typically using an optimization algorithm like gradient descent.
 
-
-
+Through iterative forward and backward propagation, the network gradually converges to a state where the loss is minimized, indicating successful learning of the patterns in the data.
 
 \section{Recurrent Neural Networks}
 \label{sec:rnn}
-\Acp{rnn} build upon the foundation of feed-forward neural networks. They are designed to handle sequential data by introducing the concept of recurrence. In an \ac{rnn}, the output at each time step depends not only on the current input but also on the network's previous internal state or hidden state. This allows \acp{rnn} to capture dependencies over time, making them suitable for tasks involving sequential input such as speech and language \cite{lecunDeepLearning2015}.
-The first fully connected \ac{rnn} was proposed by Elman \cite{elmanFindingStructureTime1990}.
-\Acp{rnn} maintain a 'state vector' in their hidden units (see figure \ref{fig:elman}), implicitly containing information extracted from all the past elements of the sequence \cite{lecunDeepLearning2015}.
-The output $\hat{y}$ of a neural net can be calculated by
+
+Recurrent Neural Networks (RNNs) extend the capabilities of feed-forward neural networks to handle sequential data by introducing the concept of recurrence. In an RNN, the output at each time step is influenced not only by the current input but also by the network's previous internal state, known as the hidden state. This design enables RNNs to capture temporal dependencies, making them particularly effective for tasks involving sequential data, such as speech recognition and natural language processing \cite{lecunDeepLearning2015}.
+
+The concept of a fully connected RNN was first proposed by \citeauthor{elmanFindingStructureTime1990} \cite{elmanFindingStructureTime1990}. 
+RNNs maintain a 'state vector' in their hidden units, which implicitly contains information extracted from all past elements of the sequence \cite{lecunDeepLearning2015}. The output \( \hat{y}_t \) of an RNN at time step \( t \) can be calculated as:
 \begin{equation}
 \label{eq:rnn_output}
-\hat{y}_t = \tanh(V h_t + b_o)
+\hat{y}_t = \tanh(V h_t + b_o),
 \end{equation}
-where $V$ and $b_o$ are the weight matrix and the bias vector of the cell output.
-In addition to calculating the output, the forward propagation involves updating the hidden state $h_t$ at every timestep $t$:
+where \( V \) is the weight matrix and \( b_o \) is the bias vector associated with the cell output. The hidden state \( h_t \) at each time step \( t \) is updated as follows:
 \begin{equation}
 \label{eq:rnn_update}
 h_t =
 \begin{cases}
-	0, & \text{if}\ t = 0 \\
-	\sigma (W x_t + U h_{t-1} +  b_h), & \text{otherwise}
+	0, & \text{if } t = 0, \\
+	\sigma (W x_t + U h_{t-1} + b_h), & \text{otherwise},
 \end{cases}
 \end{equation}
-where $\sigma$ is the sigmoid function, $U$ and $b_h$ are the weight matrix and the bias of the hidden state and $W$ is the weight matrix of the input.
-For an \ac{rnn} with just one recurrent layer, one hidden weight matrix $W_h$ is sufficient, as the weights are shared across timesteps.
+where \( \sigma \) is the sigmoid activation function, \( U \) and \( b_h \) are the weight matrix and bias vector for the hidden state, and \( W \) is the weight matrix for the input. In a single-layer RNN, one hidden weight matrix \( W_h \) is shared across all timesteps.
 
-\Citeauthor{bengioLearningLongtermDependencies1994} \cite{bengioLearningLongtermDependencies1994} showed, however, that \acp{rnn} have challenges with exploding or vanishing gradients, especially in long sequences, which can affect their ability to capture long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}.
+
+BPTT unfolds the RNN across time steps (see figure \ref{fig:rnn_unroll}) and applies the backpropagation algorithm. The gradients of the loss function with respect to the weights are calculated for each time step. For a given time step \( t \), the gradient of the loss \( E \) with respect to the weights \( W \) is:
+\begin{equation}
+\frac{\partial E}{\partial W} = \sum_{\tau=1}^{t} \frac{\partial E}{\partial \hat{y}_\tau} \cdot \frac{\partial \hat{y}_\tau}{\partial h_\tau} \cdot \frac{\partial h_\tau}{\partial W},
+\end{equation}
+where \( \frac{\partial E}{\partial \hat{y}_\tau} \) is the gradient of the loss with respect to the output at time \( \tau \), \( \frac{\partial \hat{y}_\tau}{\partial h_\tau} \) is the gradient of the output with respect to the hidden state, and \( \frac{\partial h_\tau}{\partial W} \) is the gradient of the hidden state with respect to the weights. This process is repeated for all weights and biases in the network, allowing the RNN to learn from sequences by adjusting its parameters based on the temporal context.
+
+However, as demonstrated by \citeauthor{bengioLearningLongtermDependencies1994} \cite{bengioLearningLongtermDependencies1994}, RNNs face challenges with exploding or vanishing gradients, particularly in long sequences. This issue hinders their ability to learn long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}. 
 \begin{figure}
 \centering
 \begin{tikzpicture}

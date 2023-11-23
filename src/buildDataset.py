@@ -3,6 +3,7 @@ import logging
 import pandas as pd
 from sqlalchemy import func
 from tqdm import tqdm
+from joblib import Parallel, delayed
 
 from src.dataHandling.cleanTimelineDataset import cleanTimelineDataset
 from src.sqlstore import queries
@@ -14,6 +15,103 @@ from src.sqlstore.timeline import SQLTimeline, SQLFrame, SQLParticipantFrame
 from src.utils import separateMatchID
 
 
+def process_summoner(participant_puuid, session):
+    """
+    Processes a summoner and returns a DataFrame with the summoner's data
+    :param participant_puuid: puuid of the participant
+    :param session: sqlalchemy session
+    :return: DataFrame with summoner data
+    """
+    summoner = session.query(SQLSummoner).filter(SQLSummoner.puuid == participant_puuid).one()
+    df_summoner = pd.DataFrame([summoner.get_training_data()])
+    return df_summoner
+
+
+def process_champion(participant_id, session):
+    """
+    Processes a champion and returns a DataFrame with the champion's data and the participant's stats
+    :param participant_id: id of the participant
+    :param session: sqlalchemy session
+    :return: DataFrame with champion data, DataFrame with participant stats
+    """
+    participant_stats = session.query(SQLParticipantStats).filter(
+        SQLParticipantStats.participantId == participant_id).scalar()
+    champion = session.query(SQLChampion).filter(SQLChampion.id == participant_stats.championId).scalar()
+    df_champion = pd.DataFrame([champion.get_training_data()])
+    return df_champion, participant_stats
+
+
+def process_summoner_league(participant_puuid, session):
+    """
+    Processes a summoner league and returns a DataFrame with the summoner league's data
+    :param participant_puuid:
+    :param session:
+    :return:
+    """
+    summonerLeague = session.query(SQLSummonerLeague).filter(
+        SQLSummonerLeague.puuid == participant_puuid).one()
+    df_summonerLeague = pd.DataFrame([summonerLeague.get_training_data()])
+    return df_summonerLeague
+
+
+def process_mastery(participant, participant_stats, session):
+    """
+    Processes a champion mastery and returns a DataFrame with the champion mastery's data
+    :param participant:
+    :param participant_stats:
+    :param session: sqlalchemy session
+    :return:
+    """
+    championNumber = queries.get_champ_number_from_name(session, participant_stats.championName)
+    championIds = queries.get_all_champIds_for_number(session, championNumber)
+    mastery = session.query(SQLChampionMastery).filter(
+        SQLChampionMastery.puuid == participant.puuid,
+        SQLChampionMastery.championId.in_(championIds)).limit(1).scalar()
+    if mastery:
+        df_mastery = pd.DataFrame([mastery.get_training_data()])
+    else:
+        df_mastery = pd.DataFrame([{}])  # Empty DataFrame with same columns
+    return df_mastery
+
+
+def process_match(match, session):
+    try:
+        logging.info(f"Processing match with ID: {match.matchId}")
+
+        # Create a DataFrame for each match's data
+        df_match = pd.DataFrame([match.get_training_data()])
+
+        participants = session.query(SQLParticipant).filter(SQLParticipant.matchId == match.matchId).all()
+        assert len(participants) == 10, "Match must have exactly 10 participants"
+
+        participant_data_frames = []
+
+        for i, participant in enumerate(participants):
+            j = i + 1
+
+            df_summoner = process_summoner(participant.puuid, session)
+            df_champion, participant_stats = process_champion(participant.puuid, session)
+            df_summonerLeague = process_summoner_league(participant.puuid, session)
+            df_mastery = process_mastery(participant, participant_stats, session)
+
+            # Renaming columns to include participant index
+            for df in [df_summoner, df_champion, df_summonerLeague, df_mastery]:
+                df.rename(columns=lambda x: f"participant{j}_" + x, inplace=True)
+
+            participant_frame = pd.concat([df_summoner, df_champion, df_summonerLeague, df_mastery], axis=1)
+            participant_data_frames.append(participant_frame)
+
+        # Combine all participant data with the match data
+        df_match = pd.concat([df_match] + participant_data_frames, axis=1)
+
+        logging.info(f"Successfully processed match with ID: {match.matchId}")
+        return df_match
+
+    except Exception as e:
+        logging.error(f"An error occurred when processing match with ID {match.matchId}: {e}")
+        return None
+
+
 def build_static_dataset(size: int = None, save: bool = True) -> pd.DataFrame:
     """
     Builds a dataset with all static information (info available prior to match start) from the database.
@@ -22,84 +120,32 @@ def build_static_dataset(size: int = None, save: bool = True) -> pd.DataFrame:
     :return: DataFrame with a large number of columns (features)
     """
     with get_session() as session:
-        # Initialize an empty DataFrame
-        data = pd.DataFrame()
-
-        # Fetch a specific number of random matches from the SQLMatch table
         matches = session.query(SQLMatch).order_by(func.random()).limit(size).all()
         logging.info(f"Fetched {len(matches)} matches from the database.")
-        for match in tqdm(matches):  # TODO: parallelize with joblib
-            try:
-                logging.info(f"Processing match with ID: {match.matchId}")
 
-                # Create a DataFrame for each match's data
-                match: SQLMatch
-                df_match = pd.DataFrame([match.get_training_data()])
-                logging.info("Match data fetched.")
+        # Use joblib to parallelize match processing
+        #processed_data = Parallel(n_jobs=-1)(delayed(process_match)(match, session) for match in matches)
+        # Filter out None results due to errors and concatenate DataFrames
+        #data = pd.concat([df for df in processed_data if df is not None], axis=0, ignore_index=True)
 
-                # Query participants for the current match
-                participants = session.query(SQLParticipant).filter(SQLParticipant.matchId == match.matchId).all()
+        # List to hold DataFrame for each match
+        match_dataframes = []
 
-                # Ensure there are exactly 10 participants in the match
-                assert len(participants) == 10
+        for match in matches:
+            match: SQLMatch
+            # Process each match and append the result to the list
+            df_match = process_match(match, session)
+            if df_match is not None:
+                match_dataframes.append(df_match)
 
-                for i, participant in enumerate(participants):
-                    logging.info(f"Processing participant {i + 1} with puuid: {participant.puuid}")
-                    j = i + 1
-                    # Fetch Summoner data
-                    summoner = session.query(SQLSummoner).filter(SQLSummoner.puuid == participant.puuid).one()
-                    df_summoner = pd.DataFrame([summoner.get_training_data()])
-                    df_summoner.rename(columns=lambda x: f"participant{j}_" + x, inplace=True)
-                    logging.info("Summoner data fetched.")
+        # Concatenate all match DataFrames into a single DataFrame
+        data = pd.concat(match_dataframes, axis=0, ignore_index=True)
 
-                    # Fetch championId from ParticipantStats
-                    participant_stats = session.query(SQLParticipantStats).filter(
-                        SQLParticipantStats.participantId == participant.id).scalar()
-                    champion_id: int = participant_stats.championId
-                    champion: SQLChampion = session.query(SQLChampion).filter(SQLChampion.id == champion_id).scalar()
-                    df_champion = pd.DataFrame([champion.get_training_data()])
-                    df_champion.rename(columns=lambda x: f"participant{j}_champion_" + x, inplace=True)
-                    win: bool = participant_stats.win
-                    se_win = pd.Series([win], name=f"participant{j}_win")
-                    teamId = participant_stats.teamId
-                    se_teamId = pd.Series([teamId], name=f"participant{j}_teamId")
-                    logging.info(f"Fetched champion ID: {champion_id}")
+        logging.info(f"Successfully processed all matches, length of dataframe: {len(data)}")
 
-                    # Fetch Summoner League data
-                    summonerLeague = session.query(SQLSummonerLeague).filter(
-                        SQLSummonerLeague.puuid == participant.puuid).one()
-                    df_summonerLeague = pd.DataFrame([summonerLeague.get_training_data()])
-                    df_summonerLeague.rename(columns=lambda x: f"participant{j}_" + x, inplace=True)
-                    logging.info("Summoner League data fetched.")
+        if save:
+            data.to_pickle("data/raw/static_dataset.pkl")
 
-                    # Fetch Mastery data
-                    championNumber = queries.get_champ_number_from_name(session, participant_stats.championName)
-                    championIds = queries.get_all_champIds_for_number(session, championNumber)
-                    mastery = session.query(SQLChampionMastery).filter(
-                        SQLChampionMastery.puuid == participant.puuid,
-                        SQLChampionMastery.championId.in_(championIds)).limit(1).scalar()
-                    if mastery is None:
-                        logging.error(
-                            f"No mastery data found for participant {j} with puuid: {participant.puuid} and championId: {champion_id}")
-                        # df_mastery = pd.DataFrame([np.nan])
-                        df_mastery = None
-                    else:
-                        df_mastery = pd.DataFrame([mastery.get_training_data()])
-                        df_mastery.rename(columns=lambda x: f"participant{j}_champion_" + x, inplace=True)
-
-                    # Concatenate Summoner, Summoner League, and Mastery data to the match DataFrame
-                    df_match = pd.concat([df_match, df_summoner, df_summonerLeague, df_mastery, df_champion,
-                                          se_teamId, se_win], axis=1, copy=False)
-
-                # Append this match's DataFrame to the overall DataFrame
-                data = pd.concat([data, df_match], axis=0, copy=False)
-            except Exception as e:
-                logging.error(f"An error occurred when processing match with ID {match.matchId}: {e}")
-                raise  # Skip match and continue with next match
-            logging.info(f"Successfully processed match with ID: {match.matchId}")
-    logging.info(f"Successfully processed all matches, length of dataframe: {len(data)}")
-    if save:
-        data.to_pickle("data/raw/static_dataset.pkl")
     return data
 
 
