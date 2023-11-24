@@ -1,16 +1,15 @@
 import logging
+import time
 
 import pandas as pd
+from joblib import Parallel, delayed, wrap_non_picklable_objects
 from sqlalchemy import func
-from tqdm import tqdm
 
 from src.sqlstore import queries
 from src.sqlstore.champion import SQLChampion
 from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats
 from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
-from src.sqlstore.timeline import SQLTimeline, SQLFrame, SQLParticipantFrame
-from src.utils import separateMatchID
 
 
 def process_summoner(participant_puuid, session):
@@ -72,43 +71,51 @@ def process_mastery(participant, participant_stats, session):
     return df_mastery
 
 
-def process_match(match, session):
+@wrap_non_picklable_objects
+def process_match(match):
+    """
+    Processes a match and returns a DataFrame with the match's data
+    :param match:
+    :param session:
+    :return:
+    """
     try:
-        logging.info(f"Processing match with ID: {match.matchId}")
+        with get_session() as session:
+            logging.info(f"Processing match with ID: {match.matchId}")
 
-        # Create a DataFrame for each match's data
-        df_match = pd.DataFrame([match.get_training_data()])
+            # Create a DataFrame for each match's data
+            df_match = pd.DataFrame([match.get_training_data()])
 
-        participants = session.query(SQLParticipant).filter(SQLParticipant.matchId == match.matchId).all()
-        assert len(participants) == 10, "Match must have exactly 10 participants"
+            participants = session.query(SQLParticipant).filter(SQLParticipant.matchId == match.matchId).all()
+            assert len(participants) == 10, "Match must have exactly 10 participants"
 
-        participant_data_frames = []
+            participant_data_frames = []
 
-        for i, participant in enumerate(participants):
-            j = i + 1
+            for i, participant in enumerate(participants):
+                j = i + 1
 
-            df_summoner = process_summoner(participant.puuid, session)
-            df_champion, participant_stats = process_champion(participant.id, session)
-            df_summonerLeague = process_summoner_league(participant.puuid, session)
-            df_mastery = process_mastery(participant, participant_stats, session)
+                df_summoner = process_summoner(participant.puuid, session)
+                df_champion, participant_stats = process_champion(participant.id, session)
+                df_summonerLeague = process_summoner_league(participant.puuid, session)
+                df_mastery = process_mastery(participant, participant_stats, session)
 
-            win = pd.Series([participant_stats.win], name=f"participant{j}_win")
-            teamId = pd.Series([participant_stats.teamId], name=f"participant{j}_teamId")
+                win = pd.Series([participant_stats.win], name=f"participant{j}_win")
+                teamId = pd.Series([participant_stats.teamId], name=f"participant{j}_teamId")
 
-            # Renaming columns to include participant index
-            for df in [df_summoner, df_champion, df_summonerLeague, df_mastery]:
-                df.rename(columns=lambda x: f"participant{j}_" + x, inplace=True)
+                # Renaming columns to include participant index
+                for df in [df_summoner, df_champion, df_summonerLeague, df_mastery]:
+                    df.rename(columns=lambda x: f"participant{j}_" + x, inplace=True)
 
-            participant_frame = pd.concat([df_summoner, df_champion,
-                                           df_summonerLeague, df_mastery,
-                                           teamId, win], axis=1)
-            participant_data_frames.append(participant_frame)
+                participant_frame = pd.concat([df_summoner, df_champion,
+                                               df_summonerLeague, df_mastery,
+                                               teamId, win], axis=1)
+                participant_data_frames.append(participant_frame)
 
-        # Combine all participant data with the match data
-        df_match = pd.concat([df_match] + participant_data_frames, axis=1)
+            # Combine all participant data with the match data
+            df_match = pd.concat([df_match] + participant_data_frames, axis=1)
 
-        logging.info(f"Successfully processed match with ID: {match.matchId}")
-        return df_match
+            logging.info(f"Successfully processed match with ID: {match.matchId}")
+            return df_match
 
     except Exception as e:
         logging.error(f"An error occurred when processing match with ID {match.matchId}: {e}")
@@ -126,79 +133,25 @@ def build_static_dataset(size: int = None, save: bool = True) -> pd.DataFrame:
         matches = session.query(SQLMatch).order_by(func.random()).limit(size).all()
         logging.info(f"Fetched {len(matches)} matches from the database.")
 
-        # Use joblib to parallelize match processing
-        # processed_data = Parallel(n_jobs=-1)(delayed(process_match)(match, session) for match in matches)
-        # Filter out None results due to errors and concatenate DataFrames
-        # data = pd.concat([df for df in processed_data if df is not None], axis=0, ignore_index=True)
+    # Use joblib to parallelize match processing
+    processed_data = Parallel(n_jobs=30, prefer='threads')(delayed(process_match)(match) for match in
+                                                           matches)
+    # Filter out None results due to errors and concatenate DataFrames
+    data = pd.concat([df for df in processed_data if df is not None], axis=0, ignore_index=True)
 
-        # List to hold DataFrame for each match
-        match_dataframes = []
+    logging.info(f"Successfully processed all matches, length of dataframe: {len(data)}")
 
-        for match in tqdm(matches):
-            match: SQLMatch
-            # Process each match and append the result to the list
-            df_match = process_match(match, session)
-            if df_match is not None:
-                match_dataframes.append(df_match)
-
-        # Concatenate all match DataFrames into a single DataFrame
-        data = pd.concat(match_dataframes, axis=0, ignore_index=True)
-
-        logging.info(f"Successfully processed all matches, length of dataframe: {len(data)}")
-
-        if save:
-            data.to_pickle("data/raw/static_dataset.pkl")
+    if save:
+        data.to_pickle("data/raw/static_dataset.pkl")
 
     return data
 
 
-def build_frame_dataset(size: int = None, save: bool = True):
-    """
-    Builds a dataset with all frame information (info available during match, but no events) from the database.
-    :param size: Number of matches in the dataset, None if all matches should be used
-    :param save: Whether to save the dataset to a pickle file in the data/raw folder
-    :return: None
-    """
-    # TODO: every 500 or so matches save the dataset to a pickle file
-    with get_session() as session:
-        matches = session.query(SQLMatch).order_by(func.random()).limit(size).all()
-        matchIds = []
-        frameData = []
-        # iterate over matches
-        for match in tqdm(matches):
-            platformId, gameId = separateMatchID(match.matchId)
-            # calculate winning team
-            participantId = session.query(SQLParticipant.id).filter(SQLParticipant.matchId == match.matchId,
-                                                                    SQLParticipant.participantId == 1).scalar()
-            winning_team = int(session.query(SQLParticipantStats.win
-                                             ).filter(SQLParticipantStats.participantId == participantId
-                                                      ).scalar())
-            # get timeline and frames for that match
-            timeline = session.query(SQLTimeline).filter_by(platformId=platformId, gameId=gameId).first()
-            frames = session.query(SQLFrame).filter_by(timelineId=timeline.id).all()
-            participantFrameData = []
-            # iterate over frames
-            for frame in frames:
-                matchIds.append((match.matchId, frame.id))
-                frameDict = {'timestamp': frame.timestamp, 'winning_team': winning_team}
-                participantFrames = session.query(SQLParticipantFrame).filter_by(frameId=frame.id).all()
-                for i, participantFrame in enumerate(participantFrames):
-                    participantFrameTrainingData = participantFrame.get_training_data()
-                    participantFrameData.append(participantFrameTrainingData)
-                    participantFrameDict = {f'participant{i + 1}_{k}': v for k, v in
-                                            participantFrameTrainingData.items()}
-                    frameDict.update(participantFrameDict)
-                frameData.append(frameDict)
-        index = pd.MultiIndex.from_tuples(matchIds, names=['matchId', 'frameId'])
-        print(f"len of framedata: {len(frameData)}")
-        print(f"shape of index: {index.shape}")
-        dfTimelines = pd.DataFrame(frameData, index=index)
-        if save:
-            dfTimelines.to_pickle('data/raw/timelines.pkl')
-
-
 if __name__ == "__main__":
     # cProfile.run('build_static_dataset(1, False)')
+    start = time.time()
     build_static_dataset(100, False)
+    end = time.time()
+    print(f"Time elapsed: {end - start}")
 # build_frame_dataset(None, True)
 # cleanTimelineDataset()

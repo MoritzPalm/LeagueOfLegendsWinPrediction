@@ -1,10 +1,10 @@
 import configparser
-import logging
 import contextlib
+import logging
+from configparser import ConfigParser
 
 from sqlalchemy import create_engine, URL, exc
 from sqlalchemy.orm import declarative_base, Session
-from configparser import ConfigParser
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ def connect_to_db():
         database=config["database"],
     )
     logger.info(f"creating engine object with {url_object}")
-    return create_engine(url_object)
+    return create_engine(url_object, pool_size=20, max_overflow=10)
 
 
 Base = declarative_base()

@@ -35,6 +35,7 @@ xgboost = "^2.0.2"
 shap = "^0.43.0"
 lightning = "^2.1.2"
 tensorboard = "^2.15.1"
+dill = "^0.3.7"
 
 
 
