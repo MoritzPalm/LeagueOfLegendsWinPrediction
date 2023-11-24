@@ -3,9 +3,7 @@ import logging
 import pandas as pd
 from sqlalchemy import func
 from tqdm import tqdm
-from joblib import Parallel, delayed
 
-from src.dataHandling.cleanTimelineDataset import cleanTimelineDataset
 from src.sqlstore import queries
 from src.sqlstore.champion import SQLChampion
 from src.sqlstore.db import get_session
@@ -90,15 +88,20 @@ def process_match(match, session):
             j = i + 1
 
             df_summoner = process_summoner(participant.puuid, session)
-            df_champion, participant_stats = process_champion(participant.puuid, session)
+            df_champion, participant_stats = process_champion(participant.id, session)
             df_summonerLeague = process_summoner_league(participant.puuid, session)
             df_mastery = process_mastery(participant, participant_stats, session)
+
+            win = pd.Series([participant_stats.win], name=f"participant{j}_win")
+            teamId = pd.Series([participant_stats.teamId], name=f"participant{j}_teamId")
 
             # Renaming columns to include participant index
             for df in [df_summoner, df_champion, df_summonerLeague, df_mastery]:
                 df.rename(columns=lambda x: f"participant{j}_" + x, inplace=True)
 
-            participant_frame = pd.concat([df_summoner, df_champion, df_summonerLeague, df_mastery], axis=1)
+            participant_frame = pd.concat([df_summoner, df_champion,
+                                           df_summonerLeague, df_mastery,
+                                           teamId, win], axis=1)
             participant_data_frames.append(participant_frame)
 
         # Combine all participant data with the match data
@@ -124,14 +127,14 @@ def build_static_dataset(size: int = None, save: bool = True) -> pd.DataFrame:
         logging.info(f"Fetched {len(matches)} matches from the database.")
 
         # Use joblib to parallelize match processing
-        #processed_data = Parallel(n_jobs=-1)(delayed(process_match)(match, session) for match in matches)
+        # processed_data = Parallel(n_jobs=-1)(delayed(process_match)(match, session) for match in matches)
         # Filter out None results due to errors and concatenate DataFrames
-        #data = pd.concat([df for df in processed_data if df is not None], axis=0, ignore_index=True)
+        # data = pd.concat([df for df in processed_data if df is not None], axis=0, ignore_index=True)
 
         # List to hold DataFrame for each match
         match_dataframes = []
 
-        for match in matches:
+        for match in tqdm(matches):
             match: SQLMatch
             # Process each match and append the result to the list
             df_match = process_match(match, session)
@@ -156,6 +159,7 @@ def build_frame_dataset(size: int = None, save: bool = True):
     :param save: Whether to save the dataset to a pickle file in the data/raw folder
     :return: None
     """
+    # TODO: every 500 or so matches save the dataset to a pickle file
     with get_session() as session:
         matches = session.query(SQLMatch).order_by(func.random()).limit(size).all()
         matchIds = []
@@ -194,6 +198,7 @@ def build_frame_dataset(size: int = None, save: bool = True):
 
 
 if __name__ == "__main__":
-    build_static_dataset(None, True)
-    build_frame_dataset(None, True)
-    cleanTimelineDataset()
+    # cProfile.run('build_static_dataset(1, False)')
+    build_static_dataset(100, False)
+# build_frame_dataset(None, True)
+# cleanTimelineDataset()
