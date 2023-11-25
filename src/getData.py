@@ -14,6 +14,7 @@ from src.parsers.summoner import scrape_champion_masteries
 from src.sqlstore import queries
 from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLMatch
+from src.sqlstore.queries import get_all_matchIds
 
 
 # TODO: fix issue where crawler crawls many summoner ids or puuids
@@ -27,7 +28,14 @@ def getData():
     logger.info(
         f"initializing matchIdCrawler with api key {api_key}, region {args.region} and tier {args.tier}"
     )
-    crawler = MatchIdCrawler(api_key=api_key, region=args.region, tier=args.tier, patch=args.patch, season=13)
+    with get_session(cleanup=False) as session:
+        present_matchIDs: set = get_all_matchIds(session=session,
+                                                 patch=args.patch,
+                                                 season=args.season)
+        print(f"present matchIDs: {len(present_matchIDs)}")
+    crawler = MatchIdCrawler(api_key=api_key, region=args.region,
+                             tier=args.tier, patch=args.patch, season=13,
+                             known_matchIDs=present_matchIDs)
     logger.info(f"crawling {args.n} matchIDs")
     matchIDs: set[str] = crawler.getMatchIDs(n=args.n)
     logger.info(f"{len(matchIDs)} non-unique matchIDs crawled")

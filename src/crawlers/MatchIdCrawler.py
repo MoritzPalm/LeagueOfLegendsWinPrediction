@@ -22,6 +22,16 @@ class MatchIdCrawler:
         Tier level of the matches, defaults to None.
     queue : str
         The queue type of the matches, defaults to None.
+    patch : int
+        The patch number of the matches, defaults to None.
+    season : int
+        The season number of the matches, defaults to None.
+    known_matchIDs : set
+        The set of matchIDs that should not be included in the output, defaults to None.
+        Usually used for successive runs, where already downloaded matches
+        should not be processed twice.
+        A list will also work, but is much slower, so a set is preferred
+
 
     Notes
     -----
@@ -79,6 +89,7 @@ class MatchIdCrawler:
             queue: str = "RANKED_SOLO_5x5",
             patch: int = 21,
             season: int = 13,
+            known_matchIDs: set = None,
     ):
         # Error checking
         # api_key
@@ -119,10 +130,10 @@ class MatchIdCrawler:
 
         self.start_time, self.end_time = convert_patchNumber_time(season, patch)
         self.watcher = LolWatcher(api_key=self.api_key)
+        self.known_matchIDs = known_matchIDs
 
     def getMatchIDs(
-            self, n: int, match_per_id: int = 15, cutoff: int = 16, excludingIDs: set = None
-    ) -> set:
+            self, n: int, match_per_id: int = 15, cutoff: int = 16) -> set:
         """
         n : int
             Number of matchIDs to be returned. If not enough matches can be found,
@@ -135,11 +146,6 @@ class MatchIdCrawler:
         cutoff : int
             The minimum number of minutes required for a match to
             be counted toward the final list. Defaults to 16.
-        excludingIDs : set
-            The set of matchIDs that should not be included in the output.
-            Usually used for successive runs, where already downloaded matches
-            should not be processed twice.
-            A list will also work, but is much slower, so a set is preferred
         :return: set of matchIDs (str)
         """
         # error checking
@@ -149,11 +155,6 @@ class MatchIdCrawler:
             raise ValueError("Invalid number of match per account.")
         if cutoff < 0:
             raise ValueError("Invalid cutoff.")
-        # variable definition
-        if not excludingIDs:
-            exclude_IDs = False
-        else:
-            exclude_IDs = True
 
         # Fetch a set of leagueIds
         # For highest tiers - LeagueLists
@@ -199,7 +200,7 @@ class MatchIdCrawler:
                     matchId = match_list[i]
                     if matchId in visited_matchIds:
                         continue
-                    if exclude_IDs and matchId in excludingIDs:
+                    if self.known_matchIDs and matchId in self.known_matchIDs:
                         continue
                     visited_matchIds.add(matchId)
                     if len(visited_matchIds) >= n:

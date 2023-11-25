@@ -241,3 +241,16 @@ def champion_mastery_present(session: sqlalchemy.orm.Session, puuid: str, champi
         session.query(SQLChampionMastery).filter(SQLChampionMastery.puuid == puuid,
                                                  SQLChampionMastery.championId.in_(championIds)).exists()
     ).scalar()
+
+
+def get_all_matchIds(session: sqlalchemy.orm.Session, season: int, patch: int) -> set:
+    """
+    gets all matchIds from the database for given season and patch
+    :param session:
+    :param season:
+    :param patch:
+    :return:
+    """
+    query = select(SQLMatch.matchId).filter(
+        SQLMatch.seasonId == season, SQLMatch.patch == patch)
+    return set(session.scalars(query).all())
