@@ -2,6 +2,8 @@ import logging
 
 from riotwatcher import LolWatcher
 
+from src.utils import convert_patchNumber_time
+
 logger = logging.getLogger(__name__)
 
 
@@ -75,6 +77,8 @@ class MatchIdCrawler:
             region: str = "euw1",
             tier: str = "CHALLENGER",
             queue: str = "RANKED_SOLO_5x5",
+            patch: int = 21,
+            season: int = 13,
     ):
         # Error checking
         # api_key
@@ -113,6 +117,7 @@ class MatchIdCrawler:
         else:
             self.queue = queue
 
+        self.start_time, self.end_time = convert_patchNumber_time(season, patch)
         self.watcher = LolWatcher(api_key=self.api_key)
 
     def getMatchIDs(
@@ -187,7 +192,8 @@ class MatchIdCrawler:
                 puuid = self.watcher.summoner.by_id(self.region, summonerId)["puuid"]
                 # Then fetch a list of matchIds for that puuid
                 match_list = self.watcher.match.matchlist_by_puuid(
-                    region=self.region, puuid=puuid, count=100, queue=420
+                    region=self.region, puuid=puuid, count=100, queue=420,
+                    start_time=self.start_time, end_time=self.end_time
                 )
                 for i in range(min(match_per_id, len(match_list))):
                     matchId = match_list[i]

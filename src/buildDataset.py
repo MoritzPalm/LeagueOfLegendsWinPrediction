@@ -134,8 +134,8 @@ def build_static_dataset(size: int = None, save: bool = True) -> pd.DataFrame:
         logging.info(f"Fetched {len(matches)} matches from the database.")
 
     # Use joblib to parallelize match processing
-    processed_data = Parallel(n_jobs=30, prefer='threads')(delayed(process_match)(match) for match in
-                                                           matches)
+    processed_data = Parallel(n_jobs=90, prefer='threads', verbose=10)(delayed(process_match)(match) for match in
+                                                                       matches)
     # Filter out None results due to errors and concatenate DataFrames
     data = pd.concat([df for df in processed_data if df is not None], axis=0, ignore_index=True)
 
@@ -153,5 +153,3 @@ if __name__ == "__main__":
     build_static_dataset(100, False)
     end = time.time()
     print(f"Time elapsed: {end - start}")
-# build_frame_dataset(None, True)
-# cleanTimelineDataset()

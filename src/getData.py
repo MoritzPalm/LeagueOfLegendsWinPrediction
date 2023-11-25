@@ -4,6 +4,7 @@ import sys
 
 import sqlalchemy.orm.session
 from riotwatcher import LolWatcher
+from tqdm import tqdm
 
 import keys
 from src import utils
@@ -15,7 +16,7 @@ from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLMatch
 
 
-# TODO: review logging
+# TODO: fix issue where crawler crawls many summoner ids or puuids
 
 
 def getData():
@@ -26,14 +27,14 @@ def getData():
     logger.info(
         f"initializing matchIdCrawler with api key {api_key}, region {args.region} and tier {args.tier}"
     )
-    crawler = MatchIdCrawler(api_key=api_key, region=args.region, tier=args.tier)
+    crawler = MatchIdCrawler(api_key=api_key, region=args.region, tier=args.tier, patch=args.patch, season=13)
     logger.info(f"crawling {args.n} matchIDs")
     matchIDs: set[str] = crawler.getMatchIDs(n=args.n)
     logger.info(f"{len(matchIDs)} non-unique matchIDs crawled")
     watcher = LolWatcher(api_key)
     counter = 0
     with get_session(cleanup=False) as session:
-        for matchID in matchIDs:
+        for matchID in tqdm(matchIDs):
             try:
                 if queries.check_matchId_present(session, matchID):
                     logger.warning(f"matchID {matchID} already present in database")

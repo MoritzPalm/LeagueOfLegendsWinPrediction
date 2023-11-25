@@ -37,7 +37,7 @@ def connect_to_db():
         database=config["database"],
     )
     logger.info(f"creating engine object with {url_object}")
-    return create_engine(url_object, pool_size=20, max_overflow=10)
+    return create_engine(url_object, pool_size=90, max_overflow=0)
 
 
 Base = declarative_base()

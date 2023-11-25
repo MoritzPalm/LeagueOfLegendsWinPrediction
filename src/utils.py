@@ -1,8 +1,10 @@
+import datetime
 import logging
 import math
 import re
-import pandas as pd
 from typing import Match
+
+import pandas as pd
 
 
 def parse_game_version(gameVersion: str) -> Match[str]:
@@ -102,3 +104,28 @@ def clean_champion_name(name: str) -> str:
     if cleaned == "renataglasc":
         cleaned = "renata"
     return cleaned
+
+
+def convert_patchNumber_time(season: int, patch: int) -> tuple[int, int]:
+    """
+    Converts patch number to Unix time
+    numbers for datetime are from
+    https://support-leagueoflegends.riotgames.com/hc/en-us/articles/360018987893-Patch-Schedule-League-of-Legends
+    this function is returning the absolute bounds for the patch, so using this will result is some matches from
+    other patches due to timezone issues. this is preferable to the alternative where some matches would be missed
+    :param season: season number
+    :param patch: patch number
+    :return: Unix timestamp start, Unix timestamp end
+    """
+    if season == 13:
+        if patch == 20:
+            start_day = int(datetime.datetime(2023, 10, 11).timestamp())
+            end_day = int(datetime.datetime(2023, 10, 25).timestamp())
+        elif patch == 21:
+            start_day = int(datetime.datetime(2023, 10, 25).timestamp())
+            end_day = int(datetime.datetime(2023, 11, 8).timestamp())
+        else:
+            raise NotImplementedError(f"patch {season}.{patch} not implemented")
+    else:
+        raise NotImplementedError(f"season {season} not implemented")
+    return start_day, end_day
