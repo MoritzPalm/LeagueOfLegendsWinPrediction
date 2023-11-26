@@ -32,7 +32,7 @@ def getData():
         present_matchIDs: set = get_all_matchIds(session=session,
                                                  patch=args.patch,
                                                  season=args.season)
-        print(f"present matchIDs: {len(present_matchIDs)}")
+        logger.info(f"present matchIDs: {len(present_matchIDs)}")
     crawler = MatchIdCrawler(api_key=api_key, region=args.region,
                              tier=args.tier, patch=args.patch, season=13,
                              known_matchIDs=present_matchIDs)

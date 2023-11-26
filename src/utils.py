@@ -129,3 +129,25 @@ def convert_patchNumber_time(season: int, patch: int) -> tuple[int, int]:
     else:
         raise NotImplementedError(f"season {season} not implemented")
     return start_day, end_day
+
+
+def get_teamId_from_participantIds(participantIds: list[int]) -> int:
+    """
+    Returns the teamId of the team that the participantIds belong to
+    :param participantIds: list of participantIds
+    :return: teamId
+    """
+    team = set()
+
+    for id in participantIds:
+        if id > 10:
+            raise ValueError(f"participantId {id} is invalid")
+        if id <= 5:
+            team.add(0)
+        else:
+            team.add(1)
+
+    if len(team) != 1:
+        raise ValueError(f"participantIds {participantIds} belong to both teams")
+
+    return team.pop()

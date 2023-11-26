@@ -1,3 +1,5 @@
+import logging
+import pickle
 import time
 
 import pandas as pd
@@ -6,8 +8,8 @@ from sqlalchemy import func
 
 from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats
-from src.sqlstore.timeline import SQLTimeline, SQLFrame, SQLParticipantFrame
-from src.utils import separateMatchID
+from src.sqlstore.timeline import SQLTimeline, SQLFrame, SQLParticipantFrame, SQLKillEvent
+from src.utils import separateMatchID, get_teamId_from_participantIds
 
 
 @wrap_non_picklable_objects
@@ -34,7 +36,8 @@ def process_match(match):
 
             timeline = session.query(SQLTimeline).filter_by(platformId=platformId, gameId=gameId).first()
             frames = session.query(SQLFrame).filter_by(timelineId=timeline.id).all()
-
+            team0BuildingsDestroyed = 0
+            team1BuildingsDestroyed = 0
             for frame in frames:
                 matchIds.append((match.matchId, frame.id))
                 frameDict = {'timestamp': frame.timestamp, 'winning_team': winning_team}
@@ -44,6 +47,20 @@ def process_match(match):
                     participantFrameDict = {f'participant{i + 1}_{k}': v for k, v in
                                             participantFrameTrainingData.items()}
                     frameDict.update(participantFrameDict)
+                buildingKillEvents = session.query(SQLKillEvent).filter_by(frameId=frame.id, type="BUILDING_KILL").all()
+                for buildingKillEvent in buildingKillEvents:
+                    assistingParticipantIds = pickle.loads(buildingKillEvent.assistingParticipantIds)
+                    if buildingKillEvent.killerId == 0:
+                        teamId = get_teamId_from_participantIds(assistingParticipantIds)
+                    else:
+                        teamId = get_teamId_from_participantIds([buildingKillEvent.killerId])  # this misses all
+                    # cases where a building was destroyed by minions only
+                    if teamId == 0:
+                        team0BuildingsDestroyed += 1
+                    elif teamId == 1:
+                        team1BuildingsDestroyed += 1
+                frameDict['team0_buildings_destroyed'] = team0BuildingsDestroyed
+                frameDict['team1_buildings_destroyed'] = team1BuildingsDestroyed
                 frameData.append(frameDict)
         except Exception as e:
             print(f"Error: {e}")
@@ -62,12 +79,12 @@ def build_frame_dataset(size: int = None, save: bool = True):
     """
     with get_session() as session:
         matches = session.query(SQLMatch).order_by(func.random()).limit(size).all()
+        logging.info(f"Processing {len(matches)} matches")
 
     matchData = []
     frameData = []
 
-    results = Parallel(n_jobs=90, verbose=10, prefer='threads')(delayed(process_match)(match) for match in matches)
-
+    results = Parallel(n_jobs=10, verbose=10, prefer='threads')(delayed(process_match)(match) for match in matches)
     for matchIds, frames in results:
         matchData.extend(matchIds)
         frameData.extend(frames)
