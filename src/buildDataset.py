@@ -130,7 +130,7 @@ def build_static_dataset(size: int = None, save: bool = True) -> pd.DataFrame:
     :return: DataFrame with a large number of columns (features)
     """
     with get_session() as session:
-        matches = session.query(SQLMatch).order_by(func.random()).limit(size).all()
+        matches = session.query(SQLMatch).where(SQLMatch.patch == 20).order_by(func.random()).limit(size).all()
         logging.info(f"Fetched {len(matches)} matches from the database.")
 
     # Use joblib to parallelize match processing

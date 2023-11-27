@@ -3,7 +3,7 @@ import pickle
 import time
 
 import pandas as pd
-from joblib import Parallel, delayed, wrap_non_picklable_objects
+from joblib import wrap_non_picklable_objects
 from sqlalchemy import func
 
 from src.sqlstore.db import get_session
@@ -49,8 +49,11 @@ def process_match(match):
                     frameDict.update(participantFrameDict)
                 buildingKillEvents = session.query(SQLKillEvent).filter_by(frameId=frame.id, type="BUILDING_KILL").all()
                 for buildingKillEvent in buildingKillEvents:
-                    assistingParticipantIds = pickle.loads(buildingKillEvent.assistingParticipantIds)
                     if buildingKillEvent.killerId == 0:
+                        assistingParticipantIds = pickle.loads(buildingKillEvent.assistingParticipantIds)
+                        if assistingParticipantIds is None:  # TODO: find out which team killed the turret,
+                            # probably by using the position
+                            continue
                         teamId = get_teamId_from_participantIds(assistingParticipantIds)
                     else:
                         teamId = get_teamId_from_participantIds([buildingKillEvent.killerId])  # this misses all
@@ -64,6 +67,7 @@ def process_match(match):
                 frameData.append(frameDict)
         except Exception as e:
             print(f"Error: {e}")
+            raise
             return [], []
         finally:
             session.close()
@@ -78,14 +82,14 @@ def build_frame_dataset(size: int = None, save: bool = True):
     :return: None
     """
     with get_session() as session:
-        matches = session.query(SQLMatch).order_by(func.random()).limit(size).all()
+        matches = session.query(SQLMatch).where(SQLMatch.patch == 20).order_by(func.random()).limit(size).all()
         logging.info(f"Processing {len(matches)} matches")
 
     matchData = []
     frameData = []
 
-    results = Parallel(n_jobs=10, verbose=10, prefer='threads')(delayed(process_match)(match) for match in matches)
-    for matchIds, frames in results:
+    for match in matches:
+        matchIds, frames = process_match(match)
         matchData.extend(matchIds)
         frameData.extend(frames)
 
