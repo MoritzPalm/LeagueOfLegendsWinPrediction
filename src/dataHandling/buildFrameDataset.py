@@ -36,9 +36,11 @@ def process_match(match):
 
             timeline = session.query(SQLTimeline).filter_by(platformId=platformId, gameId=gameId).first()
             frames = session.query(SQLFrame).filter_by(timelineId=timeline.id).all()
-            team0BuildingsDestroyed = 0
-            team1BuildingsDestroyed = 0
+            team0BuildingsDestroyed, team1BuildingsDestroyed = 0, 0
             for frame in frames:
+                # setting team0TotalGold and team1TotalGold to 0 every frame as total gold contains all gold from
+                # previous frames
+                team0TotalGold, team1TotalGold = 0, 0
                 matchIds.append((match.matchId, frame.id))
                 frameDict = {'timestamp': frame.timestamp, 'winning_team': winning_team}
                 participantFrames = session.query(SQLParticipantFrame).filter_by(frameId=frame.id).all()
@@ -47,6 +49,12 @@ def process_match(match):
                     participantFrameDict = {f'participant{i + 1}_{k}': v for k, v in
                                             participantFrameTrainingData.items()}
                     frameDict.update(participantFrameDict)
+                    if i <= 5:
+                        team0TotalGold += participantFrameTrainingData['totalGold']
+                    elif i <= 10:
+                        team1TotalGold += participantFrameTrainingData['totalGold']
+                    else:
+                        raise ValueError(f"participantId {i} not in range 1-10")
                 buildingKillEvents = session.query(SQLKillEvent).filter_by(frameId=frame.id, type="BUILDING_KILL").all()
                 for buildingKillEvent in buildingKillEvents:
                     if buildingKillEvent.killerId == 0:
@@ -64,10 +72,11 @@ def process_match(match):
                         team1BuildingsDestroyed += 1
                 frameDict['team0_buildings_destroyed'] = team0BuildingsDestroyed
                 frameDict['team1_buildings_destroyed'] = team1BuildingsDestroyed
+                frameDict['team0_total_gold'] = team0TotalGold
+                frameDict['team1_total_gold'] = team1TotalGold
                 frameData.append(frameDict)
         except Exception as e:
             print(f"Error: {e}")
-            raise
             return [], []
         finally:
             session.close()
