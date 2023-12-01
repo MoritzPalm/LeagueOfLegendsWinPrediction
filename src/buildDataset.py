@@ -1,4 +1,5 @@
 import logging
+import os
 import time
 
 import pandas as pd
@@ -72,11 +73,13 @@ def process_mastery(participant, participant_stats, session):
 
 
 @wrap_non_picklable_objects
-def process_match(match):
+def process_match(match, save_path: str, save: bool = True):
     """
     Processes a match and returns a DataFrame with the match's data
     :param match:
     :param session:
+    :param save_path: Path to save the match DataFrame to
+    :param save: Whether to save the match DataFrame to a pickle file
     :return:
     """
     try:
@@ -113,7 +116,9 @@ def process_match(match):
 
             # Combine all participant data with the match data
             df_match = pd.concat([df_match] + participant_data_frames, axis=1)
-
+            if save:
+                match_filename = os.path.join(save_path, f"match_{match.matchId}.pkl")
+                df_match.to_pickle(match_filename)
             logging.info(f"Successfully processed match with ID: {match.matchId}")
             return df_match
 
@@ -134,22 +139,21 @@ def build_static_dataset(size: int = None, save: bool = True) -> pd.DataFrame:
         logging.info(f"Fetched {len(matches)} matches from the database.")
 
     # Use joblib to parallelize match processing
-    processed_data = Parallel(n_jobs=90, prefer='threads', verbose=10)(delayed(process_match)(match) for match in
+    processed_data = Parallel(n_jobs=20, prefer='threads', verbose=10)(delayed(process_match)(match, 'data/raw/',
+                                                                                              True) for
+                                                                       match in
                                                                        matches)
     # Filter out None results due to errors and concatenate DataFrames
-    data = pd.concat([df for df in processed_data if df is not None], axis=0, ignore_index=True)
+    # data = pd.concat([df for df in processed_data if df is not None], axis=0, ignore_index=True)
 
-    logging.info(f"Successfully processed all matches, length of dataframe: {len(data)}")
+    # logging.info(f"Successfully processed all matches, length of dataframe: {len(data)}")
 
-    if save:
-        data.to_pickle("data/raw/static_dataset.pkl")
-
-    return data
+    # return data
 
 
 if __name__ == "__main__":
     # cProfile.run('build_static_dataset(1, False)')
     start = time.time()
-    build_static_dataset(100, False)
+    build_static_dataset(None, True)
     end = time.time()
     print(f"Time elapsed: {end - start}")
