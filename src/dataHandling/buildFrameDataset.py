@@ -3,6 +3,7 @@ import pickle
 import time
 
 import pandas as pd
+from joblib import Parallel, delayed
 from joblib import wrap_non_picklable_objects
 from sqlalchemy import func
 
@@ -97,8 +98,8 @@ def build_frame_dataset(size: int = None, save: bool = True):
     matchData = []
     frameData = []
 
-    for match in matches:
-        matchIds, frames = process_match(match)
+    results = Parallel(n_jobs=20, verbose=10, prefer='threads')(delayed(process_match)(match) for match in matches)
+    for matchIds, frames in results:
         matchData.extend(matchIds)
         frameData.extend(frames)
 
