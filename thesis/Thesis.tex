@@ -16,13 +16,13 @@
 \addbibresource{Thesis.bib}
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %----------------------------------------------------------------------------------
 %  Informationen
 %----------------------------------------------------------------------------------
 \author{Moritz Palm}
 \title{Comparative Analysis of Predictive Performance: Neural Networks vs. GRU in League of
 Legends Match Outcome Prediction}
+
 \date{\today}
 
 
@@ -40,6 +40,7 @@ Legends Match Outcome Prediction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \makeatletter
 \begin{titlepage}
+\selectlanguage{ngerman}
 \begin{figure}[thb]
        \includegraphics[height=2.3cm]{./images/logo/FakIM_Logo} 
 \end{figure}
@@ -82,7 +83,7 @@ Zweitgutachter:   	& Prof. Dr. Timo Baumann\\
 \end{center}
 \end{titlepage}
 
-
+\selectlanguage{ngerman}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ****************** Erklärung zur Arbeit ***************** %
@@ -118,7 +119,6 @@ Regensburg, den \@date\\
 
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ******************* Inhaltsverzeichnis ****************** %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,7 +135,7 @@ Regensburg, den \@date\\
 \cleardoublepage
 \pagenumbering{arabic} 																	% ab jetzt arabische Nummerierung
 
-
+\selectlanguage{english}
 \chapter{Introduction}
 \label{chap:intro}
 
@@ -488,9 +488,35 @@ This regional diversity contributes to the model's generalizability across diffe
 \paragraph{Period of Time}
 All matches included in the dataset were played in season 13 and on patch 20.
 It is important that all matches are played on the same patch, as a patch may cause major shifts in the balance of the game, thus making certain strategies and champions way better than others.
-\\ \  \\
+
 In summary, the data collection process for this study involved a dual-pronged approach, leveraging the extensive resources provided by the Riot Games API alongside a targeted web-scraping strategy.
 The resulting raw dataset containing $20,513$ and  $3,972$ matches in the pre-game and in-game datasets respectively, stored in a PostgreSQL Database, reflects a comprehensive compilation of high-rank amateur League of Legends matches.
+
+\section{Dataset Properties}
+\label{sec:dataprop}
+
+\begin{figure}
+\input{./images/platformId_distribution.pgf}
+\caption{Region distribution of all matches in the dataset}
+\label{fig:platformId}
+\end{figure}
+
+\begin{figure}
+\input{./images/gameDuration_distribution.pgf}
+\caption{Distribution of game duration with its kernel density estimation. The spike at 16 minutes is explained by the fact that this is the earliest possible surrender time.}
+\label{fig:gameDuration}
+\end{figure}
+
+
+\begin{figure}
+\resizebox{\textwidth}{!}{\input{./images/tier_distribution.pgf}}
+\caption{Distribution of ranks in the dataset}
+\label{fig:tier}
+\end{figure}
+
+The matches collected have the following properties: 
+As only matches with a game length of at least 16 minutes are collected, the shortest match is 16 minutes long, while the longest game is $59.62$ minutes long.
+The average match length is $26.88$ minutes.
 
 
 \section{Data Processing}
@@ -513,17 +539,87 @@ It encompasses metrics such as the average amount of gold earned by the player a
 Unfortunately, this information is not readily available to be extracted by our web scraper,  necessitating its omission from the dataset.
 
 
+
 \subsection{In-Game Dataset}
 \label{ssec:in_game_data}
 
 The raw in-game dataset contains $381$ features describing the current state of the game after every minute.
-It only consists of statistics of each player like the damage done by him to other champions, the level of his champion or his total gold earned thus far.
+It primarily includes player-specific metrics such as damage dealt to opponents, champion level, and cumulative gold. These statistics, recorded per minute, create a discrete time series. Furthermore, key events like the number of turrets destroyed and each team's total gold are tracked to more precisely gauge the game's state. Gold, a critical indicator, underscores each victory milestone - be it destroying a turret or defeating an adversary. Often, the winning team can be predicted by analyzing gold trends. As illustrated in Figure \ref{fig:totalGold}, members of the victorious team typically amass significantly more gold by the game's conclusion compared to their counterparts.
 
+Destroying turrets is crucial in the game, offering significant gold rewards and map control. 
+With a minimum of five turrets required for victory, their destruction serves as a key indicator of a team's likelihood to win.
+
+\begin{figure}
+\input{./images/totalGold.pgf}
+\caption{Total gold accumulated by each player of the course of the match, separated into teams by color. 
+A clear separation between the blue and red team is noticeable especially at the later stages of the game.}
+\label{fig:totalGold}
+\end{figure}
 
 
 
 \chapter{Experiments}
 \label{chap:experiments}
+
+\section{Feature Selection}
+\label{sec:feature_selection}
+
+Both datasets initially have a very high dimensionality, which can lead to the prevalence of noisy or irrelevant data \cite{venkateshReviewFeatureSelection2019}.
+In order to facilitate the learning of the \ac{ann}, all such data should be removed.
+This process of finding the best subset of features used for training is called Feature Selection.
+Different methods of selecting a subset of features have been tried:
+\begin{itemize}
+\item Pearson's correlation coefficient
+\item Gradient Boosted Trees
+\end{itemize}
+
+\subsection{Pearsons' correlation coefficient}
+\label{ssec:pearsons}
+
+We regard the input vector $\mathbf{x}$ as a manifestation of an underlying, unknown distribution. 
+Here, $X_i$ represents the random variable corresponding to the $i^{\text{th}}$ component of $\mathbf{x}$, and $\mathbf{y}$ is the target value vector, viewed as a realization of the random variable $Y$ \cite{guyonIntroductionVariableFeature}. 
+The Pearson correlation coefficient is employed to quantify the linear correlation between these two random variables. It is defined by the formula:
+\begin{equation}
+R(i) = \frac{\text{cov}(X_i, Y)}{\sqrt{\text{var}(X_i) \cdot \text{var}(Y)}},
+\end{equation}
+where $\text{cov}(X_i, Y)$ is the covariance between $X_i$ and $Y$, and $\text{var}(X_i)$ and $\text{var}(Y)$ are the variances of $X_i$ and $Y$, respectively \cite{chandrashekarSurveyFeatureSelection2014a}.
+In order to ascertain the significance of the test results, a hypothesis test is performed, with the null hypothesis being that there is no correlation between the feature and the target.
+
+The results of the test are found in table \ref{tab:pearson_results}.
+All $p$-values in the table are below the significance threshold of $0.05$, confirming the statistical significance of the correlation.
+The highest correlation is $0.15$, belonging to the KDA feature.
+This feature measures the average ratio of $\frac{\text{kills} + \text{assists}}{\text{deaths}}$ the player achieved on his champion.
+This is a very low correlation, indicating that no single feature has a strong linear relationship with the target.
+This illustrates the need for multivariate analysis.
+\begin{table}
+	\centering
+	\begin{tblr}{cc}
+	Feature  & Correlation coefficient & \acs{gbt} Feature Importance\\
+	\hline
+	participant\textunderscore 9\textunderscore champion\textunderscore kda & 0.148 & \\
+	participant\textunderscore 5\textunderscore champion\textunderscore kda & -0.148 & \\
+	participant\textunderscore 4\textunderscore champion\textunderscore kda & -0.137 & \\
+	participant\textunderscore 7\textunderscore champion\textunderscore kda & 0.136 & \\
+	participant\textunderscore 3\textunderscore champion\textunderscore kda & -0.133 & \\
+	participant\textunderscore 10\textunderscore champion\textunderscore kda & 0.132 & \\
+	participant\textunderscore 2\textunderscore champion\textunderscore kda & -0.131 & \\
+	participant\textunderscore 8\textunderscore champion\textunderscore kda & 0.129 & \\ 
+	
+	\end{tblr}
+	\caption{Pearson's correlation coefficient for the 15 features with the highest absolute correlation}
+	\label{tab:pearson_results}
+
+\end{table}
+
+
+\subsection{Gradient Boosted Trees}
+\label{ssec:gbt}
+
+\Acp{gbt} like all tree-based methods have an embedded method of selecting the most important feature.
+There are different types of importance, such as the average or total gain across all splits the feature is used in.
+The simplest definition is the 'weight', defined as the number of times a feature is used to split the data across all trees \cite{chenXGBoostScalableTree2016}.
+30 features have not been used in any split and thus have a feature importance of 0.
+
 
 \chapter{Results}
 \label{chap:results}
