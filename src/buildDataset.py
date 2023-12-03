@@ -108,6 +108,7 @@ def process_match(match, save_path: str, save: bool = True):
                 # Renaming columns to include participant index
                 for df in [df_summoner, df_champion, df_summonerLeague, df_mastery]:
                     df.rename(columns=lambda x: f"participant{j}_" + x, inplace=True)
+                    # TODO: fix two columns named participant1_tier
 
                 participant_frame = pd.concat([df_summoner, df_champion,
                                                df_summonerLeague, df_mastery,

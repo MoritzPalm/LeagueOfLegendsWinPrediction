@@ -537,6 +537,9 @@ This feature vector contains information about the player on a specific champion
 It encompasses metrics such as the average amount of gold earned by the player across all matches played on the champion during Season 13. 
 \Citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021} found that  the most pivotal feature within this category is the player's win rate while piloting this champion.
 Unfortunately, this information is not readily available to be extracted by our web scraper,  necessitating its omission from the dataset.
+Each feature category like 'average gold per match' is split into 10 features, one for each participant.
+This is a very fine-grained approach, greatly increasing the dimensionality of the dataset.
+For some features, a broader approach is sufficient, where statistics are averaged for each team, reducing 10 features per category to two.
 
 
 
@@ -585,6 +588,22 @@ R(i) = \frac{\text{cov}(X_i, Y)}{\sqrt{\text{var}(X_i) \cdot \text{var}(Y)}},
 where $\text{cov}(X_i, Y)$ is the covariance between $X_i$ and $Y$, and $\text{var}(X_i)$ and $\text{var}(Y)$ are the variances of $X_i$ and $Y$, respectively \cite{chandrashekarSurveyFeatureSelection2014a}.
 In order to ascertain the significance of the test results, a hypothesis test is performed, with the null hypothesis being that there is no correlation between the feature and the target.
 
+\subsection{Gradient Boosted Trees}
+\label{ssec:gbt}
+
+\Acp{gbt} like all tree-based methods have an embedded method of selecting the most important feature.
+There are different types of importance, such as the average or total gain across all splits the feature is used in.
+The simplest definition is the 'weight', defined as the number of times a feature is used to split the data across all trees \cite{chenXGBoostScalableTree2016}.
+30 features have not been used in any split and thus have a feature importance of 0.
+
+
+\subsection{Feature Selection Results}
+\label{ssec:feature_selection_results}
+
+
+As expected, the significance of the features does not differ much within a category, so the correlation coefficients are averaged per category.
+This enables a clearer result on the importance of feature categories.
+
 The results of the test are found in table \ref{tab:pearson_results}.
 All $p$-values in the table are below the significance threshold of $0.05$, confirming the statistical significance of the correlation.
 The highest correlation is $0.15$, belonging to the KDA feature.
@@ -593,32 +612,32 @@ This is a very low correlation, indicating that no single feature has a strong l
 This illustrates the need for multivariate analysis.
 \begin{table}
 	\centering
-	\begin{tblr}{cc}
+	\begin{tblr}{ccc}
 	Feature  & Correlation coefficient & \acs{gbt} Feature Importance\\
 	\hline
-	participant\textunderscore 9\textunderscore champion\textunderscore kda & 0.148 & \\
-	participant\textunderscore 5\textunderscore champion\textunderscore kda & -0.148 & \\
-	participant\textunderscore 4\textunderscore champion\textunderscore kda & -0.137 & \\
-	participant\textunderscore 7\textunderscore champion\textunderscore kda & 0.136 & \\
-	participant\textunderscore 3\textunderscore champion\textunderscore kda & -0.133 & \\
-	participant\textunderscore 10\textunderscore champion\textunderscore kda & 0.132 & \\
-	participant\textunderscore 2\textunderscore champion\textunderscore kda & -0.131 & \\
-	participant\textunderscore 8\textunderscore champion\textunderscore kda & 0.129 & \\ 
+	KDA & \textbf{0.133} & \textbf{726}\\
+	Deaths & 0.092 & 284\\
+	Assists & 0.081 & 403\\
+	Gold & 0.063 & 393\\
+	Kills & 0.060 & 310\\
+	LP & 0.050 & 541\\
+	Champion Level & 0.034 & 50\\
+	CS Per Minute & 0.027 & 394\\
+	Last Play Time & 0.026 & 349\\
+	Win Rate & 0.022 & 301\\
+	Champion Tier & 0.020 & 66\\
+	Champion Points & 0.015 & 401\\
 	
 	\end{tblr}
-	\caption{Pearson's correlation coefficient for the 15 features with the highest absolute correlation}
+	\caption{
+	Average Pearson's correlation coefficient and average \ac{gbt} Feature Importance for the 12 features categories with the highest absolute average correlation.
+	Notably, the KDA feature is not only by far the most important, but its components Kills, Deaths and Assists are in the top 5.
+	}
 	\label{tab:pearson_results}
 
 \end{table}
 
 
-\subsection{Gradient Boosted Trees}
-\label{ssec:gbt}
-
-\Acp{gbt} like all tree-based methods have an embedded method of selecting the most important feature.
-There are different types of importance, such as the average or total gain across all splits the feature is used in.
-The simplest definition is the 'weight', defined as the number of times a feature is used to split the data across all trees \cite{chenXGBoostScalableTree2016}.
-30 features have not been used in any split and thus have a feature importance of 0.
 
 
 \chapter{Results}

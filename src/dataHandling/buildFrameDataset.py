@@ -97,6 +97,7 @@ def build_frame_dataset(size: int = None, save: bool = True, recovery_path: str 
     :param recovery_path: path to a pickle file containing a DataFrame of already processed matches
     :return: None
     """
+    # TODO: fix recovery path to not take only a single dataframe but a directory of dataframes
     if recovery_path is not None:
         dfTimelines = pd.read_pickle(recovery_path)
         matchIds = dfTimelines.index.unique(level='matchId').tolist()

@@ -36,6 +36,8 @@ shap = "^0.43.0"
 lightning = "^2.1.2"
 tensorboard = "^2.15.1"
 dill = "^0.3.7"
+scipy = "^1.11.4"
+statsmodels = "^0.14.0"
 
 
 
