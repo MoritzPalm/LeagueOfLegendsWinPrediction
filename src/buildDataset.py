@@ -106,10 +106,9 @@ def process_match(match, save_path: str, save: bool = True):
                 teamId = pd.Series([participant_stats.teamId], name=f"participant{j}_teamId")
 
                 # Renaming columns to include participant index
-                for df in [df_summoner, df_champion, df_summonerLeague, df_mastery]:
+                for df in [df_summoner, df_summonerLeague, df_mastery]:
                     df.rename(columns=lambda x: f"participant{j}_" + x, inplace=True)
-                    # TODO: fix two columns named participant1_tier
-
+                df_champion.rename(columns=lambda x: f"participant{j}_champion_" + x, inplace=True)
                 participant_frame = pd.concat([df_summoner, df_champion,
                                                df_summonerLeague, df_mastery,
                                                teamId, win], axis=1)
