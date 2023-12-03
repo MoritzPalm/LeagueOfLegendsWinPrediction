@@ -14,11 +14,11 @@ from src.utils import separateMatchID, get_teamId_from_participantIds
 
 
 @wrap_non_picklable_objects
-def process_match(match):
+def process_match(match, save: bool = True):
     """
     Processes a match and returns a DataFrame with the match's data
     :param match:
-    :param session:
+    :param save: if True, saves the match to data/raw/timeline_matches/
     :return:
     """
     with get_session() as session:
@@ -76,6 +76,11 @@ def process_match(match):
                 frameDict['team0_total_gold'] = team0TotalGold
                 frameDict['team1_total_gold'] = team1TotalGold
                 frameData.append(frameDict)
+            if save:
+                index = pd.MultiIndex.from_tuples(matchIds, names=['matchId', 'frameId'])
+                dfTimelines = pd.DataFrame(frameData, index=index)
+                dfTimelines.to_pickle(f'data/raw/timeline_matches/{match.matchId}.pkl')
+
         except Exception as e:
             print(f"Error: {e}")
             return [], []
@@ -105,25 +110,11 @@ def build_frame_dataset(size: int = None, save: bool = True, recovery_path: str 
             matches = session.query(SQLMatch).where(SQLMatch.patch == 20).order_by(func.random()).limit(size).all()
             logging.info(f"Processing {len(matches)} matches")
 
-    matchData = []
-    frameData = []
-
     results = Parallel(n_jobs=20, verbose=10, prefer='threads')(delayed(process_match)(match) for match in matches)
-    for matchIds, frames in results:
-        matchData.extend(matchIds)
-        frameData.extend(frames)
-
-    index = pd.MultiIndex.from_tuples(matchData, names=['matchId', 'frameId'])
-    print(f"len of framedata: {len(frameData)}")
-    print(f"shape of index: {index.shape}")
-    dfTimelines = pd.DataFrame(frameData, index=index)
-
-    if save:
-        dfTimelines.to_pickle('data/raw/timelines.pkl')
 
 
 if __name__ == '__main__':
     start = time.time()
-    build_frame_dataset(100, False)
+    build_frame_dataset(10, True)
     end = time.time()
     print(f"Time elapsed: {end - start}")
