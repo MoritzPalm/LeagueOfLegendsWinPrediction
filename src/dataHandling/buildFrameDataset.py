@@ -84,16 +84,26 @@ def process_match(match):
     return matchIds, frameData
 
 
-def build_frame_dataset(size: int = None, save: bool = True):
+def build_frame_dataset(size: int = None, save: bool = True, recovery_path: str = None):
     """
     Builds a dataset of frames
     :param size: size of the dataset in number of matches
     :param save: if True, saves the dataset to data/raw/timelines.pkl
+    :param recovery_path: path to a pickle file containing a DataFrame of already processed matches
     :return: None
     """
-    with get_session() as session:
-        matches = session.query(SQLMatch).where(SQLMatch.patch == 20).order_by(func.random()).limit(size).all()
-        logging.info(f"Processing {len(matches)} matches")
+    if recovery_path is not None:
+        dfTimelines = pd.read_pickle(recovery_path)
+        matchIds = dfTimelines.index.unique(level='matchId').tolist()
+        size -= len(matchIds)
+        with get_session() as session:
+            matches = session.query(SQLMatch).where(SQLMatch.patch == 20, SQLMatch.matchId.notin_(
+                matchIds).order_by(func.random()).limit(size).all())
+
+    else:
+        with get_session() as session:
+            matches = session.query(SQLMatch).where(SQLMatch.patch == 20).order_by(func.random()).limit(size).all()
+            logging.info(f"Processing {len(matches)} matches")
 
     matchData = []
     frameData = []
