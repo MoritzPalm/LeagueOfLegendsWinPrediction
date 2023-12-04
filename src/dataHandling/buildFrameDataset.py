@@ -1,5 +1,7 @@
 import logging
+import os
 import pickle
+import re
 import time
 
 import pandas as pd
@@ -99,8 +101,7 @@ def build_frame_dataset(size: int = None, save: bool = True, recovery_path: str 
     """
     # TODO: fix recovery path to not take only a single dataframe but a directory of dataframes
     if recovery_path is not None:
-        dfTimelines = pd.read_pickle(recovery_path)
-        matchIds = dfTimelines.index.unique(level='matchId').tolist()
+        matchIds = [re.match(r"(.*)\.pkl", file)[0] for file in os.listdir(recovery_path)]
         size -= len(matchIds)
         with get_session() as session:
             matches = session.query(SQLMatch).where(SQLMatch.patch == 20, SQLMatch.matchId.notin_(
@@ -116,6 +117,6 @@ def build_frame_dataset(size: int = None, save: bool = True, recovery_path: str 
 
 if __name__ == '__main__':
     start = time.time()
-    build_frame_dataset(10, True)
+    build_frame_dataset(None, True, "data/raw/timeline_matches/")
     end = time.time()
     print(f"Time elapsed: {end - start}")
