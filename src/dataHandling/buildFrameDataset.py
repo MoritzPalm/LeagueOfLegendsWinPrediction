@@ -101,8 +101,9 @@ def build_frame_dataset(size: int = None, save: bool = True, recovery_path: str 
     """
     # TODO: fix recovery path to not take only a single dataframe but a directory of dataframes
     if recovery_path is not None:
-        matchIds = [re.match(r"(.*)\.pkl", file)[0] for file in os.listdir(recovery_path)]
-        size -= len(matchIds)
+        matchIds = [re.match(r"(.*)\.pkl", file).group(1) for file in os.listdir(recovery_path)]
+        if size is not None:
+            size -= len(matchIds)
         with get_session() as session:
             matches = session.query(SQLMatch).where(SQLMatch.patch == 20, SQLMatch.matchId.notin_(
                 matchIds).order_by(func.random()).limit(size).all())
