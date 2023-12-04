@@ -106,7 +106,7 @@ def build_frame_dataset(size: int = None, save: bool = True, recovery_path: str 
             size -= len(matchIds)
         with get_session() as session:
             matches = session.query(SQLMatch).where(SQLMatch.patch == 20, SQLMatch.matchId.notin_(
-                matchIds).order_by(func.random()).limit(size).all())
+                matchIds)).order_by(func.random()).limit(size).all()
 
     else:
         with get_session() as session:
