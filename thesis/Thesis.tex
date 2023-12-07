@@ -528,10 +528,15 @@ The raw pre-game dataset contains $368$ columns which can be categorized into fo
 General match details, such as the patch number, are exclusively utilized for validation purposes and are excluded from the final dataset.
 \paragraph{Player Information}
 Player Information feature $x_p$ is a two-dimensional vector containing information about the player. This includes the account level, serving as an indicator of the player's accumulated gaming experience, and the player's rank, functioning as a metric for assessing the player's skill level.
+transform rank info into a single float number
+winrate calculation
+
 \paragraph{Champion Information}
 The Champion Information feature $\mathbf{x}_c$ is composed of 
 
 However, it is noteworthy that a limitation inherent in these metrics lies in their aggregation across all player ranks, reducing their specificity to the ranks under analysis.
+conversion of champion tier into integer
+
 \paragraph{Player-Champion Information}
 This feature vector contains information about the player on a specific champion.
 It encompasses metrics such as the average amount of gold earned by the player across all matches played on the champion during Season 13. 
@@ -540,14 +545,16 @@ Unfortunately, this information is not readily available to be extracted by our 
 Each feature category like 'average gold per match' is split into 10 features, one for each participant.
 This is a very fine-grained approach, greatly increasing the dimensionality of the dataset.
 For some features, a broader approach is sufficient, where statistics are averaged for each team, reducing 10 features per category to two.
-
+champion number one hot encoded
+\paragraph{Scaling and Partitioning}
+In order to improve  
 
 
 \subsection{In-Game Dataset}
 \label{ssec:in_game_data}
 
 The raw in-game dataset contains $381$ features describing the current state of the game after every minute.
-It primarily includes player-specific metrics such as damage dealt to opponents, champion level, and cumulative gold. These statistics, recorded per minute, create a discrete time series. Furthermore, key events like the number of turrets destroyed and each team's total gold are tracked to more precisely gauge the game's state. Gold, a critical indicator, underscores each victory milestone - be it destroying a turret or defeating an adversary. Often, the winning team can be predicted by analyzing gold trends. As illustrated in Figure \ref{fig:totalGold}, members of the victorious team typically amass significantly more gold by the game's conclusion compared to their counterparts.
+It primarily includes player-specific metrics such as damage dealt to opponents, champion level, and cumulative gold. These statistics, recorded per minute, create a discrete time series. Furthermore, key events like the number of turrets destroyed and each team's total gold are tracked to more precisely gauge the game's state. Gold, a critical indicator, underscores each victory milestone - be it destroying a turret or defeating an adversary. Often, the winning team can be predicted by analysing gold trends. As illustrated in Figure \ref{fig:totalGold}, members of the victorious team typically amass significantly more gold by the game's conclusion compared to their counterparts.
 
 Destroying turrets is crucial in the game, offering significant gold rewards and map control. 
 With a minimum of five turrets required for victory, their destruction serves as a key indicator of a team's likelihood to win.
@@ -631,12 +638,26 @@ This illustrates the need for multivariate analysis.
 	\end{tblr}
 	\caption{
 	Average Pearson's correlation coefficient and average \ac{gbt} Feature Importance for the 12 features categories with the highest absolute average correlation.
-	Notably, the KDA feature is not only by far the most important, but its components Kills, Deaths and Assists are in the top 5.
+	Notably, the KDA feature is not only by far the most important, but its components Kills, Deaths and Assists are in the top 5 correlation coeffients as well.
 	}
 	\label{tab:pearson_results}
-
 \end{table}
 
+
+
+
+
+\section{Pre-Game Classification}
+\label{sec:pregame_class}
+using neural network
+
+\subsection{Hyperparameter Optimization}
+\label{ssec:hyperparam_optim}
+
+
+
+\section{Mid-Game Classification}
+\label{sec:midgame_class}
 
 
 
