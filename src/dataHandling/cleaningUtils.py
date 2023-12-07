@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from enum import Enum
 
@@ -83,7 +84,7 @@ def drop_irrelevant(df: pd.DataFrame) -> pd.DataFrame:
                               'champion_kills', 'champion_deaths', 'champion_assists', 'champion_maxKills',
                               'champion_cs', 'champion_damage', 'champion_gold', 'champion_championNumber',
                               'champion_pick_rate', 'champion_ban_rate', 'leaguePoints', 'champion_tier']
-    participant_irrelevant = ['win']
+    participant_irrelevant = ['win', 'lp']
     for i in range(1, 11):
         for col in participant_irrelevant:
             irrelevant_cols.append(f'participant{i}_{col}')
@@ -174,7 +175,7 @@ def convert_lastPlayTime(df: pd.DataFrame) -> pd.DataFrame:
     :return: None
     """
     for i in range(1, 11):
-        df[f'participant{i}_champion_lastPlayTime'] = df[f'participant{i}_champion_lastPlayTime'].apply(
+        df[f'participant{i}_lastPlayTime'] = df[f'participant{i}_lastPlayTime'].apply(
             lambda x: int((datetime.now() - datetime.fromtimestamp(x / 1000)).total_seconds()) if x is not np.nan
             else 0)
     return df
@@ -216,5 +217,78 @@ def drop_wrong_teamIds(df: pd.DataFrame) -> pd.DataFrame:
         df.drop(df[df[f'participant{i}_teamId'] != 0].index, inplace=True)
     for i in range(6, 11):
         df.drop(df[df[f'participant{i}_teamId'] != 1].index, inplace=True)
-    print(f'dropped {len_before - len(df)} rows')
+    print(f'dropped {len_before - len(df)} rows because of wrong teamIds')
     return df
+
+
+def drop_wrong_wins(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Filters the DataFrame to keep only rows where the first 5 participants have the same value (True/False)
+    and the last 5 participants have the opposite value.
+
+    :param df: DataFrame with columns named "participant<x>_win" where x is a number from 1 to 10
+    :return: Filtered DataFrame
+    """
+    len_before = len(df)
+    # Columns for first 5 participants and last 5 participants
+    first_five_cols = [f'participant{i}_win' for i in range(1, 6)]
+    last_five_cols = [f'participant{i}_win' for i in range(6, 11)]
+
+    # Check the condition for each row
+    valid_rows = df.apply(
+        lambda row: (row[first_five_cols].nunique() == 1) and
+                    (row[last_five_cols].nunique() == 1) and
+                    (row[first_five_cols[0]] != row[last_five_cols[0]]),
+        axis=1
+    )
+    print(f'dropped {len_before - len(df[valid_rows])} rows because of wrong wins')
+    # Filter the DataFrame
+    return df[valid_rows]
+
+
+def average_over_teams(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    averages all participant columns into one column for each team per category
+    :param df: pd.DataFrame
+    :return: DataFrame with averaged columns
+    """
+    raise NotImplementedError
+
+
+def merge_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Merges columns of the form participant<x>_<col> into two columns per category, one for each team.
+    Uses participant<x>_team columns to determine the team of each participant.
+
+    :param df: DataFrame containing the columns to be merged.
+    :return: Dictionary with keys as categories and values as a DataFrame with two columns per category, one for each team.
+    """
+    cols = df.columns.tolist()
+    merged_columns = {}
+    # cols that are not to be merged as they are categorical, so averaging them does not make sense
+    cols_left = ['teamId', 'champion_championNumber']
+    for col in cols:
+        matches = re.search(r"participant(\d+)_(\w+)", col)
+        if matches and matches.group(2) != 'teamId':
+            participant_number = matches.group(1)
+            col_type = matches.group(2)
+
+            # Determine the team of the participant
+            team_col = f'participant{participant_number}_teamId'
+            team = df[team_col].iloc[0] if team_col in df.columns else 'unknown'
+
+            if col_type not in merged_columns:
+                merged_columns[col_type] = {'team1': [], 'team2': []}
+
+            if team == 0:
+                merged_columns[col_type]['team1'].append(df[col])
+            elif team == 1:
+                merged_columns[col_type]['team2'].append(df[col])
+
+    merged_series = {}
+    for col_type, teams_data in merged_columns.items():
+        for team, data_list in teams_data.items():
+            if data_list:  # Only proceed if there are columns to merge
+                merged_series[f"{col_type}_{team}"] = pd.concat(data_list, axis=1).mean(axis=1)
+
+    return pd.DataFrame(merged_series)
