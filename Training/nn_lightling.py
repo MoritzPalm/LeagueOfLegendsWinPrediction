@@ -29,7 +29,7 @@ sweep_config = {  # TODO: should be in a yml file
     },
     'parameters': {
         'input_size': {
-            'values': [223]
+            'values': [221]
         },
         'hidden_size': {
             'values': [128, 256, 512, 1024]
@@ -225,4 +225,4 @@ def train(config=None):
 
 if __name__ == '__main__':
     sweep_id = wandb.sweep(sweep_config, project='leaguify')
-    wandb.agent(sweep_id, train, count=3)
+    wandb.agent(sweep_id, train, count=1)

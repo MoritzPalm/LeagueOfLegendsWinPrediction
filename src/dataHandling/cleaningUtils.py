@@ -259,7 +259,7 @@ def merge_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
     Merges columns of the form participant<x>_<col> into two columns per category, one for each team.
     Uses participant<x>_team columns to determine the team of each participant.
-
+    Drops categorical columns that are not to be merged.
     :param df: DataFrame containing the columns to be merged.
     :return: Dictionary with keys as categories and values as a DataFrame with two columns per category, one for each team.
     """
@@ -269,7 +269,7 @@ def merge_columns(df: pd.DataFrame) -> pd.DataFrame:
     cols_left = ['teamId', 'champion_championNumber']
     for col in cols:
         matches = re.search(r"participant(\d+)_(\w+)", col)
-        if matches and matches.group(2) != 'teamId':
+        if matches and matches.group(2) not in cols_left:
             participant_number = matches.group(1)
             col_type = matches.group(2)
 
