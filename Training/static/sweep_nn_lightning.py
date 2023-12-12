@@ -2,12 +2,13 @@ import lightning as L
 import numpy as np
 import torch
 import torchmetrics
-import wandb
 from lightning.pytorch.callbacks import ModelCheckpoint
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
-from lightning.pytorch.loggers import TensorBoardLogger, WandbLogger, CSVLogger
+from lightning.pytorch.loggers import WandbLogger
 from torch import optim, nn
 from torch.utils.data import Dataset, DataLoader
+
+import wandb
 
 wandb.login()
 
@@ -22,7 +23,7 @@ else:
     device = "cpu"
 print(f"Using {device} device")
 
-sweep_config = {  # TODO: should be in a yml file
+sweep_config = {
     'method': 'random',
     'metric': {
         'name': 'val_acc',
@@ -30,7 +31,7 @@ sweep_config = {  # TODO: should be in a yml file
     },
     'parameters': {
         'input_size': {
-            'values': [221]
+            'value': 221
         },
         'hidden_size': {
             'values': [128, 256, 512, 1024]
@@ -43,10 +44,10 @@ sweep_config = {  # TODO: should be in a yml file
             'values': [0.2, 0.3, 0.4, 0.5]
         },
         'activation': {
-            'values': ['ReLU']
+            'value': 'ReLU'
         },
         'decrease_size': {
-            'values': [False]
+            'value': False
         },
         'batch_size': {
             'values': [64, 128, 256]
@@ -56,16 +57,16 @@ sweep_config = {  # TODO: should be in a yml file
             'max': 1e-1
         },
         'weight_decay': {
-            'values': [1e-5]
+            'value': 1e-5
         },
         'max_epochs': {
-            'values': [200]
+            'value': 200
         },
         'patience': {
             'values': [10, 20, 30, 40]
         },
         'merged': {
-            'values': [True]
+            'value': True
         }
     }
 }
@@ -188,16 +189,22 @@ class StaticDataset(Dataset):
         print(f'Number of samples per class: {np.bincount(self.labels.cpu().numpy())}')
 
 
-def train(config=None):
-    data_dir = '../data/static_05_12_23/processed'
-    with wandb.init(config=sweep_config, project='leaguify') as run:
-        wandb_logger = WandbLogger(project='leaguify', log_model='all')
-        training_data = wandb.Artifact('training_data', type='dataset')
-        training_data.add_dir(data_dir)
-        wandb_logger.experiment.log_artifact(training_data)
-        tb_logger = TensorBoardLogger('lightning_logs')
-        csv_logger = CSVLogger('logs', name='leaguify_logs')
+def main(config=None):
+    """
+
+    :param config:
+    :return:
+    """
+    with wandb.init(config=config):
+        data_dir = '../../data/static_05_12_23/processed'
         config = wandb.config
+        model = LNN(config.input_size, config.hidden_size, config.num_layers, config.dropout_prob)
+
+        wandb_logger = WandbLogger()
+        wandb_logger.watch(model)
+        # training_data = wandb.Artifact('training_data', type='dataset')
+        # training_data.add_dir(data_dir)
+        # wandb_logger.experiment.log_artifact(training_data)
         if config.merged:
             train_loader = DataLoader(StaticDataset(data_dir + '/train_static_merged.npy'),
                                       batch_size=config.batch_size,
@@ -213,8 +220,6 @@ def train(config=None):
                                     shuffle=True)
             test_loader = DataLoader(StaticDataset(data_dir + '/test_static.npy'), batch_size=config.batch_size,
                                      shuffle=True)
-        model = LNN(config.input_size, config.hidden_size, config.num_layers, config.dropout_prob)
-        wandb_logger.watch(model)
         trainer = L.Trainer(max_epochs=config.max_epochs, accelerator=device, devices=1,
                             logger=wandb_logger,
                             callbacks=[
@@ -228,4 +233,4 @@ def train(config=None):
 
 
 if __name__ == '__main__':
-    wandb.agent(sweep_id, train, count=1)
+    wandb.agent(sweep_id, function=main, count=2)

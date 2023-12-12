@@ -1,4 +1,6 @@
+import glob
 import logging
+import pickle
 
 import numpy as np
 import pandas as pd
@@ -15,14 +17,15 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     :return: X_train, X_val, X_test
     """
     print("Cleaning static dataset...")
-    # df = pd.DataFrame()
-    # for f in glob.glob('data/static_05_12_23/raw/raw/match_*.pkl'):
-    #     with open(f, 'rb') as file:
-    #         df_new = pickle.load(file)
-    #     df = pd.concat([df, df_new], axis=0)
-    # df.to_pickle('data/static_05_12_23/raw/static_full.pkl')
+    dir = 'data/static_11_12_23'
+    df = pd.DataFrame()
+    for f in glob.glob(f'{dir}/raw/match_*.pkl'):
+        with open(f, 'rb') as file:
+            df_new = pickle.load(file)
+        df = pd.concat([df, df_new], axis=0)
+    df.to_pickle(f'{dir}/raw/static_full.pkl')
     logging.info("Concatenated all files")
-    df = pd.read_pickle('data/static_05_12_23/raw/static_full.pkl')
+    # df = pd.read_pickle(f'{dir}/raw/static_full.pkl')
     df = clean.drop_wrong_data(df)
     df.reset_index(drop=True, inplace=True)
     df = clean.fix_rank(df)
@@ -66,12 +69,12 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     X_val = pd.DataFrame(X_val, columns=df.columns)
 
     if save:
-        X_train.to_pickle('data/static_05_12_23/processed/train_static.pkl')
-        X_test.to_pickle('data/static_05_12_23/processed/test_static.pkl')
-        X_val.to_pickle('data/static_05_12_23/processed/val_static.pkl')
-        np.save('data/static_05_12_23/processed/train_static.npy', X_train)
-        np.save('data/static_05_12_23/processed/test_static.npy', X_test)
-        np.save('data/static_05_12_23/processed/val_static.npy', X_val)
+        X_train.to_pickle(f'{dir}/processed/train_static.pkl')
+        X_test.to_pickle(f'{dir}/processed/test_static.pkl')
+        X_val.to_pickle(f'{dir}/processed/val_static.pkl')
+        np.save(f'{dir}/processed/train_static.npy', X_train)
+        np.save(f'{dir}/processed/test_static.npy', X_test)
+        np.save(f'{dir}/processed/val_static.npy', X_val)
 
     # handling of averaged dataset
 
@@ -122,12 +125,12 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     df_val_merged = pd.DataFrame(X_val_merged, columns=df_merged_ohc.columns)
 
     if save:
-        df_train_merged.to_pickle('data/static_05_12_23/processed/train_static_merged.pkl')
-        df_test_merged.to_pickle('data/static_05_12_23/processed/test_static_merged.pkl')
-        df_val_merged.to_pickle('data/static_05_12_23/processed/val_static_merged.pkl')
-        np.save('data/static_05_12_23/processed/train_static_merged.npy', X_train_merged)
-        np.save('data/static_05_12_23/processed/test_static_merged.npy', X_test_merged)
-        np.save('data/static_05_12_23/processed/val_static_merged.npy', X_val_merged)
+        df_train_merged.to_pickle(f'{dir}/processed/train_static_merged.pkl')
+        df_test_merged.to_pickle(f'{dir}/processed/test_static_merged.pkl')
+        df_val_merged.to_pickle(f'{dir}/processed/val_static_merged.pkl')
+        np.save(f'{dir}/processed/train_static_merged.npy', X_train_merged)
+        np.save(f'{dir}/processed/test_static_merged.npy', X_test_merged)
+        np.save(f'{dir}/processed/val_static_merged.npy', X_val_merged)
 
     print(f'X_train shape: {X_train.shape}')
     print(f'X_test shape: {X_test.shape}')
@@ -137,4 +140,7 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
 
 
 if __name__ == '__main__':
+    import os
+
+    print(os.getcwd())
     cleanStaticDataset(save=True)

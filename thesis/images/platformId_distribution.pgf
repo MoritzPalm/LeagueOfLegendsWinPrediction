@@ -292,8 +292,8 @@
 \pgfsetdash{}{0pt}%
 \pgfpathmoveto{\pgfqpoint{1.891200in}{0.528000in}}%
 \pgfpathlineto{\pgfqpoint{2.684800in}{0.528000in}}%
-\pgfpathlineto{\pgfqpoint{2.684800in}{1.212306in}}%
-\pgfpathlineto{\pgfqpoint{1.891200in}{1.212306in}}%
+\pgfpathlineto{\pgfqpoint{2.684800in}{1.212498in}}%
+\pgfpathlineto{\pgfqpoint{1.891200in}{1.212498in}}%
 \pgfpathlineto{\pgfqpoint{1.891200in}{0.528000in}}%
 \pgfpathclose%
 \pgfusepath{stroke,fill}%
