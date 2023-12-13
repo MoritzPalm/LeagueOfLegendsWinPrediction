@@ -11,6 +11,9 @@ from torch.utils.data import Dataset, DataLoader
 
 wandb.login()
 
+wandb.login()
+
+
 if torch.cuda.is_available():
     print(f'PyTorch version: {torch.__version__}')
     print('*' * 10)
@@ -116,7 +119,7 @@ class LNN(L.LightningModule):
         self.model = NeuralNetwork(input_size, hidden_size, num_layers, dropout_prob, output_size, activation,
                                    decrease_size)
         self.criterion = nn.BCELoss()
-        self.save_hyperparameters()
+        self.save_hyperparameters(ignore=['activation'])
         self.accuracy = torchmetrics.classification.BinaryAccuracy()
         self.f1 = torchmetrics.classification.BinaryF1Score()
         self.confusion_matrix = torchmetrics.classification.BinaryConfusionMatrix()
@@ -189,8 +192,8 @@ class StaticDataset(Dataset):
 
 
 def train(config=None):
-    data_dir = '../data/static_05_12_23/processed'
-    with wandb.init(config=sweep_config, project='leaguify') as run:
+    data_dir = 'data/static_05_12_23/processed'
+    with wandb.init(config=config) as run:
         wandb_logger = WandbLogger(project='leaguify', log_model='all')
         training_data = wandb.Artifact('training_data', type='dataset')
         training_data.add_dir(data_dir)
@@ -203,18 +206,20 @@ def train(config=None):
                                       batch_size=config.batch_size,
                                       shuffle=True)
             val_loader = DataLoader(StaticDataset(data_dir + '/val_static_merged.npy'), batch_size=config.batch_size,
-                                    shuffle=True)
+                                    shuffle=False)
             test_loader = DataLoader(StaticDataset(data_dir + '/test_static_merged.npy'), batch_size=config.batch_size,
-                                     shuffle=True)
+                                     shuffle=False)
         else:
             train_loader = DataLoader(StaticDataset(data_dir + '/train_static.npy'), batch_size=config.batch_size,
                                       shuffle=True)
             val_loader = DataLoader(StaticDataset(data_dir + '/val_static.npy'), batch_size=config.batch_size,
-                                    shuffle=True)
+                                    shuffle=False)
             test_loader = DataLoader(StaticDataset(data_dir + '/test_static.npy'), batch_size=config.batch_size,
-                                     shuffle=True)
+                                     shuffle=False)
         model = LNN(config.input_size, config.hidden_size, config.num_layers, config.dropout_prob)
+
         wandb_logger.watch(model)
+
         trainer = L.Trainer(max_epochs=config.max_epochs, accelerator=device, devices=1,
                             logger=wandb_logger,
                             callbacks=[
@@ -228,4 +233,4 @@ def train(config=None):
 
 
 if __name__ == '__main__':
-    wandb.agent(sweep_id, train, count=1)
+    wandb.agent(sweep_id, train, count=2)
