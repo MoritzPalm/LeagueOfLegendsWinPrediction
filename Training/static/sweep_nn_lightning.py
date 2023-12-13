@@ -30,9 +30,6 @@ sweep_config = {
         'goal': 'maximize'
     },
     'parameters': {
-        'input_size': {
-            'value': 221
-        },
         'hidden_size': {
             'values': [128, 256, 512, 1024]
         },
@@ -46,18 +43,12 @@ sweep_config = {
         'activation': {
             'value': 'ReLU'
         },
-        'decrease_size': {
-            'value': False
-        },
         'batch_size': {
             'values': [64, 128, 256]
         },
-        'lr': {
+        'learning_rate': {
             'min': 1e-5,
             'max': 1e-1
-        },
-        'weight_decay': {
-            'value': 1e-5
         },
         'max_epochs': {
             'value': 200
@@ -66,7 +57,7 @@ sweep_config = {
             'values': [10, 20, 30, 40]
         },
         'merged': {
-            'value': True
+            'values': ["True", "False", "ohc"]
         }
     }
 }
@@ -75,8 +66,8 @@ sweep_id = wandb.sweep(sweep_config, project='leaguify')
 
 
 class NeuralNetwork(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, dropout_prob, output_size=1, activation=nn.ReLU(),
-                 decrease_size=False):
+    def __init__(self, input_size, hidden_size, num_layers, dropout_prob,
+                 output_size=1, activation=nn.ReLU(), ):
         super(NeuralNetwork, self).__init__()
         self.dropout = nn.Dropout(dropout_prob)
         self.num_layers = num_layers
@@ -87,10 +78,7 @@ class NeuralNetwork(nn.Module):
         self.linear_relu_stack = nn.Sequential()
         self.linear_relu_stack.append(nn.Linear(input_size, hidden_size))
         for i in range(num_layers - 1):
-            if decrease_size:
-                next_hidden_size = int(self.hidden_size // 2)
-            else:
-                next_hidden_size = self.hidden_size
+            next_hidden_size = self.hidden_size
             self.linear_relu_stack.append(self.dropout)
             self.linear_relu_stack.append(nn.BatchNorm1d(self.hidden_size))
             self.linear_relu_stack.append(nn.Linear(self.hidden_size, next_hidden_size))
@@ -111,11 +99,11 @@ class NeuralNetwork(nn.Module):
 
 
 class LNN(L.LightningModule):
-    def __init__(self, input_size, hidden_size, num_layers, dropout_prob, output_size=1, activation=nn.ReLU(),
-                 decrease_size=False):
+    def __init__(self, input_size, hidden_size, num_layers, dropout_prob,
+                 output_size=1, activation=nn.ReLU(), learning_rate=1e-3):
         super().__init__()
-        self.model = NeuralNetwork(input_size, hidden_size, num_layers, dropout_prob, output_size, activation,
-                                   decrease_size)
+        self.model = NeuralNetwork(input_size, hidden_size, num_layers,
+                                   dropout_prob, output_size, activation)
         self.criterion = nn.BCELoss()
         self.save_hyperparameters()
         self.accuracy = torchmetrics.classification.BinaryAccuracy()
@@ -156,17 +144,17 @@ class LNN(L.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        optimizer = optim.Adam(self.parameters(), lr=1e-3)
+        optimizer = optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
         return optimizer
 
 
 class StaticDataset(Dataset):
     def __init__(self, data_dir, transform=None, target_transform=None):
-        self.data = torch.tensor(np.load(data_dir)[:, :-1], dtype=torch.float32, )
+        self.data = torch.tensor(np.load(data_dir)[:, :-1], dtype=torch.float32)
         self.labels = torch.tensor(np.load(data_dir)[:, -1], dtype=torch.int64)
+        self.shape = self.data.shape
         self.transform = transform
         self.target_transform = target_transform
-        print(f'labels: {self.labels}')
         self.print_statistics()
 
     def __len__(self):
@@ -196,41 +184,67 @@ def main(config=None):
     :return:
     """
     with wandb.init(config=config):
-        data_dir = '../../data/static_05_12_23/processed'
+        data_dir = '../../data/static_11_12_23/processed'
         config = wandb.config
-        model = LNN(config.input_size, config.hidden_size, config.num_layers, config.dropout_prob)
 
         wandb_logger = WandbLogger()
-        wandb_logger.watch(model)
-        # training_data = wandb.Artifact('training_data', type='dataset')
-        # training_data.add_dir(data_dir)
-        # wandb_logger.experiment.log_artifact(training_data)
-        if config.merged:
-            train_loader = DataLoader(StaticDataset(data_dir + '/train_static_merged.npy'),
+        training_data = wandb.Artifact('training_data', type='dataset')
+        training_data.add_dir(data_dir)
+        wandb_logger.experiment.log_artifact(training_data)
+        if config.merged == "True":
+            data_dir += '/merged_only'
+            X_train = StaticDataset(data_dir + '/train_static.npy')
+            X_val = StaticDataset(data_dir + '/val_static.npy')
+            X_test = StaticDataset(data_dir + '/test_static.npy')
+            train_loader = DataLoader(X_train,
                                       batch_size=config.batch_size,
                                       shuffle=True)
-            val_loader = DataLoader(StaticDataset(data_dir + '/val_static_merged.npy'), batch_size=config.batch_size,
-                                    shuffle=True)
-            test_loader = DataLoader(StaticDataset(data_dir + '/test_static_merged.npy'), batch_size=config.batch_size,
-                                     shuffle=True)
-        else:
-            train_loader = DataLoader(StaticDataset(data_dir + '/train_static.npy'), batch_size=config.batch_size,
+            val_loader = DataLoader(X_val, batch_size=X_val.__len__(),
+                                    shuffle=False)
+            test_loader = DataLoader(X_test, batch_size=X_test.__len__(),
+                                     shuffle=False)
+            input_size = X_train.shape[1] - 1
+        elif config.merged == "ohc":
+            data_dir += '/merged_ohc'
+            X_train = StaticDataset(data_dir + '/train_static.npy')
+            X_val = StaticDataset(data_dir + '/val_static.npy')
+            X_test = StaticDataset(data_dir + '/test_static.npy')
+            train_loader = DataLoader(X_train, batch_size=config.batch_size,
                                       shuffle=True)
-            val_loader = DataLoader(StaticDataset(data_dir + '/val_static.npy'), batch_size=config.batch_size,
-                                    shuffle=True)
-            test_loader = DataLoader(StaticDataset(data_dir + '/test_static.npy'), batch_size=config.batch_size,
-                                     shuffle=True)
-        trainer = L.Trainer(max_epochs=config.max_epochs, accelerator=device, devices=1,
-                            logger=wandb_logger,
-                            callbacks=[
-                                EarlyStopping(monitor='val_acc', patience=config.patience, verbose=True, mode='max'),
-                                ModelCheckpoint(monitor='val_acc', dirpath='models', filename='model', save_top_k=2,
-                                                mode='max',
-                                                every_n_epochs=1)
-                            ])
+            val_loader = DataLoader(X_val, batch_size=X_val.__len__(),
+                                    shuffle=False)
+            test_loader = DataLoader(X_test, batch_size=X_test.__len__(),
+                                     shuffle=False)
+            input_size = X_train.shape[1] - 1
+        else:
+            data_dir += '/default'
+            X_train = StaticDataset(data_dir + '/train_static.npy')
+            X_val = StaticDataset(data_dir + '/val_static.npy')
+            X_test = StaticDataset(data_dir + '/test_static.npy')
+            train_loader = DataLoader(X_train, batch_size=config.batch_size,
+                                      shuffle=True)
+            val_loader = DataLoader(X_val, batch_size=X_val.__len__(),
+                                    shuffle=False)
+            test_loader = DataLoader(X_test, batch_size=X_test.__len__(),
+                                     shuffle=False)
+            input_size = X_train.shape[1] - 1
+
+        model = LNN(input_size, config.hidden_size, config.num_layers, config.dropout_prob)
+        wandb_logger.watch(model)
+        checkpoint_callback = ModelCheckpoint(monitor='val_acc',
+                                              dirpath='checkpoints/',
+                                              filename='nn-{epoch:02d}-{val_acc:.2f}',
+                                              save_top_k=3,
+                                              mode='max', every_n_epochs=1)
+        early_stop_callback = EarlyStopping(monitor='val_acc',
+                                            patience=config.patience,
+                                            mode='max')
+        trainer = L.Trainer(max_epochs=config.max_epochs, accelerator=device,
+                            devices=1, logger=wandb_logger, callbacks=
+                            [early_stop_callback, checkpoint_callback])
         trainer.fit(model, train_loader, val_loader)
         trainer.test(model, test_loader)
 
 
 if __name__ == '__main__':
-    wandb.agent(sweep_id, function=main, count=2)
+    wandb.agent(sweep_id, function=main, count=1)
