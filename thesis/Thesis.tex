@@ -456,21 +456,33 @@ In equations \ref{eq:gru_h} and \ref{eq_gru_h_tilde} $\odot$ denotes the element
 \end{figure}
 
 
-\section{Pearsons' correlation coefficient}
-\label{sec:pearsons}
-Pearson's correlations coefficient is a statistical measure widely used to evaluate the linear relationship between two variables. 
+\section{Feature Selection Algorithms}
+\label{sec:fs_algos}
+
+Feature selection in neural network modeling is crucial, especially when dealing with high-dimensional data. It primarily aims to enhance model performance by reducing the curse of dimensionality, which can improve predictive accuracy. Additionally, it helps in reducing overfitting, as irrelevant or redundant features are eliminated, thereby improving the model's ability to generalize. This process also contributes to the interpretability of the model, making it easier to understand the learned relationships. Furthermore, it can lead to reduced training times, as the network has fewer parameters to update during learning.
+
+
+\subsection{Pearsons' correlation coefficient}
+\label{ssec:pearsons}
+\Ac{pcc} is a statistical measure widely used to evaluate the linear relationship between two variables. 
 Specifically, we consider its application in the context of feature selection in machine learning, where it is used to assess the linear correlation between input features and the target variable. 
 We regard the input vector $\mathbf{x}$ as a manifestation of an underlying, unknown distribution. 
 Here, $X_i$ represents the random variable corresponding to the $i^{\text{th}}$ component of $\mathbf{x}$, and $\mathbf{y}$ is the target value vector, viewed as a realization of the random variable $Y$ \cite{guyonIntroductionVariableFeature}. 
-The Pearson's correlation coefficient is employed to quantify the linear correlation between these two random variables. It is defined by the formula:
+\Ac{pcc} is employed to quantify the linear correlation between these two random variables. It is defined by the formula:
 \begin{equation}
 R(i) = \frac{\text{cov}(X_i, Y)}{\sqrt{\text{var}(X_i) \cdot \text{var}(Y)}},
 \end{equation}
 where $\text{cov}(X_i, Y)$ is the covariance between $X_i$ and $Y$, and $\text{var}(X_i)$ and $\text{var}(Y)$ are the variances of $X_i$ and $Y$, respectively \cite{chandrashekarSurveyFeatureSelection2014}.
 In order to ascertain the significance of the test results, a hypothesis test needs to be performed, with the null hypothesis being that there is no correlation between the feature and the target.
+While simple and effective for identifying linear relationships, \ac{pcc} only captures linear dependencies and might miss non-linear relationships crucial for neural networks.
 
 
+\subsection{Gradient Boosted Trees}
+\label{ssec:gbt}
 
+Gradient Boosted Trees (GBT) is an ensemble learning technique that can be used for feature selection. It builds the model in a stage-wise fashion, with each tree being added to correct the errors made by the previous ones. 
+There are different types of importance, such as the average or total gain across all splits the feature is used in.
+The simplest definition is the 'weight', defined as the number of times a feature is used to split the data across all trees \cite{chenXGBoostScalableTree2016}.
 
 
 
@@ -588,28 +600,6 @@ A clear separation between the blue and red team is noticeable especially at the
 
 \chapter{Experiments}
 \label{chap:experiments}
-
-\section{Feature Selection}
-\label{sec:feature_selection}
-
-Both datasets initially have a very high dimensionality, which can lead to the prevalence of noisy or irrelevant data \cite{venkateshReviewFeatureSelection2019}.
-In order to facilitate the learning of the \ac{ann}, all such data should be removed.
-This process of finding the best subset of features used for training is called Feature Selection.
-Different methods of selecting a subset of features have been tried:
-\begin{itemize}
-\item Pearson's correlation coefficient
-\item Gradient Boosted Trees
-\end{itemize}
-
-
-\subsection{Gradient Boosted Trees}
-\label{ssec:gbt}
-
-\Acp{gbt} like all tree-based methods have an embedded method of selecting the most important feature.
-There are different types of importance, such as the average or total gain across all splits the feature is used in.
-The simplest definition is the 'weight', defined as the number of times a feature is used to split the data across all trees \cite{chenXGBoostScalableTree2016}.
-30 features have not been used in any split and thus have a feature importance of 0.
-
 
 \subsection{Feature Selection Results}
 \label{ssec:feature_selection_results}
