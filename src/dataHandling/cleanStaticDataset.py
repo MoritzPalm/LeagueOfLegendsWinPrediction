@@ -118,8 +118,9 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     # one hot encoding of championNumber
     categorical_columns = [f'participant{x}_champion_championNumber' for x in range(1, 11)]
     df_categorical = df.loc[:, categorical_columns]
-    df_categorical_one_hot = pd.get_dummies(df_categorical.loc[:, 'participant1_champion_championNumber'],
-                                            columns='participant1_champion_championNumber', prefix='championNumber')
+    # df_categorical_one_hot = pd.get_dummies(df_categorical.loc[:, 'participant1_champion_championNumber'],
+    # columns='participant1_champion_championNumber', prefix='championNumber')
+    df_categorical_one_hot = clean.one_hot_encode_teams(df_categorical)
     df_merged_ohc = pd.concat([df_merged, df_categorical_one_hot], axis=1)
     df_merged_ohc['label'] = df['label']
 

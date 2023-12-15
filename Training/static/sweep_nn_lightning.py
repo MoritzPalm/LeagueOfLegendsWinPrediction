@@ -242,6 +242,7 @@ def main(config=None):
         trainer = L.Trainer(max_epochs=config.max_epochs, accelerator=device,
                             devices=1, logger=wandb_logger, callbacks=
                             [early_stop_callback, checkpoint_callback])
+        trainer.test(model, test_loader)
         trainer.fit(model, train_loader, val_loader)
         trainer.test(model, test_loader)
 

@@ -292,3 +292,54 @@ def merge_columns(df: pd.DataFrame) -> pd.DataFrame:
                 merged_series[f"{col_type}_{team}"] = pd.concat(data_list, axis=1).mean(axis=1)
 
     return pd.DataFrame(merged_series)
+
+
+def one_hot_encode_teams(df) -> pd.DataFrame:
+    """
+    One-hot encodes the champions for each team
+    :param df:
+    :return:
+    """
+    # Initialize empty DataFrames for each team
+    team_0 = pd.DataFrame()
+    team_1 = pd.DataFrame()
+
+    # Iterate over the columns and separate them into two teams
+    for col in df.columns:
+        if col.startswith('participant'):
+            participant_number = int(col.split('_')[0][11:])
+            if 1 <= participant_number <= 5:
+                # Team 0
+                team_0 = pd.concat([team_0, df[col]], axis=1)
+            elif 6 <= participant_number <= 10:
+                # Team 1
+                team_1 = pd.concat([team_1, df[col]], axis=1)
+
+    # One-hot encode the champions for each team
+    team_0_encoded = pd.get_dummies(team_0, prefix='team_0_champion', columns=team_0.columns)
+    team_1_encoded = pd.get_dummies(team_1, prefix='team_1_champion', columns=team_1.columns)
+
+    # Sum the one-hot encoded columns for each team
+    team_0_encoded = team_0_encoded.groupby(level=0, axis=1).sum()
+    team_1_encoded = team_1_encoded.groupby(level=0, axis=1).sum()
+
+    # Combine the one-hot encoded teams
+    result_df = pd.concat([team_0_encoded, team_1_encoded], axis=1)
+
+    # sort columns by name
+    sorted_columns = sorted(result_df.columns, key=sort_columns)
+    result_df = result_df[sorted_columns]
+
+    return result_df
+
+
+def sort_columns(col) -> tuple:
+    """
+    Sorts the columns by the team number and then champion number
+    :param col:
+    :return:
+    """
+    parts = col.split('_')
+    team_number = int(parts[1])  # Extract team number (0 or 1)
+    champion_number = int(parts[-1])  # Extract champion number
+    return team_number, champion_number

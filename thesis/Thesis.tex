@@ -159,6 +159,29 @@ A lot of scientific research focuses on the similar \ac{moba} DotA 2, which has 
 Due to the high similarity between these two games, it is to be expected that any findings for one game can be replicated and used for the other game with minimal adaptations.
 Nevertheless, to ensure a fair comparison, both games are presented separately below.
 
+\begin{table}
+\centering
+\begin{tblr}{ccccccccc}
+Author & Games & Features & Time & Accuracy \\
+\hline
+\citeauthor{shenMachineLearningApproach2022} \cite{shenMachineLearningApproach2022} & 10,000 & 5 & 10 min & 0.726 \\
+\citeauthor{bahrololloomiESportsPlayerPerformance2023} \cite{bahrololloomiESportsPlayerPerformance2023} & 2,901 & 15 & pre-game & 0.86 \\
+\citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018} & 7,621 & 52 & up to 25 min & 0.835 (25 min) \\
+\citeauthor{mondalDoesSupportRole2022} \cite{mondalDoesSupportRole2022} & 296 & 5 & post game & - \\
+\citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021} & 2,840 & 50 & pre-game & - \\
+\citeauthor{hitar-garciaMachineLearningMethods2023} \cite{hitar-garciaMachineLearningMethods2023} & 7583 & 26 & pre-game & 0.683 \\
+\citeauthor{zhangPredictionEsportsGame2021} \cite{zhangPredictionEsportsGame2021} & 10,000 & 38 & 10 min & 0.723 \\
+\citeauthor{whiteScalablePsychologicalMomentum2020} \cite{whiteScalablePsychologicalMomentum2020} & 87,743 & ? & pre-game & 0.721 \\
+\citeauthor{baileyStatisticalLearningEsports} \cite{baileyStatisticalLearningEsports} & 671 & 28 & 15 min & 0.76 \\
+\citeauthor{doUsingMachineLearning2021} \cite{doUsingMachineLearning2021} & 5,000 & 44 & pre-game & 0.751 \\
+\citeauthor{aniVictoryPredictionLeague2019} \cite{aniVictoryPredictionLeague2019} & 1,500 & 97 & pre-game & 0.955 \\
+\end{tblr}
+\caption{Comparison of different works on League of Legends win prediction}
+\label{tblr:related_work_lol}
+\end{table}
+
+
+
 In DotA 2, a wide variety of algorithms have been used.  
 \Citeauthor{yuMOBASliceTimeSlice2018} \cite{yuMOBASliceTimeSlice2018} trained a \ac{rnn} on 71,355 matches and achieved an accuracy of $0.7083$ at the half-way point of a match, which according to their analysis is on average at 20 minutes.
 \Citeauthor{wangPredictingMultiplayerOnline2016} \cite{wangPredictingMultiplayerOnline2016} compared Logistic Regression with a \ac{fnn} trained on up to 911,468 matches, with \ac{lr} achieving a slightly better accuracy ($0.6104$) than the \ac{fnn} ($0.588$).
@@ -176,9 +199,9 @@ An evaluation of LSTM resulted in lower accuracy, most likely due to the large a
 \ac{lol}, developed by Riot Games, is a prominent \ac{moba} game, a subgenre of real-time strategy games characterized by two teams of five players, known as 'summoners', competing against each other \cite{mora-cantallopsMOBAGamesLiterature2018}. 
 Each player controls a unique character, or 'champion', and the objective is to defeat the opposing team. 
 \Ac{lol} stands out in the \ac{moba} genre for its global popularity, attracting millions of players and a significant viewership in professional esports tournaments \cite{goughLeagueLegendsChampionships}.
-
 While sharing core gameplay elements and map layouts with other \ac{moba} games, \ac{lol} distinguishes itself through its diverse range of champions, abilities, and graphical styles. 
 This thesis will therefore focus on League of Legends, given its influential status in the \ac{moba} genre. 
+
 The game's map is bifurcated into two bases, each linked by three lanes and housing a crucial structure called the 'nexus', which is protected by turrets. 
 The game's primary goal is to destroy the opposing team's nexus.
 The map includes a jungle area in between the lanes with neutral monsters and two significant creatures, Baron Nashor and the Dragon, offering team-wide benefits when defeated.
@@ -456,7 +479,7 @@ In equations \ref{eq:gru_h} and \ref{eq_gru_h_tilde} $\odot$ denotes the element
 \end{figure}
 
 
-\section{Feature Selection Algorithms}
+\section{Feature Selection}
 \label{sec:fs_algos}
 
 Feature selection in neural network modeling is crucial, especially when dealing with high-dimensional data. It primarily aims to enhance model performance by reducing the curse of dimensionality, which can improve predictive accuracy. Additionally, it helps in reducing overfitting, as irrelevant or redundant features are eliminated, thereby improving the model's ability to generalize. This process also contributes to the interpretability of the model, making it easier to understand the learned relationships. Furthermore, it can lead to reduced training times, as the network has fewer parameters to update during learning.
@@ -509,9 +532,8 @@ The Riot Games API provided access to a plethora of essential data points, inclu
 These variables collectively form a comprehensive and multifaceted dataset crucial for the development of an effective predictive model.
 \paragraph{Other Data Sources}
 However, not all pertinent data were available directly from the Riot Games API.
-These include the winning chance of each champion and statistics on how each player performs on each relevant champion.
-To address this limitation, a web-scraping approach was employed to gather additional relevant information. The amalgamation of Riot Games API data and web-scraped data was meticulously organized and stored in a Database.
-This central repository served as the foundational storehouse from which distinct datasets were constructed, ensuring an organized and structured approach to data management.
+These include the general winning chance of each champion and statistics on how each player performs on each relevant champion.
+To address this limitation, a web-scraping approach was employed to gather additional relevant information. 
 \paragraph{Regions}
 Multiple regions were included in the data collection process, including Europe West (EUW), Europe Nordic \& East (EUN), Korea (KR), and North America (NA).
 This regional diversity contributes to the model's generalizability across different player bases and playing styles.
@@ -520,18 +542,36 @@ All matches included in the dataset were played in season 13 and on patch 20.
 It is important that all matches are played on the same patch, as a patch may cause major shifts in the balance of the game, thus making certain strategies and champions way better than others.
 
 In summary, the data collection process for this study involved a dual-pronged approach, leveraging the extensive resources provided by the Riot Games API alongside a targeted web-scraping strategy.
-The resulting raw dataset containing $20,513$ and  $3,972$ matches in the pre-game and in-game datasets respectively, stored in a PostgreSQL Database, reflects a comprehensive compilation of high-rank amateur League of Legends matches.
+The resulting raw dataset containing $38,573$ and  $3,972$ matches in the pre-game and in-game datasets respectively, stored in a PostgreSQL Database, reflects a comprehensive compilation of high-rank amateur League of Legends matches.
 
 \section{Dataset Properties}
 \label{sec:dataprop}
 
-\begin{figure}
+The dataset under consideration encompasses a total of 38,573 matches drawn from various regions. 
+A visual representation of the distribution of matches across these regions is provided in Figure \ref{fig:platformId}.
+It is important to note that due to a lack of official data pertaining to the number of games played or the number of players in each region, we are unable to conclusively verify whether the distribution of matches within our dataset aligns with the true underlying distribution of games played per region.
+
+The dataset primarily comprises matches from three major regions: North America, Western Europe, and South Korea, which collectively constitute the vast majority of matches in our dataset. 
+Consequently, it is reasonable to assume that this composition approximately mirrors the real-world distribution of matches, with the exception of China, whose matches are not available.
+This assumption is further reinforced by the distribution of spots in the world championship, where these four regions are the only ones to get guaranteed spots in the main event.
+It is worth emphasizing, however, that while regional disparities may exist in terms of match characteristics, they are not expected to be substantial. Thus, the effect of drawing a uniform sample from the underlying distribution on the quality of our data is anticipated to be negligible.
+
+\begin{figure}[ht]
 \input{./images/platformId_distribution.pgf}
-\caption{Region distribution of all matches in the dataset}
+\caption{Region distribution of all matches in the dataset. Even though North America is most likely not the largest region, it has the largest number of games in the dataset.}
 \label{fig:platformId}
 \end{figure}
 
-\begin{figure}
+As only matches with a game length of at least 16 minutes are collected, the shortest match is 16 minutes long, while the longest game is $59.62$ minutes long.
+The average match length is $27.50$ minutes.
+Figure \ref{fig:gameDuration} graphically illustrates the distribution of game durations. 
+Notably, the histogram reveals a prominent spike at the 16-minute mark.
+This spike corresponds to the earliest possible conclusion time for a match, as League of Legends prohibits surrendering prior to the 15th minute of gameplay. In instances where an entire team collectively acknowledges the futility of their chances of victory, a surrender may be initiated at the 15-minute threshold.
+If a simple majority of team members want to surrender, they have to wait until the 20th minute.
+However, should a simple majority of team members decide to surrender, they must adhere to a 20-minute waiting period before being able to do so. 
+Consequently, this unique feature of the game's mechanics clarifies the relatively diminished frequency of matches ending in the 17th to 19th-minute range within our dataset.
+
+\begin{figure}[ht]
 \input{./images/gameDuration_distribution.pgf}
 \caption{Distribution of game duration with its kernel density estimation. The spike at 16 minutes is explained by the fact that this is the earliest possible surrender time.}
 \label{fig:gameDuration}
@@ -544,13 +584,7 @@ The resulting raw dataset containing $20,513$ and  $3,972$ matches in the pre-ga
 \label{fig:tier}
 \end{figure}
 
-The matches collected have the following properties: 
-As only matches with a game length of at least 16 minutes are collected, the shortest match is 16 minutes long, while the longest game is $59.62$ minutes long.
-The average match length is $26.88$ minutes.
 
-
-\section{Data Processing}
-\label{sec:data_processing}
 
 \subsection{Pre-Game Dataset}
 \label{ssec:pre_game_data}
@@ -576,8 +610,6 @@ Each feature category like 'average gold per match' is split into 10 features, o
 This is a very fine-grained approach, greatly increasing the dimensionality of the dataset.
 For some features, a broader approach is sufficient, where statistics are averaged for each team, reducing 10 features per category to two.
 champion number one hot encoded
-\paragraph{Scaling and Partitioning}
-In order to improve  
 
 
 \subsection{In-Game Dataset}
@@ -595,6 +627,16 @@ With a minimum of five turrets required for victory, their destruction serves as
 A clear separation between the blue and red team is noticeable especially at the later stages of the game.}
 \label{fig:totalGold}
 \end{figure}
+
+
+\section{Data Processing}
+\label{sec:data_processing}
+
+
+\paragraph{Scaling and Partitioning}
+In order to improve  
+
+
 
 
 
@@ -664,6 +706,8 @@ using neural network
 
 \chapter{Discussion}
 \label{chap:discussion}
+
+retrain probably necessary for every patch
 
 
 \chapter{Conclusion}
