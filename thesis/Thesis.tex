@@ -161,7 +161,10 @@ Nevertheless, to ensure a fair comparison, both games are presented separately b
 
 \begin{table}
 \centering
-\begin{tblr}{ccccccccc}
+\captionsetup{justification=centering} 
+\caption{Comparison of different works on League of Legends win prediction}
+\label{tblr:related_work_lol}
+\begin{tblr}{ccccc}
 Author & Games & Features & Time & Accuracy \\
 \hline
 \citeauthor{shenMachineLearningApproach2022} \cite{shenMachineLearningApproach2022} & 10,000 & 5 & 10 min & 0.726 \\
@@ -176,8 +179,6 @@ Author & Games & Features & Time & Accuracy \\
 \citeauthor{doUsingMachineLearning2021} \cite{doUsingMachineLearning2021} & 5,000 & 44 & pre-game & 0.751 \\
 \citeauthor{aniVictoryPredictionLeague2019} \cite{aniVictoryPredictionLeague2019} & 1,500 & 97 & pre-game & 0.955 \\
 \end{tblr}
-\caption{Comparison of different works on League of Legends win prediction}
-\label{tblr:related_work_lol}
 \end{table}
 
 
@@ -534,6 +535,7 @@ These variables collectively form a comprehensive and multifaceted dataset cruci
 However, not all pertinent data were available directly from the Riot Games API.
 These include the general winning chance of each champion and statistics on how each player performs on each relevant champion.
 To address this limitation, a web-scraping approach was employed to gather additional relevant information. 
+In particular, we leveraged u.gg \cite{GGBestLeague}, a reputable online resource, to extract and incorporate this missing data into our dataset. 
 \paragraph{Regions}
 Multiple regions were included in the data collection process, including Europe West (EUW), Europe Nordic \& East (EUN), Korea (KR), and North America (NA).
 This regional diversity contributes to the model's generalizability across different player bases and playing styles.
@@ -555,6 +557,10 @@ The dataset primarily comprises matches from three major regions: North America,
 Consequently, it is reasonable to assume that this composition approximately mirrors the real-world distribution of matches, with the exception of China, whose matches are not available.
 This assumption is further reinforced by the distribution of spots in the world championship, where these four regions are the only ones to get guaranteed spots in the main event.
 It is worth emphasizing, however, that while regional disparities may exist in terms of match characteristics, they are not expected to be substantial. Thus, the effect of drawing a uniform sample from the underlying distribution on the quality of our data is anticipated to be negligible.
+
+Since our analysis is specifically centered on high-skilled matches, it's important to note that the distribution of ranks deviates significantly from a typical, real-world distribution, as depicted in Figure \ref{fig:tier}. 
+By exclusively incorporating games featuring at least one player of master tier or higher, we've effectively minimized the presence of lower-skilled players, particularly those in the gold and lower tiers, to the point where their representation becomes nearly inconsequential.
+
 
 \begin{figure}[ht]
 \input{./images/platformId_distribution.pgf}
@@ -585,32 +591,45 @@ Consequently, this unique feature of the game's mechanics clarifies the relative
 \end{figure}
 
 
-
 \subsection{Pre-Game Dataset}
 \label{ssec:pre_game_data}
-The raw pre-game dataset contains $368$ columns which can be categorized into four distinct groups: General Match Information, Player Information, Champion Information and Player-Champion Information.
+
+The raw pre-game dataset contains $368$ columns which can be categorized into three distinct groups: Player Information, Champion Information and Player-Champion Information.
 General match details, such as the patch number, are exclusively utilized for validation purposes and are excluded from the final dataset.
+
 \paragraph{Player Information}
-Player Information feature $x_p$ is a two-dimensional vector containing information about the player. This includes the account level, serving as an indicator of the player's accumulated gaming experience, and the player's rank, functioning as a metric for assessing the player's skill level.
-transform rank info into a single float number
-winrate calculation
+The Player Information feature, denoted as $\mathbf{x}_p$, is a two-dimensional vector that encapsulates crucial player attributes: account level and rank. 
+These attributes hold distinct roles in characterizing a player's profile within the \acl{lol} ecosystem. 
+The account level serves as an indicator of a player's cumulative game experience.
+In contrast, the player's rank serves as a quantitative metric for evaluating their skill and performance. 
+To facilitate subsequent analyses, we transform the rank from its original representation, comprising a tier (as illustrated in Figure \ref{fig:tier}) and a division (ranging from 1 to 4), into a continuous floating-point number. 
+In this transformed representation, the integer part encodes the player's tier, while the fractional part signifies their division within that tier.
+%winrate calculation
 
 \paragraph{Champion Information}
-The Champion Information feature $\mathbf{x}_c$ is composed of 
-
-However, it is noteworthy that a limitation inherent in these metrics lies in their aggregation across all player ranks, reducing their specificity to the ranks under analysis.
-conversion of champion tier into integer
+The Champion Information feature, denoted as $\mathbf{x}_c$, encompasses various aspects, including the selection of champions for each team and aggregate statistics pertaining to the performance of individual champions on average.
+Each team's champion composition is represented using a one-hot encoding scheme, resulting in two 165-dimensional vectors.
+This encoding is defined as follows:
+\begin{equation}
+\label{eq:champion_feature}
+x_i = 
+\begin{cases}
+1, & \text{if a player from the team has picked this champion} , \\
+0, & \text{otherwise.}
+\end{cases}
+\end{equation}
+Furthermore, the Champion Information feature includes several other pertinent attributes, such as win rate, pick rate, ban rate, and a tier rating. 
+The tier rating is computed by u.gg based on these metrics and converted to integer format.
+It is essential to acknowledge, however, that these metrics suffer from a limitation in their aggregation across all player ranks, resulting in reduced specificity when applied to specific rank categories.
 
 \paragraph{Player-Champion Information}
-This feature vector contains information about the player on a specific champion.
+This feature vector $\mathbf{x}_{pc}$ contains information about the player on a specific champion.
 It encompasses metrics such as the average amount of gold earned by the player across all matches played on the champion during Season 13. 
 \Citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021} found that  the most pivotal feature within this category is the player's win rate while piloting this champion.
 Unfortunately, this information is not readily available to be extracted by our web scraper,  necessitating its omission from the dataset.
-Each feature category like 'average gold per match' is split into 10 features, one for each participant.
+Each feature category like 'average gold per match' contains 10 features, one for each participant.
 This is a very fine-grained approach, greatly increasing the dimensionality of the dataset.
-For some features, a broader approach is sufficient, where statistics are averaged for each team, reducing 10 features per category to two.
-champion number one hot encoded
-
+We found that it is generally sufficient to average these statistics per team, reducing 10 features per category to 2.
 
 \subsection{In-Game Dataset}
 \label{ssec:in_game_data}
@@ -632,9 +651,9 @@ A clear separation between the blue and red team is noticeable especially at the
 \section{Data Processing}
 \label{sec:data_processing}
 
-
 \paragraph{Scaling and Partitioning}
-In order to improve  
+The dataset is split into training, validation and test set with a ration of 80:10:10. 
+The training and validation set is used to 
 
 
 
@@ -642,6 +661,13 @@ In order to improve
 
 \chapter{Experiments}
 \label{chap:experiments}
+
+
+
+
+\section{Pre-Game Classification}
+\label{sec:pregame_class}
+
 
 \subsection{Feature Selection Results}
 \label{ssec:feature_selection_results}
@@ -686,8 +712,6 @@ This illustrates the need for multivariate analysis.
 
 
 
-\section{Pre-Game Classification}
-\label{sec:pregame_class}
 using neural network
 
 \subsection{Hyperparameter Optimization}
@@ -695,8 +719,8 @@ using neural network
 
 
 
-\section{Mid-Game Classification}
-\label{sec:midgame_class}
+\section{In-Game Classification}
+\label{sec:ingame_class}
 
 
 
