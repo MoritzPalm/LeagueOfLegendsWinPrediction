@@ -2,12 +2,13 @@ import lightning as L
 import numpy as np
 import torch
 import torchmetrics
-import wandb
 from lightning.pytorch.callbacks import ModelCheckpoint
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from lightning.pytorch.loggers import WandbLogger
 from torch import optim, nn
 from torch.utils.data import Dataset, DataLoader
+
+import wandb
 
 if torch.cuda.is_available():
     print(f'PyTorch version: {torch.__version__}')
@@ -55,6 +56,13 @@ sweep_config = {
         'patience': {
             'values': [10, 20, 30, 40]
         },
+        'sequence_length': {
+            'value': 16
+        },
+        'learning_rate': {
+            'min': 1e-5,
+            'max': 1e-1
+        },
     }
 }
 
@@ -62,10 +70,10 @@ sweep_id = wandb.sweep(sweep_config, project='leaguify')
 
 
 class GRU(nn.Module):
-    def __init__(self, input_dim, hidden_dim, output_dim, gru_layers, drop_prob=0.2):
+    def __init__(self, input_dim, hidden_dim, output_dim, gru_layers, dropout_prob=0.2):
         super(GRU, self).__init__()
         self.hidden_dim = hidden_dim
-        self.gru = nn.GRU(input_dim, hidden_dim, gru_layers, batch_first=True, dropout=drop_prob)
+        self.gru = nn.GRU(input_dim, hidden_dim, gru_layers, batch_first=True, dropout=dropout_prob)
         self.fc = nn.Linear(hidden_dim, output_dim)
         self.relu = nn.ReLU()
 
@@ -82,9 +90,9 @@ class GRU(nn.Module):
 
 
 class LGRU(L.LightningModule):
-    def __init__(self, input_dim, hidden_dim, output_dim, gru_layers, drop_prob=0.2):
+    def __init__(self, input_dim, hidden_dim, output_dim, gru_layers, learning_rate, dropout_prob):
         super().__init__()
-        self.model = GRU(input_dim, hidden_dim, output_dim, gru_layers, drop_prob=drop_prob)
+        self.model = GRU(input_dim, hidden_dim, output_dim, gru_layers, dropout_prob=dropout_prob)
         self.criterion = nn.BCELoss()
         self.save_hyperparameters()
         self.accuracy = torchmetrics.classification.BinaryAccuracy()
@@ -168,20 +176,22 @@ def train(config=None):
     :return:
     """
     with wandb.init(config=config):
-        data_dir = '../../data/timeline_11_12_23'
+        data_dir = '../../data/timeline_18_12_23/processed'
+        config = wandb.config
 
         wandblogger = WandbLogger()
         training_data = wandb.Artifact('training_data', type='dataset')
         training_data.add_dir(data_dir)
         wandblogger.experiment.log_artifact(training_data)
-        X_train = TimelineDataset(data_dir + '/train.npy', sequence_length=config.sequence_length)
-        X_val = TimelineDataset(data_dir + '/val.npy', sequence_length=config.sequence_length)
-        X_test = TimelineDataset(data_dir + '/test.npy', sequence_length=config.sequence_length)
+        X_train = TimelineDataset(data_dir + '/train_timeline.npy', sequence_length=config.sequence_length)
+        X_val = TimelineDataset(data_dir + '/val_timeline.npy', sequence_length=config.sequence_length)
+        X_test = TimelineDataset(data_dir + '/test_timeline.npy', sequence_length=config.sequence_length)
         train_loader = DataLoader(X_train, batch_size=config.batch_size, shuffle=False)
         val_loader = DataLoader(X_val, batch_size=X_val.__len__(), shuffle=False)
         test_loader = DataLoader(X_test, batch_size=X_test.__len__(), shuffle=False)
-        input_size = X_train.shape[1] - 1
-        model = LGRU(input_size, config.hidden_size, 1, config.num_layers, config.dropout_prob)
+        input_size = X_train.shape[1]
+        model = LGRU(input_size, config.hidden_size, 1,
+                     config.num_layers, config.learning_rate, config.dropout_prob)
         wandblogger.watch(model)
         checkpoint_callback = ModelCheckpoint(monitor='val_acc',
                                               dirpath='checkpoints/',
@@ -197,5 +207,5 @@ def train(config=None):
         trainer.test(model, test_loader)
 
 
-if __name__ == 'main':
-    wandb.agent(sweep_id, function=train, count=1)
+if __name__ == '__main__':
+    wandb.agent(sweep_id, function=train, count=5)
