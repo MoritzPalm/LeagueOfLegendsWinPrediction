@@ -13,7 +13,8 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     :return: X_train, X_val, X_test
     """
     print("Cleaning static dataset...")
-    dir = 'data/static_11_12_23'
+    dir = 'data/static_16_12_23'
+    test_size = 4000
     # df = pd.DataFrame()
     # for f in glob.glob(f'{dir}/raw/match_*.pkl'):
     #     with open(f, 'rb') as file:
@@ -42,12 +43,12 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
 
     X_train, X_test, y_train, y_test = train_test_split(df.iloc[:, :-1],
                                                         df.iloc[:, -1],
-                                                        test_size=0.1,
+                                                        test_size=test_size,
                                                         random_state=42,
                                                         shuffle=True, stratify=df.iloc[:, -1])
     X_train, X_val, y_train, y_val = train_test_split(X_train,
                                                       y_train,
-                                                      test_size=0.1,
+                                                      test_size=test_size,
                                                       random_state=42,
                                                       shuffle=True, stratify=y_train)
 
@@ -82,14 +83,14 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     (X_train_only_merged, X_test_only_merged,
      y_train_only_merged, y_test_only_merged) = train_test_split(df_merged_label.iloc[:, :-1],
                                                                  df_merged_label.iloc[:, -1],
-                                                                 test_size=0.1,
+                                                                 test_size=test_size,
                                                                  random_state=42,
                                                                  shuffle=True,
                                                                  stratify=df_merged_label.iloc[:, -1])
     (X_train_only_merged, X_val_only_merged,
      y_train_only_merged, y_val_only_merged) = train_test_split(X_train_only_merged,
                                                                 y_train_only_merged,
-                                                                test_size=0.1,
+                                                                test_size=test_size,
                                                                 random_state=42,
                                                                 shuffle=True,
                                                                 stratify=y_train_only_merged)
@@ -129,14 +130,14 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     (X_train_merged, X_test_merged,
      y_train_merged, y_test_merged) = train_test_split(df_merged_ohc.iloc[:, :-1],
                                                        df_merged_ohc.iloc[:, -1],
-                                                       test_size=0.1,
+                                                       test_size=test_size,
                                                        random_state=42,
                                                        shuffle=True,
                                                        stratify=df_merged_ohc.iloc[:, -1])
     (X_train_merged, X_val_merged,
      y_train_merged, y_val_merged) = train_test_split(X_train_merged,
                                                       y_train_merged,
-                                                      test_size=0.1,
+                                                      test_size=test_size,
                                                       random_state=42,
                                                       shuffle=True,
                                                       stratify=y_train_merged)

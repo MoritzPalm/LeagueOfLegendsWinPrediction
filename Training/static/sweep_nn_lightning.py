@@ -38,26 +38,26 @@ sweep_config = {
             'max': 15
         },
         'dropout_prob': {
-            'values': [0.2, 0.3, 0.4, 0.5]
+            'values': [0.3, 0.4, 0.5]
         },
         'activation': {
-            'value': 'ReLU'
+            'values': ['ReLU', 'ELU', 'LeakyReLU']
         },
         'batch_size': {
-            'values': [64, 128, 256]
+            'values': [128, 256]
         },
         'learning_rate': {
             'min': 1e-5,
-            'max': 1e-1
+            'max': 1e-2
         },
         'max_epochs': {
-            'value': 200
+            'value': 500
         },
         'patience': {
-            'values': [10, 20, 30, 40]
+            'values': [30, 40]
         },
         'merged': {
-            'values': ["True", "False", "ohc"]
+            'values': ["True", "ohc"]
         }
     }
 }
@@ -102,6 +102,14 @@ class LNN(L.LightningModule):
     def __init__(self, input_size, hidden_size, num_layers, dropout_prob,
                  output_size=1, activation=nn.ReLU(), learning_rate=1e-3):
         super().__init__()
+        if activation == 'ReLU':
+            activation = nn.ReLU()
+        elif activation == 'ELU':
+            activation = nn.ELU()
+        elif activation == 'LeakyReLU':
+            activation = nn.LeakyReLU()
+        else:
+            raise ValueError(f'Activation {activation} not supported')
         self.model = NeuralNetwork(input_size, hidden_size, num_layers,
                                    dropout_prob, output_size, activation)
         self.criterion = nn.BCELoss()

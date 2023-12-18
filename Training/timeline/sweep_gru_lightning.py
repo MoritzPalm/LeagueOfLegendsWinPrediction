@@ -34,8 +34,8 @@ sweep_config = {
             'values': [128, 256, 512, 1024]
         },
         'num_layers': {
-            'min': 2,
-            'max': 15
+            'min': 1,
+            'max': 4
         },
         'dropout_prob': {
             'values': [0.2, 0.3, 0.4, 0.5]
@@ -47,21 +47,17 @@ sweep_config = {
             'values': [64, 128, 256]
         },
         'learning_rate': {
-            'min': 1e-5,
-            'max': 1e-1
+            'min': 1e-7,
+            'max': 1e-2
         },
         'max_epochs': {
-            'value': 200
+            'value': 500
         },
         'patience': {
             'values': [10, 20, 30, 40]
         },
         'sequence_length': {
             'value': 16
-        },
-        'learning_rate': {
-            'min': 1e-5,
-            'max': 1e-1
         },
     }
 }
