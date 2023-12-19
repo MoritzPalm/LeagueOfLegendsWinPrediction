@@ -265,6 +265,7 @@ where $N$ is the number of samples, $y_k$ is the true label, and $\hat{y}_k$ is 
 Backpropagation \cite{rumelhartLearningRepresentationsBackpropagating1986} is a key algorithm for training \acp{ann}, involving a forward pass to compute activations and a backward pass to compute gradients. 
 The gradients of the loss function with respect to the weights and biases are computed using the chain rule of calculus. For a given layer $l$, the gradient of the loss $E$ with respect to the weights $\mathbf{W}^{(l)}$is:
 \begin{equation}
+\Delta
 \frac{\partial E}{\partial \mathbf{W}^{(l)}} = \frac{\partial E}{\partial \mathbf{a}^{(l)}} \cdot \frac{\partial \mathbf{a}^{(l)}}{\partial \mathbf{z}^{(l)}} \cdot \frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{W}^{(l)}},
 \end{equation}
 and with respect to the bias $\mathbf{b}^{(l)}$:
@@ -277,7 +278,7 @@ with
 \end{equation}
 where $\mathbf{z}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}$and $\mathbf{a}^{(l)} = \phi(\mathbf{z}^{(l)})$. 
 The gradients are then used to update the weights and biases, typically using an optimization algorithm like gradient descent.
-The 
+The weights are updated via the update rule:
 \begin{equation}
 \mathbf{W}^{(l+1)} = \mathbf{W}^{(l)} - \eta 
 \end{equation}
@@ -340,24 +341,38 @@ Recurrent Neural Networks (RNNs) extend the capabilities of feed-forward neural 
 %\end{figure}
 The concept of a fully connected RNN was first proposed by \citeauthor{elmanFindingStructureTime1990} \cite{elmanFindingStructureTime1990}.
 
-RNNs maintain a 'state vector' in their hidden units, which implicitly contains information extracted from all past elements of the sequence \cite{lecunDeepLearning2015}. The output $\mathbf{\hat{y}}_t$ of an RNN at time step $t$ can be calculated as:
+RNNs maintain a 'state vector' in their hidden units, which implicitly contains information extracted from all past elements of the sequence \cite{lecunDeepLearning2015}. 
+
+In order to provide a simpler overview, we consider a single-layer \ac{rnn} with no bias and whose activation function is the identity function $\phi (x) = x$.
+The output $\mathbf{\hat{y}}_t$ of an \ac{rnn} at time step $t$ can be calculated as:
 \begin{equation}
 \label{eq:rnn_output}
-\mathbf{\hat{y}}_t = \phi(\mathbf{V} \mathbf{h}_t + \mathbf{b}_o),
+\mathbf{\hat{y}}_t = \mathbf{V} \cdot \mathbf{h}_t ,
 \end{equation}
-where $\mathbf{V}$ is the weight matrix and $\mathbf{b}_o$ the bias vector associated with the cell output. 
+where $\mathbf{V}$ is the weight matrix associated with the cell output. 
 The hidden state $\mathbf{h}_t$ at time step $t$ is updated as follows:
 \begin{equation}
 \label{eq:rnn_update} 
 \mathbf{h}_t =
 \begin{cases}
 	0, & \text{if } t = 0, \\
-	\tanh (\mathbf{W} \mathbf{x}_t + \mathbf{U} \mathbf{h}_{t-1} + \mathbf{b}_h), & \text{otherwise},
+	\tanh (\mathbf{W} \mathbf{x}_t + \mathbf{U} \mathbf{h}_{t-1})
+	& \text{otherwise},
 \end{cases}
 \end{equation}
-where $\tanh$ is the tanh activation function, $\mathbf{U}$ and $\mathbf{b}_h$ are the weight matrix and bias vector for the hidden state, and $\mathbf{W}$ is the weight matrix for the input. In a single-layer RNN, all weight matrices $\mathbf{W}$, $\mathbf{U}$ and $\mathbf{V}$ along with their biases $\mathbf{b}_h$ and $\mathbf{b}_o$ are shared across timesteps.
+where $\mathbf{U}$ is the weight matrix for the hidden state and $\mathbf{W}$ is the weight matrix for the input. 
+In a single-layer \ac{rnn}, all weight matrices $\mathbf{W}$, $\mathbf{U}$ and $\mathbf{V}$ (and biases) are shared across timesteps.
+The loss over $T$ timesteps is defined by 
+\begin{equation}
+E_T = \frac{1}{T} \sum_{t=1}^{T} {l(\mathbf{\hat{y}}_t, \mathbf{y})}
+\end{equation} 
+%TODO: consider changing l to e
+where $l(\mathbf{\hat{y}}_t, \mathbf{y})$ is the loss at timestep $t$.
 
-\Ac{bptt} unfolds the RNN across time steps (see Figure \ref{fig:rnn_unroll}) and applies the backpropagation algorithm. The gradients of the loss function with respect to the weights are calculated for each time step. For a given time step $t$, the gradient of the loss $E$ with respect to the weights $\mathbf{W}$ is:
+\Ac{bptt} unfolds the \ac{rnn} across time steps (see Figure \ref{fig:rnn_unroll}) and applies the backpropagation algorithm. 
+In order to train $U$, $V$ and $W$, we need their respective gradients $\frac{\delta E}{\delta \mathbf{U}}$, $\frac{\delta E}{\delta \mathbf{V}}$ and $\frac{\delta E}{\delta \mathbf{W}}$.
+
+The gradients of the loss function with respect to the weights are calculated for each time step. For a given time step $t$, the gradient of the loss $E$ with respect to the weights $\mathbf{W}$ is:
 \begin{equation}
 \frac{\partial E_\tau}{\partial \mathbf{W}} = 
 \sum_{\tau=1}^{t} 
