@@ -35,10 +35,10 @@ sweep_config = {
         },
         'num_layers': {
             'min': 1,
-            'max': 4
+            'max': 3
         },
         'dropout_prob': {
-            'values': [0.2, 0.3, 0.4, 0.5]
+            'values': [0.0, 0.1, 0.2, 0.3, 0.4, ]
         },
         'activation': {
             'value': 'ReLU'
@@ -48,13 +48,13 @@ sweep_config = {
         },
         'learning_rate': {
             'min': 1e-7,
-            'max': 1e-2
+            'max': 1e-3
         },
         'max_epochs': {
             'value': 500
         },
         'patience': {
-            'values': [10, 20, 30, 40]
+            'values': [40, 60, 80, 100]
         },
         'sequence_length': {
             'value': 16

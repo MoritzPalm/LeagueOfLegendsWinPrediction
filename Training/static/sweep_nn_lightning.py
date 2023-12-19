@@ -237,7 +237,8 @@ def main(config=None):
                                      shuffle=False)
             input_size = X_train.shape[1] - 1
 
-        model = LNN(input_size, config.hidden_size, config.num_layers, config.dropout_prob)
+        model = LNN(input_size=input_size, hidden_size=config.hidden_size, num_layers=config.num_layers,
+                    dropout_prob=config.dropout_prob, activation=config.activation, learning_rate=config.learning_rate)
         wandb_logger.watch(model)
         checkpoint_callback = ModelCheckpoint(monitor='val_acc',
                                               dirpath='checkpoints/',
