@@ -140,6 +140,13 @@ Regensburg, den \@date\\
 \label{chap:intro}
 
 
+\ac{lol}, developed by Riot Games, is a prominent \ac{moba} game, a sub genre of real-time strategy games characterized by two teams of five players, known as 'summoners', competing against each other \cite{mora-cantallopsMOBAGamesLiterature2018}. 
+Each player controls a unique character, or 'champion', and the objective is to defeat the opposing team. 
+\Ac{lol} stands out in the \ac{moba} genre for its global popularity, attracting millions of players and a significant viewership in professional esports tournaments \cite{goughLeagueLegendsChampionships}.
+While sharing core gameplay elements and map layouts with other \ac{moba} games, \ac{lol} distinguishes itself through its diverse range of champions, abilities, and graphical styles. 
+This thesis will therefore focus on League of Legends, given its influential status in the \ac{moba} genre. 
+
+
 esports is highly relevant due to it being a huge and strongly growing market.
 In 2019, the esports industry's market size was valued at approximately 25B USD \cite{ahnOneBillionDollar2020}.
 Esports and mobas in particular are hard to understand and follow. A live game prediction view can help fans understand the action and decisions made better and help immerse the audience by detecting upsets and swings in win probability.
@@ -196,13 +203,7 @@ An evaluation of LSTM resulted in lower accuracy, most likely due to the large a
 \section{League of Legends}
 \label{sec:LoL}
 
-\ac{lol}, developed by Riot Games, is a prominent \ac{moba} game, a sub genre of real-time strategy games characterized by two teams of five players, known as 'summoners', competing against each other \cite{mora-cantallopsMOBAGamesLiterature2018}. 
-Each player controls a unique character, or 'champion', and the objective is to defeat the opposing team. 
-\Ac{lol} stands out in the \ac{moba} genre for its global popularity, attracting millions of players and a significant viewership in professional esports tournaments \cite{goughLeagueLegendsChampionships}.
-While sharing core gameplay elements and map layouts with other \ac{moba} games, \ac{lol} distinguishes itself through its diverse range of champions, abilities, and graphical styles. 
-This thesis will therefore focus on League of Legends, given its influential status in the \ac{moba} genre. 
-
-The game's map is bifurcated into two bases, each linked by three lanes and housing a crucial structure called the 'nexus', which is protected by turrets. 
+\Ac{lol} is played with 5 players on each team on a map which is bifurcated into two bases, each linked by three lanes and housing a crucial structure called the 'nexus', which is protected by turrets. 
 The game's primary goal is to destroy the opposing team's nexus.
 The map includes a jungle area in between the lanes with neutral monsters and two significant creatures, Baron Nashor and the Dragon, offering team-wide benefits when defeated.
 Players must accumulate gold and \ac{xp} through defeating minions, neutral monsters, or enemy champions. 
@@ -211,7 +212,8 @@ These in-game currencies are essential for purchasing items and levelling up, th
 Player roles in \ac{lol} are typically assigned with one player in the top lane, one in the mid lane, two in the bottom lane, and one in the jungle, facilitating strategic diversity and role specialization.
 Players select from a roster of 165 champions, each with unique abilities and characteristics, to compete in matches.
 Champion selection is a pivotal element of \ac{lol} gameplay, requiring players to consider team composition, damage types, assigned roles, and personal proficiency with specific champions. 
-The theoretical number of possible champion combinations in a game is $\binom{165}{10} = \frac{165!}{10! \cdot (165-10)!}$, underscoring the game's strategic depth.
+The theoretical number of possible champion combinations in a game is $\binom{165}{10} = \num{3.21e15}$.
+Although this number is quite a bit smaller in reality as not every champion can play every role and most players are only proficient with 15-20 champions \cite{2022Recap}, this underscores the game's strategic depth.
 
 Each year, \ac{lol} introduces a new 'season', bringing substantial changes, and Riot Games issues bi-weekly patches to adjust champion balance, influencing the prevailing game strategies, or 'meta'.
 These patches can also include the release of a new champion or the rework of an old one.
@@ -224,7 +226,8 @@ This system ensures that players are matched with and against others of comparab
 \section{Neural Networks}
 \label{sec:nn}
 
-\Acp{ann} are computational models that emulate the processing patterns of the human brain. The fundamental computational unit of an ANN is the neuron, a concept first proposed by \citeauthor{mccullochLogicalCalculusIdeas1943} \cite{mccullochLogicalCalculusIdeas1943}. 
+\Acp{ann} are computational models that emulate the processing patterns of the human brain. The fundamental computational unit of an ANN is the neuron, a concept first proposed by \citeauthor{mccullochLogicalCalculusIdeas1943} \cite{mccullochLogicalCalculusIdeas1943}.
+
 A neuron computes an output activation $a$ from a set of input values $\mathbf{x} = (x_1, x_2, \ldots, x_m)$, where $m$ denotes the number of inputs. 
 The neuron's weighted input $z$ is calculated as the dot product of the input vector $\mathbf{x}$ and the weight vector $\mathbf{w} = (w_1, w_2, \ldots, w_m)$, plus a bias term $b$:
 \begin{equation}
@@ -238,13 +241,18 @@ a = \phi(z) = \phi(\mathbf{w}^\top \mathbf{x} + b).
 The \ac{mlp}, introduced by \citeauthor{rosenblattPerceptronProbabilisticModel1958} \cite{rosenblattPerceptronProbabilisticModel1958}, organizes neurons into layers. 
 Data flows from the input layer, through one or more hidden layers, to the output layer. In a fully connected feed-forward network, the computation in each layer $l$ is:
 \begin{equation}
-\mathbf{a}^{(l)} = \phi (\mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}),
+\mathbf{z}^{(l)} = \phi (\mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}),
 \end{equation}
 where $\mathbf{a}^{(l)}$ represents the activation of layer $l$, $\mathbf{W}^{(l)}$ is the weight matrix, and $\mathbf{b}^{(l)}$ the bias vector. 
+The vector $\mathbf{z}^{(l)}$ is then passed through the activation function for layer $l$, which is applied elementwise:
+\begin{equation}
+\mathbf{a}^{(l)} = \phi (\mathbf{z}^{(l)}).
+\end{equation}
 The output layer $L$ produces the network's prediction $\hat{y}$.
-
 To approximate any measurable function, an \ac{ann} requires at least one hidden layer \cite{hornikMultilayerFeedforwardNetworks1989}. 
-The network's weights and biases are adjusted during training to minimize a loss function $E$. Common loss functions include \ac{mse} for regression tasks:
+The network's weights and biases are adjusted during training to minimize a loss function $E$.
+
+Common loss functions include \ac{mse} for regression tasks:
 \begin{equation}
 E_N = \frac{1}{N} \sum_{k=1}^{N}(y_{k} - \hat{y}_{k})^2,
 \end{equation}
@@ -254,13 +262,25 @@ E_N = -\frac{1}{N} \sum_{k=1}^{N} \left( y_k \ln{\hat{y}_k} + (1-y_k) \ln{(1-\ha
 \end{equation}
 where $N$ is the number of samples, $y_k$ is the true label, and $\hat{y}_k$ is the predicted value.
 
-Backpropagation is a key algorithm for training \acp{ann}, involving a forward pass to compute activations and a backward pass to compute gradients. 
+Backpropagation \cite{rumelhartLearningRepresentationsBackpropagating1986} is a key algorithm for training \acp{ann}, involving a forward pass to compute activations and a backward pass to compute gradients. 
 The gradients of the loss function with respect to the weights and biases are computed using the chain rule of calculus. For a given layer $l$, the gradient of the loss $E$ with respect to the weights $\mathbf{W}^{(l)}$is:
 \begin{equation}
 \frac{\partial E}{\partial \mathbf{W}^{(l)}} = \frac{\partial E}{\partial \mathbf{a}^{(l)}} \cdot \frac{\partial \mathbf{a}^{(l)}}{\partial \mathbf{z}^{(l)}} \cdot \frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{W}^{(l)}},
 \end{equation}
+and with respect to the bias $\mathbf{b}^{(l)}$:
+\begin{equation}
+\frac{\partial E}{\partial \mathbf{b}^{(l)}} = \frac{\partial E}{\partial \mathbf{z}^{(l)}} \cdot \frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{b}^{(l)}} 
+\end{equation}
+with 
+\begin{equation}
+\frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{b}^{(l)}} = 1
+\end{equation}
 where $\mathbf{z}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}$and $\mathbf{a}^{(l)} = \phi(\mathbf{z}^{(l)})$. 
 The gradients are then used to update the weights and biases, typically using an optimization algorithm like gradient descent.
+The 
+\begin{equation}
+\mathbf{W}^{(l+1)} = \mathbf{W}^{(l)} - \eta 
+\end{equation}
 
 Through iterative forward and backward propagation, the network gradually converges to a state where the loss is minimized, indicating successful learning of the patterns in the data.
 
@@ -318,29 +338,36 @@ Recurrent Neural Networks (RNNs) extend the capabilities of feed-forward neural 
 %\caption{Elman Recurrent Unit \cite{hewamalageRecurrentNeuralNetworks2021}}
 %\label{fig:elman}
 %\end{figure}
-The concept of a fully connected RNN was first proposed by \citeauthor{elmanFindingStructureTime1990} \cite{elmanFindingStructureTime1990}. 
-RNNs maintain a 'state vector' in their hidden units, which implicitly contains information extracted from all past elements of the sequence \cite{lecunDeepLearning2015}. The output \( \hat{y}_t \) of an RNN at time step \( t \) can be calculated as:
+The concept of a fully connected RNN was first proposed by \citeauthor{elmanFindingStructureTime1990} \cite{elmanFindingStructureTime1990}.
+
+RNNs maintain a 'state vector' in their hidden units, which implicitly contains information extracted from all past elements of the sequence \cite{lecunDeepLearning2015}. The output $\mathbf{\hat{y}}_t$ of an RNN at time step $t$ can be calculated as:
 \begin{equation}
 \label{eq:rnn_output}
-\hat{y}_t = \sigma(V h_t + b_o),
+\mathbf{\hat{y}}_t = \phi(\mathbf{V} \mathbf{h}_t + \mathbf{b}_o),
 \end{equation}
-where \( V \) is the weight matrix and \( b_o \) the bias vector associated with the cell output. 
-The hidden state \( h_t \) at time step \( t \) is updated as follows:
+where $\mathbf{V}$ is the weight matrix and $\mathbf{b}_o$ the bias vector associated with the cell output. 
+The hidden state $\mathbf{h}_t$ at time step $t$ is updated as follows:
 \begin{equation}
 \label{eq:rnn_update} 
-h_t =
+\mathbf{h}_t =
 \begin{cases}
 	0, & \text{if } t = 0, \\
-	\sigma (W x_t + U h_{t-1} + b_h), & \text{otherwise},
+	\tanh (\mathbf{W} \mathbf{x}_t + \mathbf{U} \mathbf{h}_{t-1} + \mathbf{b}_h), & \text{otherwise},
 \end{cases}
 \end{equation}
-where \( \sigma \) is the sigmoid activation function, \( U \) and \( b_h \) are the weight matrix and bias vector for the hidden state, and \( W \) is the weight matrix for the input. In a single-layer RNN, one hidden weight matrix \( W_h \) is shared across all timesteps.
+where $\tanh$ is the tanh activation function, $\mathbf{U}$ and $\mathbf{b}_h$ are the weight matrix and bias vector for the hidden state, and $\mathbf{W}$ is the weight matrix for the input. In a single-layer RNN, all weight matrices $\mathbf{W}$, $\mathbf{U}$ and $\mathbf{V}$ along with their biases $\mathbf{b}_h$ and $\mathbf{b}_o$ are shared across timesteps.
 
-\Ac{bptt} unfolds the RNN across time steps (see figure \ref{fig:rnn_unroll}) and applies the backpropagation algorithm. The gradients of the loss function with respect to the weights are calculated for each time step. For a given time step \( t \), the gradient of the loss \( E \) with respect to the weights \( W \) is:
+\Ac{bptt} unfolds the RNN across time steps (see Figure \ref{fig:rnn_unroll}) and applies the backpropagation algorithm. The gradients of the loss function with respect to the weights are calculated for each time step. For a given time step $t$, the gradient of the loss $E$ with respect to the weights $\mathbf{W}$ is:
 \begin{equation}
-\frac{\partial E}{\partial W} = \sum_{\tau=1}^{t} \frac{\partial E}{\partial \hat{y}_\tau} \cdot \frac{\partial \hat{y}_\tau}{\partial h_\tau} \cdot \frac{\partial h_\tau}{\partial W},
+\frac{\partial E_\tau}{\partial \mathbf{W}} = 
+\sum_{\tau=1}^{t} 
+\frac{\partial E}{\partial \mathbf{\hat{y}}_\tau} 
+\cdot 
+\frac{\partial \mathbf{\hat{y}}_\tau}{\partial \mathbf{h}_\tau} 
+\cdot 
+\frac{\partial \mathbf{h}_\tau}{\partial \mathbf{W}},
 \end{equation}
-where $\frac{\partial E}{\partial \hat{y}_\tau}$ is the gradient of the loss with respect to the output at time \( \tau \), \( \frac{\partial \hat{y}_\tau}{\partial h_\tau} \) is the gradient of the output with respect to the hidden state, and \( \frac{\partial h_\tau}{\partial W} \) is the gradient of the hidden state with respect to the weights. This process is repeated for all weights and biases in the network, allowing the RNN to learn from sequences by adjusting its parameters based on the temporal context.
+where $\frac{\partial E}{\partial \hat{y}_\tau}$ is the gradient of the loss with respect to the output at time $\tau$, $\frac{\partial \hat{y}_\tau}{\partial h_\tau}$ is the gradient of the output with respect to the hidden state, and $\frac{\partial h_\tau}{\partial \mathbf{W}}$ is the gradient of the hidden state with respect to the weights. This process is repeated for all weights and biases in the network, allowing the RNN to learn from sequences by adjusting its parameters based on the temporal context.
 
 However, as demonstrated by \citeauthor{bengioLearningLongtermDependencies1994} \cite{bengioLearningLongtermDependencies1994}, RNNs face challenges with exploding or vanishing gradients, particularly in long sequences. This issue hinders their ability to learn long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}. 
 
@@ -401,16 +428,15 @@ z_t = \sigma (W_z x_t + U_z h_{t-1} + b_z)
 The hidden state update is a linear interpolation between the previous activation $h_{t-1}$ and the candidate activation $\tilde{h}_t$, where the update gate $z_t$ influences how much the hidden state is changed \cite{chungEmpiricalEvaluationGated2014}:
 \begin{equation}
 \label{eq:gru_h}
-h_t = (1-z_t) \odot h_t + z_t \odot \tilde{h}_t
+h_t = (1-z_t) \odot h_{t-1} + z_t \odot \tilde{h}_t
 \end{equation}
 with
 \begin{equation}
 \label{eq_gru_h_tilde}
-\tilde{h}_t = g(W_h x_t + U_h (r_t \odot h_{t-1} + b_h)
+\tilde{h}_t = \tanh(W_h x_t + U_h (r_t \odot h_{t-1} + b_h)
 \end{equation}
 .
-In equations \ref{eq:gru_h} and \ref{eq_gru_h_tilde} $\odot$ denotes the element-wise (Hadamard) multiplication and the function $g$ in equation \ref{eq_gru_h_tilde} is the activation function.
-
+In equations (\ref{eq:gru_h}) and (\ref{eq_gru_h_tilde}) $\odot$ denotes the element-wise (Hadamard) multiplication.
 
 \begin{figure}
 \centering
