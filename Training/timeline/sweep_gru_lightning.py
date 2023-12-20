@@ -191,15 +191,15 @@ def train(config=None):
     with wandb.init(config=config):
         config = wandb.config
         if config.dataset == 'full':
-            data_dir = '../../data/timeline_20_12_23/processed/full'
+            data_dir = 'data/timeline_20_12_23/processed/full'
         elif config.dataset == 'avg':
-            data_dir = '../../data/timeline_20_12_23/processed/avg'
+            data_dir = 'data/timeline_20_12_23/processed/avg'
         elif config.dataset == 'gold':
-            data_dir = '../../data/timeline_20_12_23/processed/gold'
+            data_dir = 'data/timeline_20_12_23/processed/gold'
         elif config.dataset == 'manual':
-            data_dir = '../../data/timeline_20_12_23/processed/manual'
+            data_dir = 'data/timeline_20_12_23/processed/manual'
         else:
-            data_dir = '../../data/timeline_18_12_23/processed'
+            data_dir = 'data/timeline_18_12_23/processed'
 
         wandblogger = WandbLogger()
         training_data = wandb.Artifact('training_data', type='dataset')
@@ -231,4 +231,8 @@ def train(config=None):
 
 
 if __name__ == '__main__':
+<<<<<<< Updated upstream
     wandb.agent(sweep_id, function=train, count=3)
+=======
+    wandb.agent(sweep_id, function=train, count=500)
+>>>>>>> Stashed changes

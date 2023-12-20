@@ -192,7 +192,7 @@ def main(config=None):
     :return:
     """
     with wandb.init(config=config):
-        data_dir = '../../data/static_11_12_23/processed'
+        data_dir = 'data/static_11_12_23/processed'
         config = wandb.config
 
         wandb_logger = WandbLogger()
@@ -257,4 +257,4 @@ def main(config=None):
 
 
 if __name__ == '__main__':
-    wandb.agent(sweep_id, function=main, count=1)
+    wandb.agent(sweep_id, function=main, count=2000)
