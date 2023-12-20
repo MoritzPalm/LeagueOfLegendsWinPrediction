@@ -65,6 +65,9 @@ sweep_config = {
         'fc_layers': {
             'values': [1, 2, 3]
         },
+        'dataset': {
+            'values': ['full', 'avg', 'gold', 'manual']
+        }
     }
 }
 
@@ -186,8 +189,17 @@ def train(config=None):
     :return:
     """
     with wandb.init(config=config):
-        data_dir = '../../data/timeline_18_12_23/processed'
         config = wandb.config
+        if config.dataset == 'full':
+            data_dir = '../../data/timeline_20_12_23/processed/full'
+        elif config.dataset == 'avg':
+            data_dir = '../../data/timeline_20_12_23/processed/avg'
+        elif config.dataset == 'gold':
+            data_dir = '../../data/timeline_20_12_23/processed/gold'
+        elif config.dataset == 'manual':
+            data_dir = '../../data/timeline_20_12_23/processed/manual'
+        else:
+            data_dir = '../../data/timeline_18_12_23/processed'
 
         wandblogger = WandbLogger()
         training_data = wandb.Artifact('training_data', type='dataset')
@@ -219,4 +231,4 @@ def train(config=None):
 
 
 if __name__ == '__main__':
-    wandb.agent(sweep_id, function=train, count=1)
+    wandb.agent(sweep_id, function=train, count=3)
