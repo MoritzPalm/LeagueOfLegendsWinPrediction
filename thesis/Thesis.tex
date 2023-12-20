@@ -532,12 +532,12 @@ Feature selection methods can be broadly categorized into three distinct types:
 \end{description}
 Below, two different feature selection methods are discussed in detail.
 
-\subsection{Pearson's correlation coefficient}
+\subsection{Pearson's Correlation Coefficient}
 \label{ssec:pearsons}
 \Ac{pcc} is a statistical measure widely used to evaluate the linear relationship between two variables. 
 Specifically, we consider its application in the context of feature selection in machine learning, where it is used to assess the linear correlation between input features and the target variable. 
 We regard the input vector $\mathbf{x}$ as a manifestation of an underlying, unknown distribution. 
-Here, $X_i$ represents the random variable corresponding to the $i^{\text{th}}$ component of $\mathbf{x}$, and $\mathbf{y}$ is the target value vector, viewed as a realization of the random variable $Y$ \cite{guyonIntroductionVariableFeature}. 
+Here, $X_i$ represents the random variable corresponding to the $i^{\text{th}}$ component of $\mathbf{x}$, and $y$ is the target value, viewed as a realization of the random variable $Y$ \cite{guyonIntroductionVariableFeature}. 
 \Ac{pcc} is employed to quantify the linear correlation between these two random variables. It is defined by the formula:
 \begin{equation}
 R(i) = \frac{\text{cov}(X_i, Y)}{\sqrt{\text{var}(X_i) \cdot \text{var}(Y)}},
@@ -574,7 +574,7 @@ Riot Games themselves considers any rank above Diamond 3 as 'Elite' \cite{riotga
 Due to the fact that for a match to be included in the dataset, only one out of ten players needs to hold one of the aforementioned highest ranks, some slightly lower ranked players are also present in the dataset.
 These ranks combined account for the top $0.2\%$ of all players \cite{riotgamesRankedTiersDivisions2023}.
 \paragraph{Riot Games API}
-The primary source of data stemmed from the Riot Games API, a comprehensive repository of information pertaining to League of Legends gameplay.
+The primary source of data stemmed from the Riot Games API \cite{RiotDeveloperPortal}, a comprehensive repository of information pertaining to League of Legends gameplay.
 The Riot Games API provided access to a plethora of essential data points, including champion statistics, general match information, timeline details, and player-specific information.
 These variables collectively form a comprehensive and multifaceted dataset crucial for the development of an effective predictive model.
 \paragraph{Other Data Sources}

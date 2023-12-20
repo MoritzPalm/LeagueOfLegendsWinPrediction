@@ -59,6 +59,12 @@ sweep_config = {
         'sequence_length': {
             'value': 16
         },
+        'model': {
+            'values': ['GRU', 'RNN']
+        },
+        'fc_layers': {
+            'values': [1, 2, 3]
+        },
     }
 }
 
@@ -66,16 +72,24 @@ sweep_id = wandb.sweep(sweep_config, project='leaguify')
 
 
 class GRU(nn.Module):
-    def __init__(self, input_dim, hidden_dim, output_dim, gru_layers, dropout_prob=0.2):
+    def __init__(self, input_dim, hidden_dim, output_dim, gru_layers, dropout_prob=0.2, gru=True, fc_layers=1):
         super(GRU, self).__init__()
         self.hidden_dim = hidden_dim
-        self.gru = nn.GRU(input_dim, hidden_dim, gru_layers, batch_first=True, dropout=dropout_prob)
-        self.fc = nn.Linear(hidden_dim, output_dim)
+        if gru:
+            self.gru = nn.GRU(input_dim, hidden_dim, gru_layers, batch_first=True, dropout=dropout_prob)
+        else:
+            self.gru = nn.RNN(input_dim, hidden_dim, gru_layers, batch_first=True, dropout=dropout_prob)
+        self.linear_relu_stack = nn.Sequential()
+        for layer in range(fc_layers - 1):
+            self.linear_relu_stack.append(nn.Linear(hidden_dim, hidden_dim))
+            self.linear_relu_stack.append(nn.ReLU())
+        self.linear_relu_stack.append(nn.Linear(hidden_dim, output_dim))
         self.relu = nn.ReLU()
 
     def forward(self, x, h=None):
         out, h = self.gru(x, h)
-        out = self.fc(self.relu(out[:, -1]))
+        out = out[:, -1]  # get last output only, as we are performing sequence classification
+        out = self.linear_relu_stack(out)
         out = nn.Sigmoid()(out)
         return out, h
 
@@ -86,9 +100,9 @@ class GRU(nn.Module):
 
 
 class LGRU(L.LightningModule):
-    def __init__(self, input_dim, hidden_dim, output_dim, gru_layers, learning_rate, dropout_prob):
+    def __init__(self, input_dim, hidden_dim, output_dim, gru_layers, learning_rate, dropout_prob, gru, fc_layers):
         super().__init__()
-        self.model = GRU(input_dim, hidden_dim, output_dim, gru_layers, dropout_prob=dropout_prob)
+        self.model = GRU(input_dim, hidden_dim, output_dim, gru_layers, dropout_prob, gru, fc_layers)
         self.criterion = nn.BCELoss()
         self.save_hyperparameters()
         self.accuracy = torchmetrics.classification.BinaryAccuracy()
@@ -187,7 +201,8 @@ def train(config=None):
         test_loader = DataLoader(X_test, batch_size=X_test.__len__(), shuffle=False)
         input_size = X_train.shape[1]
         model = LGRU(input_size, config.hidden_size, 1,
-                     config.num_layers, config.learning_rate, config.dropout_prob)
+                     config.num_layers, config.learning_rate,
+                     config.dropout_prob, config.model, config.fc_layers)
         wandblogger.watch(model)
         checkpoint_callback = ModelCheckpoint(monitor='val_acc',
                                               dirpath='checkpoints/',
@@ -204,4 +219,4 @@ def train(config=None):
 
 
 if __name__ == '__main__':
-    wandb.agent(sweep_id, function=train, count=5)
+    wandb.agent(sweep_id, function=train, count=1)

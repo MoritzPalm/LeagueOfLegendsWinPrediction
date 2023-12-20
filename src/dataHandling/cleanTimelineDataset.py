@@ -143,12 +143,59 @@ def test_match_length(df: pd.DataFrame) -> bool:
         return False
 
 
-def cleanTimelineDataset():
+def average_over_teams(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Averages the values of the columns over the two teams
+    :param df: DataFrame where the columns are named participant{i}_{type}
+    :return:
+    """
+    # Columns that should be left as they are
+    columns_left = ['timestamp', 'winning_team']
+    # Extract unique types from the column names
+    types = set(col.split('_')[-1] for col in df.columns)
+
+    # Create a new DataFrame for the results
+    result_df = pd.DataFrame()
+
+    for type in types:
+        # Columns for participants 1-5
+        cols_1_to_5 = [f'participant{i}_{type}' for i in range(1, 6) if f'participant{i}_{type}' in df.columns]
+        # Columns for participants 6-10
+        cols_6_to_10 = [f'participant{i}_{type}' for i in range(6, 11) if f'participant{i}_{type}' in df.columns]
+
+        # Calculate averages and add to the result DataFrame
+        if cols_1_to_5:
+            result_df[f'team0_{type}'] = df[cols_1_to_5].mean(axis=1)
+        if cols_6_to_10:
+            result_df[f'team1_{type}'] = df[cols_6_to_10].mean(axis=1)
+
+    # Add the remaining columns
+    for col in columns_left:
+        result_df[col] = df[col]
+
+    return result_df
+
+
+def drop_columns_not_including(df, substrings):
+    """
+    Drops columns that do not include any of the substrings
+    :param df:
+    :param substrings:
+    :return:
+    """
+    # Keep only columns that contain any of the substrings
+    relevant_columns = [col for col in df.columns if any(substring in col for substring in substrings)]
+
+    # Drop columns that are not in relevant_columns
+    return df[relevant_columns]
+
+
+def cleanTimelineDataset(save=True):
     """
     Cleans the timeline dataset and saves it to the data/processed folder
     :return: None
     """
-    dir = 'data/timeline_18_12_23'
+    dir = 'data/timeline_20_12_23'
     # df = pd.DataFrame()
     # for f in glob.glob(f'{dir}/raw/*.pkl'):
     #     with open(f, 'rb') as file:
@@ -165,30 +212,123 @@ def cleanTimelineDataset():
     df = make_label_last_col(df)
     df = prune_timeline(df)
     df = drop_short_matches(df)
+
     columns = df.columns
+
     if not test_match_length(df):
         raise ValueError('Timeline length of at least one match is not 16')
     train_df, train_labels, test_df, test_labels, val_df, val_labels = train_val_test_split(df, 1000, 1000)
+
     scaler = StandardScaler()
     X_train = scaler.fit_transform(train_df)
     X_test = scaler.transform(test_df)
     X_val = scaler.transform(val_df)
+
     X_train = np.append(X_train, np.expand_dims(train_labels, axis=1), axis=1)
     X_test = np.append(X_test, np.expand_dims(test_labels, axis=1), axis=1)
     X_val = np.append(X_val, np.expand_dims(val_labels, axis=1), axis=1)
+
     df_train = pd.DataFrame(X_train, columns=columns)
     df_test = pd.DataFrame(X_test, columns=columns)
     df_val = pd.DataFrame(X_val, columns=columns)
+
     print(f'X_train shape: {X_train.shape}')
     print(f'X_test shape: {X_test.shape}')
     print(f'X_val shape: {X_val.shape}')
-    np.save(f'{dir}/processed/train_timeline', X_train)
-    np.save(f'{dir}/processed/test_timeline', X_test)
-    np.save(f'{dir}/processed/val_timeline', X_val)
-    df_train.to_pickle(f'{dir}/processed/train_timeline.pkl')
-    df_test.to_pickle(f'{dir}/processed/test_timeline.pkl')
-    df_val.to_pickle(f'{dir}/processed/val_timeline.pkl')
+    if save:
+        dir_full = f'{dir}/processed/full'
+        np.save(f'{dir_full}/train_timeline', X_train)
+        np.save(f'{dir_full}/test_timeline', X_test)
+        np.save(f'{dir_full}/val_timeline', X_val)
+        df_train.to_pickle(f'{dir_full}/train_timeline.pkl')
+        df_test.to_pickle(f'{dir_full}/test_timeline.pkl')
+        df_val.to_pickle(f'{dir_full}/val_timeline.pkl')
+
+    # averaging over teams
+    df = average_over_teams(df)
+    columns = df.columns
+    (train_avg_df, train_avg_labels, test_avg_df, test_avg_labels, val_avg_df, val_avg_labels) = (
+        train_val_test_split(df, 1000, 1000))
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(train_avg_df)
+    X_test = scaler.transform(test_avg_df)
+    X_val = scaler.transform(val_avg_df)
+
+    X_train = np.append(X_train, np.expand_dims(train_avg_labels, axis=1), axis=1)
+    X_test = np.append(X_test, np.expand_dims(test_avg_labels, axis=1), axis=1)
+    X_val = np.append(X_val, np.expand_dims(val_avg_labels, axis=1), axis=1)
+
+    df_train = pd.DataFrame(X_train, columns=columns)
+    df_test = pd.DataFrame(X_test, columns=columns)
+    df_val = pd.DataFrame(X_val, columns=columns)
+
+    if save:
+        dir_avg = f'{dir}/processed/avg'
+        np.save(f'{dir_avg}/train_timeline', X_train)
+        np.save(f'{dir_avg}/test_timeline', X_test)
+        np.save(f'{dir_avg}/val_timeline', X_val)
+        df_train.to_pickle(f'{dir_avg}/train_timeline.pkl')
+        df_test.to_pickle(f'{dir_avg}/test_timeline.pkl')
+        df_val.to_pickle(f'{dir_avg}/val_timeline.pkl')
+
+    # averaged over teams only gold
+    cols = ['totalGold', 'winning_team']
+    df_gold = drop_columns_not_including(df, cols)
+    df_gold_cols = df_gold.columns
+
+    (train_gold_df, train_gold_labels, test_gold_df, test_gold_labels, val_gold_df, val_gold_labels) = (
+        train_val_test_split(df_gold, 1000, 1000))
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(train_gold_df)
+    X_test = scaler.transform(test_gold_df)
+    X_val = scaler.transform(val_gold_df)
+
+    X_train = np.append(X_train, np.expand_dims(train_gold_labels, axis=1), axis=1)
+    X_test = np.append(X_test, np.expand_dims(test_gold_labels, axis=1), axis=1)
+    X_val = np.append(X_val, np.expand_dims(val_gold_labels, axis=1), axis=1)
+
+    df_train = pd.DataFrame(X_train, columns=df_gold_cols)
+    df_test = pd.DataFrame(X_test, columns=df_gold_cols)
+    df_val = pd.DataFrame(X_val, columns=df_gold_cols)
+
+    if save:
+        dir_gold = f'{dir}/processed/gold'
+        np.save(f'{dir_gold}/train_timeline', X_train)
+        np.save(f'{dir_gold}/test_timeline', X_test)
+        np.save(f'{dir_gold}/val_timeline', X_val)
+        df_train.to_pickle(f'{dir_gold}/train_timeline.pkl')
+        df_test.to_pickle(f'{dir_gold}/test_timeline.pkl')
+        df_val.to_pickle(f'{dir_gold}/val_timeline.pkl')
+
+    # averaged over teams manual selection
+    cols = ['totalGold', 'kills', 'level', 'totalDamageDone', 'winning_team']
+    df_manual = drop_columns_not_including(df, cols)
+    df_manual_cols = df_manual.columns
+
+    (train_manual_df, train_manual_labels, test_manual_df, test_manual_labels, val_manual_df, val_manual_labels) = (
+        train_val_test_split(df_manual, 1000, 1000))
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(train_manual_df)
+    X_test = scaler.transform(test_manual_df)
+    X_val = scaler.transform(val_manual_df)
+
+    X_train = np.append(X_train, np.expand_dims(train_manual_labels, axis=1), axis=1)
+    X_test = np.append(X_test, np.expand_dims(test_manual_labels, axis=1), axis=1)
+    X_val = np.append(X_val, np.expand_dims(val_manual_labels, axis=1), axis=1)
+
+    df_train = pd.DataFrame(X_train, columns=df_manual_cols)
+    df_test = pd.DataFrame(X_test, columns=df_manual_cols)
+    df_val = pd.DataFrame(X_val, columns=df_manual_cols)
+
+    if save:
+        dir_manual = f'{dir}/processed/manual'
+        np.save(f'{dir_manual}/train_timeline', X_train)
+        np.save(f'{dir_manual}/test_timeline', X_test)
+        np.save(f'{dir_manual}/val_timeline', X_val)
+        df_train.to_pickle(f'{dir_manual}/train_timeline.pkl')
+        df_test.to_pickle(f'{dir_manual}/test_timeline.pkl')
+        df_val.to_pickle(f'{dir_manual}/val_timeline.pkl')
 
 
 if __name__ == '__main__':
-    cleanTimelineDataset()
+    cleanTimelineDataset(save=True)
