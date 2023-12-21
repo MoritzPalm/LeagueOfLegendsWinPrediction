@@ -263,25 +263,26 @@ E_N = -\frac{1}{N} \sum_{k=1}^{N} \left( y_k \ln{\hat{y}_k} + (1-y_k) \ln{(1-\ha
 where $N$ is the number of samples, $y_k$ is the true label, and $\hat{y}_k$ is the predicted value.
 
 Backpropagation \cite{rumelhartLearningRepresentationsBackpropagating1986} is a key algorithm for training \acp{ann}, involving a forward pass to compute activations and a backward pass to compute gradients. 
-The gradients of the loss function with respect to the weights and biases are computed using the chain rule of calculus. For a given layer $l$, the gradient of the loss $E$ with respect to the weights $\mathbf{W}^{(l)}$is:
+The gradients of the loss function with respect to the weights and biases are computed using the chain rule of calculus. For a given layer $l$, the gradient of the loss $E$ with respect to the weights $\mathbf{W}^{(l)}$is
 \begin{equation}
 \Delta
 \frac{\partial E}{\partial \mathbf{W}^{(l)}} = \frac{\partial E}{\partial \mathbf{a}^{(l)}} \cdot \frac{\partial \mathbf{a}^{(l)}}{\partial \mathbf{z}^{(l)}} \cdot \frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{W}^{(l)}},
 \end{equation}
-and with respect to the bias $\mathbf{b}^{(l)}$:
+and with respect to the bias $\mathbf{b}^{(l)}$
 \begin{equation}
-\frac{\partial E}{\partial \mathbf{b}^{(l)}} = \frac{\partial E}{\partial \mathbf{z}^{(l)}} \cdot \frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{b}^{(l)}} 
+\frac{\partial E}{\partial \mathbf{b}^{(l)}} = \frac{\partial E}{\partial \mathbf{z}^{(l)}} \cdot \frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{b}^{(l)}} = \frac{\partial E}{\partial \mathbf{z}^{(l)}}
 \end{equation}
-with 
+as 
 \begin{equation}
 \frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{b}^{(l)}} = 1
 \end{equation}
 where $\mathbf{z}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}$and $\mathbf{a}^{(l)} = \phi(\mathbf{z}^{(l)})$. 
 The gradients are then used to update the weights and biases, typically using an optimization algorithm like gradient descent.
-The weights are updated via the update rule:
+The weights are updated via:
 \begin{equation}
-\mathbf{W}^{(l+1)} = \mathbf{W}^{(l)} - \eta 
+\mathbf{W}^{(l)} = \mathbf{W}^{(l)} - \eta \frac{\partial E}{\partial \mathbf{W}^{(l)}}
 \end{equation}
+where $\eta$ is the learning rate.
 
 Through iterative forward and backward propagation, the network gradually converges to a state where the loss is minimized, indicating successful learning of the patterns in the data.
 
@@ -372,7 +373,10 @@ where $l(\mathbf{\hat{y}}_t, \mathbf{y})$ is the loss at timestep $t$.
 \Ac{bptt} unfolds the \ac{rnn} across time steps (see Figure \ref{fig:rnn_unroll}) and applies the backpropagation algorithm. 
 In order to train $U$, $V$ and $W$, we need their respective gradients $\frac{\delta E}{\delta \mathbf{U}}$, $\frac{\delta E}{\delta \mathbf{V}}$ and $\frac{\delta E}{\delta \mathbf{W}}$.
 
-The gradients of the loss function with respect to the weights are calculated for each time step. For a given time step $t$, the gradient of the loss $E$ with respect to the weights $\mathbf{W}$ is:
+
+
+The gradients of the loss function $E$ with respect to the weights $\mathbf{W}$ are calculated for each timestep. 
+As the weight matrices are shared across timesteps, we can sum the gradients from each timestep $t$ together:
 \begin{equation}
 \frac{\partial E_\tau}{\partial \mathbf{W}} = 
 \sum_{\tau=1}^{t} 
@@ -382,7 +386,7 @@ The gradients of the loss function with respect to the weights are calculated fo
 \cdot 
 \frac{\partial \mathbf{h}_\tau}{\partial \mathbf{W}},
 \end{equation}
-where $\frac{\partial E}{\partial \hat{y}_\tau}$ is the gradient of the loss with respect to the output at time $\tau$, $\frac{\partial \hat{y}_\tau}{\partial h_\tau}$ is the gradient of the output with respect to the hidden state, and $\frac{\partial h_\tau}{\partial \mathbf{W}}$ is the gradient of the hidden state with respect to the weights. This process is repeated for all weights and biases in the network, allowing the RNN to learn from sequences by adjusting its parameters based on the temporal context.
+where $\frac{\partial E}{\partial \mathbf{\hat{y}}_\tau}$ is the gradient of the loss with respect to the output at time $\tau$, $\frac{\partial \mathbf{\hat{y}}_\tau}{\partial \mathbf{h}_\tau}$ is the gradient of the output with respect to the hidden state, and $\frac{\partial \mathbf{h}_\tau}{\partial \mathbf{W}}$ is the gradient of the hidden state with respect to the weights. This process is repeated for all weights and biases in the network, allowing the RNN to learn from sequences by adjusting its parameters based on the temporal context.
 
 However, as demonstrated by \citeauthor{bengioLearningLongtermDependencies1994} \cite{bengioLearningLongtermDependencies1994}, RNNs face challenges with exploding or vanishing gradients, particularly in long sequences. This issue hinders their ability to learn long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}. 
 
