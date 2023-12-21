@@ -344,7 +344,6 @@ The concept of a fully connected RNN was first proposed by \citeauthor{elmanFind
 
 RNNs maintain a 'state vector' in their hidden units, which implicitly contains information extracted from all past elements of the sequence \cite{lecunDeepLearning2015}. 
 
-In order to provide a simpler overview, we consider a single-layer \ac{rnn} with no bias and whose activation function is the identity function $\phi (x) = x$.
 The output $\mathbf{\hat{y}}_t$ of an \ac{rnn} at time step $t$ can be calculated as:
 \begin{equation}
 \label{eq:rnn_output}
@@ -378,9 +377,9 @@ In order to train $U$, $V$ and $W$, we need their respective gradients $\frac{\d
 The gradients of the loss function $E$ with respect to the weights $\mathbf{W}$ are calculated for each timestep. 
 As the weight matrices are shared across timesteps, we can sum the gradients from each timestep $t$ together:
 \begin{equation}
-\frac{\partial E_\tau}{\partial \mathbf{W}} = 
+\frac{\partial E}{\partial \mathbf{W}} = 
 \sum_{\tau=1}^{t} 
-\frac{\partial E}{\partial \mathbf{\hat{y}}_\tau} 
+\frac{\partial E_\tau}{\partial \mathbf{\hat{y}}_\tau} 
 \cdot 
 \frac{\partial \mathbf{\hat{y}}_\tau}{\partial \mathbf{h}_\tau} 
 \cdot 
