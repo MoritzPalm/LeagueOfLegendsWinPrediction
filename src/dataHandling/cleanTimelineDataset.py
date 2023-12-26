@@ -1,3 +1,4 @@
+import glob
 import logging
 import pickle
 
@@ -190,23 +191,25 @@ def drop_columns_not_including(df, substrings):
     return df[relevant_columns]
 
 
-def cleanTimelineDataset(save=True):
+def cleanTimelineDataset(save=True, concatenated=False):
     """
     Cleans the timeline dataset and saves it to the data/processed folder
     :return: None
     """
-    dir = 'data/timeline_20_12_23'
-    # df = pd.DataFrame()
-    # for f in glob.glob(f'{dir}/raw/*.pkl'):
-    #     with open(f, 'rb') as file:
-    #         df_new = pickle.load(file)
-    #     df = pd.concat([df, df_new], axis=0)
-    # df.to_pickle(f'{dir}/timeline_full_raw.pkl')  # this cannot be saved in the /raw/
-    # # dir as it would not stand out with the glob regex
-    logging.info("Concatenated all files")
-    with open(f'{dir}/timeline_full_raw.pkl', 'rb') as f:
-        df = pickle.load(f)
-        print(df.shape)
+    dir = 'data/timeline_25_12_23'
+    if not concatenated:
+        df = pd.DataFrame()
+        for f in glob.glob(f'{dir}/raw/*.pkl'):
+            with open(f, 'rb') as file:
+                df_new = pickle.load(file)
+            df = pd.concat([df, df_new], axis=0)
+        df.to_pickle(f'{dir}/timeline_full_raw.pkl')  # this cannot be saved in the /raw/
+        # dir as it would not stand out with the glob regex
+        logging.info("Concatenated all files")
+    else:
+        with open(f'{dir}/timeline_full_raw.pkl', 'rb') as f:
+            df = pickle.load(f)
+            print(df.shape)
     df = df.sort_values(by=['matchId', 'timestamp'])
     df = drop_irrelevant_columns(df)
     df = make_label_last_col(df)
@@ -331,4 +334,4 @@ def cleanTimelineDataset(save=True):
 
 
 if __name__ == '__main__':
-    cleanTimelineDataset(save=True)
+    cleanTimelineDataset(save=True, concatenated=True)

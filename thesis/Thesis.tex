@@ -20,7 +20,7 @@
 %  Informationen
 %----------------------------------------------------------------------------------
 \author{Moritz Palm}
-\title{Neural Networks vs. GRU in League of
+\title{Neural Network vs. GRU in League of
 Legends Match Outcome Prediction: A Data-Centric Perspective}
 
 \date{\today}
@@ -241,26 +241,33 @@ a = \phi(z) = \phi(\mathbf{w}^\top \mathbf{x} + b).
 The \ac{mlp}, introduced by \citeauthor{rosenblattPerceptronProbabilisticModel1958} \cite{rosenblattPerceptronProbabilisticModel1958}, organizes neurons into layers. 
 Data flows from the input layer, through one or more hidden layers, to the output layer. In a fully connected feed-forward network, the computation in each layer $l$ is:
 \begin{equation}
-\mathbf{z}^{(l)} = \phi (\mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}),
+\mathbf{z}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)},
 \end{equation}
 where $\mathbf{a}^{(l)}$ represents the activation of layer $l$, $\mathbf{W}^{(l)}$ is the weight matrix, and $\mathbf{b}^{(l)}$ the bias vector. 
 The vector $\mathbf{z}^{(l)}$ is then passed through the activation function for layer $l$, which is applied elementwise:
 \begin{equation}
 \mathbf{a}^{(l)} = \phi (\mathbf{z}^{(l)}).
 \end{equation}
-The output layer $L$ produces the network's prediction $\hat{y}$.
+The output layer $L$ produces the network's prediction $\mathbf{\hat{y}}$.
+The choice of activation function is dependent on the task, a common choice for classification is the softmax function \cite{bridleProbabilisticInterpretationFeedforward1990}
+\begin{equation}
+\label{eq:softmax}
+ S(\mathbf{x}_i) = \frac{e^{x_i}}{\sum_{k=1}^{K} e^{x_k}}
+\end{equation}
+where $K$ is the number of classes and $i = 1, ..., K$.
+The softmax function returns a probability distribution over the predicted output classes.
+
 To approximate any measurable function, an \ac{ann} requires at least one hidden layer \cite{hornikMultilayerFeedforwardNetworks1989}. 
 The network's weights and biases are adjusted during training to minimize a loss function $E$.
-
 Common loss functions include \ac{mse} for regression tasks:
 \begin{equation}
 E_N = \frac{1}{N} \sum_{k=1}^{N}(y_{k} - \hat{y}_{k})^2,
 \end{equation}
-and \ac{cel} for binary classification tasks:
+and \ac{cel} for multi-class classification tasks:
 \begin{equation}
-E_N = -\frac{1}{N} \sum_{k=1}^{N} \left( y_k \ln{\hat{y}_k} + (1-y_k) \ln{(1-\hat{y}_k)} \right),
+E_N = -\frac{1}{N} \sum_{n=1}^{N} \sum_{k=1}^{K} y_{nk} \log (\hat{y}_{nk})
 \end{equation}
-where $N$ is the number of samples, $y_k$ is the true label, and $\hat{y}_k$ is the predicted value.
+where $N$ is the number of samples, $y_{nk}$ is the (one-hot encoded) ground truth and $\hat{y}_{nk}$ is the softmax output.
 
 Backpropagation \cite{rumelhartLearningRepresentationsBackpropagating1986} is a key algorithm for training \acp{ann}, involving a forward pass to compute activations and a backward pass to compute gradients. 
 The gradients of the loss function with respect to the weights and biases are computed using the chain rule of calculus. For a given layer $l$, the gradient of the loss $E$ with respect to the weights $\mathbf{W}^{(l)}$is
@@ -276,7 +283,7 @@ as
 \begin{equation}
 \frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{b}^{(l)}} = 1
 \end{equation}
-where $\mathbf{z}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}$and $\mathbf{a}^{(l)} = \phi(\mathbf{z}^{(l)})$. 
+where $\mathbf{z}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}$and $\mathbf{a}^{(l)} = \phi(\mathbf{z}^{(l)})$.
 The gradients are then used to update the weights and biases, typically using an optimization algorithm like gradient descent.
 The weights are updated via:
 \begin{equation}
@@ -342,26 +349,30 @@ Recurrent Neural Networks (RNNs) extend the capabilities of feed-forward neural 
 %\end{figure}
 The concept of a fully connected RNN was first proposed by \citeauthor{elmanFindingStructureTime1990} \cite{elmanFindingStructureTime1990}.
 
-RNNs maintain a 'state vector' in their hidden units, which implicitly contains information extracted from all past elements of the sequence \cite{lecunDeepLearning2015}. 
-
-The output $\mathbf{\hat{y}}_t$ of an \ac{rnn} at time step $t$ can be calculated as:
-\begin{equation}
-\label{eq:rnn_output}
-\mathbf{\hat{y}}_t = \mathbf{V} \cdot \mathbf{h}_t ,
-\end{equation}
-where $\mathbf{V}$ is the weight matrix associated with the cell output. 
+RNNs maintain a 'state vector' in their hidden units, which implicitly contains information extracted from all past elements of the sequence \cite{lecunDeepLearning2015}.
 The hidden state $\mathbf{h}_t$ at time step $t$ is updated as follows:
 \begin{equation}
 \label{eq:rnn_update} 
 \mathbf{h}_t =
 \begin{cases}
 	0, & \text{if } t = 0, \\
-	\tanh (\mathbf{W} \mathbf{x}_t + \mathbf{U} \mathbf{h}_{t-1})
+	\sigma_h (\mathbf{W} \mathbf{x}_t + \mathbf{U} \mathbf{h}_{t-1} + \mathbf{b}_h)
 	& \text{otherwise},
 \end{cases}
 \end{equation}
-where $\mathbf{U}$ is the weight matrix for the hidden state and $\mathbf{W}$ is the weight matrix for the input. 
+where $\mathbf{U}$ is the weight matrix for the hidden state and $\mathbf{W}$ is the weight matrix for the input.
+A common choice for $\sigma_h$ is the tanh function.
 In a single-layer \ac{rnn}, all weight matrices $\mathbf{W}$, $\mathbf{U}$ and $\mathbf{V}$ (and biases) are shared across timesteps.
+The output $\mathbf{\hat{y}}_t$ of an \ac{rnn} at time step $t$ can be calculated as:
+\begin{equation}
+\label{eq:rnn_output}
+\begin{split}
+\mathbf{o}_t &= \mathbf{V} \cdot \mathbf{h}_t + \mathbf{b_h} \\
+\mathbf{\hat{y}}_t &= \text{softmax}(\mathbf{o}_t)
+\end{split}
+\end{equation}
+where $\mathbf{V}$ is the weight matrix associated with the cell output. 
+
 The loss over $T$ timesteps is defined by 
 \begin{equation}
 E_T = \frac{1}{T} \sum_{t=1}^{T} {l(\mathbf{\hat{y}}_t, \mathbf{y})}
@@ -372,26 +383,88 @@ where $l(\mathbf{\hat{y}}_t, \mathbf{y})$ is the loss at timestep $t$.
 \Ac{bptt} unfolds the \ac{rnn} across time steps (see Figure \ref{fig:rnn_unroll}) and applies the backpropagation algorithm. 
 In order to train $U$, $V$ and $W$, we need their respective gradients $\frac{\delta E}{\delta \mathbf{U}}$, $\frac{\delta E}{\delta \mathbf{V}}$ and $\frac{\delta E}{\delta \mathbf{W}}$.
 
-
-
-The gradients of the loss function $E$ with respect to the weights $\mathbf{W}$ are calculated for each timestep. 
-As the weight matrices are shared across timesteps, we can sum the gradients from each timestep $t$ together:
+As the weight matrices are shared across timesteps, we can generally sum the gradients from each timestep $t$ together.
+The gradient of the loss function with regards to the output matrix $V$ does not depend on the hidden state $h_t$ and can thus be calculated easily.
 \begin{equation}
-\frac{\partial E}{\partial \mathbf{W}} = 
-\sum_{\tau=1}^{t} 
-\frac{\partial E_\tau}{\partial \mathbf{\hat{y}}_\tau} 
+\label{eq:bptt_V}
+\begin{split}
+\frac{\partial E}{\partial \mathbf{V}} 
+& = 
+\sum_{t}^{T} \frac{\partial E_t}{\partial \mathbf{V}} \\
+& =
+\sum_{t}^{T} 
+\frac{\partial E_t}{\partial \mathbf{\hat{y}}_t} 
 \cdot 
-\frac{\partial \mathbf{\hat{y}}_\tau}{\partial \mathbf{h}_\tau} 
+\frac{\partial \mathbf{\hat{y}}_t}{\partial \mathbf{o}_t} 
 \cdot 
-\frac{\partial \mathbf{h}_\tau}{\partial \mathbf{W}},
+\frac{\partial \mathbf{o}_t}{\partial \mathbf{V}}
+\end{split}
 \end{equation}
-where $\frac{\partial E}{\partial \mathbf{\hat{y}}_\tau}$ is the gradient of the loss with respect to the output at time $\tau$, $\frac{\partial \mathbf{\hat{y}}_\tau}{\partial \mathbf{h}_\tau}$ is the gradient of the output with respect to the hidden state, and $\frac{\partial \mathbf{h}_\tau}{\partial \mathbf{W}}$ is the gradient of the hidden state with respect to the weights. This process is repeated for all weights and biases in the network, allowing the RNN to learn from sequences by adjusting its parameters based on the temporal context.
-
-However, as demonstrated by \citeauthor{bengioLearningLongtermDependencies1994} \cite{bengioLearningLongtermDependencies1994}, RNNs face challenges with exploding or vanishing gradients, particularly in long sequences. This issue hinders their ability to learn long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}. 
+Now we consider the gradient with respect to the weight matrix for the hidden state $U$ at the time step $t+1$:
+\begin{equation}
+\frac{\partial E_{t+1}}{\partial \mathbf{U}} = 
+\frac{\partial E_{t+1}}{\partial \mathbf{\hat{y}}_{t+1}}
+\frac{\partial \mathbf{\hat{y}}_{t+1}}{\partial \mathbf{h}_{t+1}}
+\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{U}}
+\end{equation}
+As the hidden state $h_{t+1}$ depends on the hidden state of the previous timestep $h_t$, we need to recursively calculate the partial derivatives of all the previous timesteps, yielding the following formula:
+\begin{equation}
+\frac{\partial E_{t+1}}{\partial \mathbf{U}} = \sum_{k=1}^{t+1}
+\frac{\partial E_{t+1}}{\partial \mathbf{\hat{y}}_{t+1}}
+\frac{\partial \mathbf{\hat{y}}_{t+1}}{\partial \mathbf{h}_{t+1}}
+\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_k}
+\frac{\partial \mathbf{h}_k}{\partial \mathbf{U}}
+\end{equation}
+Applying the chain rule to $\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_k}$ yields
+\begin{equation}
+\frac{\partial E_{t+1}}{\partial \mathbf{U}} = \sum_{k=1}^{t+1}
+\frac{\partial E_{t+1}}{\partial \mathbf{\hat{y}}_{t+1}}
+\frac{\partial \mathbf{\hat{y}}_{t+1}}{\partial \mathbf{h}_{t+1}}
+\left(\prod_{j=k}^{t}\frac{\partial \mathbf{h}_{j+1}}{\partial \mathbf{h}_j}\right)
+\frac{\partial \mathbf{h}_k}{\partial \mathbf{U}}
+\end{equation}\cite{aratBackpropagationTimeRecurrent2019}.
+Summing the partial derivatives over timesteps similar to equation (\ref{eq:bptt_V}) yields the full equation
+\begin{equation}
+\label{eq:bptt_U}
+\frac{\partial E}{\partial \mathbf{U}} = 
+\sum_{t=1}^{T}
+\sum_{k=1}^{t}
+\frac{\partial E_{t+1}}{\partial \mathbf{\hat{y}}_{t+1}}
+\frac{\partial \mathbf{\hat{y}}_{t+1}}{\partial \mathbf{h}_{t+1}}
+\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_k}
+\frac{\partial \mathbf{h}_k}{\partial \mathbf{U}}
+\end{equation}
+where
+\begin{equation}
+\label{eq:bptt_ht+1}
+\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_k} 
+= 
+\left(\prod_{j=k}^{t}\frac{\partial \mathbf{h}_{j+1}}{\partial \mathbf{h}_j}\right)
+=
+\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_t}
+\frac{\partial \mathbf{h}_{t}}{\partial \mathbf{h}_{t-1}}
+ . . . 
+\frac{\partial \mathbf{h}_{k+1}}{\partial \mathbf{h}_k}   
+\end{equation}
+The gradient with respect to $\mathbf{W}$ follows similarly.
+As first demonstrated by \citeauthor{bengioLearningLongtermDependencies1994} \cite{bengioLearningLongtermDependencies1994}, RNNs face challenges with exploding or vanishing gradients, particularly in long sequences.
+This can be shown by examining a single term from equation (\ref{eq:bptt_ht+1}) as this is the partial derivative between two vectors and as such a Jacobian matrix :
+\begin{equation}
+\label{eq:bptt_jacobian}
+\frac{\partial \mathbf{h}_{j+1}}{\partial \mathbf{h}_j}
+= 
+\mathbf{U}^{\top} \text{diag}(\sigma_{h}' (\mathbf{W} \mathbf{x}_{j+1} + \mathbf{U} \mathbf{h}_j + \mathbf{b}_h))
+\end{equation}
+where diag() converts a vector into a diagonal matrix and $\sigma '$ computes the element-wise derivative of $\sigma$
+\cite{pascanuDifficultyTrainingRecurrent2013a}.
+The eigendecomposition of $\frac{\partial \mathbf{h}_{j+1}}{\partial \mathbf{h}_j}$ yields the eigenvalues $ \lambda_1, \lambda_2, ..., \lambda_n$ where $|\lambda_1| > |\lambda_2| > ... > |\lambda_n|$ with their corresponding eigenvectors $v_1, v_2, ..., v_n$.
+The change in hidden state $\Delta h_{j+1}$ in direction of a vector $v_i$ is multiplied with the eigenvalue of this eigenvector: $\lambda_i \Delta h_{j+1}$.
+As these factors are multiplied across timesteps, the change is scaled by a factor equivalent to $\lambda_i^t$ which scales exponentially with the timestep $t$.
+If $\lambda_1 < 1$ the gradient will vanish while if $\lambda_1 > 1$ the gradient will explode when considering $t \to \infty$ \cite{pascanuDifficultyTrainingRecurrent2013a}.
+This issue hinders their ability to learn long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}. 
 
 \begin{figure}
 \centering
-%TODO add U matrix between hidden states
 \begin{tikzpicture}[
 item/.style={circle,draw,thick,align=center, minimum size=1.2cm},
 hidden/.style={item,on chain,join}]
@@ -404,14 +477,15 @@ hidden/.style={item,on chain,join}]
  \node[left=1em of chain,scale=2] (eq) {$=$};
  \node[left=2em of eq,item] (AL) {$h$};
  \path (AL.west) ++ (-1em,2em) coordinate (aux);
- \draw[very thick,-latex,rounded corners] (AL.east) -| ++ (1em,2em) -- (aux)
- |- (AL.west) node[midway, left] {$U$};
+ \draw[very thick,-latex,rounded corners] (AL.east) -| ++ (1em,2em) -- (aux) --++(0em,-2em) node[midway, left] {$U$} -- (AL.west); 
  \foreach \X in {0,1,2,t}
  {\draw[very thick,-latex] (A\X.north) -- ++ (0,2em) node[midway, right] {$V$}
  node[above,item,fill=gray!10] (h\X) {$\hat{y}_\X$};
  \draw[very thick,latex-] (A\X.south) -- ++ (0,-2em) node[midway, right] {$W$}
  node[below,item,fill=gray!10] (x\X) {$x_\X$};
- \path (A\X.east) -- (A\X -| At.west) node[midway, above] {$U$};
+ \path (A0.east) -- (A1.west) node[midway, above] {$U$};
+ \path (A1.east) -- (A2.west) node[midway, above] {$U$};
+ \path (A2.east) -- (At.west) node[midway, above] {$U$};
 }
  
  \draw[white,line width=0.8ex] (AL.north) -- ++ (0,1.9em);
@@ -421,7 +495,7 @@ hidden/.style={item,on chain,join}]
  node[below,item,fill=gray!10] {$x_t$};
  \path (x2) -- (xt) node[midway,scale=2,font=\bfseries] {\dots};
 \end{tikzpicture}
-\caption{Unrolling of a \ac{rnn} over time}
+\caption{Unrolling of an \ac{rnn} over time}
 \label{fig:rnn_unroll}
 \end{figure}
 
@@ -527,7 +601,7 @@ In equations (\ref{eq:gru_h}) and (\ref{eq_gru_h_tilde}) $\odot$ denotes the ele
 \label{sec:fs_algos}
 
 Feature Selection is pivotal in machine learning, particularly when dealing with high-dimensional data. It serves the primary objectives of improving model performance by mitigating the 'curse of dimensionality,' enhancing predictive accuracy, and reducing overfitting. By eliminating irrelevant or redundant features, the model's generalization capacity is enhanced, contributing to model interpretability and potentially reducing training times.
-Feature selection methods can be broadly categorized into three distinct types:
+Feature selection methods can be broadly categorized into three distinct types \cite{jovicReviewFeatureSelection2015}:
 \begin{description}
 \item[Filter Methods] These methods rely on model-invariant information, such as feature-class label correlation. They are computationally efficient but may not capture complex relationships within the data.
 \item[Wrapper Methods] Wrapper methods train models iteratively on various feature subsets, incurring a higher computational cost but enabling the detection of interactions among variables.
@@ -690,11 +764,12 @@ in order to
 
 
 
-\chapter{Experiments}
-\label{chap:experiments}
+\chapter{Results and Discussion}
+\label{chap:results}
 
-\subsection{Feature Selection Results}
-\label{ssec:feature_selection_results}
+\section{Feature Selection Results}
+\label{sec:feature_selection_results}
+Manual feature selection using domain knowledge was performed.
 
 As expected, the significance of the features does not differ much within a category, so the correlation coefficients are averaged per category.
 This enables a clearer result on the importance of feature categories.
@@ -747,15 +822,6 @@ using neural network
 \section{Mid-Game Classification}
 \label{sec:midgame_class}
 
-
-
-\chapter{Results}
-\label{chap:results}
-
-
-\chapter{Discussion}
-\label{chap:discussion}
-
 retrain probably necessary for every patch
 
 
@@ -767,9 +833,8 @@ retrain probably necessary for every patch
 %\bibliographystyle{geralpha}
 \printbibliography
 
+\appendix
 
-% Anhang
-\include{appendix}
 
 
 
