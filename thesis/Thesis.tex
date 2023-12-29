@@ -578,18 +578,37 @@ In equations (\ref{eq:gru_h}) and (\ref{eq_gru_h_tilde}) $\odot$ denotes the ele
    %Start drawing the thing...    
     % Draw the cell: 
     \node [cell, minimum height =4cm, minimum width=6cm] at (0,0){} ;
+    
+    
+	%Draw operators	
+	%top row
+	\node [operator] (mux1) at (1,1.5) {$\times$};
+    \node [operator] (add1) at (2,1.5) {$+$};
+    %second row
+    \node [operator] (mux2) at (-1.5, 0.5) {$\times$};
+    \node [operator] (mux3) at (2,  0.5) {$\times$};
+    %bottom row
+    \node [gt] (sigma1) at (-1, -0.5) {$\sigma$};
+    \node [gt] (sigma2) at (1, -0.5) {$\sigma$};
+    \node [gt] (tanh) at (2, -0.5) {$\tanh$};
+    
+  
 
-   % Draw inputs named ibox#
-    \node [gt] (ibox1) at (-2,-0.75) {$\sigma$};
-    \node [gt] (ibox2) at (-1.5,-0.75) {$\sigma$};
-    \node [gt, minimum width=1cm] (ibox3) at (-0.5,-0.75) {Tanh};
-	
-	
-	\node [operator] (mux1) at (-2,1.5) {$\times$};
-    \node [operator] (add1) at (-0.5,1.5) {+};
-    \node [operator] (mux2) at (-0.5,0) {$\times$};
-    \node [operator] (mux3) at (1.5,0) {$\times$};
-    /*
+
+    
+    
+  % Draw External inputs
+    \node[] (ht-1) at (-4,1.5) {$h_{t-1}$};
+    \node[] (xt) at (-2.5,-3) {$x_t$};
+
+    % Draw External outputs
+    \node[] (out) at (4,1.5) {out};
+    \node[] (ht) at (2.5,3) {$h_t$};
+    
+      % Draw Arrows
+    
+   \draw [ArrowC2] (ht-1) -- (mux1) -- (add1) -- (out);
+   \draw[ArrowC2] (add1) -| (ht);
     
 \end{tikzpicture}
 \caption{Gated Recurrent Unit}
