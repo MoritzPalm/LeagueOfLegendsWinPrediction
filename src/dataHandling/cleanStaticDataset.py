@@ -172,7 +172,66 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     print(f'X_test shape: {X_test.shape}')
     print(f'X_val shape: {X_val.shape}')
     print("Done cleaning static dataset")
-    return X_train, X_val, X_test
+
+    # df_categorical from above is used for feature selection
+    irrelevant_feature_categories = ['kda',
+                                     'deaths',
+                                     'assists',
+                                     'gold',
+                                     'kills',
+                                     'damage',
+                                     'winrate',
+                                     'cs',
+                                     'tier',
+                                     'leaguePoints',
+                                     'lastPlayTime',
+                                     'championPoints']
+    df_fs = clean.drop_columns_not_including(df_merged, irrelevant_feature_categories)
+    df_fs_ohc = pd.concat([df_fs, df_categorical_one_hot], axis=1)
+    df_fs_ohc['label'] = df['label']
+
+    assert df_fs_ohc.columns[-1] == 'label'
+
+    (X_train_fs, X_test_fs,
+     y_train_fs, y_test_fs) = train_test_split(df_fs_ohc.iloc[:, :-1],
+                                               df_fs_ohc.iloc[:, -1],
+                                               test_size=test_size,
+                                               random_state=42,
+                                               shuffle=True,
+                                               stratify=df_fs_ohc.iloc[:, -1])
+    (X_train_fs, X_val_fs,
+     y_train_fs, y_val_fs) = train_test_split(X_train_fs,
+                                              y_train_fs,
+                                              test_size=test_size,
+                                              random_state=42,
+                                              shuffle=True,
+                                              stratify=y_train_fs)
+
+    numerical_columns = df_fs.columns.tolist()  # df_merged contains only averaged columns, categorical columns
+    # are dropped
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('scaler', StandardScaler(), numerical_columns)],
+        remainder='passthrough')
+
+    transformer = preprocessor.fit(X_train_fs)
+    X_train_fs = transformer.transform(X_train_fs)
+    X_test_fs = transformer.transform(X_test_fs)
+    X_val_fs = transformer.transform(X_val_fs)
+    X_train_fs = np.append(X_train_fs, np.expand_dims(y_train_fs, axis=1), axis=1)
+    X_test_fs = np.append(X_test_fs, np.expand_dims(y_test_fs, axis=1), axis=1)
+    X_val_fs = np.append(X_val_fs, np.expand_dims(y_val_fs, axis=1), axis=1)
+    df_train_fs = pd.DataFrame(X_train_fs, columns=df_fs_ohc.columns)
+    df_test_fs = pd.DataFrame(X_test_fs, columns=df_fs_ohc.columns)
+    df_val_fs = pd.DataFrame(X_val_fs, columns=df_fs_ohc.columns)
+
+    if save:
+        df_train_fs.to_pickle(f'{dir}/processed/fs_ohc/train_static.pkl')
+        df_test_fs.to_pickle(f'{dir}/processed/fs_ohc/test_static.pkl')
+        df_val_fs.to_pickle(f'{dir}/processed/fs_ohc/val_static.pkl')
+        np.save(f'{dir}/processed/fs_ohc/train_static.npy', X_train_fs)
+        np.save(f'{dir}/processed/fs_ohc/test_static.npy', X_test_fs)
+        np.save(f'{dir}/processed/fs_ohc/val_static.npy', X_val_fs)
 
 
 if __name__ == '__main__':

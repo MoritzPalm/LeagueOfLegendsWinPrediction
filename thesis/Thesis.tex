@@ -538,7 +538,7 @@ hidden/.style={item,on chain,join}]
 \label{fig:rnn_unroll}
 \end{figure}
 
-\section{GRU}
+\section{Gated Recurrent Unit}
 \label{sec:gru}
 In order to overcome the exploding/vanishing gradient problem of vanilla \acp{rnn}, gated networks like the \ac{lstm} \cite{hochreiterLongShortTermMemory1997} and \ac{gru} \cite{choLearningPhraseRepresentations2014} have been developed \cite{vanhoudtReviewLongShortterm2020}.
 As they introduce an increased number of parameters compared to traditional \acp{rnn}, gated networks like the \ac{lstm} and \ac{gru} demand greater computational power \cite{deyGatevariantsGatedRecurrent2017}.
@@ -899,42 +899,56 @@ The standardization is performed on each feature individually by calculating the
 \label{chap:results}
 
 %\section{Feature Selection Results}
-%\label{sec:feature_selection_results}
-%Manual feature selection using domain knowledge was performed.
-%
-%As expected, the significance of the features does not differ much within a category, so the correlation coefficients are averaged per category.
-%This enables a clearer result on the importance of feature categories.
-%
-%The results of the test are found in table \ref{tab:pearson_results}.
-%All $p$-values in the table are below the significance threshold of $0.05$, confirming the statistical significance of the correlation.
-%The highest correlation is $0.15$, belonging to the KDA feature.
-%This feature measures the average ratio of $\frac{\text{kills} + \text{assists}}{\text{deaths}}$ the player achieved on his champion.
-%This is a very low correlation, indicating that no single feature has a strong linear relationship with the target.
-%This illustrates the need for multivariate analysis.
-%\begin{table}
-%	\centering
-%	\begin{tblr}{ccc}
-%	Feature  & Correlation coefficient & \acs{gbt} Feature Importance\\
-%	\hline
-%	KDA & \textbf{0.133} & \textbf{726}\\
-%	Deaths & 0.092 & 284\\
-%	Assists & 0.081 & 403\\
-%	Gold & 0.063 & 393\\
-%	Kills & 0.060 & 310\\
-%	LP & 0.050 & 541\\
-%	Champion Level & 0.034 & 50\\
-%	CS Per Minute & 0.027 & 394\\
-%	Last Play Time & 0.026 & 349\\
-%	Win Rate & 0.022 & 301\\
-%	Champion Tier & 0.020 & 66\\
-%	Champion Points & 0.015 & 401\\
-%	
-%	\end{tblr}
-%	\caption{
-%	Average Pearson's correlation coefficient and average \ac{gbt} Feature Importance for the 12 features categories with the highest absolute average correlation.}
-%	\label{tab:pearson_results}
-%\end{table}
-%Notably, the KDA feature is not only by far the most important, but its components Kills, Deaths and Assists are in the top 5 correlation coefficients as well.
+\label{sec:feature_selection_results}
+Manual feature selection using domain knowledge was performed.
+
+As expected, the significance of the features does not differ much within a category, so the correlation coefficients are averaged per category.
+This enables a clearer result on the importance of feature categories.
+
+The results of the test are found in table \ref{tab:pearson_results}.
+All $p$-values in the table are below the significance threshold of $0.05$, confirming the statistical significance of the correlation.
+The highest correlation is $0.15$, belonging to the KDA feature.
+This feature measures the average ratio of $\frac{\text{kills} + \text{assists}}{\text{deaths}}$ the player achieved on his champion.
+This is a very low correlation, indicating that no single feature has a strong linear relationship with the target.
+This illustrates the need for multivariate analysis.
+\begin{table}
+	\centering
+	\begin{longtblr}
+	[
+		caption = {Average Pearson's correlation coefficient and average \ac{gbt} Feature Importance for the 12 features categories with the highest absolute average correlation.},	
+		label = {tab:pearson_results},
+	]	
+	{ccc}
+	Feature  & Correlation coefficient & \acs{gbt} Feature Importance\\
+	\hline
+	KDA & \textbf{0.133} & \textbf{726}\\
+	Deaths & 0.092 & 284\\
+	Assists & 0.081 & 403\\
+	Gold & 0.063 & 393\\
+	Kills & 0.060 & 310\\
+	LP & 0.050 & 541\\
+	Champion Level & 0.034 & 50\\
+	CS Per Minute & 0.027 & 394\\
+	Last Play Time & 0.026 & 349\\
+	Win Rate & 0.022 & 301\\
+	Champion Tier & 0.020 & 66\\
+	Champion Points & 0.015 & 401\\
+	
+	\end{longtblr}
+\end{table}
+
+
+\begin{figure}
+\centering
+\resizebox{\textwidth}{!}{%
+	\input{./images/pearson_correlation.pgf}
+}
+\caption{Coefficients of correlation averaged over each feature category with the label. }
+\label{fig:pearson_corr}
+\end{figure}
+
+
+Notably, the KDA feature is not only by far the most important, but its components Kills, Deaths and Assists are in the top 5 correlation coefficients as well.
 
 
 

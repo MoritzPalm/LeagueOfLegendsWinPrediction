@@ -343,3 +343,17 @@ def sort_columns(col) -> tuple:
     team_number = int(parts[1])  # Extract team number (0 or 1)
     champion_number = int(parts[-1])  # Extract champion number
     return team_number, champion_number
+
+
+def drop_columns_not_including(df: pd.DataFrame, substrings: list) -> pd.DataFrame:
+    """
+    Drops columns that do not include any of the substrings
+    :param df: DataFrame
+    :param substrings: List of substrings
+    :return:
+    """
+    # Keep only columns that contain any of the substrings
+    relevant_columns = [col for col in df.columns if any(substring in col for substring in substrings)]
+
+    # Drop columns that are not in relevant_columns
+    return df[relevant_columns]
