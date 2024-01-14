@@ -174,19 +174,21 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     print("Done cleaning static dataset")
 
     # df_categorical from above is used for feature selection
-    irrelevant_feature_categories = ['kda',
-                                     'deaths',
-                                     'assists',
-                                     'gold',
-                                     'kills',
-                                     'damage',
-                                     'winrate',
-                                     'cs',
-                                     'tier',
-                                     'leaguePoints',
-                                     'lastPlayTime',
-                                     'championPoints']
-    df_fs = clean.drop_columns_not_including(df_merged, irrelevant_feature_categories)
+    relevant_feature_categories = ['kda',
+                                   'gold',
+                                   'leaguePoints',
+                                   'assists',
+                                   'deaths',
+                                   'maxKills',
+                                   'lastPlayTime',
+                                   'winrate',
+                                   'kills',
+                                   'championLevel',
+                                   'hotstreak',
+                                   'damage',
+                                   'cs'
+                                   ]
+    df_fs = clean.drop_columns_not_including(df_merged, relevant_feature_categories)
     df_fs_ohc = pd.concat([df_fs, df_categorical_one_hot], axis=1)
     df_fs_ohc['label'] = df['label']
 
@@ -235,4 +237,4 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
 
 
 if __name__ == '__main__':
-    cleanStaticDataset(save=True)
+    cleanStaticDataset(save=False)
