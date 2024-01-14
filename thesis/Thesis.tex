@@ -222,6 +222,7 @@ Author & Games & Features & Time & Skill Group & Accuracy \\
 
 
 \section{Win Prediction in DotA 2}
+\label{sec:dota}
 is this advisable? no real new insights in my opinion
 maybe win prediction in sports?
 %A lot of scientific research focuses on the similar \ac{moba} DotA 2, which has easier and more fine-grained data collection methods (see section \ref{sec:datacoll}).
@@ -236,6 +237,10 @@ maybe win prediction in sports?
 %\Citeauthor{yuMOBASliceTimeSlice2018} \cite{yuMOBASliceTimeSlice2018} trained a \ac{rnn} on 71,355 matches and achieved an accuracy of $0.7083$ at the half-way point of a match, which according to their analysis is on average at 20 minutes.
 %\Citeauthor{wangPredictingMultiplayerOnline2016} \cite{wangPredictingMultiplayerOnline2016} compared Logistic Regression with a \ac{fnn} trained on up to 911,468 matches, with \ac{lr} achieving a slightly better accuracy ($0.6104$) than the \ac{fnn} ($0.588$).
 %
+
+\section{Win prediction in other sports}
+\label{sec:other_sports}
+
 
 \chapter{Background}
 \label{chap:background}
@@ -681,11 +686,14 @@ In equations (\ref{eq:gru_h}) and (\ref{eq_gru_h_tilde}) $\odot$ denotes the ele
 Feature Selection is pivotal in machine learning, particularly when dealing with high-dimensional data. It serves the primary objectives of improving model performance by mitigating the 'curse of dimensionality,' enhancing predictive accuracy, and reducing overfitting. By eliminating irrelevant or redundant features, the model's generalization capacity is enhanced, contributing to model interpretability and potentially reducing training times.
 Feature selection methods can be broadly categorized into three distinct types \cite{jovicReviewFeatureSelection2015}:
 \begin{description}
+
 \item[Filter Methods] These methods rely on model-invariant information, such as feature-class label correlation. They are computationally efficient and typically do not require user input in form of hyperparameters, but may not capture complex relationships within the data.
+
 \item[Wrapper Methods] Wrapper methods train models iteratively on various feature subsets, incurring a higher computational cost but enabling the detection of interactions among variables.
+
 \item[Embedded Methods] These methods perform inherent feature selection, often as an integral part of the modeling process. Tree-based models, such as Decision Trees and Gradient Boosted Trees, typically employ feature selection based on metrics like the Gini index or entropy.
 \end{description}
-Below, two different feature selection methods are discussed in detail.
+
 
 \subsection{Pearson's Correlation Coefficient}
 \label{ssec:pearsons}
@@ -698,15 +706,18 @@ Here, $X_i$ represents the random variable corresponding to the $i^{\text{th}}$ 
 R(i) = \frac{\text{cov}(X_i, Y)}{\sqrt{\text{var}(X_i) \cdot \text{var}(Y)}},
 \end{equation}
 where $\text{cov}(X_i, Y)$ is the covariance between $X_i$ and $Y$, and $\text{var}(X_i)$ and $\text{var}(Y)$ are the variances of $X_i$ and $Y$, respectively \cite{chandrashekarSurveyFeatureSelection2014}.
+$R(i) \in [-1; +1]$ where -1 and +1 are strong negative or positive correlations and 0 indicates no correlation. 
 In order to ascertain the significance of the test results, a hypothesis test needs to be performed, with the null hypothesis being that there is no correlation between the feature and the target.
+As it is a non-parametric model, there is no need to tune hyperparameters or risk of overfitting.
 While simple and effective for identifying linear relationships, \ac{pcc} only captures linear dependencies and might miss non-linear relationships crucial for neural networks.
-It still provides 
-
+Despite these limitations, \ac{pcc} remains a valuable tool in feature selection for its simplicity and efficiency in revealing linear correlations.
 
 \subsection{Gradient Boosted Trees}
 \label{ssec:gbt}
 
-Gradient Boosted Trees (GBT) is an ensemble learning technique that can be used for feature selection. It builds the model in a stage-wise fashion, with each tree being added to correct the errors made by the previous ones. 
+\Ac{gbt} is an ensemble learning technique that can be used for feature selection. 
+The core idea of \ac{gbt} is to build a model in a stage-wise fashion, where each tree incrementally improves upon the previous ones by correcting their errors. 
+This process involves training trees sequentially, with each new tree learning to predict the residuals or errors of the previous ensemble of trees.
 There are different types of importance, such as the average or total gain across all splits the feature is used in.
 The simplest definition is the 'weight', defined as the number of times a feature is used to split the data across all trees \cite{chenXGBoostScalableTree2016}.
 
@@ -858,6 +869,7 @@ Both the number of destroyed turrets and the cumulative amount of gold is tracke
 There are no missing values in the data obtained directly from Riot Games.
 On the rare occasion that the web scraper could not find the relevant information, missing values can occur.
 As this is a technical error, the missing data can be described as \ac{mcar} \cite{acockWorkingMissingValues2005} and thus deleted row-wise without introducing a bias.
+
 By deleting all rows containing missing data, the dataset shrinks by 384???? rows.
 As missing values are caused by the web scraper, the in-game dataset has no missing values.
 
@@ -898,57 +910,72 @@ The standardization is performed on each feature individually by calculating the
 \chapter{Results and Discussion}
 \label{chap:results}
 
-%\section{Feature Selection Results}
+\section{Feature Selection Results}
 \label{sec:feature_selection_results}
-Manual feature selection using domain knowledge was performed.
 
-As expected, the significance of the features does not differ much within a category, so the correlation coefficients are averaged per category.
-This enables a clearer result on the importance of feature categories.
+In order to assess the linear relationship between features and the target variable,\acl{pcc} is employed.
+In the dataset, each feature category is split in two columns, one per team.
+To facilitate a comprehensive understanding of which feature category is most influential, the results are averaged across each category.
+Only the absolute values of the \acp{pcc} are considered, as the direction of the relationship is of no concern when assessing its strength.
+The ten features with the highest correlation are displayed in Table \ref{tab:fs_results}.
+It is important to note that all $p$-values associated with these correlations are below the significance threshold of $0.01$, thereby confirming their high statistical relevance.
 
-The results of the test are found in table \ref{tab:pearson_results}.
-All $p$-values in the table are below the significance threshold of $0.05$, confirming the statistical significance of the correlation.
-The highest correlation is $0.15$, belonging to the KDA feature.
-This feature measures the average ratio of $\frac{\text{kills} + \text{assists}}{\text{deaths}}$ the player achieved on his champion.
-This is a very low correlation, indicating that no single feature has a strong linear relationship with the target.
-This illustrates the need for multivariate analysis.
-\begin{table}
-	\centering
-	\begin{longtblr}
-	[
-		caption = {Average Pearson's correlation coefficient and average \ac{gbt} Feature Importance for the 12 features categories with the highest absolute average correlation.},	
-		label = {tab:pearson_results},
-	]	
-	{ccc}
-	Feature  & Correlation coefficient & \acs{gbt} Feature Importance\\
-	\hline
-	KDA & \textbf{0.133} & \textbf{726}\\
-	Deaths & 0.092 & 284\\
-	Assists & 0.081 & 403\\
-	Gold & 0.063 & 393\\
-	Kills & 0.060 & 310\\
-	LP & 0.050 & 541\\
-	Champion Level & 0.034 & 50\\
-	CS Per Minute & 0.027 & 394\\
-	Last Play Time & 0.026 & 349\\
-	Win Rate & 0.022 & 301\\
-	Champion Tier & 0.020 & 66\\
-	Champion Points & 0.015 & 401\\
-	
-	\end{longtblr}
-\end{table}
+\Aclp{gbt} were used to assess non-linear relationships.
+The model was configured with the following hyperparameters: number of estimators set to 100, maximum depth at 3, a learning rate of 0.1, and the objective function as binary logistic.
+The Feature Importance Score is the number of times a feature was used to split the data across all trees.
+\Ac{gbt} achieved an accuracy of 0.69.
 
+In order to provide a clearer comparison between the \ac{pcc} and \ac{gbt} results, both sets of scores have been normalized into range $[0, 1]$.
+This normalization, as depicted in Figure \ref{fig:fs_norm}, allows for a more intuitive visual comparison of the feature importance as assessed by the two different methods.
+
+A key observation is that the highest \ac{pcc} and Feature Importance is associated with the KDA feature. 
+This metric, which calculates the average ratio of $\frac{\text{Kills} + \text{Assists}}{\text{Deaths}}$ achieved by a player on their champion, still demonstrates a low linear correlation with the target variable of only $0.287$.
+Notably, the three next highest correlations are Assists, Deaths and Kills, all of which are combined to calculate the KDA.
+This is different to the \ac{gbt} results, as the three features with the next highest score are Gold, League Points and Assists.
+This suggests that KDA encapsulates the essential information from Kills, Deaths and Assists, leading to \ac{gbt} assigning higher importance to KDA and lower importance to these related features.
+
+In contrast to the analysis performed by \citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021}, the win rate is not the most important factor.
+However, the general trend of placing the highest importance on statistics of individual players instead of general champion statistics is similar.
 
 \begin{figure}
 \centering
 \resizebox{\textwidth}{!}{%
-	\input{./images/pearson_correlation.pgf}
+	\input{./images/feature_importance.pgf}
 }
-\caption{Coefficients of correlation averaged over each feature category with the label. }
-\label{fig:pearson_corr}
+\caption{\ac{gbt} Feature Importance Scores and \acp{pcc} normalized into range $[0, 1]$}
+\label{fig:fs_norm}
 \end{figure}
 
 
-Notably, the KDA feature is not only by far the most important, but its components Kills, Deaths and Assists are in the top 5 correlation coefficients as well.
+
+
+\begin{table}
+\centering
+\caption{\acl{gbt} Feature Importance Scores and \aclp{pcc}, averaged per category}
+\label{tab:fs_results}
+\begin{tblr}{ccc}
+	Category & \ac{gbt} Importance Score & \ac{pcc}\\
+	\hline
+	KDA & 88.5 & 0.287 \\
+	Gold & 45.0 & 0.124 \\
+	League Points & 37.5 & 0.030 \\
+	Assists & 27.0 & 0.190 \\
+	Deaths & 21.5 & 0.183 \\
+	Max Kills & 19.0 & 0.021 \\
+	Last Play Time & 16.0 & 0.023 \\
+	Winrate & 12.5 & 0.058 \\
+	Kills & 11.5 & 0.134 \\
+	Championlevel & 8.5 & 0.069 \\
+	Hot Streak & 8.5 & 0.066 \\
+	Damage & 6.5 & 0.084 \\
+	Creep Score & 3.5 & 0.058 \\
+\end{tblr}
+\end{table}
+
+
+For the in-game dataset, manual feature selection using domain knowledge was performed.
+
+
 
 
 
