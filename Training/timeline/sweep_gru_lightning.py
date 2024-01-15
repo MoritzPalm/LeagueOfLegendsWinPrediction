@@ -68,7 +68,7 @@ sweep_config = {
             'values': [1, 2, 3]
         },
         'dataset': {
-            'values': ['full', 'avg', 'gold', 'manual']
+            'values': ['avg', 'manual']
         }
     }
 }
