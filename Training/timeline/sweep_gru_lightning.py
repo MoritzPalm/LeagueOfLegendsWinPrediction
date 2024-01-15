@@ -31,14 +31,14 @@ sweep_config = {
     },
     'parameters': {
         'hidden_size': {
-            'values': [128, 256, 512, 1024]
+            'values': [128, 256]
         },
         'num_layers': {
             'min': 1,
-            'max': 3
+            'max': 2
         },
         'dropout_prob': {
-            'values': [0.0, 0.1, 0.2, 0.3, 0.4, ]
+            'values': [0]
         },
         'activation': {
             'value': 'ReLU'

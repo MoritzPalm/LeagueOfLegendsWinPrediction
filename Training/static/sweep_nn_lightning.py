@@ -150,7 +150,7 @@ class LNN(L.LightningModule):
         self.log('test_loss', loss, prog_bar=True)
         self.log('test_acc', self.accuracy(y_hat, y), prog_bar=True)
         self.log('test_f1', self.f1(y_hat, y), prog_bar=True)
-        fpr, tpr, threshold = roc_curve(y, y_hat.detach().numpy())
+        fpr, tpr, threshold = roc_curve(y.detach().cpu().numpy(), y_hat.detach().cpu().numpy())
         print(f'fpr: {fpr}, tpr: {tpr}, threshold: {threshold}')
         print(f'test_confusion_matrix {self.confusion_matrix(y_hat, y)}')
         return loss
