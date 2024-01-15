@@ -196,7 +196,7 @@ def main(config=None):
     :return:
     """
     with wandb.init(config=config):
-        data_dir = 'data/static_11_12_23/processed'
+        data_dir = 'data/static_16_12_23/processed'
         config = wandb.config
 
         wandb_logger = WandbLogger()
@@ -205,7 +205,7 @@ def main(config=None):
         wandb_logger.experiment.log_artifact(training_data)
         if config.dataset == "fs_only":
             data_dir += '/fs_only'
-        elif config.merged == "fs_ohc":
+        elif config.dataset == "fs_ohc":
             data_dir += '/fs_ohc'
         else:
             raise ValueError(f'Dataset {config.dataset} not supported')
