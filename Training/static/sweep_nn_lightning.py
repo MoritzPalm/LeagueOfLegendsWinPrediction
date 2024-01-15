@@ -1,5 +1,6 @@
 import lightning as L
 import numpy as np
+import pandas as pd
 import torch
 import torchmetrics
 from lightning.pytorch.callbacks import ModelCheckpoint
@@ -151,7 +152,15 @@ class LNN(L.LightningModule):
         self.log('test_acc', self.accuracy(y_hat, y), prog_bar=True)
         self.log('test_f1', self.f1(y_hat, y), prog_bar=True)
         fpr, tpr, threshold = roc_curve(y.detach().cpu().numpy(), y_hat.detach().cpu().numpy())
-        print(f'fpr: {fpr}, tpr: {tpr}, threshold: {threshold}')
+        df_fpr = pd.DataFrame(fpr)
+        df_tpr = pd.DataFrame(tpr)
+        df_threshold = pd.DataFrame(threshold)
+        fpr_table = wandb.Table(df_fpr)
+        tpr_table = wandb.Table(df_tpr)
+        threshold_table = wandb.Table(df_threshold)
+        wandb.log(fpr_table)
+        wandb.log(tpr_table)
+        wandb.log(threshold_table)
         print(f'test_confusion_matrix {self.confusion_matrix(y_hat, y)}')
         return loss
 
@@ -240,4 +249,4 @@ def main(config=None):
 
 
 if __name__ == '__main__':
-    wandb.agent(sweep_id, function=main, count=2000)
+    wandb.agent(sweep_id, function=main, count=1)
