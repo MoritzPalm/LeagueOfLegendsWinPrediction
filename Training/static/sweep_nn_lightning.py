@@ -7,6 +7,7 @@ from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from lightning.pytorch.loggers import WandbLogger
 from torch import optim, nn
 from torch.utils.data import Dataset, DataLoader
+from sklearn.metrics import confusion_matrix, roc_curve, auc
 
 import wandb
 
@@ -149,6 +150,8 @@ class LNN(L.LightningModule):
         self.log('test_loss', loss, prog_bar=True)
         self.log('test_acc', self.accuracy(y_hat, y), prog_bar=True)
         self.log('test_f1', self.f1(y_hat, y), prog_bar=True)
+        fpr, tpr, threshold = roc_curve(y, y_hat.detach().numpy())
+        print(f'fpr: {fpr}, tpr: {tpr}, threshold: {threshold}')
         print(f'test_confusion_matrix {self.confusion_matrix(y_hat, y)}')
         return loss
 
