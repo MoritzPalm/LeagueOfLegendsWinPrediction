@@ -7,6 +7,7 @@ from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from lightning.pytorch.loggers import WandbLogger
 from torch import optim, nn
 from torch.utils.data import Dataset, DataLoader
+from sklearn.metrics import confusion_matrix, roc_curve, auc
 
 import wandb
 
@@ -142,6 +143,8 @@ class LGRU(L.LightningModule):
         self.log('test_loss', loss, prog_bar=True, logger=True)
         self.log('test_acc', self.accuracy(output, y), prog_bar=True, logger=True)
         self.log('test_f1', self.f1(output, y), prog_bar=True, logger=True)
+        fpr, tpr, threshold = roc_curve(y.cpu().numpy(), output.detach().cpu().numpy())
+        print(f'fpr: {fpr}, tpr: {tpr}, threshold: {threshold}')
         print(f'test_confusion_matrix {self.confusion_matrix(output, y)}')
         return loss
 
@@ -192,13 +195,13 @@ def train(config=None):
     with wandb.init(config=config):
         config = wandb.config
         if config.dataset == 'full':
-            data_dir = 'data/timeline_20_12_23/processed/full'
+            data_dir = 'data/timeline_25_12_23/processed/full'
         elif config.dataset == 'avg':
-            data_dir = 'data/timeline_20_12_23/processed/avg'
+            data_dir = 'data/timeline_25_12_23/processed/avg'
         elif config.dataset == 'gold':
-            data_dir = 'data/timeline_20_12_23/processed/gold'
+            data_dir = 'data/timeline_25_12_23/processed/gold'
         elif config.dataset == 'manual':
-            data_dir = 'data/timeline_20_12_23/processed/manual'
+            data_dir = 'data/timeline_25_12_23/processed/manual'
         else:
             data_dir = 'data/timeline_18_12_23/processed'
 
@@ -232,4 +235,4 @@ def train(config=None):
 
 
 if __name__ == '__main__':
-    wandb.agent(sweep_id, function=train, count=500)
+    wandb.agent(sweep_id, function=train, count=5000)
