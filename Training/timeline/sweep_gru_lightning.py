@@ -47,11 +47,12 @@ sweep_config = {
             'values': [64, 128, 256]
         },
         'learning_rate': {
-            'min': 1e-7,
-            'max': 1e-3
+            'min': 1e-15,
+            'max': 1e-5,
+            'distribution': 'log_uniform_values'
         },
         'max_epochs': {
-            'value': 500
+            'value': 2000
         },
         'patience': {
             'values': [40, 60, 80, 100]
@@ -231,8 +232,4 @@ def train(config=None):
 
 
 if __name__ == '__main__':
-<<<<<<< Updated upstream
-    wandb.agent(sweep_id, function=train, count=3)
-=======
     wandb.agent(sweep_id, function=train, count=500)
->>>>>>> Stashed changes

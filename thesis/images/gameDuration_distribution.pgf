@@ -21,9 +21,9 @@
 %% Matplotlib used the following preamble
 %%   
 %%   \usepackage{fontspec}
-%%   \setmainfont{DejaVuSerif.ttf}[Path=\detokenize{C:/Users/morit/AppData/Local/pypoetry/Cache/virtualenvs/leaguify-VaCbhr8h-py3.11/Lib/site-packages/matplotlib/mpl-data/fonts/ttf/}]
-%%   \setsansfont{arial.ttf}[Path=\detokenize{C:/Windows/Fonts/}]
-%%   \setmonofont{DejaVuSansMono.ttf}[Path=\detokenize{C:/Users/morit/AppData/Local/pypoetry/Cache/virtualenvs/leaguify-VaCbhr8h-py3.11/Lib/site-packages/matplotlib/mpl-data/fonts/ttf/}]
+%%   \setmainfont{DejaVuSerif.ttf}[Path=\detokenize{/Users/admin/opt/miniconda3/envs/Leaguify/lib/python3.10/site-packages/matplotlib/mpl-data/fonts/ttf/}]
+%%   \setsansfont{Arial.ttf}[Path=\detokenize{/System/Library/Fonts/Supplemental/}]
+%%   \setmonofont{DejaVuSansMono.ttf}[Path=\detokenize{/Users/admin/opt/miniconda3/envs/Leaguify/lib/python3.10/site-packages/matplotlib/mpl-data/fonts/ttf/}]
 %%   \makeatletter\@ifpackageloaded{underscore}{}{\usepackage[strings]{underscore}}\makeatother
 %%
 \begingroup%

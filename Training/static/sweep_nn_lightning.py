@@ -31,14 +31,14 @@ sweep_config = {
     },
     'parameters': {
         'hidden_size': {
-            'values': [128, 256, 512, 1024]
+            'values': [128, 256]
         },
         'num_layers': {
             'min': 2,
             'max': 15
         },
         'dropout_prob': {
-            'values': [0.3, 0.4, 0.5]
+            'values': [0, 0.1]
         },
         'activation': {
             'values': ['ReLU', 'ELU', 'LeakyReLU']
@@ -47,17 +47,18 @@ sweep_config = {
             'values': [128, 256]
         },
         'learning_rate': {
-            'min': 1e-5,
-            'max': 1e-2
+            'min': 1e-10,
+            'max': 1e-5,
+            'distribution': 'log_uniform_values'
         },
         'max_epochs': {
-            'value': 500
+            'value': 2000
         },
         'patience': {
-            'values': [30, 40]
+            'values': [100, 150]
         },
-        'merged': {
-            'values': ["True", "ohc"]
+        'dataset': {
+            'values': ['fs_ohc', 'fs_only']
         }
     }
 }
@@ -199,43 +200,22 @@ def main(config=None):
         training_data = wandb.Artifact('training_data', type='dataset')
         training_data.add_dir(data_dir)
         wandb_logger.experiment.log_artifact(training_data)
-        if config.merged == "True":
-            data_dir += '/merged_only'
-            X_train = StaticDataset(data_dir + '/train_static.npy')
-            X_val = StaticDataset(data_dir + '/val_static.npy')
-            X_test = StaticDataset(data_dir + '/test_static.npy')
-            train_loader = DataLoader(X_train,
-                                      batch_size=config.batch_size,
-                                      shuffle=True)
-            val_loader = DataLoader(X_val, batch_size=X_val.__len__(),
-                                    shuffle=False)
-            test_loader = DataLoader(X_test, batch_size=X_test.__len__(),
-                                     shuffle=False)
-            input_size = X_train.shape[1] - 1
-        elif config.merged == "ohc":
-            data_dir += '/merged_ohc'
-            X_train = StaticDataset(data_dir + '/train_static.npy')
-            X_val = StaticDataset(data_dir + '/val_static.npy')
-            X_test = StaticDataset(data_dir + '/test_static.npy')
-            train_loader = DataLoader(X_train, batch_size=config.batch_size,
-                                      shuffle=True)
-            val_loader = DataLoader(X_val, batch_size=X_val.__len__(),
-                                    shuffle=False)
-            test_loader = DataLoader(X_test, batch_size=X_test.__len__(),
-                                     shuffle=False)
-            input_size = X_train.shape[1] - 1
+        if config.dataset == "fs_only":
+            data_dir += '/fs_only'
+        elif config.merged == "fs_ohc":
+            data_dir += '/fs_ohc'
         else:
-            data_dir += '/default'
-            X_train = StaticDataset(data_dir + '/train_static.npy')
-            X_val = StaticDataset(data_dir + '/val_static.npy')
-            X_test = StaticDataset(data_dir + '/test_static.npy')
-            train_loader = DataLoader(X_train, batch_size=config.batch_size,
-                                      shuffle=True)
-            val_loader = DataLoader(X_val, batch_size=X_val.__len__(),
-                                    shuffle=False)
-            test_loader = DataLoader(X_test, batch_size=X_test.__len__(),
-                                     shuffle=False)
-            input_size = X_train.shape[1] - 1
+            raise ValueError(f'Dataset {config.dataset} not supported')
+        X_train = StaticDataset(data_dir + '/train_static.npy')
+        X_val = StaticDataset(data_dir + '/val_static.npy')
+        X_test = StaticDataset(data_dir + '/test_static.npy')
+        train_loader = DataLoader(X_train, batch_size=config.batch_size,
+                                  shuffle=True)
+        val_loader = DataLoader(X_val, batch_size=X_val.__len__(),
+                                shuffle=False)
+        test_loader = DataLoader(X_test, batch_size=X_test.__len__(),
+                                 shuffle=False)
+        input_size = X_train.shape[1] - 1
 
         model = LNN(input_size=input_size, hidden_size=config.hidden_size, num_layers=config.num_layers,
                     dropout_prob=config.dropout_prob, activation=config.activation, learning_rate=config.learning_rate)

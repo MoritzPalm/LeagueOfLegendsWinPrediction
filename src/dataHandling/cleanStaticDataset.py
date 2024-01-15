@@ -189,6 +189,52 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
                                    'cs'
                                    ]
     df_fs = clean.drop_columns_not_including(df_merged, relevant_feature_categories)
+    df_fs_only = df_fs.copy()
+    df_fs_only['label'] = df['label']
+
+    (X_train_fs_only, X_test_fs_only,
+     y_train_fs_only, y_test_fs_only) = train_test_split(df_fs_only.iloc[:, :-1],
+                                               df_fs_only.iloc[:, -1],
+                                               test_size=test_size,
+                                               random_state=42,
+                                               shuffle=True,
+                                               stratify=df_fs_only.iloc[:, -1])
+    (X_train_fs_only, X_val_fs_only,
+     y_train_fs_only, y_val_fs_only) = train_test_split(X_train_fs_only,
+                                              y_train_fs_only,
+                                              test_size=test_size,
+                                              random_state=42,
+                                              shuffle=True,
+                                              stratify=y_train_fs_only)
+
+    numerical_columns = df_fs.columns.tolist()  # df_merged contains only averaged columns, categorical columns
+    # are dropped
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('scaler', StandardScaler(), numerical_columns)],
+        remainder='passthrough')
+
+    transformer = preprocessor.fit(X_train_fs_only)
+    X_train_fs_only = transformer.transform(X_train_fs_only)
+    X_test_fs_only = transformer.transform(X_test_fs_only)
+    X_val_fs_only = transformer.transform(X_val_fs_only)
+    X_train_fs_only = np.append(X_train_fs_only, np.expand_dims(y_train_fs_only, axis=1), axis=1)
+    X_test_fs_only = np.append(X_test_fs_only, np.expand_dims(y_test_fs_only, axis=1), axis=1)
+    X_val_fs_only = np.append(X_val_fs_only, np.expand_dims(y_val_fs_only, axis=1), axis=1)
+    df_train_fs_only = pd.DataFrame(X_train_fs_only, columns=df_fs_only.columns)
+    df_test_fs_only = pd.DataFrame(X_test_fs_only, columns=df_fs_only.columns)
+    df_val_fs_only = pd.DataFrame(X_val_fs_only, columns=df_fs_only.columns)
+
+    if save:
+        df_train_fs_only.to_pickle(f'{dir}/processed/fs_only/train_static.pkl')
+        df_test_fs_only.to_pickle(f'{dir}/processed/fs_only/test_static.pkl')
+        df_val_fs_only.to_pickle(f'{dir}/processed/fs_only/val_static.pkl')
+        np.save(f'{dir}/processed/fs_only/train_static.npy', X_train_fs_only)
+        np.save(f'{dir}/processed/fs_only/test_static.npy', X_test_fs_only)
+        np.save(f'{dir}/processed/fs_only/val_static.npy', X_val_fs_only)
+
+
+
     df_fs_ohc = pd.concat([df_fs, df_categorical_one_hot], axis=1)
     df_fs_ohc['label'] = df['label']
 
@@ -237,4 +283,4 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
 
 
 if __name__ == '__main__':
-    cleanStaticDataset(save=False)
+    cleanStaticDataset(save=True)

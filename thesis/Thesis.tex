@@ -240,7 +240,7 @@ maybe win prediction in sports?
 
 \section{Win prediction in other sports}
 \label{sec:other_sports}
-
+and/or this?
 
 \chapter{Background}
 \label{chap:background}
@@ -784,7 +784,7 @@ A visual representation of the distribution of matches across regions is provide
 
 \begin{figure}[ht]
 \input{./images/platformId_distribution.pgf}
-\caption{Region distribution with the region code denoting the region: 'BR1': Brazil, 'EUN1': EU Nordic and East, 'EUW1': Europe West, 'KR': Korea, 'NA1': North America}
+\caption{Region distribution}
 \label{fig:platformId}
 \end{figure}
 
@@ -946,9 +946,6 @@ However, the general trend of placing the highest importance on statistics of in
 \label{fig:fs_norm}
 \end{figure}
 
-
-
-
 \begin{table}
 \centering
 \caption{\acl{gbt} Feature Importance Scores and \aclp{pcc}, averaged per category}
@@ -972,12 +969,7 @@ However, the general trend of placing the highest importance on statistics of in
 \end{tblr}
 \end{table}
 
-
 For the in-game dataset, manual feature selection using domain knowledge was performed.
-
-
-
-
 
 
 \section{Pre-Game Classification}
@@ -988,13 +980,9 @@ Settings used:
 
 \begin{table}
 \centering
-\begin{longtblr}
-[
-caption = {Overview of the hyperparameter search for the pre-game classification},
-label = {tab:static_hyperparam_optim},
-]
-{ccc}
-
+\caption{Overview of the hyperparameter search for the pre-game classification}
+\label{tab:static_hyperparam_optim}
+\begin{tblr}{ccc}
 Hyperparameter & Values & Distribution \\
 \hline
 Hidden Size & [128, 256, 512] & Selection \\
@@ -1003,7 +991,8 @@ Number of Layers & [2;15] & discrete \\
 Dropout Probability & [0.3; 0.5] & discrete \\
 Activation Function & [\ac{relu}, ELU, LeakyReLu] & Selection \\
 
-\end{longtblr}
+
+\end{tblr}
 \end{table}
 
 \section{Mid-Game Classification}
