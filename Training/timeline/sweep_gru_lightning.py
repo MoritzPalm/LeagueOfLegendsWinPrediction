@@ -35,8 +35,7 @@ sweep_config = {
             'values': [128, 256]
         },
         'num_layers': {
-            'min': 1,
-            'max': 2
+            'values': [1]
         },
         'dropout_prob': {
             'values': [0]
@@ -69,6 +68,9 @@ sweep_config = {
         },
         'dataset': {
             'values': ['avg', 'manual']
+        },
+        'optimizer': {
+            'values': ['Adam', 'SGD']
         }
     }
 }
@@ -105,7 +107,7 @@ class GRU(nn.Module):
 
 
 class LGRU(L.LightningModule):
-    def __init__(self, input_dim, hidden_dim, output_dim, gru_layers, learning_rate, dropout_prob, gru, fc_layers):
+    def __init__(self, input_dim, hidden_dim, output_dim, gru_layers, learning_rate, dropout_prob, gru, fc_layers, optimizer):
         super().__init__()
         self.model = GRU(input_dim, hidden_dim, output_dim, gru_layers, dropout_prob, gru, fc_layers)
         self.criterion = nn.BCELoss()
@@ -113,6 +115,7 @@ class LGRU(L.LightningModule):
         self.accuracy = torchmetrics.classification.BinaryAccuracy()
         self.f1 = torchmetrics.classification.BinaryF1Score()
         self.confusion_matrix = torchmetrics.classification.BinaryConfusionMatrix()
+        self.optimizer = optimizer
 
     def training_step(self, batch, batch_idx):
         x, y = batch
@@ -144,12 +147,25 @@ class LGRU(L.LightningModule):
         self.log('test_acc', self.accuracy(output, y), prog_bar=True, logger=True)
         self.log('test_f1', self.f1(output, y), prog_bar=True, logger=True)
         fpr, tpr, threshold = roc_curve(y.cpu().numpy(), output.detach().cpu().numpy())
-        print(f'fpr: {fpr}, tpr: {tpr}, threshold: {threshold}')
+        df_fpr = pd.DataFrame(fpr)
+        df_tpr = pd.DataFrame(tpr)
+        df_threshold = pd.DataFrame(threshold)
+        fpr_table = wandb.Table(dataframe=df_fpr)
+        tpr_table = wandb.Table(dataframe=df_tpr)
+        threshold_table = wandb.Table(dataframe=df_threshold)
+        wandb.log(fpr_table)
+        wandb.log(tpr_table)
+        wandb.log(threshold_table)
         print(f'test_confusion_matrix {self.confusion_matrix(output, y)}')
         return loss
 
     def configure_optimizers(self):
-        optimizer = optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
+        if self.optimizer == 'Adam':
+            optimizer = optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
+        elif self.optimizer == 'SGD':
+            optimizer = optim.SGD(self.parameters(), lr=self.hparams.learning_rate)
+        else:
+            raise ValueError(f'optimizer {self.optimizer} not supported')
         return optimizer
 
 

@@ -37,7 +37,7 @@ sweep_config = {
         },
         'num_layers': {
             'min': 2,
-            'max': 15
+            'max': 12
         },
         'dropout_prob': {
             'values': [0, 0.1]
@@ -57,10 +57,13 @@ sweep_config = {
             'value': 2000
         },
         'patience': {
-            'values': [100, 150]
+            'values': [30]
         },
         'dataset': {
             'values': ['fs_ohc', 'fs_only']
+        },
+        'optimizer': {
+            'values': ['Adam', 'SGD']
         }
     }
 }
@@ -82,8 +85,8 @@ class NeuralNetwork(nn.Module):
         self.linear_relu_stack.append(nn.Linear(input_size, hidden_size))
         for i in range(num_layers - 1):
             next_hidden_size = self.hidden_size
-            self.linear_relu_stack.append(self.dropout)
-            self.linear_relu_stack.append(nn.BatchNorm1d(self.hidden_size))
+            #self.linear_relu_stack.append(self.dropout)
+            #self.linear_relu_stack.append(nn.BatchNorm1d(self.hidden_size))
             self.linear_relu_stack.append(nn.Linear(self.hidden_size, next_hidden_size))
             self.linear_relu_stack.append(activation)
             self.hidden_size = next_hidden_size
@@ -103,7 +106,7 @@ class NeuralNetwork(nn.Module):
 
 class LNN(L.LightningModule):
     def __init__(self, input_size, hidden_size, num_layers, dropout_prob,
-                 output_size=1, activation=nn.ReLU(), learning_rate=1e-3):
+                 output_size=1, activation=nn.ReLU(), learning_rate=1e-3, optimizer='Adam'):
         super().__init__()
         if activation == 'ReLU':
             activation = nn.ReLU()
@@ -120,6 +123,8 @@ class LNN(L.LightningModule):
         self.accuracy = torchmetrics.classification.BinaryAccuracy()
         self.f1 = torchmetrics.classification.BinaryF1Score()
         self.confusion_matrix = torchmetrics.classification.BinaryConfusionMatrix()
+        self.optimizer = optimizer
+
 
     def training_step(self, batch, batch_idx):
         x, y = batch
@@ -155,9 +160,9 @@ class LNN(L.LightningModule):
         df_fpr = pd.DataFrame(fpr)
         df_tpr = pd.DataFrame(tpr)
         df_threshold = pd.DataFrame(threshold)
-        fpr_table = wandb.Table(df_fpr)
-        tpr_table = wandb.Table(df_tpr)
-        threshold_table = wandb.Table(df_threshold)
+        fpr_table = wandb.Table(dataframe=df_fpr)
+        tpr_table = wandb.Table(dataframe=df_tpr)
+        threshold_table = wandb.Table(dataframe=df_threshold)
         wandb.log(fpr_table)
         wandb.log(tpr_table)
         wandb.log(threshold_table)
@@ -165,7 +170,12 @@ class LNN(L.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        optimizer = optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
+        if self.optimizer == 'Adam':
+            optimizer = optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
+        elif self.optimizer == 'SGD':
+            optimizer = optim.SGD(self.parameters(), lr= self.hparams.learning_rate)
+        else:
+            raise ValueError(f'optimizer {self.optimizer} not supported')
         return optimizer
 
 
@@ -232,12 +242,12 @@ def main(config=None):
         model = LNN(input_size=input_size, hidden_size=config.hidden_size, num_layers=config.num_layers,
                     dropout_prob=config.dropout_prob, activation=config.activation, learning_rate=config.learning_rate)
         wandb_logger.watch(model)
-        checkpoint_callback = ModelCheckpoint(monitor='val_acc',
+        checkpoint_callback = ModelCheckpoint(monitor='val_loss',
                                               dirpath='checkpoints/',
-                                              filename='nn-{epoch:02d}-{val_acc:.2f}',
+                                              filename='nn-{epoch:02d}-{val_loss:.2f}',
                                               save_top_k=3,
                                               mode='max', every_n_epochs=1)
-        early_stop_callback = EarlyStopping(monitor='val_acc',
+        early_stop_callback = EarlyStopping(monitor='val_loss',
                                             patience=config.patience,
                                             mode='max')
         trainer = L.Trainer(max_epochs=config.max_epochs, accelerator=device,

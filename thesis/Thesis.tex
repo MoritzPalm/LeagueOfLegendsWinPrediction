@@ -205,7 +205,7 @@ Author & Games & Features & Time & Skill Group & Accuracy \\
 \citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021} & 2,840 & 50 & pre-game & professional & \TblrNote{a} \\
 \citeauthor{whiteScalablePsychologicalMomentum2020} \cite{whiteScalablePsychologicalMomentum2020}&87,743&\TblrNote{b}&pre-game &equidistributed&0.721\\
 \citeauthor{hitar-garciaMachineLearningMethods2023} \cite{hitar-garciaMachineLearningMethods2023} & 7583 & 26 & pre-game & professional & 0.683 \\
-\citeauthor{linLeagueLegendsMatch} \cite{linLeagueLegendsMatch} & 588 & 2231 & pre-game & Gold & 0.567 \\
+\citeauthor{linLeagueLegendsMatch2016} \cite{linLeagueLegendsMatch2016} & 588 & 2231 & pre-game & Gold & 0.567 \\
 
 \citeauthor{kimConfidenceCalibratedMOBAGame2020} \cite{kimConfidenceCalibratedMOBAGame2020} & 93875 & 295 & in-game\TblrNote{c} & \TblrNote{d} & 0.738 \\
 \citeauthor{shenMachineLearningApproach2022} \cite{shenMachineLearningApproach2022} & 10,000 & 5 & 10 min & \TblrNote{d} & 0.726 & \\
@@ -216,15 +216,14 @@ Author & Games & Features & Time & Skill Group & Accuracy \\
 \citeauthor{mondalDoesSupportRole2022} \cite{mondalDoesSupportRole2022} & 296 & 5 & post game & \TblrNote{d} & \TblrNote{a} \\
 \citeauthor{bahrololloomiESportsPlayerPerformance2023} \cite{bahrololloomiESportsPlayerPerformance2023} & 2,901 & 15 & post-game & \TblrNote{d} &0.86 \\
 \citeauthor{aniVictoryPredictionLeague2019} \cite{aniVictoryPredictionLeague2019} & 1,500 & 97 & post-game & professional & 0.955 \\
-\citeauthor{linLeagueLegendsMatch} \cite{linLeagueLegendsMatch} & 3000 &  \TblrNote{b} & post-game & Gold & 0.936 \\
+\citeauthor{linLeagueLegendsMatch2016} \cite{linLeagueLegendsMatch2016} & 3000 &  \TblrNote{b} & post-game & Gold & 0.936 \\
 \hline
 \end{longtblr}
 
 
 \section{Win Prediction in DotA 2}
 \label{sec:dota}
-is this advisable? no real new insights in my opinion
-maybe win prediction in sports?
+is this advisable?
 %A lot of scientific research focuses on the similar \ac{moba} DotA 2, which has easier and more fine-grained data collection methods (see section \ref{sec:datacoll}).
 %Due to the high similarity between these two games, it is to be expected that any findings for one game can be replicated and used for the other game with minimal adaptations.
 %Nevertheless, to ensure a fair comparison, both games are presented separately below.
@@ -700,7 +699,7 @@ Feature selection methods can be broadly categorized into three distinct types \
 \Ac{pcc} is a statistical measure widely used to evaluate the linear relationship between two variables. 
 Specifically, we consider its application in the context of feature selection in machine learning, where it is used to assess the linear correlation between input features and the target variable. 
 We regard the input vector $\mathbf{x}$ as a manifestation of an underlying, unknown distribution. 
-Here, $X_i$ represents the random variable corresponding to the $i^{\text{th}}$ component of $\mathbf{x}$, and $y$ is the target value, viewed as a realization of the random variable $Y$ \cite{guyonIntroductionVariableFeature}. 
+Here, $X_i$ represents the random variable corresponding to the $i^{\text{th}}$ component of $\mathbf{x}$, and $y$ is the target value, viewed as a realization of the random variable $Y$ \cite{guyonIntroductionVariableFeature2003}. 
 \Ac{pcc} is employed to quantify the linear correlation between these two random variables. It is defined by the formula:
 \begin{equation}
 R(i) = \frac{\text{cov}(X_i, Y)}{\sqrt{\text{var}(X_i) \cdot \text{var}(Y)}},
@@ -868,9 +867,10 @@ Both the number of destroyed turrets and the cumulative amount of gold is tracke
 \paragraph{Missing Values}
 There are no missing values in the data obtained directly from Riot Games.
 On the rare occasion that the web scraper could not find the relevant information, missing values can occur.
-As this is a technical error, the missing data can be described as \ac{mcar} \cite{acockWorkingMissingValues2005} and thus deleted row-wise without introducing a bias.
+As this is a technical error, the missing data can be assumed as being \ac{mcar} distributed \cite{acockWorkingMissingValues2005} and thus deleted row-wise without introducing a bias.
+Even if this assumption should be false, due to the low number of affected samples the introduced bias would be very small.
 
-By deleting all rows containing missing data, the dataset shrinks by 384???? rows.
+By deleting all rows containing missing data, the dataset shrinks by 384 rows.
 As missing values are caused by the web scraper, the in-game dataset has no missing values.
 
 \paragraph{Individual Feature Processing Pre-Game Dataset.}
@@ -970,30 +970,70 @@ However, the general trend of placing the highest importance on statistics of in
 \end{table}
 
 For the in-game dataset, manual feature selection using domain knowledge was performed.
-Here, eight feature categories were removed  due to their information being deemed either little informative about the state of the game (e.g. the bonus armor penetration) or more clearly conveyed in other features (gold earned per second is just as informative as 
+Here, eight feature categories were removed  due to their information being deemed either little informative about the state of the game (e.g. the bonus armor penetration) or more clearly conveyed in other features (gold earned per second is just as informative as the total gold the team has earned so far).
 
-\section{Pre-Game Classification}
-\label{sec:pregame_class}
-Settings used: 
-\subsection{Hyperparameter Optimization}
-\label{ssec:hyperparam_optim}
+
+
+\section{Hyperparameter Optimization}
+\label{sec:hyperparam_optim}
+
+The following settings were determined manually and fixed prior to the hyperparameter optimization.
+The model architecture includes a series of fully connected layers, each followed by 1-dimensional batch normalization.
+The exact number of layers is a primary parameter determined by the hyperparameter optimization.
+The batchnorm is used to stabilize the learning process, as initial experiments have shown highly fluctuating training loss.
+The activation function for each neuron is the Expontential Linear Unit, as the experiments and \citeauthor{doUsingMachineLearning2021} \cite{doUsingMachineLearning2021} have shown some improvement with it.
+Binary \acl{cel} was used as the loss function and adam optimizer was employed due to its adaptive learning rate capabilities, which can help mitigate issues with unstable gradients \cite{kingmaAdamMethodStochastic2017}.
+In order to avoid overfitting, the training is stopped when the validation accuracy does not improve for 30 epochs.
+
+\paragraph{Focus and Metrics}
+The primary focus of our hyperparameter optimization was twofold: to determine the optimal depth of the neural network and to identify the most effective learning rate. The evaluation of model quality centered on validation accuracy, deemed a suitable metric given the near-perfect balance of the dataset and the equivalent cost of false positives and negatives in predictions.
+
+\paragraph{Search Strategy}
+
+The search space, shown in Figure \ref{tab:static_hyperparam_optim} is randomly searched.
+This method allows for a comprehensive exploration of potential configurations, striking a balance between thoroughness and computational feasibility \cite{bergstraRandomSearchHyperParameter}.
+
+
 
 \begin{table}
 \centering
 \caption{Overview of the hyperparameter search for the pre-game classification}
 \label{tab:static_hyperparam_optim}
 \begin{tblr}{ccc}
-Hyperparameter & Values & Distribution \\
+Hyperparameter & \ac{ann} & \ac{gru} & Distribution \\
 \hline
-Hidden Size & [128, 256, 512] & Selection \\
-Learning Rate & [$\num{1e-5}$; $\num{1e-2}$] & uniform \\
-Number of Layers & [2;15] & discrete \\
-Dropout Probability & [0.3; 0.5] & discrete \\
-Activation Function & [\ac{relu}, ELU, LeakyReLu] & Selection \\
-
-
+Hidden Size & [128, 256, 512] & [128, 256] & Selection \\
+Learning Rate & [$\num{1e-5}$, $\num{1e-2}$] & [$\num{1e-15}, \num{1e-5}$] & log uniform \\
+Number of Layers & [2,12] & [1, 3] & discrete \\
+Dropout Probability & [0, 0.3] & [0, 0.3] & discrete \\
+Activation Function & [\ac{relu}, ELU] & [\ac{relu}] & Selection \\
+Optimization & [Adam, SGD] & [Adam, SGD] & Selection \\
+Model &  [\ac{ann}] & [\ac{rnn}, \ac{gru}] \\ & Selection
 \end{tblr}
 \end{table}
+
+
+\begin{table}
+\centering
+\caption{Final hyperparameters for \ac{ann} and \ac{gru}}
+\label{tab:final_arch}
+\begin{tblr}{ccc}
+Parameter & \ac{ann} & \ac{gru} \\
+\hline
+Hidden Size & 256 & 128 \\
+Learning Rate & $\num{1.3e-7}$ & $\num{1e-10}$\\
+Number of Layers & 6 & 2 \\
+Dropout Probability & 0 & 0 \\
+Activation Function & ELU & \ac{relu} \\
+Optimizer & SGD & SGD \\
+\end{tblr}
+\end{table}
+
+\begin{figure}
+\centering
+\input{./images/static_roc.pgf}
+\end{figure}
+
 
 \section{Mid-Game Classification}
 \label{sec:midgame_class}
@@ -1017,8 +1057,7 @@ Dropout Probability & [0.0; 0.4] & discrete \\
 Number of Fully Connected Layers & [1; 3] & discrete \\
 \end{longtblr}
 \end{table}
-
-retrain probably necessary for every patch
+as the model mostly depends on the player statistics, a retrain every patch is most likely not necessary.
 
 no real improvement with gru compared to silva on rnn
 \chapter{Conclusion}

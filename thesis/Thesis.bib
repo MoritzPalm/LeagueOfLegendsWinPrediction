@@ -199,6 +199,14 @@
   file = {/Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/IZCICZ59/Bengio et al. - 1994 - Learning long-term dependencies with gradient desc.pdf}
 }
 
+@article{bergstraRandomSearchHyperParameter,
+  title = {Random {{Search}} for {{Hyper-Parameter Optimization}}},
+  author = {Bergstra, James and Bengio, Yoshua},
+  abstract = {Grid search and manual search are the most widely used strategies for hyper-parameter optimization. This paper shows empirically and theoretically that randomly chosen trials are more efficient for hyper-parameter optimization than trials on a grid. Empirical evidence comes from a comparison with a large previous study that used grid search and manual search to configure neural networks and deep belief networks. Compared with neural networks configured by a pure grid search, we find that random search over the same domain is able to find models that are as good or better within a small fraction of the computation time. Granting random search the same computational budget, random search finds better models by effectively searching a larger, less promising configuration space. Compared with deep belief networks configured by a thoughtful combination of manual search and grid search, purely random search over the same 32-dimensional configuration space found statistically equal performance on four of seven data sets, and superior performance on one of seven. A Gaussian process analysis of the function from hyper-parameters to validation set performance reveals that for most data sets only a few of the hyper-parameters really matter, but that different hyper-parameters are important on different data sets. This phenomenon makes grid search a poor choice for configuring algorithms for new data sets. Our analysis casts some light on why recent ``High Throughput'' methods achieve surprising success{\textemdash}they appear to search through a large number of hyper-parameters because most hyper-parameters do not matter much. We anticipate that growing interest in large hierarchical models will place an increasing burden on techniques for hyper-parameter optimization; this work shows that random search is a natural baseline against which to judge progress in the development of adaptive (sequential) hyper-parameter optimization algorithms.},
+  langid = {english},
+  file = {/Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/FVD2PELM/Bergstra und Bengio - Random Search for Hyper-Parameter Optimization.pdf}
+}
+
 @inproceedings{bridleProbabilisticInterpretationFeedforward1990,
   title = {Probabilistic {{Interpretation}} of {{Feedforward Classification Network Outputs}}, with {{Relationships}} to {{Statistical Pattern Recognition}}},
   booktitle = {Neurocomputing},
@@ -253,6 +261,21 @@
   langid = {english},
   keywords = {notion},
   file = {/Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/CXWEB3I6/Chandrashekar und Sahin - 2014 - A survey on feature selection methods.pdf}
+}
+
+@article{chaudhuryRobustnessAdaptiveNeural2021,
+  title = {Robustness of {{Adaptive Neural Network Optimization Under Training Noise}}},
+  author = {Chaudhury, Subhajit and Yamasaki, Toshihiko},
+  year = {2021},
+  journal = {IEEE Access},
+  volume = {9},
+  pages = {37039--37053},
+  issn = {2169-3536},
+  doi = {10.1109/ACCESS.2021.3062990},
+  url = {https://ieeexplore.ieee.org/abstract/document/9366477},
+  urldate = {2024-01-16},
+  abstract = {Adaptive gradient methods such as adaptive moment estimation (Adam), RMSProp, and adaptive gradient (AdaGrad) use the temporal history of the gradient updates to improve the speed of convergence and reduce reliance on manual learning rate tuning, making them a popular choice for off-the-shelf Deep Neural Network (DNN) optimizers. In this article, we study the robustness of neural network optimizers in the presence of training perturbations. We show that popular adaptive optimization methods exhibit poor generalization while learning from noisy training data, compared to vanilla Stochastic Gradient Descent (SGD) and its variants, which manifest better implicit regularization properties. We construct an illustrative example of a family of two-class linearly separable toy-data such that models trained under noise using adaptive optimizers show only 52\% test accuracy (random classifier), whereas SGD-based methods can achieve 100\% test accuracy. We strengthen our hypothesis by empirical analysis using Convolutional Neural Networks (CNNs) on publicly available image datasets. For this purpose, our method trains neural network models with various optimizers on noisy training data, and we compute test accuracy on clean test data. Our results further highlight the robustness of SGD optimization against such noisy training data compared to its adaptive counterparts. Based on the results, our paper suggests a reconsideration of the extensive use of adaptive gradient methods for neural network optimization, especially when the training data is noisy.},
+  file = {/Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/Y7K9NU2H/Chaudhury und Yamasaki - 2021 - Robustness of Adaptive Neural Network Optimization.pdf;/Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/W7MPAPGB/9366477.html}
 }
 
 @inproceedings{chenXGBoostScalableTree2016,
@@ -576,9 +599,13 @@
   file = {/Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/4SLMAHYV/Grosse - Lecture 15 Exploding and Vanishing Gradients.pdf}
 }
 
-@article{guyonIntroductionVariableFeature,
+@article{guyonIntroductionVariableFeature2003,
   title = {An {{Introduction}} to {{Variable}} and {{Feature Selection}}},
   author = {Guyon, Isabelle and Elisseeff, Andre},
+  year = {2003},
+  journal = {Journal of machine learning research},
+  volume = {3},
+  pages = {1157--1182},
   abstract = {Variable and feature selection have become the focus of much research in areas of application for which datasets with tens or hundreds of thousands of variables are available. These areas include text processing of internet documents, gene expression array analysis, and combinatorial chemistry. The objective of variable selection is three-fold: improving the prediction performance of the predictors, providing faster and more cost-effective predictors, and providing a better understanding of the underlying process that generated the data. The contributions of this special issue cover a wide range of aspects of such problems: providing a better definition of the objective function, feature construction, feature ranking, multivariate feature selection, efficient search methods, and feature validity assessment methods.},
   langid = {english},
   keywords = {notion},
@@ -896,6 +923,25 @@
   pages = {2316--2329},
   keywords = {League of Legends,MOBA,notion},
   file = {/Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/9PLECNWZ/Kim et al. - 2017 - What makes a strong team Using collective intelli.pdf}
+}
+
+@misc{kingmaAdamMethodStochastic2017,
+  title = {Adam: {{A Method}} for {{Stochastic Optimization}}},
+  shorttitle = {Adam},
+  author = {Kingma, Diederik P. and Ba, Jimmy},
+  year = {2017},
+  month = jan,
+  number = {arXiv:1412.6980},
+  eprint = {1412.6980},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.1412.6980},
+  url = {http://arxiv.org/abs/1412.6980},
+  urldate = {2024-01-16},
+  abstract = {We introduce Adam, an algorithm for first-order gradient-based optimization of stochastic objective functions, based on adaptive estimates of lower-order moments. The method is straightforward to implement, is computationally efficient, has little memory requirements, is invariant to diagonal rescaling of the gradients, and is well suited for problems that are large in terms of data and/or parameters. The method is also appropriate for non-stationary objectives and problems with very noisy and/or sparse gradients. The hyper-parameters have intuitive interpretations and typically require little tuning. Some connections to related algorithms, on which Adam was inspired, are discussed. We also analyze the theoretical convergence properties of the algorithm and provide a regret bound on the convergence rate that is comparable to the best known results under the online convex optimization framework. Empirical results demonstrate that Adam works well in practice and compares favorably to other stochastic optimization methods. Finally, we discuss AdaMax, a variant of Adam based on the infinity norm.},
+  archiveprefix = {arxiv},
+  keywords = {Computer Science - Machine Learning},
+  file = {/Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/89BKFQEL/Kingma und Ba - 2017 - Adam A Method for Stochastic Optimization.pdf;/Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/YI3MCKGC/1412.html}
 }
 
 @article{kinkade2015dota,
