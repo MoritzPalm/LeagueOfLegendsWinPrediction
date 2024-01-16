@@ -1,5 +1,6 @@
 import lightning as L
 import numpy as np
+import pandas as pd
 import torch
 import torchmetrics
 from lightning.pytorch.callbacks import ModelCheckpoint
@@ -8,6 +9,7 @@ from lightning.pytorch.loggers import WandbLogger
 from torch import optim, nn
 from torch.utils.data import Dataset, DataLoader
 from sklearn.metrics import confusion_matrix, roc_curve, auc
+
 
 import wandb
 
@@ -155,9 +157,9 @@ class LGRU(L.LightningModule):
         fpr_table = wandb.Table(dataframe=df_fpr)
         tpr_table = wandb.Table(dataframe=df_tpr)
         threshold_table = wandb.Table(dataframe=df_threshold)
-        wandb.log(fpr_table)
-        wandb.log(tpr_table)
-        wandb.log(threshold_table)
+        wandb.log({'fpr_table': fpr_table})
+        wandb.log({'tpr_table': tpr_table})
+        wandb.log({'threshold_table': threshold_table})
         print(f'test_confusion_matrix {self.confusion_matrix(output, y)}')
         return loss
 
@@ -236,7 +238,7 @@ def train(config=None):
         input_size = X_train.shape[1]
         model = LGRU(input_size, config.hidden_size, 1,
                      config.num_layers, config.learning_rate,
-                     config.dropout_prob, config.model, config.fc_layers)
+                     config.dropout_prob, config.model, config.fc_layers, config.optimizer)
         wandblogger.watch(model)
         checkpoint_callback = ModelCheckpoint(monitor='val_acc',
                                               dirpath='checkpoints/',

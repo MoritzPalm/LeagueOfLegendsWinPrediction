@@ -19,7 +19,7 @@ if torch.cuda.is_available():
     print('*' * 10)
     print(f'CUDNN version: {torch.backends.cudnn.version()}')
     print(f'Available GPU devices: {torch.cuda.device_count()}')
-    torch.cuda.set_device(0)
+    torch.cuda.set_device(1)
     print(f'Device Name: {torch.cuda.get_device_name()}')
     print(f'Current device: {torch.cuda.current_device()}')
     device = "cuda"
@@ -108,7 +108,7 @@ class NeuralNetwork(nn.Module):
 
 class LNN(L.LightningModule):
     def __init__(self, input_size, hidden_size, num_layers, dropout_prob,
-                 output_size=1, activation=nn.ReLU(), learning_rate=1e-3, optimizer='Adam'):
+                 output_size, activation, learning_rate, optimizer):
         super().__init__()
         if activation == 'ReLU':
             activation = nn.ReLU()
@@ -165,9 +165,9 @@ class LNN(L.LightningModule):
         fpr_table = wandb.Table(dataframe=df_fpr)
         tpr_table = wandb.Table(dataframe=df_tpr)
         threshold_table = wandb.Table(dataframe=df_threshold)
-        wandb.log(fpr_table)
-        wandb.log(tpr_table)
-        wandb.log(threshold_table)
+        wandb.log({'fpr_table': fpr_table})
+        wandb.log({'tpr_table': tpr_table})
+        wandb.log({'threshold_table': threshold_table})
         print(f'test_confusion_matrix {self.confusion_matrix(y_hat, y)}')
         return loss
 
@@ -241,8 +241,9 @@ def main(config=None):
                                  shuffle=False)
         input_size = X_train.shape[1] - 1
 
-        model = LNN(input_size=input_size, hidden_size=config.hidden_size, num_layers=config.num_layers,
-                    dropout_prob=config.dropout_prob, activation=config.activation, learning_rate=config.learning_rate)
+        model = LNN(input_size=input_size, hidden_size=config.hidden_size, num_layers=config.num_layers, output_size=1,
+                    dropout_prob=config.dropout_prob, activation=config.activation, learning_rate=config.learning_rate,
+                    optimizer=config.optimizer)
         wandb_logger.watch(model)
         checkpoint_callback = ModelCheckpoint(monitor='val_loss',
                                               dirpath='checkpoints/',
