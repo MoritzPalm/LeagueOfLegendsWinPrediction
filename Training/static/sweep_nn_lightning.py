@@ -173,8 +173,10 @@ class LNN(L.LightningModule):
 
     def configure_optimizers(self):
         if self.optimizer == 'Adam':
+            print('Using Adam optimizer')
             optimizer = optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
         elif self.optimizer == 'SGD':
+            print('Using SGD')
             optimizer = optim.SGD(self.parameters(), lr= self.hparams.learning_rate)
         else:
             raise ValueError(f'optimizer {self.optimizer} not supported')

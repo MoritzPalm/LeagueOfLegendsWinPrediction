@@ -176,6 +176,7 @@ limited their feature set to player-champion win rates and champion mastery poin
 Applying an \ac{ann} to this data yielded a notable accuracy of 0.751, which is significant given the relatively small dataset used, especially considering the results of the paper on feature selection by 
 A dedicated feature selection study by \citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021}.
 They identified not only player-champion win rate but also the kill-to-death ratio for the chosen champion as the most critical features.
+Overall it can be assumed that lower rated games are harder to predict accurately, as more mistakes happen.
 
 \paragraph{In-Game Win Prediction}
 \Citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018} trained a \acf{rnn} on 7621 professional games  utilizing data from varying intervals, ranging from the initial 0-5 minutes to 20-25 minutes.
@@ -978,12 +979,20 @@ Here, eight feature categories were removed  due to their information being deem
 \label{sec:hyperparam_optim}
 
 The following settings were determined manually and fixed prior to the hyperparameter optimization.
-The model architecture includes a series of fully connected layers, each followed by 1-dimensional batch normalization.
-The exact number of layers is a primary parameter determined by the hyperparameter optimization.
+
+\paragraph{\Ac{ann} Parameters}
+The \ac{ann} model architecture includes a series of fully connected layers, each followed by 1-dimensional batch normalization.
+The exact number of layers is one of the primary parameters determined by the hyperparameter optimization.
 The batchnorm is used to stabilize the learning process, as initial experiments have shown highly fluctuating training loss.
 The activation function for each neuron is the Expontential Linear Unit, as the experiments and \citeauthor{doUsingMachineLearning2021} \cite{doUsingMachineLearning2021} have shown some improvement with it.
 Binary \acl{cel} was used as the loss function and adam optimizer was employed due to its adaptive learning rate capabilities, which can help mitigate issues with unstable gradients \cite{kingmaAdamMethodStochastic2017}.
 In order to avoid overfitting, the training is stopped when the validation accuracy does not improve for 30 epochs.
+\paragraph{\Ac{gru} Parameters}
+The \ac{gru} model uses the following fixed parameters: 
+One recurrent layer is determined to be sufficient with a number of fully connected, non recurrent layers following.
+Similar to the \ac{ann}, Binary \ac{cel} and adam optimization is used.
+The early stopping patience is set to 100 epochs, as the training converges much slower than the \ac{ann} training.
+
 
 \paragraph{Focus and Metrics}
 The primary focus of our hyperparameter optimization was twofold: to determine the optimal depth of the neural network and to identify the most effective learning rate. The evaluation of model quality centered on validation accuracy, deemed a suitable metric given the near-perfect balance of the dataset and the equivalent cost of false positives and negatives in predictions.
@@ -994,7 +1003,6 @@ The search space, shown in Figure \ref{tab:static_hyperparam_optim} is randomly 
 This method allows for a comprehensive exploration of potential configurations, striking a balance between thoroughness and computational feasibility \cite{bergstraRandomSearchHyperParameter}.
 
 
-
 \begin{table}
 \centering
 \caption{Overview of the hyperparameter search for the pre-game classification}
@@ -1002,13 +1010,12 @@ This method allows for a comprehensive exploration of potential configurations, 
 \begin{tblr}{ccc}
 Hyperparameter & \ac{ann} & \ac{gru} & Distribution \\
 \hline
-Hidden Size & [128, 256, 512] & [128, 256] & Selection \\
+Hidden Size & [128, 256, 512] & [64, 128, 256] & Selection \\
 Learning Rate & [$\num{1e-5}$, $\num{1e-2}$] & [$\num{1e-15}, \num{1e-5}$] & log uniform \\
 Number of Layers & [2,12] & [1, 3] & discrete \\
 Dropout Probability & [0, 0.3] & [0, 0.3] & discrete \\
 Activation Function & [\ac{relu}, ELU] & [\ac{relu}] & Selection \\
-Optimization & [Adam, SGD] & [Adam, SGD] & Selection \\
-Model &  [\ac{ann}] & [\ac{rnn}, \ac{gru}] \\ & Selection
+Model &  [\ac{ann}] & [\ac{rnn}, \ac{gru}] & Selection \\
 \end{tblr}
 \end{table}
 
@@ -1025,41 +1032,58 @@ Learning Rate & $\num{1.3e-7}$ & $\num{1e-10}$\\
 Number of Layers & 6 & 2 \\
 Dropout Probability & 0 & 0 \\
 Activation Function & ELU & \ac{relu} \\
-Optimizer & SGD & SGD \\
 \end{tblr}
 \end{table}
 
+\section{Classification Results}
+\label{sec:class_results}
+
 \begin{figure}
 \centering
-\input{./images/static_roc.pgf}
+\input{./images/roc.pgf}
+\caption{ROC Curve from both Models}
+\label{fig:roc}
 \end{figure}
 
-
-\section{Mid-Game Classification}
-\label{sec:midgame_class}
-
-
-\begin{table}
+\begin{figure}
 \centering
-\begin{longtblr}
-[
-caption = {Overview of the hyperparameter search for the mid-game classification},
-label = {tab:timeline_hyperparam_optim},
-]
-{ccc}
+\input{./images/staticcm.pgf}
+\caption{Confusion matrix of pre-game classification results}
+\label{fig:cm_static}
+\end{figure}
 
-Hyperparameter & Values & Distribution \\
-\hline
-Hidden Size & [128, 256, 512] & Selection \\
-Learning Rate & [$\num{1e-7}$; $\num{1e-3}$] & uniform \\
-Number of Layers & [1; 3] & discrete \\
-Dropout Probability & [0.0; 0.4] & discrete \\
-Number of Fully Connected Layers & [1; 3] & discrete \\
-\end{longtblr}
-\end{table}
-as the model mostly depends on the player statistics, a retrain every patch is most likely not necessary.
+%\begin{figure}
+%\centering
+%\input{./images/timeline_cm.pgf}
+%\caption{Confusion matrix of in-game classification results}
+%\label{fig:cm_timeline}
+%\end{figure}
 
-no real improvement with gru compared to silva on rnn
+
+\paragraph{\Ac{ann} Model Performance}
+The \ac{ann} has demonstrated a test accuracy of 0.710 and a ROC-AUC Score of 0.787 (see Figure \ref{fig:roc}).
+The confusion matrix can be seen in Figure \ref{fig:cm_static}.
+This performance aligns closely with previous findings in Chapter \ref{chap:related}, suggesting that while professional games may be predicted more accurately, lower-rated games are more unpredictable and challenging.
+This is consisten with 
+\Citeauthor{whiteScalablePsychologicalMomentum2020}'s  \cite{whiteScalablePsychologicalMomentum2020} findings, who, despite a more complex methodology and larger dataset, achieved similar accuracy in predicting lower-ranked games.
+As the most important features are related to player statistics, it can be assumed that the model generalizes fairly well over multiple game versions.
+Nevertheless, the model will lose predictive power after large changes of the game, which underscores the necessity of monitoring and frequent retraining.
+
+\paragraph{\ac{gru} Model Performance}
+The \ac{gru} model achieved an accuracy of 0.735, marginally surpassing the pre-game \ac{ann} model.
+This result was somewhat unexpected, as in-game predictions generally have the advantage of real-time data.
+This suggests that pre-game data is not significantly less predictive than early real-time data, especially if only the real-time data is used.
+
+Nevertheless, it shows that information obtained from a later state in the game can increase predicitive power.
+
+\Citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018} have employed an \ac{rnn} with an accuracy of 0.752 at the 15th minute and found that \ac{gru} did not perform as well. 
+They hypothesized that the underperformance of \ac{gru} compared to a regular \ac{rnn} might be due to a lack of data.
+With a much larger dataset, \ac{gru} did in fact perform slightly better than a vanilla \ac{rnn}, but the difference is marginal, as the best performing \ac{rnn} achieved an accuracy of 0.730.
+A potential improvement lies in the fact that the \ac{gru} model did not utilize any pre-game data, which have been shown to predict the winner with reasonable accuracy. 
+A combination of both data types might yield a much better predictor.
+These results also show that a simple increase in data does not always lead to better predictions.
+Here, it can be assumed that the data does not encompass all relevant information needed to make a highly accurate prediction or that a significant portion of the game's outcome might remain beyond the predictive capacity of algorithms due to the intrinsic randomness and complexity of human-led interactions.
+
 \chapter{Conclusion}
 \label{chap:conclusion}
 
