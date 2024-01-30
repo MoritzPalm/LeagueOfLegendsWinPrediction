@@ -123,6 +123,8 @@ Regensburg, den \@date\\
 % ******************* Inhaltsverzeichnis ****************** %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \cleardoublepage
+\selectlanguage{english}
+
 \pdfbookmark{\contentsname}{toc}\tableofcontents 										% Inhaltsverzeichnis
 
 
@@ -135,36 +137,43 @@ Regensburg, den \@date\\
 \cleardoublepage
 \pagenumbering{arabic} 																	% ab jetzt arabische Nummerierung
 
-\selectlanguage{english}
+
+
+
 \chapter{Introduction}
 \label{chap:intro}
 
-
-\ac{lol}, developed by Riot Games, is a prominent \ac{moba} game, a sub genre of real-time strategy games characterized by two teams of five players, known as 'summoners', competing against each other \cite{mora-cantallopsMOBAGamesLiterature2018}. 
-Each player controls a unique character, or 'champion', and the objective is to defeat the opposing team. 
-\Ac{lol} stands out in the \ac{moba} genre for its global popularity, attracting millions of players and a significant viewership in professional esports tournaments \cite{goughLeagueLegendsChampionships}.
-While sharing core gameplay elements and map layouts with other \ac{moba} games, \ac{lol} distinguishes itself through its diverse range of champions, abilities, and graphical styles. 
-This thesis will therefore focus on League of Legends, given its influential status in the \ac{moba} genre. 
-
-
-esports is highly relevant due to it being a huge and strongly growing market.
+Esports has emerged as a highly relevant and influential sector in the gaming industry, experiencing substantial growth and popularity in recent years. 
 In 2019, the esports industry's market size was valued at approximately 25B USD \cite{ahnOneBillionDollar2020}.
-Esports and mobas in particular are hard to understand and follow. A live game prediction view can help fans understand the action and decisions made better and help immerse the audience by detecting upsets and swings in win probability.
-many games are hard to understand, due to lots of information being displayed with very little explanation
-a win prediction graph can help viewers understand the action and the significance of certain plays better, thus increasing engagement and enjoyment.
-riot games has already implemented their own proprietary win prediction
-a win prediction model can also help players make more informed decisions about what the optimal path of actions is
+Within this domain, the genre of \ac{moba} games has risen to the forefront, becoming one of the most popular categories in esports. 
+At the pinnacle of this genre is \ac{lol}, developed by Riot Games, which has not only attracted a massive global player base but also a significant viewership in professional esports tournaments \cite{goughLeagueLegendsChampionships}. 
+The \acl{lol} World Championship Finals 2021 reached an impressive average minute audience of over 30 million people according to Riot Games \cite{riotgamesHowRiotEsports2022} even when compared to the estimated 150 million average minute audience for the 2021 UEFA Champions League Final \cite{dalmiaChampionsLeagueFinal2023}.
 
-the model should be able to answer the question, if team a is far enough ahead to win or if team b with their hyper scaling heroes can come back and win
+Despite its popularity, \ac{lol} presents a notable challenge: it can be hard to follow for newer audiences due to its complex gameplay and strategic depth \cite{campbell2021sports}.  
+This issue is worsened by the higher unpredictability of outcomes in esports compared to traditional sports, as lead changes are frequent and less indicative of final results \cite{campbell2021sports}.
 
-It can be divided into three distinct categories: pre-game win prediction can support players in choosing the champion that increases their chance of winning the most, in-game win prediction can guide players focus on their way to victory and help viewers to better understand the action. 
-Post-game analysis does not benefit a specific game, but helps players, particularly professional players examine their strengths and weaknesses.
+This accessibility issue parallels that of chess, where the subtleties and strategic shifts are often lost on less experienced viewers. 
+In response, chess broadcasts have employed engine evaluation graphs to depict major swings in the game, thereby enhancing viewer understanding and engagement.
+This evaluation indicates whether the game is a win, loss or a draw, assuming perfect play from both sides.
+Such an evaluation helps viewers get the most important information at a glance, without having to have a lot of in-depth knowledge.
+
+Similarly, \ac{lol} has introduced a proprietary win prediction graph during its World Championship broadcasts (see Figure \ref{fig:riot_win_pred_graph}), helping fans understand the action and decisions made better and help immerse the audience by detecting upsets and swings in win probability.
+Despite a viewer survey by \citeauthor{claytorRiotGamesAWS2023} \cite{claytorRiotGamesAWS2023} indicating that 94 percent of participants found this graphic useful, there remains a notable lack of publicly available data concerning the graph's methodology and effectiveness.
+Addressing this gap, the goal of this thesis is to develop a win prediction model for \acl{lol} both for pre-game and real-time win prediction.
+This model aims to provide a deeper understanding of the game for audiences, enhancing their viewing experience by predicting outcomes based on the ongoing gameplay. 
+It could also offer valuable insights for players and coaches in formulating strategies and making informed decisions during matches.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{./images/win_prob_worlds.png}
+\caption{Output of the proprietary win prediction model developed by Riot Games from the final game of the 2022 World championships. The icons at the top of the graph are important events during the game.\cite{LoLEsports}}
+\label{fig:riot_win_pred_graph}
+\end{figure}
+
 \chapter{Related work}
 \label{chap:related}
 
-The application of machine learning techniques in interpreting data from e-sports games represents a dynamic field of research. 
-Among the various games studied, DotA 2 and League of Legends have garnered the most attention.
-\section{Win Prediction in League of Legends}
+The application of machine learning techniques in interpreting data from esports games represents a dynamic field of research. 
 A critical factor in win prediction is the timing of data collection, as outlined in Table \ref{tab:related_work_lol}.
 It can be categorized into three distinct phases: pre-game, in-game, and post-game, each offering unique insights and benefits.
 
@@ -172,28 +181,30 @@ It can be categorized into three distinct phases: pre-game, in-game, and post-ga
 A variety of different methods were used to predict the winner prior to the game's commencement.
 A notable study by \citeauthor{whiteScalablePsychologicalMomentum2020} \cite{whiteScalablePsychologicalMomentum2020} incorporated a broad spectrum of pre-game features, including the concept of psychological momentum, and attained an accuracy of 0.721 using logistic regression.
 In comparison, \citeauthor{doUsingMachineLearning2021} \cite{doUsingMachineLearning2021} 
-limited their feature set to player-champion win rates and champion mastery points, further extracting statistical features such as the team's average player-champion win rate
-Applying an \ac{ann} to this data yielded a notable accuracy of 0.751, which is significant given the relatively small dataset used, especially considering the results of the paper on feature selection by 
-A dedicated feature selection study by \citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021}.
-They identified not only player-champion win rate but also the kill-to-death ratio for the chosen champion as the most critical features.
-Overall it can be assumed that lower rated games are harder to predict accurately, as more mistakes happen.
+limited their feature set to player-champion win rates and champion mastery points, further extracting statistical features such as the team's average player-champion win rate.
+Applying an \ac{ann} to this data yielded an accuracy of 0.751, which is significant given the relatively small dataset used. 
+Especially considering the results of the paper on feature selection by  \citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021}, which identified not only player-champion win rate but also the kill-to-death ratio for the chosen champion as the most critical features.
+These results lead to the assumption that lower rated games are harder to predict accurately, as more mistakes happen and thus increase randomness and volatility.
 
 \paragraph{In-Game Win Prediction}
 \Citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018} trained a \acf{rnn} on 7621 professional games  utilizing data from varying intervals, ranging from the initial 0-5 minutes to 20-25 minutes.
-Their findings revealed an accuracy of 75.23\% when using data from between the 10 and 15 minute mark and a maximum accuracy of 83.54\% when using data from the 20-25th minute.
+Their findings revealed an accuracy of 0.752 when using data from between the 10 and 15 minute mark and a maximum accuracy of 0.835 when using data from the 20-25th minute.
 Additionally, their research comparing \ac{lstm} networks against \acp{rnn} indicated superior performance of the latter, possibly attributable to the less complex nature of the problem or limited data availability.
-\citeauthor{baileyStatisticalLearningEsports} \cite{baileyStatisticalLearningEsports} have achieved an accuracy of 0.77 by applying logistic regression to 671 professional matches.
+Unfortunately, the work done by Riot Games themselves \cite{claytorRiotGamesAWS2023} did not report any metrics, so no direct comparison to other methods is possible.
+\citeauthor{baileyStatisticalLearningEsports} \cite{baileyStatisticalLearningEsports} have achieved an accuracy of 0.77 by applying logistic regression to 671 professional matches with data from the 15th minute mark.
 
 \paragraph{Post-Game Win Prediction}
 \citeauthor{bahrololloomiESportsPlayerPerformance2023} \cite{bahrololloomiESportsPlayerPerformance2023} have built a predictor using post-game data from professional matches achieving 86\% accuracy, while \citeauthor{aniVictoryPredictionLeague2019} \cite{aniVictoryPredictionLeague2019} trained a Random Forest model on a mixture of pre-, in- and post-game data for a maximum accuracy of 0.998.
+These results suggest that using post-game data leads to perfect predictions, where the value does not lie in the accuracy, but in the relevant features which can lead to new insights about winning strategies.
 
 \begin{longtblr}[
 caption = {Comparison of different works on League of Legends win prediction},
 label = {tab:related_work_lol},
-note{a} = {This work did not build a predictor, thus no accuracy was obtained.},
+note{a} = {No accuracy reported.},
 note{b} = {The exact number of features is unclear.},
 note{c} = {The exact timestamp where the last in-game data was obtained is unclear.},
-note{d} = {The skill group(s) from which the games stem is unclear.}
+note{d} = {The skill group(s) from which the games stem is unclear.},
+note{e} = {All professional \ac{lol} games since early 2020 \cite{LoLEsports}.}
 ]
 {
 colspec = {*{6}{c}},
@@ -206,13 +217,14 @@ Author & Games & Features & Time & Skill Group & Accuracy \\
 \citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021} & 2,840 & 50 & pre-game & professional & \TblrNote{a} \\
 \citeauthor{whiteScalablePsychologicalMomentum2020} \cite{whiteScalablePsychologicalMomentum2020}&87,743&\TblrNote{b}&pre-game &equidistributed&0.721\\
 \citeauthor{hitar-garciaMachineLearningMethods2023} \cite{hitar-garciaMachineLearningMethods2023} & 7583 & 26 & pre-game & professional & 0.683 \\
-\citeauthor{linLeagueLegendsMatch2016} \cite{linLeagueLegendsMatch2016} & 588 & 2231 & pre-game & Gold & 0.567 \\
+\citeauthor{linLeagueLegendsMatch2016} \cite{linLeagueLegendsMatch2016} & 588 & 2231 & pre-game & low-skilled & 0.567 \\
 
 \citeauthor{kimConfidenceCalibratedMOBAGame2020} \cite{kimConfidenceCalibratedMOBAGame2020} & 93875 & 295 & in-game\TblrNote{c} & \TblrNote{d} & 0.738 \\
 \citeauthor{shenMachineLearningApproach2022} \cite{shenMachineLearningApproach2022} & 10,000 & 5 & 10 min & \TblrNote{d} & 0.726 & \\
 \citeauthor{zhangPredictionEsportsGame2021} \cite{zhangPredictionEsportsGame2021} & 10,000 & 38 & 10 min & high-skilled & 0.723 \\
 \citeauthor{baileyStatisticalLearningEsports} \cite{baileyStatisticalLearningEsports} & 671 & 28 & 15 min & professional & 0.76 \\
 \citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018} & 7,621 & 52 & 25 min & professional & 0.835 \\
+\citeauthor{claytorRiotGamesAWS2023} \cite{claytorRiotGamesAWS2023}  & \TblrNote{e} & 24 & in-game\TblrNote{c} & professional & \TblrNote{a} \\ 
 
 \citeauthor{mondalDoesSupportRole2022} \cite{mondalDoesSupportRole2022} & 296 & 5 & post game & \TblrNote{d} & \TblrNote{a} \\
 \citeauthor{bahrololloomiESportsPlayerPerformance2023} \cite{bahrololloomiESportsPlayerPerformance2023} & 2,901 & 15 & post-game & \TblrNote{d} &0.86 \\
@@ -222,33 +234,13 @@ Author & Games & Features & Time & Skill Group & Accuracy \\
 \end{longtblr}
 
 
-\section{Win Prediction in DotA 2}
-\label{sec:dota}
-is this advisable?
-%A lot of scientific research focuses on the similar \ac{moba} DotA 2, which has easier and more fine-grained data collection methods (see section \ref{sec:datacoll}).
-%Due to the high similarity between these two games, it is to be expected that any findings for one game can be replicated and used for the other game with minimal adaptations.
-%Nevertheless, to ensure a fair comparison, both games are presented separately below.
-%
-
-
-%
-%
-%In DotA 2, a wide variety of algorithms have been used.  
-%\Citeauthor{yuMOBASliceTimeSlice2018} \cite{yuMOBASliceTimeSlice2018} trained a \ac{rnn} on 71,355 matches and achieved an accuracy of $0.7083$ at the half-way point of a match, which according to their analysis is on average at 20 minutes.
-%\Citeauthor{wangPredictingMultiplayerOnline2016} \cite{wangPredictingMultiplayerOnline2016} compared Logistic Regression with a \ac{fnn} trained on up to 911,468 matches, with \ac{lr} achieving a slightly better accuracy ($0.6104$) than the \ac{fnn} ($0.588$).
-%
-
-\section{Win prediction in other sports}
-\label{sec:other_sports}
-and/or this?
-
 \chapter{Background}
 \label{chap:background}
 
 \section{League of Legends}
 \label{sec:LoL}
 
-\Ac{lol} is played with 5 players on each team on a map which is bifurcated into two bases, each linked by three lanes and housing a crucial structure called the 'nexus', which is protected by turrets. 
+\Ac{lol} is played with 5 players on each team on a map which is bifurcated into two bases, each linked by three lanes and housing a crucial structure called the \textit{nexus}, which is protected by turrets. 
 The game's primary goal is to destroy the opposing team's nexus.
 The map includes a jungle area in between the lanes with neutral monsters and two significant creatures, Baron Nashor and the Dragon, offering team-wide benefits when defeated.
 Players must accumulate gold and \ac{xp} through defeating minions, neutral monsters, or enemy champions. 
@@ -258,13 +250,13 @@ Player roles in \ac{lol} are typically assigned with one player in the top lane,
 Players select from a roster of 165 champions, each with unique abilities and characteristics, to compete in matches.
 Champion selection is a pivotal element of \ac{lol} gameplay, requiring players to consider team composition, damage types, assigned roles, and personal proficiency with specific champions. 
 The theoretical number of possible champion combinations in a game is $\binom{165}{10} = \num{3.21e15}$.
-Although this number is quite a bit smaller in reality as not every champion can play every role and most players are only proficient with 15-20 champions \cite{2022Recap}, this underscores the game's strategic depth.
+Although this number is quite a bit smaller in reality as not every champion can play every role and most players are only really proficient with a handful of champions, this underscores the game's strategic depth.
 
 Each year, \ac{lol} introduces a new 'season', bringing substantial changes, and Riot Games issues bi-weekly patches to adjust champion balance, influencing the prevailing game strategies, or 'meta'.
 These patches can also include the release of a new champion or the rework of an old one.
 Frequent changes force players to be able to quickly adapt and learn new champions and mechanics.
 
-To evaluate player skill, \ac{lol} utilizes a proprietary rating system, probably a modified Elo system \cite{janssonNeuralNetworksStandardizing2022}.
+To evaluate player skill, \ac{lol} utilizes a proprietary rating system, commonly assumed to be a modified Elo system \cite{janssonNeuralNetworksStandardizing2022}.
 This system ensures that players are matched with and against others of comparable skill levels, maintaining competitive balance and fairness in the game.
 
 
@@ -287,7 +279,7 @@ Data flows from the input layer, through one or more hidden layers, to the outpu
 \begin{equation}
 \mathbf{z}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)},
 \end{equation}
-where $\mathbf{a}^{(l)}$ represents the activation of layer $l$, $\mathbf{W}^{(l)}$ is the weight matrix, and $\mathbf{b}^{(l)}$ the bias vector. 
+where $\mathbf{a}^{(l-1)}$ represents the activation of the last layer, $\mathbf{W}^{(l)}$ the weight matrix, and $\mathbf{b}^{(l)}$ the bias vector of layer $l$.
 The vector $\mathbf{z}^{(l)}$ is then passed through the activation function for layer $l$, which is applied elementwise:
 \begin{equation}
 \mathbf{a}^{(l)} = \phi (\mathbf{z}^{(l)}).
@@ -328,12 +320,11 @@ as
 \frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{b}^{(l)}} = 1
 \end{equation}
 where $\mathbf{z}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}$and $\mathbf{a}^{(l)} = \phi(\mathbf{z}^{(l)})$.
-The gradients are then used to update the weights and biases, typically using an optimization algorithm like gradient descent.
-The weights are updated via:
+The gradients are then used to update the weights and biases, typically using an optimization algorithm like gradient descent, where the weights are updated via:
 \begin{equation}
 \mathbf{W}^{(l)} = \mathbf{W}^{(l)} - \eta \frac{\partial E}{\partial \mathbf{W}^{(l)}}
 \end{equation}
-where $\eta$ is the learning rate.
+with $\eta$ being the learning rate.
 
 Through iterative forward and backward propagation, the network gradually converges to a state where the loss is minimized, indicating successful learning of the patterns in the data.
 
@@ -502,7 +493,7 @@ This can be shown by examining a single term from equation (\ref{eq:bptt_ht+1}) 
 where diag() converts a vector into a diagonal matrix and $\sigma '$ computes the element-wise derivative of $\sigma$
 \cite{pascanuDifficultyTrainingRecurrent2013}.
 The eigendecomposition of $\frac{\partial \mathbf{h}_{j+1}}{\partial \mathbf{h}_j}$ yields the eigenvalues $ \lambda_1, \lambda_2, ..., \lambda_n$ where $|\lambda_1| > |\lambda_2| > ... > |\lambda_n|$ with their corresponding eigenvectors $v_1, v_2, ..., v_n$.
-The change in hidden state $\Delta h_{j+1}$ in direction of a vector $v_i$ is multiplied with the eigenvalue of this eigenvector: $\lambda_i \Delta h_{j+1}$.
+The change in hidden state $\Delta h_{j+1}$ in direction of a vector $v_i$ is multiplied with the corresponding eigenvalue: $\lambda_i \Delta h_{j+1}$.
 As these factors are multiplied across timesteps, the change is scaled by a factor equivalent to $\lambda_i^t$ which scales exponentially with the timestep $t$.
 If $\lambda_1 < 1$ the gradient will vanish while if $\lambda_1 > 1$ the gradient will explode when considering $t \to \infty$ \cite{pascanuDifficultyTrainingRecurrent2013}.
 This issue hinders their ability to learn long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}. 
@@ -547,31 +538,35 @@ hidden/.style={item,on chain,join}]
 \label{sec:gru}
 In order to overcome the exploding/vanishing gradient problem of vanilla \acp{rnn}, gated networks like the \ac{lstm} \cite{hochreiterLongShortTermMemory1997} and \ac{gru} \cite{choLearningPhraseRepresentations2014} have been developed \cite{vanhoudtReviewLongShortterm2020}.
 As they introduce an increased number of parameters compared to traditional \acp{rnn}, gated networks like the \ac{lstm} and \ac{gru} demand greater computational power \cite{deyGatevariantsGatedRecurrent2017}.
-Compared to the \ac{lstm} network, \ac{gru} reduces the number of gate networks to two, thus being simpler to implement and compute \cite{choLearningPhraseRepresentations2014}, see Figure \ref{fig:gru}.
-\Citeauthor{chungEmpiricalEvaluationGated2014} even found that \ac{gru} is at least comparable to \ac{lstm} most of the time \cite{chungEmpiricalEvaluationGated2014}.
+Gating mechanisms mitigate the exploding / vanishing gradient problem by regulating how much the hidden state is updated each step.
+Compared to the \ac{lstm} network, \ac{gru} reduces the number of gate networks to two, thus being simpler to implement and compute \cite{choLearningPhraseRepresentations2014} (see Figure \ref{fig:gru}).
+\Citeauthor{chungEmpiricalEvaluationGated2014} even found that \ac{gru} is at least comparable to \ac{lstm} in most cases \cite{chungEmpiricalEvaluationGated2014}.
 The gates control the activation of each hidden unit.
 The reset gate $\mathbf{r}_t$ is calculated by
 \begin{equation}
 \label{eq:gru_reset}
-\mathbf{r}_t = \sigma (\mathbf{W}_r x_t + \mathbf{U}_r h_{t-1} + \mathbf{b}_r)
+\mathbf{r}_t = \sigma (\mathbf{W}_r x_t + \mathbf{U}_r \mathbf{h}_{t-1})
 \end{equation}
 and the update gate $\mathbf{z}_t$ by
 \begin{equation}
 \label{eq:gru_update}
-\mathbf{z}_t = \sigma (\mathbf{W}_z \mathbf{x}_t + \mathbf{U}_z \mathbf{h}_{t-1} + \mathbf{b}_z)
+\mathbf{z}_t = \sigma (\mathbf{W}_z \mathbf{x}_t + \mathbf{U}_z \mathbf{h}_{t-1})
 \end{equation}
 \cite{deyGatevariantsGatedRecurrent2017}.
 The hidden state update is a linear interpolation between the previous activation $\mathbf{h}_{t-1}$ and the candidate activation $\mathbf{\tilde{h}}_t$, where the update gate $\mathbf{z}_t$ influences how much the hidden state is changed \cite{chungEmpiricalEvaluationGated2014}:
 \begin{equation}
 \label{eq:gru_h}
-\mathbf{h}_t = (1-\mathbf{z}_t) \odot \mathbf{h}_{t-1} + \mathbf{z}_t \odot \mathbf{\tilde{h}}_t
+\mathbf{h}_t = (1-\mathbf{z}_t) \odot \mathbf{\tilde{h}}_t + \mathbf{z}_t \odot \mathbf{h}_{t-1} 
 \end{equation}
 with
 \begin{equation}
-\label{eq_gru_h_tilde}
-\mathbf{\tilde{h}}_t = \tanh(\mathbf{W}_h \mathbf{x}_t + \mathbf{U}_h (\mathbf{r}_t \odot \mathbf{h}_{t-1} + \mathbf{b}_h).
+\label{eq:gru_h_tilde}
+\mathbf{\tilde{h}}_t = \tanh(\mathbf{W}_h \mathbf{x}_t + \mathbf{U}_h (\mathbf{r}_t \odot \mathbf{h}_{t-1})).
 \end{equation}
-In equations (\ref{eq:gru_h}) and (\ref{eq_gru_h_tilde}) $\odot$ denotes the element-wise (Hadamard) multiplication.
+In equations (\ref{eq:gru_h}) and (\ref{eq:gru_h_tilde}) $\odot$ denotes the element-wise (Hadamard) multiplication.
+Equation \ref{eq:gru_h} shows that if $\mathbf{z}_t$ is close to one, previous memory in $\mathbf{h}_{t-1}$ is propagated to $\mathbf{h}_t$ and the model learns long-term dependencies.
+Conversely, if $\mathbf{r}_t$ is active and $\mathbf{z}_t$ is not, the hidden state gets updated with information from the last step, thus learning short-term dependencies.
+This selective inclusion of new information and the ability to skip a timestep completely can help mitigate the exploding / vanishing gradient problem described in Section \ref{sec:rnn}.
 
 \begin{figure}
 \centering
@@ -689,13 +684,13 @@ Feature selection methods can be broadly categorized into three distinct types \
 
 \item[Filter Methods] These methods rely on model-invariant information, such as feature-class label correlation. They are computationally efficient and typically do not require user input in form of hyperparameters, but may not capture complex relationships within the data.
 
-\item[Wrapper Methods] Wrapper methods train models iteratively on various feature subsets, incurring a higher computational cost but enabling the detection of interactions among variables.
+\item[Wrapper Methods] Models are trained iteratively on various feature subsets, incurring a higher computational cost but enabling the detection of interactions among variables \cite{venkateshReviewFeatureSelection2019}.
 
 \item[Embedded Methods] These methods perform inherent feature selection, often as an integral part of the modeling process. Tree-based models, such as Decision Trees and Gradient Boosted Trees, typically employ feature selection based on metrics like the Gini index or entropy.
 \end{description}
 
 
-\subsection{Pearson's Correlation Coefficient}
+\subsection*{Pearson's Correlation Coefficient}
 \label{ssec:pearsons}
 \Ac{pcc} is a statistical measure widely used to evaluate the linear relationship between two variables. 
 Specifically, we consider its application in the context of feature selection in machine learning, where it is used to assess the linear correlation between input features and the target variable. 
@@ -707,12 +702,12 @@ R(i) = \frac{\text{cov}(X_i, Y)}{\sqrt{\text{var}(X_i) \cdot \text{var}(Y)}},
 \end{equation}
 where $\text{cov}(X_i, Y)$ is the covariance between $X_i$ and $Y$, and $\text{var}(X_i)$ and $\text{var}(Y)$ are the variances of $X_i$ and $Y$, respectively \cite{chandrashekarSurveyFeatureSelection2014}.
 $R(i) \in [-1; +1]$ where -1 and +1 are strong negative or positive correlations and 0 indicates no correlation. 
-In order to ascertain the significance of the test results, a hypothesis test needs to be performed, with the null hypothesis being that there is no correlation between the feature and the target.
+A hypothesis test should be performed in order to ascertain the significance of the test results, with the null hypothesis that there is no correlation between the feature and the target.
 As it is a non-parametric model, there is no need to tune hyperparameters or risk of overfitting.
 While simple and effective for identifying linear relationships, \ac{pcc} only captures linear dependencies and might miss non-linear relationships crucial for neural networks.
-Despite these limitations, \ac{pcc} remains a valuable tool in feature selection for its simplicity and efficiency in revealing linear correlations.
+Despite these limitations, \ac{pcc} is a valuable tool in feature selection for its simplicity and efficiency in revealing linear correlations.
 
-\subsection{Gradient Boosted Trees}
+\subsection*{Gradient Boosted Trees}
 \label{ssec:gbt}
 
 \Ac{gbt} is an ensemble learning technique that can be used for feature selection. 
@@ -723,39 +718,44 @@ The simplest definition is the 'weight', defined as the number of times a featur
 
 
 
-\chapter{Data}
-\label{chap:data}
 
-Two different datasets need to be constructed: one dataset containing all relevant information prior to the start of the game and one dataset containing only the temporal information from the beginning of the game.
+\chapter{Experiments}
+\label{chap:experiments}
+This section introduces two distinct experiments designed to evaluate the effectiveness of predictive models in League of Legends, a widely-played multiplayer online battle arena game. The initial experiment centers on pre-game win prediction through a neural network, utilizing historical and statistical data before the game starts. In contrast, the subsequent experiment explores real-time prediction using a \ac{gru} model, aiming to dynamically determine winning probabilities as the game unfolds.
+
+\section{Data}
+\label{sec:data}
+
+Building upon the aforementioned approach, two different datasets are used: one dataset containing all relevant information prior to the start of the game and one dataset containing only the temporal information from the beginning of the game.
 
 
-\section{Data Collection}
-\label{sec:datacoll}
+\subsection{Data Collection}
+\label{ssec:datacoll}
 
-The data collection process for this study involved a dual-pronged approach, leveraging the extensive resources provided by the Riot Games API alongside a targeted web-scraping strategy.
-The resulting raw dataset containing $38,573$ and  $3,972$ matches in the pre-game and in-game datasets respectively, stored in a PostgreSQL Database, reflects a comprehensive compilation of high-rank amateur League of Legends matches.
+The data collection process for this study involved a dual-pronged approach, leveraging the resources provided by the Riot Games API alongside a targeted web-scraping strategy.
+The resulting raw dataset, stored in a PostgreSQL Database, reflects a comprehensive compilation of high-rank amateur \acl{lol} matches.
 
 \paragraph{High-Rank Matches}
 The rating system in \ac{lol} groups players into different skill groups, where the lowest is 'Iron' and the highest 'Challenger'.
-The two highest ranks,'Grandmaster' and 'Challenger' contain the best 300 and 700 best players on each server.
+The two highest ranks,'Grandmaster' and 'Challenger' contain the best 300 or 700 best players on each server.
 The exact number of players these tiers depend on the player number in each region (see \cite{riotgamesMasterGrandmasterChallenger2023}).
 
-Similar to the methodology of \citeauthor{zhangPredictionEsportsGame2021}, the focus of data acquisition was directed towards high-rank matches, in which a mix of excellent amateur and professional players play.
+Similar to the methodology of \citeauthor{zhangPredictionEsportsGame2021} \cite{zhangPredictionEsportsGame2021}, the focus of data acquisition was directed towards high-rank matches, in which a mix of excellent amateur and professional players play.
 High rank matches in this context are defined as having at least one player holding the rank of Master, Grandmaster or Challenger.
 These ranks combined account for the top $0.2\%$ of all players \cite{riotgamesRankedTiersDivisions2023}.
 Riot Games themselves considers any rank above Diamond 3 as 'Elite' \cite{riotgamesDevBalanceFramework2020}, but we raise this bar just slightly to only include any rank at Master or above.
 Due to the fact that for a match to be included in the dataset, only one out of ten players needs to hold one of the aforementioned highest ranks, some slightly lower ranked players are also present in the dataset.
 
-Lower rank matches are not considered due to their higher unpredictability as less skilled players should make huge, game-changing mistakes way more often.
+Lower rank matches are not considered due to their higher unpredictability as less skilled players are assumed to make huge, game-changing mistakes more often.
 This higher unpredictability could make it harder for the model to learn.
 
 Pro matches, defined as professional players playing with their respective teams in an esport tournament or league, are not included as they are not available through the official Riot Games API.
 Professional players are still included in the dataset, but only if they played regular, non-tournament games.
 
 \paragraph{Riot Games API}
-The primary source of data stemmed from the Riot Games API \cite{RiotDeveloperPortal}, a comprehensive repository of information pertaining to League of Legends gameplay.
-The Riot Games API provided access to a plethora of essential data points, including champion statistics, general match information, timeline details, and player-specific information.
-These variables collectively form a comprehensive and multifaceted dataset crucial for the development of an effective predictive model.
+The primary source of data stems from the Riot Games API \cite{RiotDeveloperPortal}, a comprehensive repository of information pertaining to League of Legends gameplay.
+The Riot Games API provides access to a plethora of essential data points, including champion statistics, general match information, timeline details, and player-specific information.
+
 \paragraph{Other Data Sources}
 However, not all pertinent data were available directly from the Riot Games API.
 These include the general winning chance of each champion and statistics on how each player performs on each relevant champion.
@@ -765,20 +765,17 @@ Multiple regions were included in the data collection process, including Europe 
 This regional diversity contributes to the model's generalizability across different player bases and playing styles.
 \paragraph{Period of Time}
 All matches included in the dataset were played in season 13 and on patch 20.
-It is important that all matches are played on the same patch, as a patch may cause major shifts in the balance of the game, thus making certain strategies and champions way better than others.
+It is important that all matches are played on the same patch, as a patch may cause major shifts in the balance of the game, thus potentially making certain strategies and champions way better than others.
 
 
 
-\section{Dataset Properties}
-\label{sec:dataprop}
-
-The pre-game dataset encompasses a total of 38,573 matches, while the in-game dataset contains 28,809 matches.
-Below, the pre-game dataset is presented in more detail, as the smaller in-game dataset is a random sampling from the pre-game dataset.
+The pre-game dataset encompasses a total of 38,957 matches, while the in-game dataset contains 28,809 matches.
+Below, the pre-game dataset characteristics are presented in more detail, as the smaller in-game dataset is a random sampling from the pre-game dataset.
 \paragraph{Region Distribution}
 The dataset is primarily comprised of matches from three major regions: North America, Western Europe, and South Korea, which collectively constitute the vast majority of matches in our dataset. 
-It is important to note that due to a lack of official data pertaining to the number of games played or the number of players in each region, we are unable to conclusively verify whether the distribution of matches within our dataset aligns with the true underlying distribution of games played per region.
-The major regions in the dataset are the same regions getting guaranteed spots at the world championship \cite{2023LeagueLegends2023} with the exception of china, whose matches are not available through the Riot Games API.
-Consequently, it is reasonable to assume that this composition approximately mirrors the real-world distribution of matches.
+It is important to note that due to a lack of official data pertaining to the number of games played or the number of players in each region, it is currently not feasible to conclusively verify whether the distribution of matches within our dataset aligns with the true underlying distribution of games played per region.
+The major regions in the dataset are the same regions getting guaranteed spots at the world championship \cite{2023LeagueLegends2023} with the exception of China, whose matches are not available through the Riot Games API.
+Consequently, it is reasonable to assume that this composition approximately mirrors the real-world distribution of matches, with the exception of chinese games.
 A visual representation of the distribution of matches across regions is provided in Figure \ref{fig:platformId}.
 
 
@@ -793,10 +790,10 @@ As only matches with a game length of at least 16 minutes are collected, the sho
 The average match length is $27.50$ minutes.
 Figure \ref{fig:gameDuration} graphically illustrates the distribution of game durations. 
 Notably, the histogram reveals a prominent spike at the 16-minute mark.
-This spike corresponds to the earliest possible conclusion time for a match, as League of Legends prohibits surrendering prior to the 15th minute of gameplay. In instances where an entire team collectively acknowledges the futility of their chances of victory, a surrender may be initiated at the 15-minute threshold.
-If a simple majority of team members want to surrender, they have to wait until the 20th minute.
+This spike corresponds to the earliest possible conclusion time for a match, as League of Legends prohibits surrendering prior to the 15th minute of gameplay. 
+In instances where an entire team collectively acknowledges the futility of their chances of victory, a surrender may be initiated at the 15-minute threshold.
 However, should a simple majority of team members decide to surrender, they must adhere to a 20-minute waiting period before being able to do so. 
-Consequently, this unique feature of the game's mechanics clarifies the relatively diminished frequency of matches ending in the 17th to 19th-minute range within our dataset.
+Consequently, this unique feature of the game's mechanics clarifies the relatively diminished frequency of matches ending in the 17th to 19th-minute range within the dataset.
 
 \begin{figure}[ht]
 \input{./images/gameDuration_distribution.pgf}
@@ -808,7 +805,7 @@ Consequently, this unique feature of the game's mechanics clarifies the relative
 \paragraph{Rank Distribution}
 As only games with at least one player ranked Master or above are considered, this distribution does not match the real distribution of ranks.
 This does introduce a bias and makes the findings less applicable to games in lower ranks.
-As argued in \ref{sec:datacoll}, lower rank games could make the learning harder due to higher unpredictability.
+As argued in \ref{ssec:datacoll}, lower ranked games could make the learning harder due to higher unpredictability.
 
 \begin{figure}
 \centering
@@ -820,9 +817,9 @@ As argued in \ref{sec:datacoll}, lower rank games could make the learning harder
 \label{fig:tier}
 \end{figure}
 
+\subsection{Pre-Game Dataset Properties}
+\label{ssec:dataprop}
 
-\subsection{Pre-Game Dataset}
-\label{ssec:pre_game_data}
 The raw pre-game dataset contains $368$ columns which can be categorized into four distinct groups: General Match Information, Player Information, Champion Information and Player-Champion Information.
 General match information, such as the patch number, are exclusively utilized for validation purposes and are excluded from the final dataset.
 
@@ -841,7 +838,7 @@ It encompasses metrics such as the average amount of gold earned by the player a
 Unfortunately, this information is not readily available to be extracted by our web scraper,  necessitating its omission from the dataset.
 Each feature category (e.g.  average gold per match) consists of 10 features, one for each participant.
 
-\subsection{In-Game Dataset}
+\subsection{In-Game Dataset Properties}
 \label{ssec:in_game_data}
 
 The in-game dataset comprises 28,809 matches, representing a random subset extracted from the broader pre-game dataset.
@@ -867,11 +864,9 @@ Both the number of destroyed turrets and the cumulative amount of gold is tracke
 
 \paragraph{Missing Values}
 There are no missing values in the data obtained directly from Riot Games.
-On the rare occasion that the web scraper could not find the relevant information, missing values can occur.
+On the rare occasion that the web scraper could not find the relevant information, missing values occur for a total of 384 rows.
 As this is a technical error, the missing data can be assumed as being \ac{mcar} distributed \cite{acockWorkingMissingValues2005} and thus deleted row-wise without introducing a bias.
 Even if this assumption should be false, due to the low number of affected samples the introduced bias would be very small.
-
-By deleting all rows containing missing data, the dataset shrinks by 384 rows.
 As missing values are caused by the web scraper, the in-game dataset has no missing values.
 
 \paragraph{Individual Feature Processing Pre-Game Dataset.}
@@ -887,8 +882,8 @@ x_i =
 \end{cases}
 \end{equation*}
 It is only possible to represent the whole team composition in one vector because no two players can pick the same champion.
-As the 10 features per category in $\mathbf{x}_f$ is a very fine-grained approach which greatly increases the dimensionality of the dataset, 
-we found that a broader approach is sufficient, where statistics are averaged for each team, reducing 10 features per category to two.
+Ten features per category in $\mathbf{x}_f$ is a very fine-grained approach.
+In order to get more meaningful features and reduce the dimensionality of the dataset, statistics are averaged for each team, reducing ten features per category to two.
 
 \paragraph{Individual Feature Processing In-Game Dataset.}
 The raw in-game dataset contains 474 features, 47 per participant and 2 columns per team containing the number of destroyed turrets and cumulative gold.
@@ -898,9 +893,6 @@ This method significantly decreases the total number of features, albeit at the 
 Such a reduction inherently shifts the analytical emphasis from individual prowess to overall team dynamics. 
 Given that \ac{lol} is intrinsically a team-oriented game, this refocused perspective is anticipated to enhance the generalizability of a predictive model as the model is trained on team-level trends rather than individual fluctuations, which can be more noisy and less predictive of outcomes.
 
-
-
-
 \paragraph{Scaling and Partitioning}
 The pre-game dataset is partitioned into train, validation and test set with a validation and test size of 4,000 samples $ \approx 10\%$ respectively.
 In order to have a more comparable training dataset size, the test and validation sets from the in-game dataset contain just 1,000 matches.
@@ -908,48 +900,211 @@ The validation set is used to optimize hyperparameters while the test set is use
 In order to allow proper training of the model, the data has to either be transformed into range $[1;-1]$ or standardized \cite{shankerEffectDataStandardization1996}.
 The standardization is performed on each feature individually by calculating the mean $\mu$ and standard deviation $\sigma$ of the training set and applying the standardization $z = (x - \mu) / \sigma$ where $x$ is the original data and $z$ the transformed data.
 
-\chapter{Results and Discussion}
-\label{chap:results}
 
-\section{Feature Selection Results}
-\label{sec:feature_selection_results}
+\section{Experimental Setup}
+\label{sec:exper_setup}
 
-In order to assess the linear relationship between features and the target variable for the pre-game dataset,\acl{pcc} is employed.
-In the dataset, each feature category is split in two columns, one per team.
-To facilitate a comprehensive understanding of which feature category is most influential, the results are averaged across each category.
+\subsection{General Setup}
+\label{ssec:general_setup}
+First, a separate feature selection process is conducted for each dataset, and the results are then applied to the respective datasets. 
+Next, the pre-game and in-game classification models are trained on their respective datasets for comparison.
+
+\subsection{Feature Selection}
+
+In order to assess the linear relationship between features and the target variable for the pre-game dataset, \acl{pcc} is employed.
+The correlation coefficients are calculated separately for each team and category and subsequently averaged over teams.
 Only the absolute values of the \acp{pcc} are considered, as the direction of the relationship is of no concern when assessing its strength.
-The ten features with the highest correlation are displayed in Table \ref{tab:fs_results}.
-It is important to note that all $p$-values associated with these correlations are below the significance threshold of $0.01$, thereby confirming their high statistical relevance.
 
 \Aclp{gbt} were used to assess non-linear relationships.
 The model was configured with the following hyperparameters: number of estimators set to 100, maximum depth at 3, a learning rate of 0.1, and the objective function as binary logistic.
 The Feature Importance Score is the number of times a feature was used to split the data across all trees.
+
+\subsection{\Ac{ann} Parameters}
+The fixed parameters can be seen in Table \ref{tab:static_hyperparam_optim}.
+The \ac{ann} model architecture includes a series of fully connected layers, each followed by 1-dimensional batch normalization.
+The exact number of layers is one of the parameters determined by the hyperparameter optimization, while the batchnorm is used to stabilize the learning process, as initial experiments have shown highly fluctuating training loss.
+Expontential Linear Unit is used as the activation function, as the preliminary experiments and \citeauthor{doUsingMachineLearning2021} \cite{doUsingMachineLearning2021} have shown some improvement with it.
+In order to avoid overfitting, the training is stopped when the validation loss does not decline for 30 epochs.
+
+\subsection{\Ac{gru} Parameters}
+As \citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018} achieved better results using a straight \ac{rnn}, a the type of recurrent unit is optimized as a hyperparameter.
+One recurrent layer is determined experimentally to be sufficient with a number of fully connected, non recurrent layers following.
+The number of layers in Table \ref{tab:static_hyperparam_optim} references the number of fully connected layers.
+The early stopping patience is set to 100 epochs, as the training converges much slower than the \ac{ann} training.
+
+\subsection{Hyperparameter Optimization}
+\label{ssec:hyperparam_optim}
+The evaluation of model quality centered on validation accuracy, deemed a suitable metric given the balance of the dataset and the equivalent cost of false positives and negatives in predictions.
+The search space, shown in Table \ref{tab:static_hyperparam_optim} is randomly searched.
+This method allows for a comprehensive exploration of potential configurations, striking a balance between thoroughness and computational feasibility \cite{bergstraRandomSearchHyperParameter}.
+
+\begin{table}
+\centering
+\caption{Overview of the hyperparameter search for the pre-game classification}
+\label{tab:static_hyperparam_optim}
+\begin{tblr}{c|ccc}
+& Hyperparameter & Pre-game Model & In-Game Model & Distribution \\
+\hline
+\hline
+\SetCell[r=5]{} \rotatebox[origin=c]{90}{fixed} &
+Normalization & 1-D BatchNorm & - \\
+& Loss Function & Binary \ac{cel} & Binary \ac{cel} \\
+& Optimizer & Adam & Adam\\
+& Stopping Patience & 30 & 100\\
+& Model & \ac{ann} & - \\ 
+\hline
+\SetCell[r=6]{c} \rotatebox[origin=c]{90}{optimized} &
+Hidden Size & [128, 256, 512] & [64, 128, 256] & Selection \\
+& Learning Rate & [$\num{1e-5}$, $\num{1e-2}$] & [$\num{1e-15}, \num{1e-5}$] & log uniform \\
+& Number of Layers & [2,12] & [1, 3] & discrete \\
+& Dropout Probability & [0, 0.3] & [0, 0.3] & discrete \\
+& Model & - & [\ac{rnn}, \ac{gru}] & Selection \\
+& Batch Size & [64, 128, 256] & [64, 128, 256] & Selection\\
+\end{tblr}
+\end{table}
+
+\section{Results and Discussion}
+\label{sec:results}
+
+The goal of the experiments is to compare both pre- and in-game win prediction against the state-of-the-art for win prediction in \acl{lol} for amateur players.
+
+\subsection{Results}
+\label{ssec:results}
+
+
+\paragraph{Feature Selection Results}
+Table \ref{tab:fs_results} presents the ten features with the highest correlation on the pre-game dataset, along with their respective Feature Importance Scores as determined by \ac{gbt}.
+It is important to note that all $p$-values associated with these correlations are below the significance threshold of $0.01$, thereby confirming their high statistical relevance.
+
+
 \Ac{gbt} achieved an accuracy of 0.69.
-
-In order to provide a clearer comparison between the \ac{pcc} and \ac{gbt} results, both sets of scores have been normalized into range $[0, 1]$.
-This normalization, as depicted in Figure \ref{fig:fs_norm}, allows for a more intuitive visual comparison of the feature importance as assessed by the two different methods.
-
-A key observation is that the highest \ac{pcc} and Feature Importance is associated with the KDA feature. 
-This metric, which calculates the average ratio of $\frac{\text{Kills} + \text{Assists}}{\text{Deaths}}$ achieved by a player on their champion, still demonstrates a low linear correlation with the target variable of only $0.287$.
-Notably, the three next highest correlations are Assists, Deaths and Kills, all of which are combined to calculate the KDA.
-This is different to the \ac{gbt} results, as the three features with the next highest score are Gold, League Points and Assists.
-This suggests that KDA encapsulates the essential information from Kills, Deaths and Assists, leading to \ac{gbt} assigning higher importance to KDA and lower importance to these related features.
-
-In contrast to the analysis performed by \citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021}, the win rate is not the most important factor.
-However, the general trend of placing the highest importance on statistics of individual players instead of general champion statistics is similar.
+As depicted in Table \ref{tab:fs_results}, both methods have identified the same 13 features as the most important, albeit in differing orders.
+For a more effective comparison between the \ac{pcc} and \ac{gbt} results, both sets of scores have been normalized to the range [0, 1] (see Figure \ref{fig:fs_norm}).
 
 \begin{figure}
 \centering
 \resizebox{\textwidth}{!}{%
 	\input{./images/feature_importance.pgf}
 }
-\caption{\ac{gbt} Feature Importance Scores and \acp{pcc} normalized into range $[0, 1]$}
+\caption{\ac{gbt} Feature Importance Scores and \acp{pcc} normalized into range $[0, 1]$.}
 \label{fig:fs_norm}
 \end{figure}
 
+
+
+For the in-game dataset, manual feature selection using domain knowledge was performed.
+Here, eight feature categories were removed  due to their information being deemed either little informative about the state of the game (e.g. the bonus armor penetration) or more clearly conveyed in other features (gold earned per second is just as informative as the total gold the team has earned so far).
+
+
+\begin{figure}[ht]
+\centering
+\input{./images/roc.pgf}
+\caption{ROC Curve from both Models.}
+\label{fig:roc}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\input{./images/staticcm.pgf}
+\caption{Confusion matrix of pre-game and in-game classification results with error rates in percent.}
+\label{fig:cm_static}
+\end{figure}
+
+%\begin{figure}
+%\centering
+%\input{./images/timeline_cm.pgf}
+%\caption{Confusion matrix of in-game classification results}
+%\label{fig:cm_timeline}
+%\end{figure}
+
+%\begin{table}
+%\centering
+%\caption{Final hyperparameters for \ac{ann} and \ac{gru}.}
+%\label{tab:final_arch}
+%\begin{tblr}{ccc}
+%Parameter & \ac{ann} & \ac{gru} \\
+%\hline
+%Hidden Size & 256 & 256 \\
+%Learning Rate & $\num{1.3e-7}$ & $\num{1.4e-7}$\\
+%Number of Layers & 6 & 1 \\
+%Dropout Probability & 0 & 0 \\
+%Activation Function & ELU & \ac{relu} \\
+%Model & \ac{ann} & \ac{gru} \\
+%\end{tblr}
+%\end{table}
+
+\paragraph{Win Prediction Performance}
+As shown in Table \ref{tab:win_pred_results}, the \ac{ann} shows a test accuracy of 0.710 and a ROC-AUC Score of 0.787.
+The \ac{gru} model achieves an accuracy of 0.741 and a ROC-AUC Score of 0.807.
+Figure \ref{fig:roc} shows the ROC curves for both models and Figure \ref{fig:cm_static} shows the confusion matrices.
+
+
 \begin{table}
 \centering
-\caption{\acl{gbt} Feature Importance Scores and \aclp{pcc}, averaged per category}
+\caption{Win Prediction Results.}
+\label{tab:win_pred_results}
+\begin{tblr}{ccc}
+Model & Accuracy & ROC-AUC Score \\
+\hline
+ANN & 0.710 & 0.787 \\
+GRU & 0.741 & 0.807 \\
+\end{tblr}
+\end{table}
+
+
+\subsection{Discussion}
+\label{ssec:discussion}
+\paragraph{Feature Selection}
+A key observation is that the highest \ac{pcc} and Feature Importance is associated with the KDA feature. 
+This metric, which calculates the average ratio of $\text{Kills} + \text{Assists}$ to Deaths achieved by a player on their champion, still demonstrates a relatively low linear correlation with the target variable of only $0.287$.
+Notably, the three next highest correlations are Assists, Deaths and Kills, all of which are combined to calculate the KDA.
+This is different to the \ac{gbt} results, as the three features with the next highest score are Gold, League Points and Assists.
+This suggests that KDA encapsulates the essential information from Kills, Deaths and Assists, leading to \ac{gbt} assigning higher importance to KDA and lower importance to these related features.
+
+In contrast to the analysis performed by \citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021}, the win rate is not the most important factor.
+However, the general trend of placing the highest importance on statistics of individual players instead of general champion statistics is similar.
+As all of the most important features are related to player statistics, it can be assumed that the pre-game model generalizes fairly well over multiple game versions, thus potentially mitigating the need of frequent retraining due to game changes.
+
+\paragraph{Win Prediction}
+The accuracies of 0.710 and 0.741 achieved by the pre-game and in-game models respectively show that incorporating real-time data significantly enhances predictive performance. 
+The confusion matrices in Figure \ref{fig:cm_static} show that while the in-game model has very similar rates for both false positives and false negatives, the pre-game model's errors are relatively one-sided.
+A pre-game win prediction accuracy of 0.71 aligns closely with previous findings in Chapter \ref{chap:related}, suggesting that while professional games may be predicted more accurately, lower-rated games are more unpredictable and challenging.
+This is consistent with \Citeauthor{whiteScalablePsychologicalMomentum2020}'s  \cite{whiteScalablePsychologicalMomentum2020} findings, who, despite a more complex methodology and larger dataset, achieved similar accuracy in the harder task of predicting lower-rated games.
+
+The significantly higher in-game classification accuracy of 0.741 shows that real-time data is better suited for win prediction.
+It also suggests that modelling this data as time series is an effective technique, as only \citeauthor{baileyStatisticalLearningEsports} \cite{baileyStatisticalLearningEsports} have achieved a higher accuracy without modelling time series data, who worked on professional games.
+\Citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018} have employed an \ac{rnn} with an accuracy of 0.752 at the 15th minute and found that \ac{gru} performed worse. 
+They hypothesized that the underperformance of \ac{gru} compared to a regular \ac{rnn} might be due to a lack of data.
+With a much larger dataset, \ac{gru} did in fact perform slightly better than a vanilla \ac{rnn}, but the difference is marginal, as the best performing \ac{rnn} achieved an accuracy of 0.730.
+The small difference in accuracy suggests that due to the comparatively short time series the \ac{rnn} does not have a big issue with exploding or vanishing gradients.
+These results also show that a simple increase in data does not always lead to better predictions.
+Here, it can be assumed that the data does not encompass all relevant information needed to make a highly accurate prediction or that a significant portion of the game's outcome might remain beyond the predictive capacity of algorithms due to the intrinsic randomness and complexity of human-led interactions.
+
+The applicability of both models is diminished for lower-rated players, as the models were exclusively trained on very good players.
+This limitation is more pronounced for the pre-game prediction model, as it could benefit all players, unlike the in-game prediction model, which is more relevant for professional game audiences.
+
+
+\chapter{Conclusion}
+\label{chap:conclusion}
+In conclusion, the pre-game model can be a valuable tool for players to estimate their winning chances at a glance.
+It is unlikely that a much higher accuracy is achievable using just player statistics, as this approach does not model the probability of human errors, which introduce a large amount of randomness into the game.
+Further directions of work could instead include gauging the likelihood of errors by assessing the mental state of players or using a more advanced champion composition analysis.
+
+As expected, the in-game model achieves a higher accuracy due to the higher informative value of real-time data.
+Its accuracy when predicting winning chances continuously needs to be assessed before deployment, as a single prediction at the 15th minute does not enhance viewer experience much.
+A potential enhancement could involve integrating pre-game data, which has shown reasonable accuracy in winner prediction, into the \ac{gru} model. 
+
+%\bibliographystyle{natdin}
+%\bibliographystyle{naturemag}
+%\bibliographystyle{geralpha}
+\printbibliography
+
+\appendix
+
+\chapter{Appendix}
+\begin{table}
+\centering
+\caption{\acl{gbt} Feature Importance Scores and \aclp{pcc} on the pre-game dataset, averaged per category}
 \label{tab:fs_results}
 \begin{tblr}{ccc}
 	Category & \ac{gbt} Importance Score & \ac{pcc}\\
@@ -969,131 +1124,6 @@ However, the general trend of placing the highest importance on statistics of in
 	Creep Score & 3.5 & 0.058 \\
 \end{tblr}
 \end{table}
-
-For the in-game dataset, manual feature selection using domain knowledge was performed.
-Here, eight feature categories were removed  due to their information being deemed either little informative about the state of the game (e.g. the bonus armor penetration) or more clearly conveyed in other features (gold earned per second is just as informative as the total gold the team has earned so far).
-
-
-
-\section{Hyperparameter Optimization}
-\label{sec:hyperparam_optim}
-
-The following settings were determined manually and fixed prior to the hyperparameter optimization.
-
-\paragraph{\Ac{ann} Parameters}
-The \ac{ann} model architecture includes a series of fully connected layers, each followed by 1-dimensional batch normalization.
-The exact number of layers is one of the primary parameters determined by the hyperparameter optimization.
-The batchnorm is used to stabilize the learning process, as initial experiments have shown highly fluctuating training loss.
-The activation function for each neuron is the Expontential Linear Unit, as the experiments and \citeauthor{doUsingMachineLearning2021} \cite{doUsingMachineLearning2021} have shown some improvement with it.
-Binary \acl{cel} was used as the loss function and adam optimizer was employed due to its adaptive learning rate capabilities, which can help mitigate issues with unstable gradients \cite{kingmaAdamMethodStochastic2017}.
-In order to avoid overfitting, the training is stopped when the validation accuracy does not improve for 30 epochs.
-\paragraph{\Ac{gru} Parameters}
-The \ac{gru} model uses the following fixed parameters: 
-One recurrent layer is determined to be sufficient with a number of fully connected, non recurrent layers following.
-Similar to the \ac{ann}, Binary \ac{cel} and adam optimization is used.
-The early stopping patience is set to 100 epochs, as the training converges much slower than the \ac{ann} training.
-
-
-\paragraph{Focus and Metrics}
-The primary focus of our hyperparameter optimization was twofold: to determine the optimal depth of the neural network and to identify the most effective learning rate. The evaluation of model quality centered on validation accuracy, deemed a suitable metric given the near-perfect balance of the dataset and the equivalent cost of false positives and negatives in predictions.
-
-\paragraph{Search Strategy}
-
-The search space, shown in Figure \ref{tab:static_hyperparam_optim} is randomly searched.
-This method allows for a comprehensive exploration of potential configurations, striking a balance between thoroughness and computational feasibility \cite{bergstraRandomSearchHyperParameter}.
-
-
-\begin{table}
-\centering
-\caption{Overview of the hyperparameter search for the pre-game classification}
-\label{tab:static_hyperparam_optim}
-\begin{tblr}{ccc}
-Hyperparameter & \ac{ann} & \ac{gru} & Distribution \\
-\hline
-Hidden Size & [128, 256, 512] & [64, 128, 256] & Selection \\
-Learning Rate & [$\num{1e-5}$, $\num{1e-2}$] & [$\num{1e-15}, \num{1e-5}$] & log uniform \\
-Number of Layers & [2,12] & [1, 3] & discrete \\
-Dropout Probability & [0, 0.3] & [0, 0.3] & discrete \\
-Activation Function & [\ac{relu}, ELU] & [\ac{relu}] & Selection \\
-Model &  [\ac{ann}] & [\ac{rnn}, \ac{gru}] & Selection \\
-\end{tblr}
-\end{table}
-
-
-\begin{table}
-\centering
-\caption{Final hyperparameters for \ac{ann} and \ac{gru}}
-\label{tab:final_arch}
-\begin{tblr}{ccc}
-Parameter & \ac{ann} & \ac{gru} \\
-\hline
-Hidden Size & 256 & 128 \\
-Learning Rate & $\num{1.3e-7}$ & $\num{1e-10}$\\
-Number of Layers & 6 & 2 \\
-Dropout Probability & 0 & 0 \\
-Activation Function & ELU & \ac{relu} \\
-\end{tblr}
-\end{table}
-
-\section{Classification Results}
-\label{sec:class_results}
-
-\begin{figure}
-\centering
-\input{./images/roc.pgf}
-\caption{ROC Curve from both Models}
-\label{fig:roc}
-\end{figure}
-
-\begin{figure}
-\centering
-\input{./images/staticcm.pgf}
-\caption{Confusion matrix of pre-game classification results}
-\label{fig:cm_static}
-\end{figure}
-
-%\begin{figure}
-%\centering
-%\input{./images/timeline_cm.pgf}
-%\caption{Confusion matrix of in-game classification results}
-%\label{fig:cm_timeline}
-%\end{figure}
-
-
-\paragraph{\Ac{ann} Model Performance}
-The \ac{ann} has demonstrated a test accuracy of 0.710 and a ROC-AUC Score of 0.787 (see Figure \ref{fig:roc}).
-The confusion matrix can be seen in Figure \ref{fig:cm_static}.
-This performance aligns closely with previous findings in Chapter \ref{chap:related}, suggesting that while professional games may be predicted more accurately, lower-rated games are more unpredictable and challenging.
-This is consisten with 
-\Citeauthor{whiteScalablePsychologicalMomentum2020}'s  \cite{whiteScalablePsychologicalMomentum2020} findings, who, despite a more complex methodology and larger dataset, achieved similar accuracy in predicting lower-ranked games.
-As the most important features are related to player statistics, it can be assumed that the model generalizes fairly well over multiple game versions.
-Nevertheless, the model will lose predictive power after large changes of the game, which underscores the necessity of monitoring and frequent retraining.
-
-\paragraph{\ac{gru} Model Performance}
-The \ac{gru} model achieved an accuracy of 0.735, marginally surpassing the pre-game \ac{ann} model.
-This result was somewhat unexpected, as in-game predictions generally have the advantage of real-time data.
-This suggests that pre-game data is not significantly less predictive than early real-time data, especially if only the real-time data is used.
-
-Nevertheless, it shows that information obtained from a later state in the game can increase predicitive power.
-
-\Citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018} have employed an \ac{rnn} with an accuracy of 0.752 at the 15th minute and found that \ac{gru} did not perform as well. 
-They hypothesized that the underperformance of \ac{gru} compared to a regular \ac{rnn} might be due to a lack of data.
-With a much larger dataset, \ac{gru} did in fact perform slightly better than a vanilla \ac{rnn}, but the difference is marginal, as the best performing \ac{rnn} achieved an accuracy of 0.730.
-A potential improvement lies in the fact that the \ac{gru} model did not utilize any pre-game data, which have been shown to predict the winner with reasonable accuracy. 
-A combination of both data types might yield a much better predictor.
-These results also show that a simple increase in data does not always lead to better predictions.
-Here, it can be assumed that the data does not encompass all relevant information needed to make a highly accurate prediction or that a significant portion of the game's outcome might remain beyond the predictive capacity of algorithms due to the intrinsic randomness and complexity of human-led interactions.
-
-\chapter{Conclusion}
-\label{chap:conclusion}
-
-%\bibliographystyle{natdin}
-%\bibliographystyle{naturemag}
-%\bibliographystyle{geralpha}
-\printbibliography
-
-\appendix
-
 
 
 
