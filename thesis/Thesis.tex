@@ -154,21 +154,44 @@ This issue is worsened by the higher unpredictability of outcomes in esports com
 
 This accessibility issue parallels that of chess, where the subtleties and strategic shifts are often lost on less experienced viewers. 
 In response, chess broadcasts have employed engine evaluation graphs to depict major swings in the game, thereby enhancing viewer understanding and engagement.
-This evaluation indicates whether the game is a win, loss or a draw, assuming perfect play from both sides.
+The evaluation indicates whether the game is a win, loss or a draw, assuming perfect play from both sides.
 Such an evaluation helps viewers get the most important information at a glance, without having to have a lot of in-depth knowledge.
 
 Similarly, \ac{lol} has introduced a proprietary win prediction graph during its World Championship broadcasts (see Figure \ref{fig:riot_win_pred_graph}), helping fans understand the action and decisions made better and help immerse the audience by detecting upsets and swings in win probability.
-Despite a viewer survey by \citeauthor{claytorRiotGamesAWS2023} \cite{claytorRiotGamesAWS2023} indicating that 94 percent of participants found this graphic useful, there remains a notable lack of publicly available data concerning the graph's methodology and effectiveness.
-Addressing this gap, the goal of this thesis is to develop a win prediction model for \acl{lol} both for pre-game and real-time win prediction.
+Despite a viewer survey by \citeauthor{claytorRiotGamesAWS2023} \cite{claytorRiotGamesAWS2023}, indicating that 94 percent of participants found the visualization useful, there remains a notable lack of publicly available data concerning the graph's methodology and effectiveness.
+Addressing this gap, the goal of this thesis is to develop a win prediction model using machine learning techniques for \acl{lol} both for pre-game and real-time win prediction.
 This model aims to provide a deeper understanding of the game for audiences, enhancing their viewing experience by predicting outcomes based on the ongoing gameplay. 
 It could also offer valuable insights for players and coaches in formulating strategies and making informed decisions during matches.
 
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{./images/win_prob_worlds.png}
-\caption{Output of the proprietary win prediction model developed by Riot Games from the final game of the 2022 World championships. The icons at the top of the graph are important events during the game.\cite{LoLEsports}}
+\caption{Output of the proprietary win prediction model developed by Riot Games from the final game of the 2022 World championships. It shows the winning probability for each team on the y-axis from 100\% for the first team to 100\% for the second team. The icons at the top of the graph are important events during the game and the icons on the left side are the team logos.\cite{LoLEsports}}
 \label{fig:riot_win_pred_graph}
 \end{figure}
+
+
+\section*{League of Legends}
+\label{sec:LoL}
+
+\Ac{lol} is played with 5 players on each team on a map which is bifurcated into two bases, each linked by three lanes and housing a crucial structure called the \textit{nexus}, which is protected by turrets. 
+The game's primary goal is to destroy the opposing team's nexus.
+The map includes a jungle area in between the lanes with neutral monsters and two significant creatures, Baron Nashor and the Dragon, offering team-wide benefits when defeated.
+Players must accumulate gold and \ac{xp} through defeating minions, neutral monsters, or enemy champions. 
+These in-game currencies are essential for purchasing items and levelling up, thereby augmenting a champion's capabilities.
+
+Player roles in \ac{lol} are typically assigned with one player in the top lane, one in the mid lane, two in the bottom lane, and one in the jungle, facilitating strategic diversity and role specialization.
+Players select from a roster of 165 champions, each with unique abilities and characteristics, to compete in matches.
+Champion selection is a pivotal element of \ac{lol} gameplay, requiring players to consider team composition, damage types, assigned roles, and personal proficiency with specific champions. 
+The theoretical number of possible champion combinations in a game is $\binom{165}{10} = \num{3.21e15}$.
+Although this number is quite a bit smaller in reality as not every champion can play every role and most players are only really proficient with a handful of champions, this underscores the game's strategic depth.
+
+Each year, \ac{lol} introduces a new 'season', bringing substantial changes, and Riot Games issues bi-weekly patches to adjust champion balance, influencing the prevailing game strategies, or 'meta'.
+These patches can also include the release of a new champion or the rework of an old one.
+Frequent changes force players to be able to quickly adapt and learn new champions and mechanics.
+
+To evaluate player skill, \ac{lol} utilizes a proprietary rating system, commonly assumed to be a modified Elo system \cite{janssonNeuralNetworksStandardizing2022}.
+This system ensures that players are matched with and against others of comparable skill levels, maintaining competitive balance and fairness in the game.
 
 \chapter{Related work}
 \label{chap:related}
@@ -193,9 +216,13 @@ Additionally, their research comparing \ac{lstm} networks against \acp{rnn} indi
 Unfortunately, the work done by Riot Games themselves \cite{claytorRiotGamesAWS2023} did not report any metrics, so no direct comparison to other methods is possible.
 \citeauthor{baileyStatisticalLearningEsports} \cite{baileyStatisticalLearningEsports} have achieved an accuracy of 0.77 by applying logistic regression to 671 professional matches with data from the 15th minute mark.
 
+This work builds upon the methodology used by  \Citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018}, but uses a much larger amount of non-professional games in order to overcome any limitations related to the amount of data used.
+
 \paragraph{Post-Game Win Prediction}
 \citeauthor{bahrololloomiESportsPlayerPerformance2023} \cite{bahrololloomiESportsPlayerPerformance2023} have built a predictor using post-game data from professional matches achieving 86\% accuracy, while \citeauthor{aniVictoryPredictionLeague2019} \cite{aniVictoryPredictionLeague2019} trained a Random Forest model on a mixture of pre-, in- and post-game data for a maximum accuracy of 0.998.
 These results suggest that using post-game data leads to perfect predictions, where the value does not lie in the accuracy, but in the relevant features which can lead to new insights about winning strategies.
+
+
 
 \begin{longtblr}[
 caption = {Comparison of different works on League of Legends win prediction},
@@ -207,7 +234,7 @@ note{d} = {The skill group(s) from which the games stem is unclear.},
 note{e} = {All professional \ac{lol} games since early 2020 \cite{LoLEsports}.}
 ]
 {
-colspec = {*{6}{c}},
+colspec = {l*{5}{c}},
 rowhead = 1,
 }
 
@@ -234,31 +261,11 @@ Author & Games & Features & Time & Skill Group & Accuracy \\
 \end{longtblr}
 
 
-\chapter{Background}
+\chapter{Technical Background}
 \label{chap:background}
 
-\section{League of Legends}
-\label{sec:LoL}
-
-\Ac{lol} is played with 5 players on each team on a map which is bifurcated into two bases, each linked by three lanes and housing a crucial structure called the \textit{nexus}, which is protected by turrets. 
-The game's primary goal is to destroy the opposing team's nexus.
-The map includes a jungle area in between the lanes with neutral monsters and two significant creatures, Baron Nashor and the Dragon, offering team-wide benefits when defeated.
-Players must accumulate gold and \ac{xp} through defeating minions, neutral monsters, or enemy champions. 
-These in-game currencies are essential for purchasing items and levelling up, thereby augmenting a champion's capabilities.
-
-Player roles in \ac{lol} are typically assigned with one player in the top lane, one in the mid lane, two in the bottom lane, and one in the jungle, facilitating strategic diversity and role specialization.
-Players select from a roster of 165 champions, each with unique abilities and characteristics, to compete in matches.
-Champion selection is a pivotal element of \ac{lol} gameplay, requiring players to consider team composition, damage types, assigned roles, and personal proficiency with specific champions. 
-The theoretical number of possible champion combinations in a game is $\binom{165}{10} = \num{3.21e15}$.
-Although this number is quite a bit smaller in reality as not every champion can play every role and most players are only really proficient with a handful of champions, this underscores the game's strategic depth.
-
-Each year, \ac{lol} introduces a new 'season', bringing substantial changes, and Riot Games issues bi-weekly patches to adjust champion balance, influencing the prevailing game strategies, or 'meta'.
-These patches can also include the release of a new champion or the rework of an old one.
-Frequent changes force players to be able to quickly adapt and learn new champions and mechanics.
-
-To evaluate player skill, \ac{lol} utilizes a proprietary rating system, commonly assumed to be a modified Elo system \cite{janssonNeuralNetworksStandardizing2022}.
-This system ensures that players are matched with and against others of comparable skill levels, maintaining competitive balance and fairness in the game.
-
+This work utilizes a variety of different methods, including \ac{gbt} for feature selection and \ac{rnn}/\ac{gru} for win prediction.
+These methods are presented in the following chapter.
 
 \section{Neural Networks}
 \label{sec:nn}
@@ -278,17 +285,19 @@ The \ac{mlp}, introduced by \citeauthor{rosenblattPerceptronProbabilisticModel19
 Data flows from the input layer, through one or more hidden layers, to the output layer. In a fully connected feed-forward network, the computation in each layer $l$ is:
 \begin{equation}
 \mathbf{z}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)},
+\label{eq:ann_zl}
 \end{equation}
-where $\mathbf{a}^{(l-1)}$ represents the activation of the last layer, $\mathbf{W}^{(l)}$ the weight matrix, and $\mathbf{b}^{(l)}$ the bias vector of layer $l$.
+where $\mathbf{a}^{(l-1)}$ represents the activation of the previous layer, $\mathbf{W}^{(l)}$ the weight matrix, and $\mathbf{b}^{(l)}$ the bias vector of layer $l$.
 The vector $\mathbf{z}^{(l)}$ is then passed through the activation function for layer $l$, which is applied elementwise:
 \begin{equation}
 \mathbf{a}^{(l)} = \phi (\mathbf{z}^{(l)}).
+\label{eq:ann_yhat}
 \end{equation}
 The output layer $L$ produces the network's prediction $\mathbf{\hat{y}}$.
-The choice of activation function is dependent on the task, a common choice for classification is the softmax function \cite{bridleProbabilisticInterpretationFeedforward1990}
+The choice of activation function is dependent on the task, a common choice for classification is the softmax function \cite{bridleProbabilisticInterpretationFeedforward1990}:
 \begin{equation}
 \label{eq:softmax}
- S(\mathbf{x}_i) = \frac{e^{x_i}}{\sum_{k=1}^{K} e^{x_k}}
+ S(\mathbf{x}_i) = \frac{e^{x_i}}{\sum_{k=1}^{K} e^{x_k}},
 \end{equation}
 where $K$ is the number of classes and $i = 1, ..., K$.
 The softmax function returns a probability distribution over the predicted output classes.
@@ -301,12 +310,12 @@ E_N = \frac{1}{N} \sum_{k=1}^{N}(y_{k} - \hat{y}_{k})^2,
 \end{equation}
 and \ac{cel} for multi-class classification tasks:
 \begin{equation}
-E_N = -\frac{1}{N} \sum_{n=1}^{N} \sum_{k=1}^{K} y_{nk} \log (\hat{y}_{nk})
+E_N = -\frac{1}{N} \sum_{n=1}^{N} \sum_{k=1}^{K} y_{nk} \log (\hat{y}_{nk}),
 \end{equation}
-where $N$ is the number of samples, $y_{nk}$ is the (one-hot encoded) ground truth and $\hat{y}_{nk}$ is the softmax output.
+where $N$ is the number of samples, $y_{nk}$ is the (one-hot encoded) ground truth and $\hat{y}_{nk}$ is the softmax output of sample $n$ and class $k$.
 
 Backpropagation \cite{rumelhartLearningRepresentationsBackpropagating1986} is a key algorithm for training \acp{ann}, involving a forward pass to compute activations and a backward pass to compute gradients. 
-The gradients of the loss function with respect to the weights and biases are computed using the chain rule of calculus. For a given layer $l$, the gradient of the loss $E$ with respect to the weights $\mathbf{W}^{(l)}$is
+The gradients of the loss function with respect to the weights and biases are computed using the chain rule of calculus. For a given layer $l$, the gradient of the loss $E$ with respect to the weights $\mathbf{W}^{(l)}$ is
 \begin{equation}
 \Delta
 \frac{\partial E}{\partial \mathbf{W}^{(l)}} = \frac{\partial E}{\partial \mathbf{a}^{(l)}} \cdot \frac{\partial \mathbf{a}^{(l)}}{\partial \mathbf{z}^{(l)}} \cdot \frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{W}^{(l)}},
@@ -317,9 +326,8 @@ and with respect to the bias $\mathbf{b}^{(l)}$
 \end{equation}
 as 
 \begin{equation}
-\frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{b}^{(l)}} = 1
+\frac{\partial \mathbf{z}^{(l)}}{\partial \mathbf{b}^{(l)}} = 1.
 \end{equation}
-where $\mathbf{z}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}$and $\mathbf{a}^{(l)} = \phi(\mathbf{z}^{(l)})$.
 The gradients are then used to update the weights and biases, typically using an optimization algorithm like gradient descent, where the weights are updated via:
 \begin{equation}
 \mathbf{W}^{(l)} = \mathbf{W}^{(l)} - \eta \frac{\partial E}{\partial \mathbf{W}^{(l)}}
@@ -331,60 +339,14 @@ Through iterative forward and backward propagation, the network gradually conver
 \section{Recurrent Neural Networks}
 \label{sec:rnn}
 
-Recurrent Neural Networks (RNNs) extend the capabilities of feed-forward neural networks to handle sequential data by introducing the concept of recurrence. In an RNN, the output at each time step is influenced not only by the current input but also by the network's previous internal state, known as the hidden state. This design enables RNNs to capture temporal dependencies, making them particularly effective for tasks involving sequential data, such as speech recognition and natural language processing \cite{lecunDeepLearning2015}.
-%\begin{figure}[h]
-%\centering
-%\begin{tikzpicture}
-%[
-%%Styles
-%cell/.style={% For the main box
-%        rectangle, 
-%        rounded corners=5mm, 
-%        draw,
-%        very thick,
-%        },
-%state/.style={ %for internal States
-%		rectangle,
-%		rounded corners=3mm,
-%		draw,
-%		dashed,
-%		minimum size=10mm,
-%		},
-%arrow/.style={ %for arrows
-%		->,
-%		thick,
-%		-{Stealth[length=3mm]},
-%		line width=0.5mm,
-%		},
-%]
-%
-%%Cell
-%\node [cell, minimum height =4cm, minimum width=6cm] at (0,0){} ;
-%
-%%States
-%
-%\node[] (ht1) at (-4.5,0) {$h_{t-1}$};
-%\node[state] (ht) [right=2.5cm of ht1]	{$h_t$};
-%\node[state] 	(Zt) [right=1cm of ht] {$Z_t$};
-%\node[] 	(xt) [below=2.5cm of ht] {$x_t$};
-%\node[] (Zt2) [above=2.5cm of Zt] {$\hat{y}_t$};
-%
-%%Arrows
-%\draw[arrow] (xt.north) to (ht.south);
-%\draw[arrow] (ht1.east) to (ht.west);
-%\draw[arrow] (ht.east) to (Zt.west);
-%\draw[arrow] (Zt.north) to (Zt2.south);
-%
-%%Other
-%%\node[]  [right=3cm of Zt] {}; % this is just to add some space on the right side to center the caption on the cell
-%
-%\end{tikzpicture}
-%\caption{Elman Recurrent Unit \cite{hewamalageRecurrentNeuralNetworks2021}}
-%\label{fig:elman}
-%\end{figure}
-The concept of a fully connected RNN was first proposed by \citeauthor{elmanFindingStructureTime1990} \cite{elmanFindingStructureTime1990}.
+\Ac{rnn} extend the capabilities of feed-forward neural networks to handle sequential data by introducing the concept of recurrence. 
+In an \ac{rnn}, the output at each time step is influenced not only by the current input but also by the network's previous internal state, known as the hidden state. 
+This design enables \acp{rnn} to capture temporal dependencies, making them particularly effective for tasks involving sequential data, such as speech recognition and natural language processing \cite{lecunDeepLearning2015}.
+The concept of a fully connected \ac{rnn} was first proposed by \citeauthor{elmanFindingStructureTime1990} \cite{elmanFindingStructureTime1990}.
 
-RNNs maintain a 'state vector' in their hidden units, which implicitly contains information extracted from all past elements of the sequence \cite{lecunDeepLearning2015}.
+\Acp{rnn} maintain a 'state vector' in their hidden units, which implicitly contains information extracted from all past elements of the sequence \cite{lecunDeepLearning2015}.
+Compared to vanilla \acp{ann}, the \ac{rnn} has three weight matrices $\mathbf{W}$, $\mathbf{V}$ and $\mathbf{U}$, which represent input-to-hidden, hidden-to-output and temporal connections (see Figure \ref{fig:rnn_unroll}).
+These matrices are shared across timesteps.
 The hidden state $\mathbf{h}_t$ at time step $t$ is updated as follows:
 \begin{equation}
 \label{eq:rnn_update} 
@@ -397,16 +359,15 @@ The hidden state $\mathbf{h}_t$ at time step $t$ is updated as follows:
 \end{equation}
 where $\mathbf{U}$ is the weight matrix for the hidden state and $\mathbf{W}$ is the weight matrix for the input.
 A common choice for $\sigma_h$ is the tanh function.
-In a single-layer \ac{rnn}, all weight matrices $\mathbf{W}$, $\mathbf{U}$ and $\mathbf{V}$ (and biases) are shared across timesteps.
-The output $\mathbf{\hat{y}}_t$ of an \ac{rnn} at time step $t$ can be calculated as:
+The output $\mathbf{\hat{y}}_t$ of an \ac{rnn} at time step $t$ can be calculated similar to (\ref{eq:ann_zl}) and (\ref{eq:ann_yhat}) with:
 \begin{equation}
 \label{eq:rnn_output}
 \begin{split}
-\mathbf{o}_t &= \mathbf{V} \cdot \mathbf{h}_t + \mathbf{b_h} \\
-\mathbf{\hat{y}}_t &= \text{softmax}(\mathbf{o}_t)
+\mathbf{o}_t &= \mathbf{V} \cdot \mathbf{h}_t + \mathbf{b}_h \\
+\mathbf{\hat{y}}_t &= S(\mathbf{o}_t)
 \end{split}
 \end{equation}
-where $\mathbf{V}$ is the weight matrix associated with the cell output. 
+where $\mathbf{V}$ is the weight matrix associated with the cell output and $S$ the softmax function defined in (\ref{eq:softmax}). 
 
 The loss over $T$ timesteps is defined by 
 \begin{equation}
@@ -416,14 +377,14 @@ E_T = \frac{1}{T} \sum_{t=1}^{T} {l(\mathbf{\hat{y}}_t, \mathbf{y})}
 where $l(\mathbf{\hat{y}}_t, \mathbf{y})$ is the loss at timestep $t$.
 
 \Ac{bptt} unfolds the \ac{rnn} across time steps (see Figure \ref{fig:rnn_unroll}) and applies the backpropagation algorithm. 
-In order to train $U$, $V$ and $W$, we need their respective gradients $\frac{\delta E}{\delta \mathbf{U}}$, $\frac{\delta E}{\delta \mathbf{V}}$ and $\frac{\delta E}{\delta \mathbf{W}}$.
+In order to train the weight matrices, we need the partial derivatives of $E_T$ with respect to $\mathbf{U}$, $\mathbf{V}$ and $\mathbf{W}$.
 
-As the weight matrices are shared across timesteps, we can generally sum the gradients from each timestep $t$ together.
-The gradient of the loss function with regards to the output matrix $V$ does not depend on the hidden state $h_t$ and can thus be calculated easily.
+As the weight matrices are shared across timesteps, we can generally sum up the gradients from each timestep $t$.
+The gradient of the loss function with regards to the output matrix $\mathbf{V}$ does not depend on the hidden state $\mathbf{h}_t$ and can thus be calculated easily:
 \begin{equation}
 \label{eq:bptt_V}
 \begin{split}
-\frac{\partial E}{\partial \mathbf{V}} 
+\frac{\partial E_T}{\partial \mathbf{V}} 
 & = 
 \sum_{t}^{T} \frac{\partial E_t}{\partial \mathbf{V}} \\
 & =
@@ -432,7 +393,7 @@ The gradient of the loss function with regards to the output matrix $V$ does not
 \cdot 
 \frac{\partial \mathbf{\hat{y}}_t}{\partial \mathbf{o}_t} 
 \cdot 
-\frac{\partial \mathbf{o}_t}{\partial \mathbf{V}}
+\frac{\partial \mathbf{o}_t}{\partial \mathbf{V}}.
 \end{split}
 \end{equation}
 Now we consider the gradient with respect to the weight matrix for the hidden state $U$ at the time step $t+1$:
@@ -440,7 +401,7 @@ Now we consider the gradient with respect to the weight matrix for the hidden st
 \frac{\partial E_{t+1}}{\partial \mathbf{U}} = 
 \frac{\partial E_{t+1}}{\partial \mathbf{\hat{y}}_{t+1}}
 \frac{\partial \mathbf{\hat{y}}_{t+1}}{\partial \mathbf{h}_{t+1}}
-\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{U}}
+\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{U}}.
 \end{equation}
 As the hidden state $h_{t+1}$ depends on the hidden state of the previous timestep $h_t$, we need to recursively calculate the partial derivatives of all the previous timesteps, yielding the following formula:
 \begin{equation}
@@ -448,7 +409,7 @@ As the hidden state $h_{t+1}$ depends on the hidden state of the previous timest
 \frac{\partial E_{t+1}}{\partial \mathbf{\hat{y}}_{t+1}}
 \frac{\partial \mathbf{\hat{y}}_{t+1}}{\partial \mathbf{h}_{t+1}}
 \frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_k}
-\frac{\partial \mathbf{h}_k}{\partial \mathbf{U}}
+\frac{\partial \mathbf{h}_k}{\partial \mathbf{U}}.
 \end{equation}
 Applying the chain rule to $\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_k}$ yields
 \begin{equation}
@@ -458,16 +419,16 @@ Applying the chain rule to $\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}
 \left(\prod_{j=k}^{t}\frac{\partial \mathbf{h}_{j+1}}{\partial \mathbf{h}_j}\right)
 \frac{\partial \mathbf{h}_k}{\partial \mathbf{U}}
 \end{equation}\cite{aratBackpropagationTimeRecurrent2019}.
-Summing the partial derivatives over timesteps similar to equation (\ref{eq:bptt_V}) yields the full equation
+Summing the partial derivatives over timesteps similar to (\ref{eq:bptt_V}) yields the full equation
 \begin{equation}
 \label{eq:bptt_U}
-\frac{\partial E}{\partial \mathbf{U}} = 
+\frac{\partial E_T}{\partial \mathbf{U}} = 
 \sum_{t=1}^{T}
 \sum_{k=1}^{t}
 \frac{\partial E_{t+1}}{\partial \mathbf{\hat{y}}_{t+1}}
 \frac{\partial \mathbf{\hat{y}}_{t+1}}{\partial \mathbf{h}_{t+1}}
 \frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_k}
-\frac{\partial \mathbf{h}_k}{\partial \mathbf{U}}
+\frac{\partial \mathbf{h}_k}{\partial \mathbf{U}},
 \end{equation}
 where
 \begin{equation}
@@ -479,16 +440,17 @@ where
 \frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_t}
 \frac{\partial \mathbf{h}_{t}}{\partial \mathbf{h}_{t-1}}
  . . . 
-\frac{\partial \mathbf{h}_{k+1}}{\partial \mathbf{h}_k}   
+\frac{\partial \mathbf{h}_{k+1}}{\partial \mathbf{h}_k}.
 \end{equation}
 The gradient with respect to $\mathbf{W}$ follows similarly.
 As first demonstrated by \citeauthor{bengioLearningLongtermDependencies1994} \cite{bengioLearningLongtermDependencies1994}, RNNs face challenges with exploding or vanishing gradients, particularly in long sequences.
-This can be shown by examining a single term from equation (\ref{eq:bptt_ht+1}) as this is the partial derivative between two vectors and as such a Jacobian matrix :
+
+This can be shown by examining a single term from (\ref{eq:bptt_ht+1}) as this is the partial derivative between two vectors and as such a Jacobian matrix of the transition from $\mathbf{h}_t$ to $\mathbf{h}_{t+1}$:
 \begin{equation}
 \label{eq:bptt_jacobian}
 \frac{\partial \mathbf{h}_{j+1}}{\partial \mathbf{h}_j}
 = 
-\mathbf{U}^{\top} \text{diag}(\sigma_{h}' (\mathbf{W} \mathbf{x}_{j+1} + \mathbf{U} \mathbf{h}_j + \mathbf{b}_h))
+\text{diag}(\sigma_{h}' ( \mathbf{U} \mathbf{h}_j + \mathbf{b}_h)) \mathbf{U}
 \end{equation}
 where diag() converts a vector into a diagonal matrix and $\sigma '$ computes the element-wise derivative of $\sigma$
 \cite{pascanuDifficultyTrainingRecurrent2013}.
@@ -506,31 +468,31 @@ hidden/.style={item,on chain,join}]
 
  \begin{scope}[start chain=going right,nodes=hidden,every
  join/.style={-latex,very thick},local bounding box=chain]
- \draw node (A0) {$h_0$} node (A1) {$h_1$} node (A2) {$h_2$} node[xshift=2em] (At)
- {$h_t$};
+ \draw node (A0) {$\mathbf{h}_0$} node (A1) {$\mathbf{h}_1$} node (A2) {$\mathbf{h}_2$} node[xshift=2em] (At)
+ {$\mathbf{h}_t$};
  \end{scope}
  \node[left=1em of chain,scale=2] (eq) {$=$};
- \node[left=2em of eq,item] (AL) {$h$};
+ \node[left=2em of eq,item] (AL) {$\mathbf{h}$};
  \path (AL.west) ++ (-1em,2em) coordinate (aux);
- \draw[very thick,-latex,rounded corners] (AL.east) -| ++ (1em,2em) -- (aux) --++(0em,-2em) node[midway, left] {$U$} -- (AL.west); 
+ \draw[very thick,-latex,rounded corners] (AL.east) -| ++ (1em,2em) -- (aux) --++(0em,-2em) node[midway, left] {$\mathbf{U}$} -- (AL.west); 
  \foreach \X in {0,1,2,t}
- {\draw[very thick,-latex] (A\X.north) -- ++ (0,2em) node[midway, right] {$V$}
- node[above,item,fill=gray!10] (h\X) {$\hat{y}_\X$};
- \draw[very thick,latex-] (A\X.south) -- ++ (0,-2em) node[midway, right] {$W$}
- node[below,item,fill=gray!10] (x\X) {$x_\X$};
- \path (A0.east) -- (A1.west) node[midway, above] {$U$};
- \path (A1.east) -- (A2.west) node[midway, above] {$U$};
- \path (A2.east) -- (At.west) node[midway, above] {$U$};
+ {\draw[very thick,-latex] (A\X.north) -- ++ (0,2em) node[midway, right] {$\mathbf{V}$}
+ node[above,item,fill=gray!10] (h\X) {$\mathbf{\hat{y}}_\X$};
+ \draw[very thick,latex-] (A\X.south) -- ++ (0,-2em) node[midway, right] {$\mathbf{W}$}
+ node[below,item,fill=gray!10] (x\X) {$\mathbf{x}_\X$};
+ \path (A0.east) -- (A1.west) node[midway, above] {$\mathbf{U}$};
+ \path (A1.east) -- (A2.west) node[midway, above] {$\mathbf{U}$};
+ \path (A2.east) -- (At.west) node[midway, above] {$\mathbf{U}$};
 }
  
  \draw[white,line width=0.8ex] (AL.north) -- ++ (0,1.9em);
- \draw[very thick,-latex] (AL.north) -- ++ (0,2em) node[midway, right] {$V$}
- node[above,item,fill=gray!10] {$\hat{y}_t$};
- \draw[very thick,latex-] (AL.south) -- ++ (0,-2em) node[midway, right] {$W$}
- node[below,item,fill=gray!10] {$x_t$};
+ \draw[very thick,-latex] (AL.north) -- ++ (0,2em) node[midway, right] {$\mathbf{V}$}
+ node[above,item,fill=gray!10] {$\mathbf{\hat{y}}_t$};
+ \draw[very thick,latex-] (AL.south) -- ++ (0,-2em) node[midway, right] {$\mathbf{W}$}
+ node[below,item,fill=gray!10] {$\mathbf{x}_t$};
  \path (x2) -- (xt) node[midway,scale=2,font=\bfseries] {\dots};
 \end{tikzpicture}
-\caption{Unrolling of an \ac{rnn} over time}
+\caption{Unrolling of an \ac{rnn} over time by creating a copy of the model for each time step $t$ with shared weight matrices, where $\mathbf{U}$ is the matrix representing the recurrent connection and the grey nodes containing $\mathbf{x}_t$ and $\mathbf{\hat{y}}_t$ are the input and output at timestep $t$.}
 \label{fig:rnn_unroll}
 \end{figure}
 
@@ -538,14 +500,14 @@ hidden/.style={item,on chain,join}]
 \label{sec:gru}
 In order to overcome the exploding/vanishing gradient problem of vanilla \acp{rnn}, gated networks like the \ac{lstm} \cite{hochreiterLongShortTermMemory1997} and \ac{gru} \cite{choLearningPhraseRepresentations2014} have been developed \cite{vanhoudtReviewLongShortterm2020}.
 As they introduce an increased number of parameters compared to traditional \acp{rnn}, gated networks like the \ac{lstm} and \ac{gru} demand greater computational power \cite{deyGatevariantsGatedRecurrent2017}.
-Gating mechanisms mitigate the exploding / vanishing gradient problem by regulating how much the hidden state is updated each step.
+Gating mechanisms mitigate the exploding/vanishing gradient problem by regulating how much the hidden state is updated each step.
 Compared to the \ac{lstm} network, \ac{gru} reduces the number of gate networks to two, thus being simpler to implement and compute \cite{choLearningPhraseRepresentations2014} (see Figure \ref{fig:gru}).
 \Citeauthor{chungEmpiricalEvaluationGated2014} even found that \ac{gru} is at least comparable to \ac{lstm} in most cases \cite{chungEmpiricalEvaluationGated2014}.
 The gates control the activation of each hidden unit.
 The reset gate $\mathbf{r}_t$ is calculated by
 \begin{equation}
 \label{eq:gru_reset}
-\mathbf{r}_t = \sigma (\mathbf{W}_r x_t + \mathbf{U}_r \mathbf{h}_{t-1})
+\mathbf{r}_t = \sigma (\mathbf{W}_r \mathbf{x}_t + \mathbf{U}_r \mathbf{h}_{t-1})
 \end{equation}
 and the update gate $\mathbf{z}_t$ by
 \begin{equation}
@@ -644,8 +606,8 @@ This selective inclusion of new information and the ability to skip a timestep c
     \node[outer sep=1] (xt) at (-2.5,-3) {$\mathbf{x}_t$};
 
     % Draw External outputs
-    \node[] (out) at (4,1.5) {};
-    \node[] (ht) at (2.5,3) {$\mathbf{h}_t$};
+    \node[] (out) at (4,1.5) {$\mathbf{h}_t$};
+    \node[] (ht) at (2.5,3) {$\mathbf{\hat{y}}_t$};
     
    % Draw Arrows
    % input
@@ -686,8 +648,10 @@ Feature selection methods can be broadly categorized into three distinct types \
 
 \item[Wrapper Methods] Models are trained iteratively on various feature subsets, incurring a higher computational cost but enabling the detection of interactions among variables \cite{venkateshReviewFeatureSelection2019}.
 
-\item[Embedded Methods] These methods perform inherent feature selection, often as an integral part of the modeling process. Tree-based models, such as Decision Trees and Gradient Boosted Trees, typically employ feature selection based on metrics like the Gini index or entropy.
+\item[Embedded Methods] These methods perform inherent feature selection, often as an integral part of the modeling process. Tree-based models, such as Decision Trees and \ac{gbt}, typically employ feature selection based on metrics like the Gini index or entropy.
 \end{description}
+
+The two methods used in this work are a filter method (\ac{pcc}) and an embedded method (\ac{gbt}) and are presented in more detail below.
 
 
 \subsection*{Pearson's Correlation Coefficient}
@@ -713,15 +677,35 @@ Despite these limitations, \ac{pcc} is a valuable tool in feature selection for 
 \Ac{gbt} is an ensemble learning technique that can be used for feature selection. 
 The core idea of \ac{gbt} is to build a model in a stage-wise fashion, where each tree incrementally improves upon the previous ones by correcting their errors. 
 This process involves training trees sequentially, with each new tree learning to predict the residuals or errors of the previous ensemble of trees.
+
+The mathematical foundation of \ac{gbt} can be described through the framework of additive models. 
+Given a dataset with \(n\) instances \((x_i, y_i)\), where \(x_i\) represents the feature vector of the \(i\)-th instance and \(y_i\) is its corresponding target value, the goal of \ac{gbt} is to find an approximation \(\hat{F}(x)\) to the true function \(F(x)\) that minimizes the expected value of some specified loss function \(L(y, F(x))\). 
+\Ac{gbt} models build an approximation of $F(x)$ as the weighted sum of the functions
+\begin{equation}
+F_m(x) = F_{m-1}(x) + \phi_m h_m(x)
+\end{equation}
+where $\phi_m$ is the weight of the $m^{th}$ function $h_m(x)$\cite{bentejacComparativeAnalysisGradient2021}.
+
+The \ac{gbt} model is constructed iteratively, starting with a constant model \(F_0(x) = \arg\min_{\gamma} \sum_{i=1}^{n} E(y_i, \gamma)\), and incrementally adding trees to minimize the loss function. 
+Each subsequent tree models the residual errors made by the previous ensemble of trees. Specifically, at each stage \(t\), a tree \(h_t(x)\) is fitted to the negative gradient of the loss function
+\begin{equation}
+-\left[\frac{\partial E(y_i, F(x_i))}{\partial F(x_i)}\right]_{F(x)=F_{t-1}(x)},
+\end{equation}
+evaluated at the predictions \(F_{t-1}(x)\) of the current model.
+The update equation for the model at each stage \(t\) is given by:
+\begin{equation}
+F_t(x) = F_{t-1}(x) + \nu \cdot h_t(x)
+\end{equation}
+where \(\nu\) is the learning rate, a parameter that scales the contribution of each tree. 
+The learning rate is crucial for the performance of \ac{gbt}, as it controls the speed at which the model learns. 
+A smaller \(\nu\) requires more trees to model the data but can lead to a more robust model by reducing the risk of overfitting.
+
 There are different types of importance, such as the average or total gain across all splits the feature is used in.
 The simplest definition is the 'weight', defined as the number of times a feature is used to split the data across all trees \cite{chenXGBoostScalableTree2016}.
 
-
-
-
 \chapter{Experiments}
 \label{chap:experiments}
-This section introduces two distinct experiments designed to evaluate the effectiveness of predictive models in League of Legends, a widely-played multiplayer online battle arena game. The initial experiment centers on pre-game win prediction through a neural network, utilizing historical and statistical data before the game starts. In contrast, the subsequent experiment explores real-time prediction using a \ac{gru} model, aiming to dynamically determine winning probabilities as the game unfolds.
+This section introduces two distinct experiments designed to evaluate the effectiveness of predictive models in \ac{lol}. The initial experiment centers on pre-game win prediction through a neural network, utilizing historical and statistical data before the game starts. In contrast, the subsequent experiment explores real-time prediction using a \ac{gru} model, aiming to dynamically determine winning probabilities as the game unfolds.
 
 \section{Data}
 \label{sec:data}
@@ -749,11 +733,11 @@ Due to the fact that for a match to be included in the dataset, only one out of 
 Lower rank matches are not considered due to their higher unpredictability as less skilled players are assumed to make huge, game-changing mistakes more often.
 This higher unpredictability could make it harder for the model to learn.
 
-Pro matches, defined as professional players playing with their respective teams in an esport tournament or league, are not included as they are not available through the official Riot Games API.
+Pro matches, defined as professional players playing with their respective teams in an esports tournament or league, are not included as they are not available through the official Riot Games API.
 Professional players are still included in the dataset, but only if they played regular, non-tournament games.
 
 \paragraph{Riot Games API}
-The primary source of data stems from the Riot Games API \cite{RiotDeveloperPortal}, a comprehensive repository of information pertaining to League of Legends gameplay.
+The primary source of data stems from the Riot Games API \cite{RiotDeveloperPortal}, a comprehensive repository of information pertaining to \ac{lol} gameplay.
 The Riot Games API provides access to a plethora of essential data points, including champion statistics, general match information, timeline details, and player-specific information.
 
 \paragraph{Other Data Sources}
@@ -766,11 +750,12 @@ This regional diversity contributes to the model's generalizability across diffe
 \paragraph{Period of Time}
 All matches included in the dataset were played in season 13 and on patch 20.
 It is important that all matches are played on the same patch, as a patch may cause major shifts in the balance of the game, thus potentially making certain strategies and champions way better than others.
-
-
-
+\\\\
 The pre-game dataset encompasses a total of 38,957 matches, while the in-game dataset contains 28,809 matches.
-Below, the pre-game dataset characteristics are presented in more detail, as the smaller in-game dataset is a random sampling from the pre-game dataset.
+In \ref{ssec:dataprop}, the pre-game dataset characteristics are presented in more detail, as the smaller in-game dataset is a random sampling from the pre-game dataset. 
+As it is a random sample, the dataset characteristics are shared. 
+The sampling is necessary due to the long processing time of in-game data, necessitating a smaller dataset compared to pre-game data.
+
 \paragraph{Region Distribution}
 The dataset is primarily comprised of matches from three major regions: North America, Western Europe, and South Korea, which collectively constitute the vast majority of matches in our dataset. 
 It is important to note that due to a lack of official data pertaining to the number of games played or the number of players in each region, it is currently not feasible to conclusively verify whether the distribution of matches within our dataset aligns with the true underlying distribution of games played per region.
@@ -790,7 +775,7 @@ As only matches with a game length of at least 16 minutes are collected, the sho
 The average match length is $27.50$ minutes.
 Figure \ref{fig:gameDuration} graphically illustrates the distribution of game durations. 
 Notably, the histogram reveals a prominent spike at the 16-minute mark.
-This spike corresponds to the earliest possible conclusion time for a match, as League of Legends prohibits surrendering prior to the 15th minute of gameplay. 
+This spike corresponds to the earliest possible conclusion time for a match, as \ac{lol} prohibits surrendering prior to the 15th minute of gameplay. 
 In instances where an entire team collectively acknowledges the futility of their chances of victory, a surrender may be initiated at the 15-minute threshold.
 However, should a simple majority of team members decide to surrender, they must adhere to a 20-minute waiting period before being able to do so. 
 Consequently, this unique feature of the game's mechanics clarifies the relatively diminished frequency of matches ending in the 17th to 19th-minute range within the dataset.
