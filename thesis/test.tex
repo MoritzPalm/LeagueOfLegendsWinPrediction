@@ -1,0 +1,26 @@
+\documentclass[12pt, a4paper]{scrreprt}
+
+%\usepackage{showframe}
+
+
+% WICHTIG: Hier wird nicht BibTeX sondern BibLateX verwendet!!
+% Deshalb nicht mit bibtex uebersetzen, sondern mit biber
+% Das kann man in jedem Tool wie TexMaker oder TexShop als Option einstellen
+%
+%% Spezielle Einstellungen, insbesondere fuer das Literaturverzeichnis,
+% aber auch Packages wie amsmath, Groessenanpassungen etc.
+\input{Preferences.tex}
+%
+\begin{document}
+\begin{table}
+\centering
+\caption{Win Prediction Results.}
+\label{tab:win_pred_results}
+\begin{tblr}{ccc}
+Model & Accuracy & ROC-AUC Score \\
+\hline
+ANN & 0.710 & 0.787 \\
+GRU & 0.741 & 0.807 \\
+\end{tblr}
+\end{table}
+\end{document}

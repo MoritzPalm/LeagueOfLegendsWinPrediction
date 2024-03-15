@@ -149,49 +149,39 @@ Within this domain, the genre of \ac{moba} games has risen to the forefront, bec
 At the pinnacle of this genre is \ac{lol}, developed by Riot Games, which has not only attracted a massive global player base but also a significant viewership in professional esports tournaments \cite{goughLeagueLegendsChampionships}. 
 The \acl{lol} World Championship Finals 2021 reached an impressive average minute audience of over 30 million people according to Riot Games \cite{riotgamesHowRiotEsports2022} even when compared to the estimated 150 million average minute audience for the 2021 UEFA Champions League Final \cite{dalmiaChampionsLeagueFinal2023}.
 
-Despite its popularity, \ac{lol} presents a notable challenge: it can be hard to follow for newer audiences due to its complex gameplay and strategic depth \cite{campbell2021sports}.  
+Despite its popularity, \ac{lol} presents a notable challenge: it can be hard to follow for newer audiences due to its complex gameplay and strategic depth \cite{campbell2021sports}. 
+Even for regular viewers, it can be hard to follow the action on screen, as in certain moments, there are a plethora of things happening at the same time.
+Figure \ref{fig:screenshot} shows how the game looks during a smaller fight from the players perspective.
 This issue is worsened by the higher unpredictability of outcomes in esports compared to traditional sports, as lead changes are frequent and less indicative of final results \cite{campbell2021sports}.
 
+\begin{figure}[htbp]
+\includegraphics[width=\textwidth]{./images/LolScreenshot1.jpg}
+\caption[Screenshot of a \ac{lol} game, showing the players perspective.]{Screenshot of a \ac{lol} game, showing the players perspective \cite{fearless-ad5644HighlightMyLOL2024}.}
+\label{fig:screenshot}
+\end{figure}
+
 This accessibility issue parallels that of chess, where the subtleties and strategic shifts are often lost on less experienced viewers. 
-In response, chess broadcasts have employed engine evaluation graphs to depict major swings in the game, thereby enhancing viewer understanding and engagement.
+In response, chess broadcasts have employed engine evaluation graphs to depict major swings in the game, thereby enhancing viewer understanding and engagement \cite{zangAutomatedChessCommentator2019}.
 The evaluation indicates whether the game is a win, loss or a draw, assuming perfect play from both sides.
 Such an evaluation helps viewers get the most important information at a glance, without having to have a lot of in-depth knowledge.
+It is also a starting point for different kinds of analysis, for example whether a room's air quality affects the player's decision making (see \cite{kunnIndoorAirQuality2023}).
 
 Similarly, \ac{lol} has introduced a proprietary win prediction graph during its World Championship broadcasts (see Figure \ref{fig:riot_win_pred_graph}), helping fans understand the action and decisions made better and help immerse the audience by detecting upsets and swings in win probability.
-Despite a viewer survey by \citeauthor{claytorRiotGamesAWS2023} \cite{claytorRiotGamesAWS2023}, indicating that 94 percent of participants found the visualization useful, there remains a notable lack of publicly available data concerning the graph's methodology and effectiveness.
-Addressing this gap, the goal of this thesis is to develop a win prediction model using machine learning techniques for \acl{lol} both for pre-game and real-time win prediction.
-This model aims to provide a deeper understanding of the game for audiences, enhancing their viewing experience by predicting outcomes based on the ongoing gameplay. 
-It could also offer valuable insights for players and coaches in formulating strategies and making informed decisions during matches.
 
-\begin{figure}
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{./images/win_prob_worlds.png}
-\caption{Output of the proprietary win prediction model developed by Riot Games from the final game of the 2022 World championships. It shows the winning probability for each team on the y-axis from 100\% for the first team to 100\% for the second team. The icons at the top of the graph are important events during the game and the icons on the left side are the team logos.\cite{LoLEsports}}
+\caption[Official win probability graph from World Championship 2022.]{Output of the proprietary win prediction model developed by Riot Games from the final game of the 2022 World championships. It shows the winning probability for each team on the y-axis from 100\% for the first team to 100\% for the second team. The icons at the top of the graph are important events during the game and the icons on the left side are the team logos \cite{LoLEsports}.}
 \label{fig:riot_win_pred_graph}
 \end{figure}
 
+Despite a viewer survey by \citeauthor{claytorRiotGamesAWS2023} \cite{claytorRiotGamesAWS2023}, indicating that 94 percent of participants found the visualization useful, there remains a notable lack of publicly available data concerning the graph's methodology and effectiveness.
+Other works have worked on this topic (see Chapter \ref{chap:related}), but may be limited by a potential lack of data or a narrow focus on the professional scene.
 
-\section*{League of Legends}
-\label{sec:LoL}
-
-\Ac{lol} is played with 5 players on each team on a map which is bifurcated into two bases, each linked by three lanes and housing a crucial structure called the \textit{nexus}, which is protected by turrets. 
-The game's primary goal is to destroy the opposing team's nexus.
-The map includes a jungle area in between the lanes with neutral monsters and two significant creatures, Baron Nashor and the Dragon, offering team-wide benefits when defeated.
-Players must accumulate gold and \ac{xp} through defeating minions, neutral monsters, or enemy champions. 
-These in-game currencies are essential for purchasing items and levelling up, thereby augmenting a champion's capabilities.
-
-Player roles in \ac{lol} are typically assigned with one player in the top lane, one in the mid lane, two in the bottom lane, and one in the jungle, facilitating strategic diversity and role specialization.
-Players select from a roster of 165 champions, each with unique abilities and characteristics, to compete in matches.
-Champion selection is a pivotal element of \ac{lol} gameplay, requiring players to consider team composition, damage types, assigned roles, and personal proficiency with specific champions. 
-The theoretical number of possible champion combinations in a game is $\binom{165}{10} = \num{3.21e15}$.
-Although this number is quite a bit smaller in reality as not every champion can play every role and most players are only really proficient with a handful of champions, this underscores the game's strategic depth.
-
-Each year, \ac{lol} introduces a new 'season', bringing substantial changes, and Riot Games issues bi-weekly patches to adjust champion balance, influencing the prevailing game strategies, or 'meta'.
-These patches can also include the release of a new champion or the rework of an old one.
-Frequent changes force players to be able to quickly adapt and learn new champions and mechanics.
-
-To evaluate player skill, \ac{lol} utilizes a proprietary rating system, commonly assumed to be a modified Elo system \cite{janssonNeuralNetworksStandardizing2022}.
-This system ensures that players are matched with and against others of comparable skill levels, maintaining competitive balance and fairness in the game.
+Addressing this gap, the goal of this thesis is to develop a win prediction model using machine learning techniques for \acl{lol} both for pre-game and real-time win prediction, training on a greater number of non-professional games.
+The pre-game model uses an \acl{ann}, while the in-game model seeks to exploit the temporal structure of the data by using a \acl{gru}.
+These models aim to provide a deeper understanding of the game for audiences, enhancing their viewing experience by predicting outcomes based on the ongoing gameplay. 
+They could also offer valuable insights for players and coaches in formulating strategies and making informed decisions during matches.
 
 \chapter{Related work}
 \label{chap:related}
@@ -207,14 +197,15 @@ In comparison, \citeauthor{doUsingMachineLearning2021} \cite{doUsingMachineLearn
 limited their feature set to player-champion win rates and champion mastery points, further extracting statistical features such as the team's average player-champion win rate.
 Applying an \ac{ann} to this data yielded an accuracy of 0.751, which is significant given the relatively small dataset used. 
 Especially considering the results of the paper on feature selection by  \citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021}, which identified not only player-champion win rate but also the kill-to-death ratio for the chosen champion as the most critical features.
-These results lead to the assumption that lower rated games are harder to predict accurately, as more mistakes happen and thus increase randomness and volatility.
+
 
 \paragraph{In-Game Win Prediction}
-\Citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018} trained a \acf{rnn} on 7621 professional games  utilizing data from varying intervals, ranging from the initial 0-5 minutes to 20-25 minutes.
+\Citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018} trained a \acf{rnn} on 7621 professional games  utilizing data from varying time intervals, ranging from the initial 0-5 minutes to 20-25 minutes.
 Their findings revealed an accuracy of 0.752 when using data from between the 10 and 15 minute mark and a maximum accuracy of 0.835 when using data from the 20-25th minute.
 Additionally, their research comparing \ac{lstm} networks against \acp{rnn} indicated superior performance of the latter, possibly attributable to the less complex nature of the problem or limited data availability.
 Unfortunately, the work done by Riot Games themselves \cite{claytorRiotGamesAWS2023} did not report any metrics, so no direct comparison to other methods is possible.
 \citeauthor{baileyStatisticalLearningEsports} \cite{baileyStatisticalLearningEsports} have achieved an accuracy of 0.77 by applying logistic regression to 671 professional matches with data from the 15th minute mark.
+These results lead to the assumption that lower rated games are harder to predict accurately, as more mistakes happen and thus increase randomness and volatility.
 
 This work builds upon the methodology used by  \Citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018}, but uses a much larger amount of non-professional games in order to overcome any limitations related to the amount of data used.
 
@@ -261,11 +252,41 @@ Author & Games & Features & Time & Skill Group & Accuracy \\
 \end{longtblr}
 
 
-\chapter{Technical Background}
+\chapter{Background}
 \label{chap:background}
 
 This work utilizes a variety of different methods, including \ac{gbt} for feature selection and \ac{rnn}/\ac{gru} for win prediction.
-These methods are presented in the following chapter.
+These methods are presented in this chapter, following a general description of \ac{lol}.
+
+\section{League of Legends}
+\label{sec:LoL}
+
+\Ac{lol} is played with 5 players on each team on a map which is bifurcated into two bases, each linked by three lanes and housing a crucial structure called the \textit{nexus}, which is protected by turrets. 
+The game's primary goal is to destroy the opposing team's nexus.
+The map includes a jungle area in between the lanes with neutral monsters and two significant creatures, Baron Nashor and the Dragon, offering team-wide benefits when defeated.
+A schematic overview of the map is provided in Figure \ref{fig:map}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.5\textwidth]{./images/Map_of_MOBA.png}
+\caption[Schematic visualization of the map \ac{lol} is played on.]{Schematic visualization of the map \ac{lol} is played on \cite{raizinFileMapMOBA2013}. }
+\label{fig:map}
+\end{figure}
+Players must accumulate gold and \ac{xp} through defeating minions, neutral monsters, or enemy champions. 
+These in-game currencies are essential for purchasing items and levelling up, thereby augmenting a champion's capabilities.
+
+Player roles in \ac{lol} are typically assigned with one player in the top lane, one in the mid lane, two in the bottom lane, and one in the jungle, facilitating strategic diversity and role specialization.
+Players select from a roster of 165 champions, each with unique abilities and characteristics, to compete in matches.
+Champion selection is a pivotal element of \ac{lol} gameplay, requiring players to consider team composition, damage types, assigned roles, and personal proficiency with specific champions. 
+The theoretical number of possible champion combinations in a game is $\binom{165}{10} = \num{3.21e15}$.
+Although this number is quite a bit smaller in reality as not every champion can play every role and most players are only really proficient with a handful of champions, this underscores the game's strategic depth.
+
+Each year, \ac{lol} introduces a new 'season', bringing substantial changes, and Riot Games issues bi-weekly patches to adjust champion balance, influencing the prevailing game strategies, or 'meta'.
+These patches can also include the release of a new champion or the rework of an old one.
+Frequent changes force players to be able to quickly adapt and learn new champions and mechanics.
+
+To evaluate player skill, \ac{lol} utilizes a proprietary rating system, commonly assumed to be a modified Elo system \cite{janssonNeuralNetworksStandardizing2022}.
+This system ensures that players are matched with and against others of comparable skill levels, maintaining competitive balance and fairness in the game.
 
 \section{Neural Networks}
 \label{sec:nn}
@@ -357,7 +378,7 @@ The hidden state $\mathbf{h}_t$ at time step $t$ is updated as follows:
 	& \text{otherwise},
 \end{cases}
 \end{equation}
-where $\mathbf{U}$ is the weight matrix for the hidden state and $\mathbf{W}$ is the weight matrix for the input.
+where $\mathbf{U}$ is the weight matrix for the hidden state, $\mathbf{W}$ is the weight matrix for the input and $\mathbf{b}_h$ is the bias.
 A common choice for $\sigma_h$ is the tanh function.
 The output $\mathbf{\hat{y}}_t$ of an \ac{rnn} at time step $t$ can be calculated similar to (\ref{eq:ann_zl}) and (\ref{eq:ann_yhat}) with:
 \begin{equation}
@@ -368,15 +389,48 @@ The output $\mathbf{\hat{y}}_t$ of an \ac{rnn} at time step $t$ can be calculate
 \end{split}
 \end{equation}
 where $\mathbf{V}$ is the weight matrix associated with the cell output and $S$ the softmax function defined in (\ref{eq:softmax}). 
-
 The loss over $T$ timesteps is defined by 
 \begin{equation}
-E_T = \frac{1}{T} \sum_{t=1}^{T} {l(\mathbf{\hat{y}}_t, \mathbf{y})}
+E_T = \frac{1}{T} \sum_{t=1}^{T} {E(\mathbf{\hat{y}}_t, \mathbf{y})}
 \end{equation} 
-%TODO: consider changing l to e
-where $l(\mathbf{\hat{y}}_t, \mathbf{y})$ is the loss at timestep $t$.
+where $E(\mathbf{\hat{y}}_t, \mathbf{y})$ is the loss at timestep $t$.
 
 \Ac{bptt} unfolds the \ac{rnn} across time steps (see Figure \ref{fig:rnn_unroll}) and applies the backpropagation algorithm. 
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+item/.style={circle,draw,thick,align=center, minimum size=1.2cm},
+hidden/.style={item,on chain,join}]
+
+ \begin{scope}[start chain=going right,nodes=hidden,every
+ join/.style={-latex,very thick},local bounding box=chain]
+ \draw node (A0) {$\mathbf{h}_0$} node (A1) {$\mathbf{h}_1$} node (A2) {$\mathbf{h}_2$} node[xshift=2em] (At)
+ {$\mathbf{h}_t$};
+ \end{scope}
+ \node[left=1em of chain,scale=2] (eq) {$=$};
+ \node[left=2em of eq,item] (AL) {$\mathbf{h}$};
+ \path (AL.west) ++ (-1em,2em) coordinate (aux);
+ \draw[very thick,-latex,rounded corners] (AL.east) -| ++ (1em,2em) -- (aux) --++(0em,-2em) node[midway, left] {$\mathbf{U}$} -- (AL.west); 
+ \foreach \X in {0,1,2,t}
+ {\draw[very thick,-latex] (A\X.north) -- ++ (0,2em) node[midway, right] {$\mathbf{V}$}
+ node[above,item,fill=gray!10] (h\X) {$\mathbf{\hat{y}}_\X$};
+ \draw[very thick,latex-] (A\X.south) -- ++ (0,-2em) node[midway, right] {$\mathbf{W}$}
+ node[below,item,fill=gray!10] (x\X) {$\mathbf{x}_\X$};
+ \path (A0.east) -- (A1.west) node[midway, above] {$\mathbf{U}$};
+ \path (A1.east) -- (A2.west) node[midway, above] {$\mathbf{U}$};
+ \path (A2.east) -- (At.west) node[midway, above] {$\mathbf{U}$};
+}
+ 
+ \draw[white,line width=0.8ex] (AL.north) -- ++ (0,1.9em);
+ \draw[very thick,-latex] (AL.north) -- ++ (0,2em) node[midway, right] {$\mathbf{V}$}
+ node[above,item,fill=gray!10] {$\mathbf{\hat{y}}_t$};
+ \draw[very thick,latex-] (AL.south) -- ++ (0,-2em) node[midway, right] {$\mathbf{W}$}
+ node[below,item,fill=gray!10] {$\mathbf{x}_t$};
+ \path (x2) -- (xt) node[midway,scale=2,font=\bfseries] {\dots};
+\end{tikzpicture}
+\caption[Unrolling of an \ac{rnn} over time.]{Unrolling of an \ac{rnn} over time by creating a copy of the model for each time step $t$ with shared weight matrices, where $\mathbf{U}$ is the matrix representing the recurrent connection and the grey nodes containing $\mathbf{x}_t$ and $\mathbf{\hat{y}}_t$ are the input and output at timestep $t$.}
+\label{fig:rnn_unroll}
+\end{figure}
 In order to train the weight matrices, we need the partial derivatives of $E_T$ with respect to $\mathbf{U}$, $\mathbf{V}$ and $\mathbf{W}$.
 
 As the weight matrices are shared across timesteps, we can generally sum up the gradients from each timestep $t$.
@@ -403,7 +457,7 @@ Now we consider the gradient with respect to the weight matrix for the hidden st
 \frac{\partial \mathbf{\hat{y}}_{t+1}}{\partial \mathbf{h}_{t+1}}
 \frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{U}}.
 \end{equation}
-As the hidden state $h_{t+1}$ depends on the hidden state of the previous timestep $h_t$, we need to recursively calculate the partial derivatives of all the previous timesteps, yielding the following formula:
+As the hidden state $\mathbf{h}_{t+1}$ depends on the hidden state of the previous timestep $\mathbf{h}_t$, we need to recursively calculate the partial derivatives of all the previous timesteps, yielding the following formula:
 \begin{equation}
 \frac{\partial E_{t+1}}{\partial \mathbf{U}} = \sum_{k=1}^{t+1}
 \frac{\partial E_{t+1}}{\partial \mathbf{\hat{y}}_{t+1}}
@@ -443,94 +497,29 @@ where
 \frac{\partial \mathbf{h}_{k+1}}{\partial \mathbf{h}_k}.
 \end{equation}
 The gradient with respect to $\mathbf{W}$ follows similarly.
-As first demonstrated by \citeauthor{bengioLearningLongtermDependencies1994} \cite{bengioLearningLongtermDependencies1994}, RNNs face challenges with exploding or vanishing gradients, particularly in long sequences.
 
-This can be shown by examining a single term from (\ref{eq:bptt_ht+1}) as this is the partial derivative between two vectors and as such a Jacobian matrix of the transition from $\mathbf{h}_t$ to $\mathbf{h}_{t+1}$:
+As first demonstrated by \citeauthor{bengioLearningLongtermDependencies1994} \cite{bengioLearningLongtermDependencies1994}, \acp{rnn} face challenges with exploding or vanishing gradients, particularly in long sequences.
+The underlying mechanics of this issue can be illustrated by analysing the gradient flow within the network, specifically through the Jacobian matrix representing the transition from one hidden state, $\mathbf{h}_t$, to the next, $\mathbf{h}_{t+1}$:
 \begin{equation}
 \label{eq:bptt_jacobian}
-\frac{\partial \mathbf{h}_{j+1}}{\partial \mathbf{h}_j}
-= 
-\text{diag}(\sigma_{h}' ( \mathbf{U} \mathbf{h}_j + \mathbf{b}_h)) \mathbf{U}
+\frac{\partial \mathbf{h}_{j+1}}{\partial \mathbf{h}_j} = \text{diag}(\sigma_h' (\mathbf{U} \mathbf{h}_j + \mathbf{b}_h)) \mathbf{U},
 \end{equation}
 where diag() converts a vector into a diagonal matrix and $\sigma '$ computes the element-wise derivative of $\sigma$
 \cite{pascanuDifficultyTrainingRecurrent2013}.
-The eigendecomposition of $\frac{\partial \mathbf{h}_{j+1}}{\partial \mathbf{h}_j}$ yields the eigenvalues $ \lambda_1, \lambda_2, ..., \lambda_n$ where $|\lambda_1| > |\lambda_2| > ... > |\lambda_n|$ with their corresponding eigenvectors $v_1, v_2, ..., v_n$.
-The change in hidden state $\Delta h_{j+1}$ in direction of a vector $v_i$ is multiplied with the corresponding eigenvalue: $\lambda_i \Delta h_{j+1}$.
-As these factors are multiplied across timesteps, the change is scaled by a factor equivalent to $\lambda_i^t$ which scales exponentially with the timestep $t$.
-If $\lambda_1 < 1$ the gradient will vanish while if $\lambda_1 > 1$ the gradient will explode when considering $t \to \infty$ \cite{pascanuDifficultyTrainingRecurrent2013}.
-This issue hinders their ability to learn long-range dependencies \cite{sutskeverTrainingRecurrentNeural2013}. 
+Eigendecomposition of this Jacobian matrix yields the eigenvalues $ \lambda_1, \lambda_2, ..., \lambda_n$ with their magnitudes indicating the gradient's behaviour over time: $|\lambda_1| > |\lambda_2| > ... > |\lambda_n|$.
+The corresponding eigenvectors, $v_1, v_2, ..., v_n$, determine the directions in which these changes occur.
+The change in hidden state $\Delta h_{j+1}$ in direction of a vector $v_i$ is multiplied with the corresponding eigenvalue $\lambda_i \Delta h_{j+1}$, leading to the multiplication factor $\lambda_i^t$ over timesteps $t$.
+This scaling factor is pivotal, as when $\lambda_1 < 1$, gradients vanish, and when $\lambda_1 > 1$ gradients explode as $t \to \infty$ \cite{pascanuDifficultyTrainingRecurrent2013}.
 
-\begin{figure}
-\centering
-\begin{tikzpicture}[
-item/.style={circle,draw,thick,align=center, minimum size=1.2cm},
-hidden/.style={item,on chain,join}]
+The presence of exploding or vanishing gradients not only complicates the training process but also severely limits the network's capacity to capture dependencies over extended sequences. \cite{sutskeverTrainingRecurrentNeural2013}. 
+This issue has prompted the development of alternative architectures, such as \ac{lstm} networks and \acp{gru}, which incorporate mechanisms to regulate the flow of information and gradients, thereby mitigating the adverse effects of this phenomenon.
 
- \begin{scope}[start chain=going right,nodes=hidden,every
- join/.style={-latex,very thick},local bounding box=chain]
- \draw node (A0) {$\mathbf{h}_0$} node (A1) {$\mathbf{h}_1$} node (A2) {$\mathbf{h}_2$} node[xshift=2em] (At)
- {$\mathbf{h}_t$};
- \end{scope}
- \node[left=1em of chain,scale=2] (eq) {$=$};
- \node[left=2em of eq,item] (AL) {$\mathbf{h}$};
- \path (AL.west) ++ (-1em,2em) coordinate (aux);
- \draw[very thick,-latex,rounded corners] (AL.east) -| ++ (1em,2em) -- (aux) --++(0em,-2em) node[midway, left] {$\mathbf{U}$} -- (AL.west); 
- \foreach \X in {0,1,2,t}
- {\draw[very thick,-latex] (A\X.north) -- ++ (0,2em) node[midway, right] {$\mathbf{V}$}
- node[above,item,fill=gray!10] (h\X) {$\mathbf{\hat{y}}_\X$};
- \draw[very thick,latex-] (A\X.south) -- ++ (0,-2em) node[midway, right] {$\mathbf{W}$}
- node[below,item,fill=gray!10] (x\X) {$\mathbf{x}_\X$};
- \path (A0.east) -- (A1.west) node[midway, above] {$\mathbf{U}$};
- \path (A1.east) -- (A2.west) node[midway, above] {$\mathbf{U}$};
- \path (A2.east) -- (At.west) node[midway, above] {$\mathbf{U}$};
-}
- 
- \draw[white,line width=0.8ex] (AL.north) -- ++ (0,1.9em);
- \draw[very thick,-latex] (AL.north) -- ++ (0,2em) node[midway, right] {$\mathbf{V}$}
- node[above,item,fill=gray!10] {$\mathbf{\hat{y}}_t$};
- \draw[very thick,latex-] (AL.south) -- ++ (0,-2em) node[midway, right] {$\mathbf{W}$}
- node[below,item,fill=gray!10] {$\mathbf{x}_t$};
- \path (x2) -- (xt) node[midway,scale=2,font=\bfseries] {\dots};
-\end{tikzpicture}
-\caption{Unrolling of an \ac{rnn} over time by creating a copy of the model for each time step $t$ with shared weight matrices, where $\mathbf{U}$ is the matrix representing the recurrent connection and the grey nodes containing $\mathbf{x}_t$ and $\mathbf{\hat{y}}_t$ are the input and output at timestep $t$.}
-\label{fig:rnn_unroll}
-\end{figure}
+
 
 \section{Gated Recurrent Unit}
 \label{sec:gru}
-In order to overcome the exploding/vanishing gradient problem of vanilla \acp{rnn}, gated networks like the \ac{lstm} \cite{hochreiterLongShortTermMemory1997} and \ac{gru} \cite{choLearningPhraseRepresentations2014} have been developed \cite{vanhoudtReviewLongShortterm2020}.
-As they introduce an increased number of parameters compared to traditional \acp{rnn}, gated networks like the \ac{lstm} and \ac{gru} demand greater computational power \cite{deyGatevariantsGatedRecurrent2017}.
-Gating mechanisms mitigate the exploding/vanishing gradient problem by regulating how much the hidden state is updated each step.
-Compared to the \ac{lstm} network, \ac{gru} reduces the number of gate networks to two, thus being simpler to implement and compute \cite{choLearningPhraseRepresentations2014} (see Figure \ref{fig:gru}).
-\Citeauthor{chungEmpiricalEvaluationGated2014} even found that \ac{gru} is at least comparable to \ac{lstm} in most cases \cite{chungEmpiricalEvaluationGated2014}.
-The gates control the activation of each hidden unit.
-The reset gate $\mathbf{r}_t$ is calculated by
-\begin{equation}
-\label{eq:gru_reset}
-\mathbf{r}_t = \sigma (\mathbf{W}_r \mathbf{x}_t + \mathbf{U}_r \mathbf{h}_{t-1})
-\end{equation}
-and the update gate $\mathbf{z}_t$ by
-\begin{equation}
-\label{eq:gru_update}
-\mathbf{z}_t = \sigma (\mathbf{W}_z \mathbf{x}_t + \mathbf{U}_z \mathbf{h}_{t-1})
-\end{equation}
-\cite{deyGatevariantsGatedRecurrent2017}.
-The hidden state update is a linear interpolation between the previous activation $\mathbf{h}_{t-1}$ and the candidate activation $\mathbf{\tilde{h}}_t$, where the update gate $\mathbf{z}_t$ influences how much the hidden state is changed \cite{chungEmpiricalEvaluationGated2014}:
-\begin{equation}
-\label{eq:gru_h}
-\mathbf{h}_t = (1-\mathbf{z}_t) \odot \mathbf{\tilde{h}}_t + \mathbf{z}_t \odot \mathbf{h}_{t-1} 
-\end{equation}
-with
-\begin{equation}
-\label{eq:gru_h_tilde}
-\mathbf{\tilde{h}}_t = \tanh(\mathbf{W}_h \mathbf{x}_t + \mathbf{U}_h (\mathbf{r}_t \odot \mathbf{h}_{t-1})).
-\end{equation}
-In equations (\ref{eq:gru_h}) and (\ref{eq:gru_h_tilde}) $\odot$ denotes the element-wise (Hadamard) multiplication.
-Equation \ref{eq:gru_h} shows that if $\mathbf{z}_t$ is close to one, previous memory in $\mathbf{h}_{t-1}$ is propagated to $\mathbf{h}_t$ and the model learns long-term dependencies.
-Conversely, if $\mathbf{r}_t$ is active and $\mathbf{z}_t$ is not, the hidden state gets updated with information from the last step, thus learning short-term dependencies.
-This selective inclusion of new information and the ability to skip a timestep completely can help mitigate the exploding / vanishing gradient problem described in Section \ref{sec:rnn}.
 
-\begin{figure}
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[
     % Styles
@@ -582,11 +571,11 @@ This selective inclusion of new information and the ability to skip a timestep c
     
 	%Draw operators	
 	%top row
-	\node [operator] (mux1) at (0,1.5) {$\times$};
+	\node [operator] (mux1) at (0,1.5) {$\odot$};
     \node [operator] (add1) at (2,1.5) {$+$};
     %second row
-    \node [operator] (mux2) at (-2, 0.5) {$\times$};
-    \node [operator] (mux3) at (2,  0.5) {$\times$};
+    \node [operator] (mux2) at (-2, 0.5) {$\odot$};
+    \node [operator] (mux3) at (2,  0.5) {$\odot$};
     \node [operator, inner sep=0pt] (minus) at (1, 0.5) {
     \begin{scriptsize}
     $1-$
@@ -632,15 +621,48 @@ This selective inclusion of new information and the ability to skip a timestep c
    \draw[->, ArrowC1] (add1) -| (ht);
     
 \end{tikzpicture}
-\caption{Gated Recurrent Unit}
+\caption{Gated Recurrent Unit, where round operators denote elementwise operators and rectangular boxes denote fully connected layers with the shown activation function (adapted from \cite{zhaoMachineHealthMonitoring2018}).}
 \label{fig:gru}
 \end{figure}
+
+In order to overcome the exploding/vanishing gradient problem of vanilla \acp{rnn}, gated networks like the \ac{lstm} \cite{hochreiterLongShortTermMemory1997} and \ac{gru} \cite{choLearningPhraseRepresentations2014} have been developed \cite{vanhoudtReviewLongShortterm2020}.
+As they introduce an increased number of parameters compared to traditional \acp{rnn}, gated networks like the \ac{lstm} and \ac{gru} demand greater computational power \cite{deyGatevariantsGatedRecurrent2017}.
+Gating mechanisms mitigate the exploding/vanishing gradient problem by regulating how much the hidden state is updated each step.
+Compared to the \ac{lstm} network, \ac{gru} reduces the number of gate networks to two, thus being simpler to implement and compute \cite{choLearningPhraseRepresentations2014} (see Figure \ref{fig:gru}).
+\Citeauthor{chungEmpiricalEvaluationGated2014} even found that \ac{gru} is at least comparable to \ac{lstm} in most cases \cite{chungEmpiricalEvaluationGated2014}.
+The gates control the activation of each hidden unit.
+The reset gate $\mathbf{r}_t$ is calculated by
+\begin{equation}
+\label{eq:gru_reset}
+\mathbf{r}_t = \sigma (\mathbf{W}_r \mathbf{x}_t + \mathbf{U}_r \mathbf{h}_{t-1})
+\end{equation}
+and the update gate $\mathbf{z}_t$ by
+\begin{equation}
+\label{eq:gru_update}
+\mathbf{z}_t = \sigma (\mathbf{W}_z \mathbf{x}_t + \mathbf{U}_z \mathbf{h}_{t-1})
+\end{equation}
+\cite{deyGatevariantsGatedRecurrent2017}.
+The hidden state update is a linear interpolation between the previous activation $\mathbf{h}_{t-1}$ and the candidate activation $\mathbf{\tilde{h}}_t$, where the update gate $\mathbf{z}_t$ influences how much the hidden state is changed \cite{chungEmpiricalEvaluationGated2014}:
+\begin{equation}
+\label{eq:gru_h}
+\mathbf{h}_t = (1-\mathbf{z}_t) \odot \mathbf{\tilde{h}}_t + \mathbf{z}_t \odot \mathbf{h}_{t-1} 
+\end{equation}
+with
+\begin{equation}
+\label{eq:gru_h_tilde}
+\mathbf{\tilde{h}}_t = \tanh(\mathbf{W}_h \mathbf{x}_t + \mathbf{U}_h (\mathbf{r}_t \odot \mathbf{h}_{t-1})).
+\end{equation}
+In equations (\ref{eq:gru_h}) and (\ref{eq:gru_h_tilde}) $\odot$ denotes the element-wise (Hadamard) multiplication.
+Equation \ref{eq:gru_h} shows that if $\mathbf{z}_t$ is close to one, previous memory in $\mathbf{h}_{t-1}$ is propagated to $\mathbf{h}_t$ and the model learns long-term dependencies.
+Conversely, if $\mathbf{r}_t$ is active and $\mathbf{z}_t$ is not, the hidden state gets updated with information from the last step, thus learning short-term dependencies.
+This selective inclusion of new information and the ability to skip a timestep completely can help mitigate the exploding / vanishing gradient problem described in Section \ref{sec:rnn}.
+
 
 
 \section{Feature Selection}
 \label{sec:fs_algos}
 
-Feature Selection is pivotal in machine learning, particularly when dealing with high-dimensional data. It serves the primary objectives of improving model performance by mitigating the 'curse of dimensionality,' enhancing predictive accuracy, and reducing overfitting. By eliminating irrelevant or redundant features, the model's generalization capacity is enhanced, contributing to model interpretability and potentially reducing training times.
+Feature Selection is pivotal in machine learning, particularly when dealing with high-dimensional data. It serves the primary objectives of improving model performance by mitigating the 'curse of dimensionality' \cite{bellman1961adaptive}, enhancing predictive accuracy, and reducing overfitting. By eliminating irrelevant or redundant features, the model's generalization capacity is enhanced, contributing to model interpretability and potentially reducing training times.
 Feature selection methods can be broadly categorized into three distinct types \cite{jovicReviewFeatureSelection2015}:
 \begin{description}
 
@@ -648,7 +670,7 @@ Feature selection methods can be broadly categorized into three distinct types \
 
 \item[Wrapper Methods] Models are trained iteratively on various feature subsets, incurring a higher computational cost but enabling the detection of interactions among variables \cite{venkateshReviewFeatureSelection2019}.
 
-\item[Embedded Methods] These methods perform inherent feature selection, often as an integral part of the modeling process. Tree-based models, such as Decision Trees and \ac{gbt}, typically employ feature selection based on metrics like the Gini index or entropy.
+\item[Embedded Methods] These methods perform inherent feature selection, often as an integral part of the modelling process. Tree-based models, such as Decision Trees and \ac{gbt}, typically employ feature selection based on metrics like the Gini index or entropy.
 \end{description}
 
 The two methods used in this work are a filter method (\ac{pcc}) and an embedded method (\ac{gbt}) and are presented in more detail below.
@@ -674,38 +696,90 @@ Despite these limitations, \ac{pcc} is a valuable tool in feature selection for 
 \subsection*{Gradient Boosted Trees}
 \label{ssec:gbt}
 
-\Ac{gbt} is an ensemble learning technique that can be used for feature selection. 
+\Acf{gbt} \cite{friedmanGreedyFunctionApproximation2001} is an ensemble learning technique that can be used for feature selection. 
 The core idea of \ac{gbt} is to build a model in a stage-wise fashion, where each tree incrementally improves upon the previous ones by correcting their errors. 
 This process involves training trees sequentially, with each new tree learning to predict the residuals or errors of the previous ensemble of trees.
 
 The mathematical foundation of \ac{gbt} can be described through the framework of additive models. 
-Given a dataset with \(n\) instances \((x_i, y_i)\), where \(x_i\) represents the feature vector of the \(i\)-th instance and \(y_i\) is its corresponding target value, the goal of \ac{gbt} is to find an approximation \(\hat{F}(x)\) to the true function \(F(x)\) that minimizes the expected value of some specified loss function \(L(y, F(x))\). 
-\Ac{gbt} models build an approximation of $F(x)$ as the weighted sum of the functions
+Given a dataset with $n$ instances $(\mathbf{x}_i, y_i)$, where $\mathbf{x}_i$ represents the feature vector of the $i$-th instance and $y_i$ is its corresponding target value, the goal of \ac{gbt} is to find an approximation $\hat{F}(\mathbf{x})$ to the true function $F^{*}: \mathbf{x} \rightarrow y$ that minimizes the expected value of the loss function $L(y, F(\mathbf{x}))$. 
+\Ac{gbt} models build an approximation of $F(\mathbf{x})$ as the weighted sum of the functions
 \begin{equation}
-F_m(x) = F_{m-1}(x) + \phi_m h_m(x)
+F_m(\mathbf{x}) = F_{m-1}(\mathbf{x}) + \phi_m h_m(\mathbf{x})
 \end{equation}
-where $\phi_m$ is the weight of the $m^{th}$ function $h_m(x)$\cite{bentejacComparativeAnalysisGradient2021}.
+where $\phi_m$ is the weight of the $m^{th}$ function $h_m(\mathbf{x})$ \cite{bentejacComparativeAnalysisGradient2021}.
+This function $h_m(\mathbf{x})$ is usually a classification tree and called a \textit{weak learner}.
+The iterative construction starts with a constant model 
+\begin{equation}
+F_0(\mathbf{x}) = \arg\min_{\gamma} \sum_{i=1}^{n} L(y_i, \gamma)
+\end{equation}
+ and incrementally adds weak learners $h_m(\mathbf{x})$ to minimize the loss function. 
+Each subsequent tree models the residual errors made by the previous ensemble of trees. Specifically, at each stage $m$, a tree $h_m(\mathbf{x})$ is fitted to the negative gradient of the loss function
+\begin{equation}
+-\left[\frac{\partial L(y_i, F(\mathbf{x}))}{\partial F(\mathbf{x})}\right]_{F(\mathbf{x})=F_{m-1}(\mathbf{x})},
+\end{equation}
+evaluated at the predictions $F_{m-1}(\mathbf{x})$ of the current model.
 
-The \ac{gbt} model is constructed iteratively, starting with a constant model \(F_0(x) = \arg\min_{\gamma} \sum_{i=1}^{n} E(y_i, \gamma)\), and incrementally adding trees to minimize the loss function. 
-Each subsequent tree models the residual errors made by the previous ensemble of trees. Specifically, at each stage \(t\), a tree \(h_t(x)\) is fitted to the negative gradient of the loss function
-\begin{equation}
--\left[\frac{\partial E(y_i, F(x_i))}{\partial F(x_i)}\right]_{F(x)=F_{t-1}(x)},
-\end{equation}
-evaluated at the predictions \(F_{t-1}(x)\) of the current model.
-The update equation for the model at each stage \(t\) is given by:
-\begin{equation}
-F_t(x) = F_{t-1}(x) + \nu \cdot h_t(x)
-\end{equation}
-where \(\nu\) is the learning rate, a parameter that scales the contribution of each tree. 
-The learning rate is crucial for the performance of \ac{gbt}, as it controls the speed at which the model learns. 
-A smaller \(\nu\) requires more trees to model the data but can lead to a more robust model by reducing the risk of overfitting.
-
-There are different types of importance, such as the average or total gain across all splits the feature is used in.
+Different types of feature importance can be calculated from a \ac{gbt} model, such as the average or total gain across all splits the feature is used in.
 The simplest definition is the 'weight', defined as the number of times a feature is used to split the data across all trees \cite{chenXGBoostScalableTree2016}.
 
 \chapter{Experiments}
 \label{chap:experiments}
 This section introduces two distinct experiments designed to evaluate the effectiveness of predictive models in \ac{lol}. The initial experiment centers on pre-game win prediction through a neural network, utilizing historical and statistical data before the game starts. In contrast, the subsequent experiment explores real-time prediction using a \ac{gru} model, aiming to dynamically determine winning probabilities as the game unfolds.
+Figure \ref{fig:flowchart} shows the different steps both for pre-game and in-game win prediction.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[%
+   % >=triangle 60,              % Nice arrows; your taste may be different
+    start chain=going below,    % General flow is top-to-bottom
+    node distance=6mm and 60mm, % Global setup of box spacing
+    every join/.style={norm},   % Default linetype for connecting boxes
+    ]
+
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, text width=3cm,]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\node [process] (t0){Data Collection \ref{ssec:datacoll}};
+\node [process, below=of t0] (t1) {Pre-Game Dataset}; 
+\node [process, below=of t1] (t2){Dataset Properties \ref{ssec:dataprop}}; 
+
+\node [process, right=of t1] (t3) {In-Game Dataset};
+\node [process, below=of t2] (t4) {Feature Engineering \ref{sec:data_processing}}; 
+\node [process, right=of t4] (t5) {Feature Engineering \ref{sec:data_processing}};
+\node [process, below=of t4] (t6) {Partitioning};
+\node [process, right=of t6] (t7) {Partitioning};
+\node [process, below=of t6] (t8) {Algorithmic Feature Selection \ref{ssec:fs_setup}};
+\node [process, right=of t8] (t9) {Manual Feature Selection};
+\node [process, below=of t8] (t10) {Hyperparameter Optimization \ref{ssec:hyperparam_optim}};
+\node [process, right=of t10] (t11) {Hyperparameter Optimization \ref{ssec:hyperparam_optim}};
+\node [process, below=of t10] (t12) {Training and Evaluation \ref{sec:results}};
+\node [process, right=of t12] (t13) {Training and Evaluation \ref{sec:results}};
+
+
+% arrows
+
+\draw [arrow] (t0) -- (t1);
+\draw [arrow] (t1) -- (t2);
+\draw [arrow] (t1) -- (t3)node[midway, above] {Random Sample};
+\draw [arrow] (t2) -- (t4);
+\draw [arrow] (t3) -- (t5);
+\draw [arrow] (t4) -- (t6);
+\draw [arrow] (t5) -- (t7);
+\draw [arrow] (t6) -- (t8);
+\draw [arrow] (t7) -- (t9);
+\draw [arrow] (t8) -- (t10);
+\draw [arrow] (t9) -- (t11);
+\draw [arrow] (t10) -- (t12);
+\draw [arrow] (t11) -- (t13);
+
+
+\end{tikzpicture}
+\caption{Flowchart of the data processing and model training steps with their corresponding sections.}
+\label{fig:flowchart}
+\end{figure}
 
 \section{Data}
 \label{sec:data}
@@ -717,12 +791,13 @@ Building upon the aforementioned approach, two different datasets are used: one 
 \label{ssec:datacoll}
 
 The data collection process for this study involved a dual-pronged approach, leveraging the resources provided by the Riot Games API alongside a targeted web-scraping strategy.
-The resulting raw dataset, stored in a PostgreSQL Database, reflects a comprehensive compilation of high-rank amateur \acl{lol} matches.
+The resulting raw dataset reflects a comprehensive compilation of high-rank amateur \acl{lol} matches.
+The important parameters for data collection are presented below.
 
 \paragraph{High-Rank Matches}
 The rating system in \ac{lol} groups players into different skill groups, where the lowest is 'Iron' and the highest 'Challenger'.
-The two highest ranks,'Grandmaster' and 'Challenger' contain the best 300 or 700 best players on each server.
-The exact number of players these tiers depend on the player number in each region (see \cite{riotgamesMasterGrandmasterChallenger2023}).
+The two highest ranks,'Grandmaster' and 'Challenger' contain the best 300 or 700 players on each server.
+The exact number of players in these tiers depend on the player number in each region (see \cite{riotgamesMasterGrandmasterChallenger2023}).
 
 Similar to the methodology of \citeauthor{zhangPredictionEsportsGame2021} \cite{zhangPredictionEsportsGame2021}, the focus of data acquisition was directed towards high-rank matches, in which a mix of excellent amateur and professional players play.
 High rank matches in this context are defined as having at least one player holding the rank of Master, Grandmaster or Challenger.
@@ -743,35 +818,28 @@ The Riot Games API provides access to a plethora of essential data points, inclu
 \paragraph{Other Data Sources}
 However, not all pertinent data were available directly from the Riot Games API.
 These include the general winning chance of each champion and statistics on how each player performs on each relevant champion.
-To address this limitation, additional relevant information was gathered by using web scraping on u.gg \cite{GGBestLeague}.
+To address this limitation, additional relevant information was gathered by using web scraping on a website for aggregation of player and game statistics, specifically www.u.gg \cite{GGBestLeague}.
 \paragraph{Regions}
 Multiple regions were included in the data collection process, including Europe West (EUW), Europe Nordic \& East (EUN), Korea (KR), and North America (NA).
 This regional diversity contributes to the model's generalizability across different player bases and playing styles.
-\paragraph{Period of Time}
-All matches included in the dataset were played in season 13 and on patch 20.
-It is important that all matches are played on the same patch, as a patch may cause major shifts in the balance of the game, thus potentially making certain strategies and champions way better than others.
-\\\\
-The pre-game dataset encompasses a total of 38,957 matches, while the in-game dataset contains 28,809 matches.
-In \ref{ssec:dataprop}, the pre-game dataset characteristics are presented in more detail, as the smaller in-game dataset is a random sampling from the pre-game dataset. 
-As it is a random sample, the dataset characteristics are shared. 
-The sampling is necessary due to the long processing time of in-game data, necessitating a smaller dataset compared to pre-game data.
-
-\paragraph{Region Distribution}
-The dataset is primarily comprised of matches from three major regions: North America, Western Europe, and South Korea, which collectively constitute the vast majority of matches in our dataset. 
 It is important to note that due to a lack of official data pertaining to the number of games played or the number of players in each region, it is currently not feasible to conclusively verify whether the distribution of matches within our dataset aligns with the true underlying distribution of games played per region.
 The major regions in the dataset are the same regions getting guaranteed spots at the world championship \cite{2023LeagueLegends2023} with the exception of China, whose matches are not available through the Riot Games API.
 Consequently, it is reasonable to assume that this composition approximately mirrors the real-world distribution of matches, with the exception of chinese games.
 A visual representation of the distribution of matches across regions is provided in Figure \ref{fig:platformId}.
 
-
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \input{./images/platformId_distribution.pgf}
-\caption{Region distribution}
+\caption{Region distribution of \ac{lol} games included in the pre-game dataset.}
 \label{fig:platformId}
 \end{figure}
 
+\paragraph{Period of Time}
+All matches included in the dataset were played in season 13 and on patch 20.
+It is important that all matches are played on the same patch, as a patch may cause major shifts in the balance of the game, thus potentially making certain strategies and champions way better than others.
+
 \paragraph{Game length}
 As only matches with a game length of at least 16 minutes are collected, the shortest match is 16 minutes long, while the longest game is $59.62$ minutes long.
+This minimum game length is chosen to guarantee the game's duration extends at least one additional minute following the win prediction, thereby ensuring the prediction's non-trivial nature.
 The average match length is $27.50$ minutes.
 Figure \ref{fig:gameDuration} graphically illustrates the distribution of game durations. 
 Notably, the histogram reveals a prominent spike at the 16-minute mark.
@@ -780,19 +848,23 @@ In instances where an entire team collectively acknowledges the futility of thei
 However, should a simple majority of team members decide to surrender, they must adhere to a 20-minute waiting period before being able to do so. 
 Consequently, this unique feature of the game's mechanics clarifies the relatively diminished frequency of matches ending in the 17th to 19th-minute range within the dataset.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \input{./images/gameDuration_distribution.pgf}
-\caption{Distribution of game duration with its kernel density estimationd}
+\caption{Distribution of game duration with its kernel density estimation.}
 \label{fig:gameDuration}
 \end{figure}
-
 
 \paragraph{Rank Distribution}
 As only games with at least one player ranked Master or above are considered, this distribution does not match the real distribution of ranks.
 This does introduce a bias and makes the findings less applicable to games in lower ranks.
 As argued in \ref{ssec:datacoll}, lower ranked games could make the learning harder due to higher unpredictability.
+\\\\
+The pre-game dataset encompasses a total of 38,957 matches, while the in-game dataset contains 28,809 matches.
+In \ref{ssec:dataprop}, the pre-game dataset characteristics are presented in more detail, as the smaller in-game dataset is a random sampling from the pre-game dataset. 
+As it is a random sample, the dataset characteristics are shared. 
+The sampling is necessary due to the long processing time of in-game data, necessitating a smaller dataset compared to pre-game data.
 
-\begin{figure}
+\begin{figure}[htbp]
 \centering
 \resizebox{\textwidth}{!}
 {
@@ -802,6 +874,7 @@ As argued in \ref{ssec:datacoll}, lower ranked games could make the learning har
 \label{fig:tier}
 \end{figure}
 
+
 \subsection{Pre-Game Dataset Properties}
 \label{ssec:dataprop}
 
@@ -809,15 +882,15 @@ The raw pre-game dataset contains $368$ columns which can be categorized into fo
 General match information, such as the patch number, are exclusively utilized for validation purposes and are excluded from the final dataset.
 
 \paragraph{Player Information.}
-This feature $\mathbf{x}_p$ is a two-dimensional vector including the account level, serving as an indicator of the player's accumulated gaming experience, and the player's rank, functioning as a metric for assessing the player's skill level.
+This feature $\mathbf{X}_p$ is a matrix with two elements, including the account level, serving as an indicator of the player's accumulated gaming experience, and the player's rank, functioning as a metric for assessing the player's skill level.
 
 \paragraph{Champion Information.}
-The Champion Information feature $\mathbf{x}_c$ is composed of different metrics describing the success the players have with a particular champion over all games in all ranks (e.g. win rate).
+The Champion Information feature matrix $\mathbf{X}_c$ is composed of different metrics describing the success the players have with a particular champion over all games in all ranks (e.g. win rate).
 Additionally, it contains more subjective information (e.g. difficulty) which is provided by Riot Games as a general guide to the champion.
 However, it is noteworthy that a limitation inherent in these metrics lies in their aggregation across all player ranks, reducing their specificity to the ranks under analysis.
 
 \paragraph{Player-Champion Information.}
-This feature vector $\mathbf{x}_f$ contains information about the player on a specific champion.
+This feature matrix $\mathbf{X}_f$ contains information about the player on a specific champion.
 It encompasses metrics such as the average amount of gold earned by the player across all matches played on the champion during season 13. 
 \Citeauthor{costaFeatureAnalysisLeague2021} \cite{costaFeatureAnalysisLeague2021} found that  the most pivotal feature within this category is the player's win rate while piloting this champion.
 Unfortunately, this information is not readily available to be extracted by our web scraper,  necessitating its omission from the dataset.
@@ -832,24 +905,24 @@ These features encompass a range of player-specific metrics, including but not l
 Furthermore, key events like the number of turrets destroyed and each team's total gold are tracked to more precisely gauge the game's state. 
 Gold, a critical indicator, underscores each victory milestone - be it destroying a turret or defeating an adversary. 
 As illustrated in Figure \ref{fig:totalGold}, members of the victorious team typically amass significantly more gold by the game's conclusion compared to their counterparts.
-This is more prominent in the later stages of the game, making the win prediction earlier more difficult.
-Destroying turrets is crucial in the game, offering significant gold rewards and map control. 
-With a minimum of five turrets required for victory, their destruction serves as a key indicator of a team's likelihood to win.
-Both the number of destroyed turrets and the cumulative amount of gold is tracked for each team.
+This is more prominent in the later stages of the game, making the win prediction earlier more difficult and showing that the total amount of gold is not very meaningful at earlier stages of the game.
 
-\begin{figure}
+\begin{figure}[htbp]
 \input{./images/totalGold.pgf}
-\caption{Total gold accumulated by each player of the course of the match, separated into teams by color. }
+\caption[Total gold accumulated by each player of the course of an exemplary match]{Total gold accumulated by each player of the course of an exemplary match, separated into teams by color. The gold lead of the red team is increasing towards the end of the game, but at the 15th minute mark is not yet apparent.}
 \label{fig:totalGold}
 \end{figure}
 
+Destroying turrets is crucial in the game, offering significant gold rewards and map control. 
+With a minimum of five turrets required for victory, their destruction serves as a key indicator of a team's likelihood to win.
+Both the number of destroyed turrets and the cumulative amount of gold is tracked for each team.
 
 \section{Data Processing}
 \label{sec:data_processing}
 
 \paragraph{Missing Values}
 There are no missing values in the data obtained directly from Riot Games.
-On the rare occasion that the web scraper could not find the relevant information, missing values occur for a total of 384 rows.
+On the rare occasion that the web scraper could not find the relevant information, missing values occur for a total of 813 rows.
 As this is a technical error, the missing data can be assumed as being \ac{mcar} distributed \cite{acockWorkingMissingValues2005} and thus deleted row-wise without introducing a bias.
 Even if this assumption should be false, due to the low number of affected samples the introduced bias would be very small.
 As missing values are caused by the web scraper, the in-game dataset has no missing values.
@@ -858,7 +931,7 @@ As missing values are caused by the web scraper, the in-game dataset has no miss
 The rank is converted from the rank-tier system into a single floating point number where the integer part denotes the tier (Master, Grandmaster, etc.) and the floating point part denotes the rank (ranges from 1-5, but only in Diamond and below).
 The win rate is calculated by averaging over the number of wins and losses the player has accumulated over the season.
 The champion tier is converted from D - S ranking into integer values and the champion number is one-hot encoded.
-The one-hot encoding results in two vectors of size $n$ -one for each team- where $n$ is the number of champions and 
+The one-hot encoding results in two vectors of size $n$ -- one for each team -- where $n$ is the number of champions and 
 \begin{equation*}
 x_i = 
 \begin{cases}
@@ -867,7 +940,7 @@ x_i =
 \end{cases}
 \end{equation*}
 It is only possible to represent the whole team composition in one vector because no two players can pick the same champion.
-Ten features per category in $\mathbf{x}_f$ is a very fine-grained approach.
+Ten features per category in $\mathbf{X}_f$ is a very fine-grained approach.
 In order to get more meaningful features and reduce the dimensionality of the dataset, statistics are averaged for each team, reducing ten features per category to two.
 
 \paragraph{Individual Feature Processing In-Game Dataset.}
@@ -883,7 +956,7 @@ The pre-game dataset is partitioned into train, validation and test set with a v
 In order to have a more comparable training dataset size, the test and validation sets from the in-game dataset contain just 1,000 matches.
 The validation set is used to optimize hyperparameters while the test set is used to evaluate the final performance of the model.
 In order to allow proper training of the model, the data has to either be transformed into range $[1;-1]$ or standardized \cite{shankerEffectDataStandardization1996}.
-The standardization is performed on each feature individually by calculating the mean $\mu$ and standard deviation $\sigma$ of the training set and applying the standardization $z = (x - \mu) / \sigma$ where $x$ is the original data and $z$ the transformed data.
+The standardization is performed on each feature individually by calculating the mean $\mu$ and standard deviation $\sigma$ of the training set and applying the standardization $\mathbf{z} = (\mathbf{x} - \mu) / \sigma$ where $\mathbf{x}$ is the original data and $\mathbf{z}$ the transformed data.
 
 
 \section{Experimental Setup}
@@ -895,24 +968,24 @@ First, a separate feature selection process is conducted for each dataset, and t
 Next, the pre-game and in-game classification models are trained on their respective datasets for comparison.
 
 \subsection{Feature Selection}
-
+\label{ssec:fs_setup}
 In order to assess the linear relationship between features and the target variable for the pre-game dataset, \acl{pcc} is employed.
 The correlation coefficients are calculated separately for each team and category and subsequently averaged over teams.
 Only the absolute values of the \acp{pcc} are considered, as the direction of the relationship is of no concern when assessing its strength.
 
-\Aclp{gbt} were used to assess non-linear relationships.
+\Aclp{gbt} are used to include non-linear relationships in the analysis.
 The model was configured with the following hyperparameters: number of estimators set to 100, maximum depth at 3, a learning rate of 0.1, and the objective function as binary logistic.
 The Feature Importance Score is the number of times a feature was used to split the data across all trees.
 
 \subsection{\Ac{ann} Parameters}
 The fixed parameters can be seen in Table \ref{tab:static_hyperparam_optim}.
 The \ac{ann} model architecture includes a series of fully connected layers, each followed by 1-dimensional batch normalization.
-The exact number of layers is one of the parameters determined by the hyperparameter optimization, while the batchnorm is used to stabilize the learning process, as initial experiments have shown highly fluctuating training loss.
-Expontential Linear Unit is used as the activation function, as the preliminary experiments and \citeauthor{doUsingMachineLearning2021} \cite{doUsingMachineLearning2021} have shown some improvement with it.
+The exact number of layers is one of the parameters determined by the hyperparameter optimization (see \ref{ssec:hyperparam_optim}), while the BatchNorm is used to stabilize the learning process, as initial experiments have shown highly fluctuating training loss.
+Exponential Linear Unit is used as the activation function, as the preliminary experiments and \citeauthor{doUsingMachineLearning2021} \cite{doUsingMachineLearning2021} have shown some improvement with it.
 In order to avoid overfitting, the training is stopped when the validation loss does not decline for 30 epochs.
 
 \subsection{\Ac{gru} Parameters}
-As \citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018} achieved better results using a straight \ac{rnn}, a the type of recurrent unit is optimized as a hyperparameter.
+As \citeauthor{silvaContinuousOutcomePrediction2018} \cite{silvaContinuousOutcomePrediction2018} achieved better results using a straight \ac{rnn},  the type of recurrent unit is optimized as a hyperparameter.
 One recurrent layer is determined experimentally to be sufficient with a number of fully connected, non recurrent layers following.
 The number of layers in Table \ref{tab:static_hyperparam_optim} references the number of fully connected layers.
 The early stopping patience is set to 100 epochs, as the training converges much slower than the \ac{ann} training.
@@ -920,8 +993,8 @@ The early stopping patience is set to 100 epochs, as the training converges much
 \subsection{Hyperparameter Optimization}
 \label{ssec:hyperparam_optim}
 The evaluation of model quality centered on validation accuracy, deemed a suitable metric given the balance of the dataset and the equivalent cost of false positives and negatives in predictions.
-The search space, shown in Table \ref{tab:static_hyperparam_optim} is randomly searched.
-This method allows for a comprehensive exploration of potential configurations, striking a balance between thoroughness and computational feasibility \cite{bergstraRandomSearchHyperParameter}.
+The search space, shown in Table \ref{tab:static_hyperparam_optim} is randomly searched for 2,000 and 850 trials for the \ac{ann} and \ac{gru} models respectively.
+The number of trials is only limited by the computation capacity.
 
 \begin{table}
 \centering
@@ -942,7 +1015,7 @@ Normalization & 1-D BatchNorm & - \\
 Hidden Size & [128, 256, 512] & [64, 128, 256] & Selection \\
 & Learning Rate & [$\num{1e-5}$, $\num{1e-2}$] & [$\num{1e-15}, \num{1e-5}$] & log uniform \\
 & Number of Layers & [2,12] & [1, 3] & discrete \\
-& Dropout Probability & [0, 0.3] & [0, 0.3] & discrete \\
+& Dropout Probability & [0, 0.3] & [0, 0.1, 0.2, 0.3] & Selection \\
 & Model & - & [\ac{rnn}, \ac{gru}] & Selection \\
 & Batch Size & [64, 128, 256] & [64, 128, 256] & Selection\\
 \end{tblr}
@@ -958,15 +1031,8 @@ The goal of the experiments is to compare both pre- and in-game win prediction a
 
 
 \paragraph{Feature Selection Results}
-Table \ref{tab:fs_results} presents the ten features with the highest correlation on the pre-game dataset, along with their respective Feature Importance Scores as determined by \ac{gbt}.
-It is important to note that all $p$-values associated with these correlations are below the significance threshold of $0.01$, thereby confirming their high statistical relevance.
 
-
-\Ac{gbt} achieved an accuracy of 0.69.
-As depicted in Table \ref{tab:fs_results}, both methods have identified the same 13 features as the most important, albeit in differing orders.
-For a more effective comparison between the \ac{pcc} and \ac{gbt} results, both sets of scores have been normalized to the range [0, 1] (see Figure \ref{fig:fs_norm}).
-
-\begin{figure}
+\begin{figure}[htbp]
 \centering
 \resizebox{\textwidth}{!}{%
 	\input{./images/feature_importance.pgf}
@@ -974,57 +1040,19 @@ For a more effective comparison between the \ac{pcc} and \ac{gbt} results, both 
 \caption{\ac{gbt} Feature Importance Scores and \acp{pcc} normalized into range $[0, 1]$.}
 \label{fig:fs_norm}
 \end{figure}
+Figure \ref{fig:fs_norm} presents the ten features with the highest correlation on the pre-game dataset, along with their respective Feature Importance Scores as determined by \ac{gbt}.
+It is important to note that all $p$-values associated with these correlations are below the significance threshold of $0.01$, thereby confirming their high statistical relevance.
+
+\Ac{gbt} achieved an accuracy of 0.69.
+As depicted in Figure \ref{fig:fs_norm}, both methods have identified the same 13 features as the most important, albeit in differing orders.
+For a more effective comparison between the \ac{pcc} and \ac{gbt} results, both sets of scores have been normalized to the range [0, 1].
+The original values have been placed in Table \ref{tab:fs_results} for verification purposes.
 
 
 
-For the in-game dataset, manual feature selection using domain knowledge was performed.
-Here, eight feature categories were removed  due to their information being deemed either little informative about the state of the game (e.g. the bonus armor penetration) or more clearly conveyed in other features (gold earned per second is just as informative as the total gold the team has earned so far).
-
-
-\begin{figure}[ht]
-\centering
-\input{./images/roc.pgf}
-\caption{ROC Curve from both Models.}
-\label{fig:roc}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\input{./images/staticcm.pgf}
-\caption{Confusion matrix of pre-game and in-game classification results with error rates in percent.}
-\label{fig:cm_static}
-\end{figure}
-
-%\begin{figure}
-%\centering
-%\input{./images/timeline_cm.pgf}
-%\caption{Confusion matrix of in-game classification results}
-%\label{fig:cm_timeline}
-%\end{figure}
-
-%\begin{table}
-%\centering
-%\caption{Final hyperparameters for \ac{ann} and \ac{gru}.}
-%\label{tab:final_arch}
-%\begin{tblr}{ccc}
-%Parameter & \ac{ann} & \ac{gru} \\
-%\hline
-%Hidden Size & 256 & 256 \\
-%Learning Rate & $\num{1.3e-7}$ & $\num{1.4e-7}$\\
-%Number of Layers & 6 & 1 \\
-%Dropout Probability & 0 & 0 \\
-%Activation Function & ELU & \ac{relu} \\
-%Model & \ac{ann} & \ac{gru} \\
-%\end{tblr}
-%\end{table}
 
 \paragraph{Win Prediction Performance}
-As shown in Table \ref{tab:win_pred_results}, the \ac{ann} shows a test accuracy of 0.710 and a ROC-AUC Score of 0.787.
-The \ac{gru} model achieves an accuracy of 0.741 and a ROC-AUC Score of 0.807.
-Figure \ref{fig:roc} shows the ROC curves for both models and Figure \ref{fig:cm_static} shows the confusion matrices.
-
-
-\begin{table}
+\begin{table}[H]
 \centering
 \caption{Win Prediction Results.}
 \label{tab:win_pred_results}
@@ -1035,13 +1063,28 @@ ANN & 0.710 & 0.787 \\
 GRU & 0.741 & 0.807 \\
 \end{tblr}
 \end{table}
+As shown in Table \ref{tab:win_pred_results}, the \ac{ann} shows a test accuracy of 0.710 and a ROC-AUC Score of 0.787.
+\begin{figure}[htbp]
+\centering
+\input{./images/roc.pgf}
+\caption{ROC Curve from both Models.}
+\label{fig:roc}
+\end{figure}
+The \ac{gru} model achieves an accuracy of 0.741 and a ROC-AUC Score of 0.807.
+Figure \ref{fig:roc} shows the ROC curves for both models and Figure \ref{fig:cm_static} shows the confusion matrices.
 
+\begin{figure}[htbp]
+\centering
+\input{./images/staticcm.pgf}
+\caption{Confusion matrix of pre-game and in-game classification results with error rates in percent.}
+\label{fig:cm_static}
+\end{figure}
 
 \subsection{Discussion}
 \label{ssec:discussion}
 \paragraph{Feature Selection}
-A key observation is that the highest \ac{pcc} and Feature Importance is associated with the KDA feature. 
-This metric, which calculates the average ratio of $\text{Kills} + \text{Assists}$ to Deaths achieved by a player on their champion, still demonstrates a relatively low linear correlation with the target variable of only $0.287$.
+A key observation is that the highest \ac{pcc} and Feature Importance is associated with the \acs{kda} feature. 
+This metric, which calculates the average \acl{kda} achieved by a player on their champion, still demonstrates a relatively low linear correlation with the target variable of only $0.287$.
 Notably, the three next highest correlations are Assists, Deaths and Kills, all of which are combined to calculate the KDA.
 This is different to the \ac{gbt} results, as the three features with the next highest score are Gold, League Points and Assists.
 This suggests that KDA encapsulates the essential information from Kills, Deaths and Assists, leading to \ac{gbt} assigning higher importance to KDA and lower importance to these related features.
@@ -1051,7 +1094,8 @@ However, the general trend of placing the highest importance on statistics of in
 As all of the most important features are related to player statistics, it can be assumed that the pre-game model generalizes fairly well over multiple game versions, thus potentially mitigating the need of frequent retraining due to game changes.
 
 \paragraph{Win Prediction}
-The accuracies of 0.710 and 0.741 achieved by the pre-game and in-game models respectively show that incorporating real-time data significantly enhances predictive performance. 
+The accuracies of 0.710 and 0.741 achieved by the pre-game and in-game models respectively (see Table \ref{tab:win_pred_results}) indicate that incorporating real-time data significantly enhances predictive performance. 
+This result is reflected in Figure \ref{fig:roc}, showing that the in-game model is better or equal to the pre-game model for all decision thresholds.
 The confusion matrices in Figure \ref{fig:cm_static} show that while the in-game model has very similar rates for both false positives and false negatives, the pre-game model's errors are relatively one-sided.
 A pre-game win prediction accuracy of 0.71 aligns closely with previous findings in Chapter \ref{chap:related}, suggesting that while professional games may be predicted more accurately, lower-rated games are more unpredictable and challenging.
 This is consistent with \Citeauthor{whiteScalablePsychologicalMomentum2020}'s  \cite{whiteScalablePsychologicalMomentum2020} findings, who, despite a more complex methodology and larger dataset, achieved similar accuracy in the harder task of predicting lower-rated games.
@@ -1067,17 +1111,19 @@ Here, it can be assumed that the data does not encompass all relevant informatio
 
 The applicability of both models is diminished for lower-rated players, as the models were exclusively trained on very good players.
 This limitation is more pronounced for the pre-game prediction model, as it could benefit all players, unlike the in-game prediction model, which is more relevant for professional game audiences.
-
+The fact that the model only predicts the winning chances once severely limits its applicability to viewer experience enhancement.
+The performance of the model when continuously predicting is not evaluated, which is a necessary step before it could be used in a broadcasted tournament.
+Currently, the main beneficiaries are good players wishing to see if they should continue playing the game or if a surrender is more time-efficient.
 
 \chapter{Conclusion}
 \label{chap:conclusion}
-In conclusion, the pre-game model can be a valuable tool for players to estimate their winning chances at a glance.
+In conclusion, the pre-game model can predict the outcome of the game with good accuracy, but the in-game model successfully uses the additional information to improve the accuracy.
+The increased amount of data did not increase the predictive performance as much as expected compared to the previous works, indicating that different approaches are needed in order to achieve further improvements.
+
 It is unlikely that a much higher accuracy is achievable using just player statistics, as this approach does not model the probability of human errors, which introduce a large amount of randomness into the game.
 Further directions of work could instead include gauging the likelihood of errors by assessing the mental state of players or using a more advanced champion composition analysis.
+Another potential enhancement could involve integrating pre-game data, which has shown reasonable accuracy in winner prediction, into the \ac{gru} model. 
 
-As expected, the in-game model achieves a higher accuracy due to the higher informative value of real-time data.
-Its accuracy when predicting winning chances continuously needs to be assessed before deployment, as a single prediction at the 15th minute does not enhance viewer experience much.
-A potential enhancement could involve integrating pre-game data, which has shown reasonable accuracy in winner prediction, into the \ac{gru} model. 
 
 %\bibliographystyle{natdin}
 %\bibliographystyle{naturemag}
@@ -1085,9 +1131,10 @@ A potential enhancement could involve integrating pre-game data, which has shown
 \printbibliography
 
 \appendix
-
 \chapter{Appendix}
-\begin{table}
+\setcounter{table}{0}
+\renewcommand\thetable{A\arabic{table}}
+\begin{table}[!h]
 \centering
 \caption{\acl{gbt} Feature Importance Scores and \aclp{pcc} on the pre-game dataset, averaged per category}
 \label{tab:fs_results}
@@ -1109,14 +1156,15 @@ A potential enhancement could involve integrating pre-game data, which has shown
 	Creep Score & 3.5 & 0.058 \\
 \end{tblr}
 \end{table}
-
+\setcounter{figure}{0}
+\renewcommand\thefigure{A\arabic{figure}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ********************* Verzeichnisse ********************* %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \listoffigures																			% Abbildungsverzeichnis
-\listoftables																			% Tabellenverzeichnis
+%\listoftables																			% Tabellenverzeichnis
 \cleardoublepage\phantomsection\addcontentsline{toc}{chapter}{List of Abbreviations}	% Abkürzungsverzeichnis
 \printacronyms[heading={chapter*}, name={List of Abbreviations}]
 

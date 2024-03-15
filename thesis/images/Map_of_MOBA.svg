@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="600" viewBox="0 0 3000 3000">
+	<title>Map of multiplayer online battle arena</title>
+	<g transform="scale(10,10)">
+		<rect id="background" x="-10" y="-10" width="310" height="310" fill="#fea"/>
+		<path id="jungle" fill="#8b4" d="M 255,25 H 25 V 255 M 275,45 V 275 H 45"/>
+		<circle cy="300" r="60" fill="#aaf"/>
+		<circle cy="300" r="25" fill="#66e"/>
+		<circle cx="300" r="60" fill="#faa"/>
+		<circle cx="300" r="25" fill="#e66"/>
+		<use xlink:href="#team_1_base" transform="translate(300,300)rotate(180)"/>
+		<g fill="#66e">
+			<g id="team_1_towers">
+				<g id="team_1_top_towers">
+					<circle r="7" cx="12.5" cy="40"/>
+					<circle r="7" cx="12.5" cy="150"/>
+					<circle r="7" cx="12.5" cy="242"/>
+				</g>
+				<use xlink:href="#team_1_top_towers" transform="translate(300,300)scale(-1,1)rotate(-90)"/>
+				<circle r="7" cx="140" cy="160"/>
+				<circle r="7" cx="90" cy="210"/>
+				<circle r="7" cx="42" cy="258"/>
+			</g>
+		</g>
+		<use xlink:href="#team_1_towers" fill="#e66" transform="translate(300,300)rotate(180)"/>
+		<path id="divide" style="stroke:#000;stroke-width:3;stroke-dasharray:5" d="M 0,0 L 300,300"/>
+	</g>
+	<g style="font-size:150px;fill:#000;text-anchor:middle;font-family:Liberation Sans,sans-serif">
+		<g fill="#339">
+			<switch><text transform="translate(300,2700)rotate(45)" id="trsvg19-ro" systemLanguage="ro"><tspan id="trsvg1-ro">Echipa 1</tspan><tspan x="0" dy="150" id="trsvg2-ro">bază</tspan></text><text transform="translate(300,2700)rotate(45)" id="trsvg19-id" systemLanguage="id"><tspan id="trsvg1-id">Markas</tspan><tspan x="0" dy="150" id="trsvg2-id">tim 1</tspan></text><text transform="translate(300,2700)rotate(45)" id="trsvg19"><tspan id="trsvg1">Team 1</tspan><tspan x="0" dy="150" id="trsvg2">base</tspan></text></switch>
+			<switch><text transform="translate(80,940)rotate(90)" id="trsvg20-ro" systemLanguage="ro"><tspan id="trsvg3-ro">Banda de sus</tspan></text><text transform="translate(80,940)rotate(90)" id="trsvg20-id" systemLanguage="id"><tspan id="trsvg3-id">Lajur atas</tspan></text><text transform="translate(80,940)rotate(90)" id="trsvg20"><tspan id="trsvg3">Top lane</tspan></text></switch>
+			<switch><text x="2070" y="2930" id="trsvg21-ro" systemLanguage="ro"><tspan id="trsvg4-ro">Banda de jos</tspan></text><text x="2070" y="2930" id="trsvg21-id" systemLanguage="id"><tspan id="trsvg4-id">Lajur bawah</tspan></text><text x="2070" y="2930" id="trsvg21"><tspan id="trsvg4">Bottom lane</tspan></text></switch>
+			<switch><text transform="translate(1200,1880)rotate(-45)" id="trsvg22-ro" systemLanguage="ro"><tspan id="trsvg5-ro">Mijloc</tspan></text><text transform="translate(1200,1880)rotate(-45)" id="trsvg22-id" systemLanguage="id"><tspan id="trsvg5-id">Lajur</tspan></text><text transform="translate(1200,1880)rotate(-45)" id="trsvg22"><tspan id="trsvg5">Middle</tspan></text></switch>
+			<switch><text x="800" y="1400" id="trsvg23-ro" systemLanguage="ro"><tspan id="trsvg6-ro">Echipa 1</tspan><tspan x="800" dy="150" id="trsvg7-ro">jungla de sus</tspan></text><text x="800" y="1400" id="trsvg23-id" systemLanguage="id"><tspan id="trsvg6-id">Hutan atas</tspan><tspan x="800" dy="150" id="trsvg7-id">tim 1</tspan></text><text x="800" y="1400" id="trsvg23"><tspan id="trsvg6">Team 1</tspan><tspan x="800" dy="150" id="trsvg7">top jungle</tspan></text></switch>
+			<switch><text x="1550" y="2300" id="trsvg24-ro" systemLanguage="ro"><tspan id="trsvg8-ro">Echipa 1</tspan><tspan x="1550" dy="150" id="trsvg9-ro">jungla de jos</tspan></text><text x="1550" y="2300" id="trsvg24-id" systemLanguage="id"><tspan id="trsvg8-id">Hutan bawah</tspan><tspan x="1550" dy="150" id="trsvg9-id">tim 1</tspan></text><text x="1550" y="2300" id="trsvg24"><tspan id="trsvg8">Team 1</tspan><tspan x="1550" dy="150" id="trsvg9">bottom jungle</tspan></text></switch>
+		</g>
+		<g fill="#933">
+			<switch><text transform="translate(2750,250)rotate(45)" id="trsvg25-ro" systemLanguage="ro"><tspan id="trsvg10-ro">Echipa 2</tspan><tspan x="0" dy="150" id="trsvg11-ro">bază</tspan></text><text transform="translate(2750,250)rotate(45)" id="trsvg25-id" systemLanguage="id"><tspan id="trsvg10-id">Markas</tspan><tspan x="0" dy="150" id="trsvg11-id">tim 2</tspan></text><text transform="translate(2750,250)rotate(45)" id="trsvg25"><tspan id="trsvg10">Team 2</tspan><tspan x="0" dy="150" id="trsvg11">base</tspan></text></switch>
+			<switch><text x="930" y="170" id="trsvg26-ro" systemLanguage="ro"><tspan id="trsvg12-ro">Banda de sus</tspan></text><text x="930" y="170" id="trsvg26-id" systemLanguage="id"><tspan id="trsvg12-id">Lajur atas</tspan></text><text x="930" y="170" id="trsvg26"><tspan id="trsvg12">Top lane</tspan></text></switch>
+			<switch><text transform="translate(2830,2060)rotate(90)" id="trsvg27-ro" systemLanguage="ro"><tspan id="trsvg13-ro">Banda de jos</tspan></text><text transform="translate(2830,2060)rotate(90)" id="trsvg27-id" systemLanguage="id"><tspan id="trsvg13-id">Lajur bawah</tspan></text><text transform="translate(2830,2060)rotate(90)" id="trsvg27"><tspan id="trsvg13">Bottom lane</tspan></text></switch>
+			<switch><text transform="translate(1840,1240)rotate(-45)" id="trsvg28-ro" systemLanguage="ro"><tspan id="trsvg14-ro">bandă</tspan></text><text transform="translate(1840,1240)rotate(-45)" id="trsvg28-id" systemLanguage="id"><tspan id="trsvg14-id">tengah</tspan></text><text transform="translate(1840,1240)rotate(-45)" id="trsvg28"><tspan id="trsvg14">lane</tspan></text></switch>
+			<switch><text x="1450" y="700" id="trsvg29-ro" systemLanguage="ro"><tspan id="trsvg15-ro">Echipa 2</tspan><tspan x="1450" dy="150" id="trsvg16-ro">jungla de sus</tspan></text><text x="1450" y="700" id="trsvg29-id" systemLanguage="id"><tspan id="trsvg15-id">Hutan atas</tspan><tspan x="1450" dy="150" id="trsvg16-id">tim 2</tspan></text><text x="1450" y="700" id="trsvg29"><tspan id="trsvg15">Team 2</tspan><tspan x="1450" dy="150" id="trsvg16">top jungle</tspan></text></switch>
+			<switch><text x="2200" y="1500" id="trsvg30-ro" systemLanguage="ro"><tspan id="trsvg17-ro">Echipa 2</tspan><tspan x="2200" dy="150" id="trsvg18-ro">jungla de jos</tspan></text><text x="2200" y="1500" id="trsvg30-id" systemLanguage="id"><tspan id="trsvg17-id">Hutan bawah</tspan><tspan x="2200" dy="150" id="trsvg18-id">tim 2</tspan></text><text x="2200" y="1500" id="trsvg30"><tspan id="trsvg17">Team 2</tspan><tspan x="2200" dy="150" id="trsvg18">bottom jungle</tspan></text></switch>
+		</g>
+	</g>
+</svg>

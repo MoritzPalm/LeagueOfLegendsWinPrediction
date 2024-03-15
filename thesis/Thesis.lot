@@ -1,0 +1,18 @@
+\acswitchoff 
+\babel@toc {english}{}\relax 
+\babel@toc {ngerman}{}\relax 
+\babel@toc {english}{}\relax 
+\babel@toc {ngerman}{}\relax 
+\babel@toc {english}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {1}{Comparison of different works on League of Legends win prediction}}{4}{table.2.1}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {2}{\ignorespaces Overview of the hyperparameter search for the pre-game classification}}{22}{table.caption.48}%
+\contentsline {table}{\numberline {3}{\ignorespaces Win Prediction Results.}}{23}{table.caption.56}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {A1}{\ignorespaces \acl {gbt} Feature Importance Scores and \aclp {pcc} on the pre-game dataset, averaged per category}}{34}{table.caption.62}%
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
