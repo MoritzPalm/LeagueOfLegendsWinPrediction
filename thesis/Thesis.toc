@@ -1,0 +1,56 @@
+\acswitchoff 
+\babel@toc {english}{}\relax 
+\babel@toc {ngerman}{}\relax 
+\babel@toc {english}{}\relax 
+\babel@toc {ngerman}{}\relax 
+\babel@toc {english}{}\relax 
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Related work}{3}{chapter.2}%
+\contentsline {paragraph}{\nonumberline Pre-Game Win Prediction}{3}{paragraph*.6}%
+\contentsline {paragraph}{\nonumberline In-Game Win Prediction}{3}{paragraph*.8}%
+\contentsline {paragraph}{\nonumberline Post-Game Win Prediction}{3}{paragraph*.10}%
+\contentsline {chapter}{\numberline {3}Background}{5}{chapter.3}%
+\contentsline {section}{\numberline {3.1}League of Legends}{5}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Neural Networks}{6}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Recurrent Neural Networks}{8}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Gated Recurrent Unit}{10}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Feature Selection}{11}{section.3.5}%
+\contentsline {chapter}{\numberline {4}Experiments}{15}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Data}{16}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Data Collection}{16}{subsection.4.1.1}%
+\contentsline {paragraph}{\nonumberline High-Rank Matches}{16}{paragraph*.18}%
+\contentsline {paragraph}{\nonumberline Riot Games API}{16}{paragraph*.20}%
+\contentsline {paragraph}{\nonumberline Other Data Sources}{16}{paragraph*.22}%
+\contentsline {paragraph}{\nonumberline Regions}{17}{paragraph*.24}%
+\contentsline {paragraph}{\nonumberline Period of Time}{18}{paragraph*.27}%
+\contentsline {paragraph}{\nonumberline Game length}{18}{paragraph*.29}%
+\contentsline {paragraph}{\nonumberline Rank Distribution}{18}{paragraph*.32}%
+\contentsline {subsection}{\numberline {4.1.2}Pre-Game Dataset Properties}{18}{subsection.4.1.2}%
+\contentsline {paragraph}{\nonumberline Player Information.}{18}{paragraph*.35}%
+\contentsline {paragraph}{\nonumberline Champion Information.}{20}{paragraph*.37}%
+\contentsline {paragraph}{\nonumberline Player-Champion Information.}{20}{paragraph*.39}%
+\contentsline {subsection}{\numberline {4.1.3}In-Game Dataset Properties}{20}{subsection.4.1.3}%
+\contentsline {section}{\numberline {4.2}Data Processing}{20}{section.4.2}%
+\contentsline {paragraph}{\nonumberline Missing Values}{20}{paragraph*.42}%
+\contentsline {paragraph}{\nonumberline Individual Feature Processing Pre-Game Dataset.}{22}{paragraph*.44}%
+\contentsline {paragraph}{\nonumberline Individual Feature Processing In-Game Dataset.}{22}{paragraph*.46}%
+\contentsline {paragraph}{\nonumberline Scaling and Partitioning}{22}{paragraph*.48}%
+\contentsline {section}{\numberline {4.3}Experimental Setup}{23}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}General Setup}{23}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Feature Selection}{23}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}\Ac {ann} Parameters}{23}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}\Ac {gru} Parameters}{23}{subsection.4.3.4}%
+\contentsline {subsection}{\numberline {4.3.5}Hyperparameter Optimization}{23}{subsection.4.3.5}%
+\contentsline {section}{\numberline {4.4}Results and Discussion}{24}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Results}{24}{subsection.4.4.1}%
+\contentsline {paragraph}{\nonumberline Feature Selection Results}{24}{figure.caption.52}%
+\contentsline {paragraph}{\nonumberline Win Prediction Performance}{25}{table.caption.55}%
+\contentsline {subsection}{\numberline {4.4.2}Discussion}{25}{subsection.4.4.2}%
+\contentsline {paragraph}{\nonumberline Feature Selection}{25}{paragraph*.59}%
+\contentsline {paragraph}{\nonumberline Win Prediction}{27}{paragraph*.61}%
+\contentsline {chapter}{\numberline {5}Conclusion}{29}{chapter.5}%
+\contentsline {chapter}{\nonumberline Bibliography}{31}{chapter*.62}%
+\contentsline {chapter}{\numberline {A}Appendix}{37}{appendix.A}%
+\contentsline {chapter}{\nonumberline List of Figures}{39}{chapter*.64}%
+\contentsline {chapter}{List of Abbreviations}{41}{section*.65}%
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

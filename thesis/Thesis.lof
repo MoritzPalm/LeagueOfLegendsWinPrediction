@@ -1,0 +1,27 @@
+\acswitchoff 
+\babel@toc {english}{}\relax 
+\babel@toc {ngerman}{}\relax 
+\babel@toc {english}{}\relax 
+\babel@toc {ngerman}{}\relax 
+\babel@toc {english}{}\relax 
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {1}{\ignorespaces Screenshot of a \ac {lol} game, showing the players perspective.}}{1}{figure.caption.3}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Official win probability graph from World Championship 2022.}}{2}{figure.caption.4}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3}{\ignorespaces Schematic visualization of the map \ac {lol} is played on.}}{5}{figure.caption.11}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Unrolling of an \ac {rnn} over time.}}{9}{figure.caption.12}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Gated Recurrent Unit, where round operators denote elementwise operators and rectangular boxes denote fully connected layers with the shown activation function (adapted from \blx@tocontentsinit {0}\cite {zhaoMachineHealthMonitoring2018}).}}{10}{figure.caption.13}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6}{\ignorespaces Flowchart of the data processing and model training steps with their corresponding sections.}}{15}{figure.caption.16}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Region distribution of \ac {lol} games included in the pre-game dataset.}}{17}{figure.caption.25}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Distribution of game duration with its kernel density estimation.}}{19}{figure.caption.30}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Distribution of ranks in the dataset}}{19}{figure.caption.33}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Total gold accumulated by each player of the course of an exemplary match}}{21}{figure.caption.40}%
+\contentsline {figure}{\numberline {11}{\ignorespaces \ac {gbt} Feature Importance Scores and \acp {pcc} normalized into range $[0, 1]$.}}{25}{figure.caption.52}%
+\contentsline {figure}{\numberline {12}{\ignorespaces ROC Curve from both Models.}}{26}{figure.caption.56}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Confusion matrix of pre-game and in-game classification results with error rates in percent.}}{27}{figure.caption.57}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

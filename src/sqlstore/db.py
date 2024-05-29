@@ -1,15 +1,15 @@
 import configparser
-import logging
 import contextlib
+import logging
+from configparser import ConfigParser
 
 from sqlalchemy import create_engine, URL, exc
 from sqlalchemy.orm import declarative_base, Session
-from configparser import ConfigParser
 
 logger = logging.getLogger(__name__)
 
 
-def db_config(filename='src/database.ini', section='postgresql') -> dict:
+def db_config(filename="src/database.ini", section="postgresql") -> dict:
     db_configparser = ConfigParser()
     try:
         with open(filename) as f:
@@ -29,14 +29,15 @@ def db_config(filename='src/database.ini', section='postgresql') -> dict:
 def connect_to_db():
     """Connect to db and return the engine object"""
     config: dict = db_config()
-    url_object = URL.create('postgresql+psycopg2',
-                            username=config['user'],
-                            password=config['password'],
-                            host=config['host'],
-                            database=config['database'],
-                            )
+    url_object = URL.create(
+        "postgresql+psycopg2",
+        username=config["user"],
+        password=config["password"],
+        host=config["host"],
+        database=config["database"],
+    )
     logger.info(f"creating engine object with {url_object}")
-    return create_engine(url_object)
+    return create_engine(url_object, pool_size=90, max_overflow=0)
 
 
 Base = declarative_base()
@@ -46,7 +47,7 @@ engine = connect_to_db()
 @contextlib.contextmanager
 def get_session(cleanup=False) -> Session:
     session = Session(bind=engine)
-    logger.info(f"creating all tables")
+    logger.info(f"building database session")
     Base.metadata.create_all(engine)
 
     try:
@@ -54,6 +55,7 @@ def get_session(cleanup=False) -> Session:
     except exc.SQLAlchemyError as e:
         logger.critical(str(e))
         session.rollback()
+        raise
     finally:
         session.close()
 

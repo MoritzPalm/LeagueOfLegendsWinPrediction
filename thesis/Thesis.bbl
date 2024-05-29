@@ -1,0 +1,2732 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global}
+    \entry{ahnOneBillionDollar2020}{article}{}
+      \name{author}{3}{}{%
+        {{hash=4d00f5297bf18bd1e3a79e13d678ddb4}{%
+           family={Ahn},
+           familyi={A\bibinitperiod},
+           given={Joseph},
+           giveni={J\bibinitperiod}}}%
+        {{hash=9c48226ff646e3eff1eefb63b19a7388}{%
+           family={Collis},
+           familyi={C\bibinitperiod},
+           given={William},
+           giveni={W\bibinitperiod}}}%
+        {{hash=04153751197ddad1c703940ebe1a1155}{%
+           family={Jenny},
+           familyi={J\bibinitperiod},
+           given={Seth},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{f3cb5e95b9f271404de0d5fa3cd2718d}
+      \strng{fullhash}{b69dc25fadcf4c7908079e1ee5848886}
+      \strng{bibnamehash}{b69dc25fadcf4c7908079e1ee5848886}
+      \strng{authorbibnamehash}{b69dc25fadcf4c7908079e1ee5848886}
+      \strng{authornamehash}{f3cb5e95b9f271404de0d5fa3cd2718d}
+      \strng{authorfullhash}{b69dc25fadcf4c7908079e1ee5848886}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{It is our contention that the 2019 esports industry's revenue size is massively undervalued at \$1.1B USD within the literature. This paper provides a more accurate sizing of the esports landscape, incorporating into the analysis six major sectors of the esports industry: 1) teams, professional players, and streamers, 2) game publishers, 3) streaming platforms, 4) physical products, 5) leagues and tournaments, and 6) digital tools. Each sector is discussed separately, with descriptions of the business models and corresponding revenue equations that drive each sector's revenue estimates. Overall, we purport that \$24.9B USD is a more accurate estimation of the ``true'' market size of esports for 2019.}
+      \field{issn}{2634-1069}
+      \field{journaltitle}{International Journal of Esports}
+      \field{langid}{english}
+      \field{month}{10}
+      \field{number}{1}
+      \field{shorttitle}{The One Billion Dollar Myth}
+      \field{title}{The One Billion Dollar Myth: {{Methods}} for Sizing the Massively Undervalued Esports Revenue Landscape}
+      \field{urlday}{9}
+      \field{urlmonth}{12}
+      \field{urlyear}{2023}
+      \field{volume}{1}
+      \field{year}{2020}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/E5GNQZCI/Ahn et al. - 2020 - The one billion dollar myth Methods for sizing th.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.ijesports.org/article/15/html
+      \endverb
+      \verb{url}
+      \verb https://www.ijesports.org/article/15/html
+      \endverb
+    \endentry
+    \entry{goughLeagueLegendsChampionships}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=06dde9197699171f74d47f5de4bec0c9}{%
+           family={Gough},
+           familyi={G\bibinitperiod},
+           given={Christina},
+           giveni={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{06dde9197699171f74d47f5de4bec0c9}
+      \strng{fullhash}{06dde9197699171f74d47f5de4bec0c9}
+      \strng{bibnamehash}{06dde9197699171f74d47f5de4bec0c9}
+      \strng{authorbibnamehash}{06dde9197699171f74d47f5de4bec0c9}
+      \strng{authornamehash}{06dde9197699171f74d47f5de4bec0c9}
+      \strng{authorfullhash}{06dde9197699171f74d47f5de4bec0c9}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The League of Legends World Championship is an annual tournament hosted by Riot Games which pits the best League of Legends eSports players against each other for the chance to win a large amount of money.}
+      \field{journaltitle}{Statista}
+      \field{langid}{english}
+      \field{title}{League of {{Legends}} Championships Viewers 2022}
+      \field{urlday}{9}
+      \field{urlmonth}{12}
+      \field{urlyear}{2023}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/8EUC32GX/league-of-legends-championship-viewers.html
+      \endverb
+      \verb{urlraw}
+      \verb https://www.statista.com/statistics/518126/league-of-legends-championship-viewers/
+      \endverb
+      \verb{url}
+      \verb https://www.statista.com/statistics/518126/league-of-legends-championship-viewers/
+      \endverb
+    \endentry
+    \entry{riotgamesHowRiotEsports2022}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=88c35b9a642a0f10b3fdba232e42fdba}{%
+           family={Games},
+           familyi={G\bibinitperiod},
+           given={Riot},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{fullhash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{bibnamehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{authorbibnamehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{authornamehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{authorfullhash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \field{extraname}{1}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{With Worlds 2022 happening in North America, Rioters and partners around the world deliver live League of Legends broadcasts custom tailored to local audiences.}
+      \field{journaltitle}{How Riot Delivers a Global Broadcast for Worlds 2022}
+      \field{langid}{english}
+      \field{month}{11}
+      \field{title}{How {{Riot Esports Delivers Worlds}} 2022 {{Broadcast}} to a {{Global Audience}}}
+      \field{urlday}{29}
+      \field{urlmonth}{1}
+      \field{urlyear}{2024}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/BE39284Y/riot-esports-delivering-custom-global-broadcasts-worlds-2022.html
+      \endverb
+      \verb{urlraw}
+      \verb https://www.riotgames.com/en/news/riot-esports-delivering-custom-global-broadcasts-worlds-2022
+      \endverb
+      \verb{url}
+      \verb https://www.riotgames.com/en/news/riot-esports-delivering-custom-global-broadcasts-worlds-2022
+      \endverb
+    \endentry
+    \entry{dalmiaChampionsLeagueFinal2023}{article}{}
+      \name{author}{1}{}{%
+        {{hash=58b78fdf291f3a404ef0fbfa69c0eb81}{%
+           family={Dalmia},
+           familyi={D\bibinitperiod},
+           given={Nikunj},
+           giveni={N\bibinitperiod}}}%
+      }
+      \strng{namehash}{58b78fdf291f3a404ef0fbfa69c0eb81}
+      \strng{fullhash}{58b78fdf291f3a404ef0fbfa69c0eb81}
+      \strng{bibnamehash}{58b78fdf291f3a404ef0fbfa69c0eb81}
+      \strng{authorbibnamehash}{58b78fdf291f3a404ef0fbfa69c0eb81}
+      \strng{authornamehash}{58b78fdf291f3a404ef0fbfa69c0eb81}
+      \strng{authorfullhash}{58b78fdf291f3a404ef0fbfa69c0eb81}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Madrid's 1-0 victory over Liverpool one year ago had an average audience of 166 million, according to UEFA research, and the same two teams' final in 2018 had a 161 million average. When Liverpool played another English club, Tottenham, one year later in 2019 the average audience was just 91 million, according to UEFA.}
+      \field{issn}{0013-0389}
+      \field{journaltitle}{The Economic Times}
+      \field{month}{6}
+      \field{title}{Champions {{League}} Final Set to Reach 450 Million Broadcast Viewers Worldwide}
+      \field{urlday}{29}
+      \field{urlmonth}{1}
+      \field{urlyear}{2024}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/NEV2YUMN/100902286.html
+      \endverb
+      \verb{urlraw}
+      \verb https://economictimes.indiatimes.com/news/sports/champions-league-final-set-to-reach-450-million-broadcast-viewers-worldwide/articleshow/100902286.cms?from=mdr
+      \endverb
+      \verb{url}
+      \verb https://economictimes.indiatimes.com/news/sports/champions-league-final-set-to-reach-450-million-broadcast-viewers-worldwide/articleshow/100902286.cms?from=mdr
+      \endverb
+    \endentry
+    \entry{campbell2021sports}{article}{}
+      \name{author}{4}{}{%
+        {{hash=10c89369fc1e56b2dc7265af9f12eba2}{%
+           family={Campbell},
+           familyi={C\bibinitperiod},
+           given={William},
+           giveni={W\bibinitperiod}}}%
+        {{hash=2c66c97fd78da281c9a6e6ce35a04ee5}{%
+           family={Goss},
+           familyi={G\bibinitperiod},
+           given={Amanda},
+           giveni={A\bibinitperiod}}}%
+        {{hash=7a69444da46c20826ca8247f76d2aee6}{%
+           family={Trottier},
+           familyi={T\bibinitperiod},
+           given={Kyle},
+           giveni={K\bibinitperiod}}}%
+        {{hash=f4e0c08d7c72b4d7cddc5cbebce39ed8}{%
+           family={Claypool},
+           familyi={C\bibinitperiod},
+           given={Mark},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{f2e0f250f857dd75a9065ca135874c93}
+      \strng{fullhash}{9c7a11042e4773b5c10b4bc22ffb054f}
+      \strng{bibnamehash}{9c7a11042e4773b5c10b4bc22ffb054f}
+      \strng{authorbibnamehash}{9c7a11042e4773b5c10b4bc22ffb054f}
+      \strng{authornamehash}{f2e0f250f857dd75a9065ca135874c93}
+      \strng{authorfullhash}{9c7a11042e4773b5c10b4bc22ffb054f}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Global esports: Transformation of Cultural Perceptions of Competitive Gaming, Bloomsbury, London}
+      \field{title}{Sports versus Esports--a Comparison of Industry Size, Viewer Friendliness, and Game Competitiveness}
+      \field{year}{2021}
+      \field{pages}{35\bibrangedash 59}
+      \range{pages}{25}
+    \endentry
+    \entry{fearless-ad5644HighlightMyLOL2024}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=bc650628b4649c4352b8d415d192b3dc}{%
+           family={{Fearless-Ad5644}},
+           familyi={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{bc650628b4649c4352b8d415d192b3dc}
+      \strng{fullhash}{bc650628b4649c4352b8d415d192b3dc}
+      \strng{bibnamehash}{bc650628b4649c4352b8d415d192b3dc}
+      \strng{authorbibnamehash}{bc650628b4649c4352b8d415d192b3dc}
+      \strng{authornamehash}{bc650628b4649c4352b8d415d192b3dc}
+      \strng{authorfullhash}{bc650628b4649c4352b8d415d192b3dc}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{r/leagueoflegends}
+      \field{month}{2}
+      \field{title}{Highlight of My {{LOL}} Career}
+      \field{type}{Reddit {{Post}}}
+      \field{urlday}{6}
+      \field{urlmonth}{3}
+      \field{urlyear}{2024}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/ZGLZ9BDH/highlight_of_my_lol_career.html
+      \endverb
+      \verb{urlraw}
+      \verb www.reddit.com/r/leagueoflegends/comments/1aup3o3/highlight_of_my_lol_career/
+      \endverb
+      \verb{url}
+      \verb www.reddit.com/r/leagueoflegends/comments/1aup3o3/highlight_of_my_lol_career/
+      \endverb
+    \endentry
+    \entry{zangAutomatedChessCommentator2019}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{hash=fffaf756fcec6f47cbbce93363b90afe}{%
+           family={Zang},
+           familyi={Z\bibinitperiod},
+           given={Hongyu},
+           giveni={H\bibinitperiod}}}%
+        {{hash=19a84da1df3cd7f9517782eec64c68c4}{%
+           family={Yu},
+           familyi={Y\bibinitperiod},
+           given={Zhiwei},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=099b49eba881fb48d8a736fb9873c0e6}{%
+           family={Wan},
+           familyi={W\bibinitperiod},
+           given={Xiaojun},
+           giveni={X\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Florence, Italy}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computational Linguistics}%
+      }
+      \strng{namehash}{f054b13cf4e801d88ea00de0a64f9968}
+      \strng{fullhash}{d8945b89c2a60babd2de3e11a3bb3748}
+      \strng{bibnamehash}{d8945b89c2a60babd2de3e11a3bb3748}
+      \strng{authorbibnamehash}{d8945b89c2a60babd2de3e11a3bb3748}
+      \strng{authornamehash}{f054b13cf4e801d88ea00de0a64f9968}
+      \strng{authorfullhash}{d8945b89c2a60babd2de3e11a3bb3748}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In this paper, we explore a new approach for automated chess commentary generation, which aims to generate chess commentary texts in different categories (e.g., description, comparison, planning, etc.). We introduce a neural chess engine into text generation models to help with encoding boards, predicting moves, and analyzing situations. By jointly training the neural chess engine and the generation models for different categories, the models become more effective. We conduct experiments on 5 categories in a benchmark Chess Commentary dataset and achieve inspiring results in both automatic and human evaluations.}
+      \field{booktitle}{Proceedings of the 57th {{Annual Meeting}} of the {{Association}} for {{Computational Linguistics}}}
+      \field{langid}{english}
+      \field{title}{Automated {{Chess Commentator Powered}} by {{Neural Chess Engine}}}
+      \field{urlday}{6}
+      \field{urlmonth}{3}
+      \field{urlyear}{2024}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \field{pages}{5952\bibrangedash 5961}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.18653/v1/P19-1597
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/3VQL5JYH/Zang et al. - 2019 - Automated Chess Commentator Powered by Neural Ches.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.aclweb.org/anthology/P19-1597
+      \endverb
+      \verb{url}
+      \verb https://www.aclweb.org/anthology/P19-1597
+      \endverb
+    \endentry
+    \entry{kunnIndoorAirQuality2023}{article}{}
+      \name{author}{3}{}{%
+        {{hash=70e1843073c8c1018eec05ea1e545dea}{%
+           family={Künn},
+           familyi={K\bibinitperiod},
+           given={Steffen},
+           giveni={S\bibinitperiod}}}%
+        {{hash=5753db5e02b805705de37779aed1cb13}{%
+           family={Palacios},
+           familyi={P\bibinitperiod},
+           given={Juan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=e51bc7c44cc58aa37a36039eb02c24e7}{%
+           family={Pestel},
+           familyi={P\bibinitperiod},
+           given={Nico},
+           giveni={N\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {INFORMS}%
+      }
+      \strng{namehash}{ae2b09091241c5d0658bd1f53f737578}
+      \strng{fullhash}{1a59cc434aec8a15233e097b2d042211}
+      \strng{bibnamehash}{1a59cc434aec8a15233e097b2d042211}
+      \strng{authorbibnamehash}{1a59cc434aec8a15233e097b2d042211}
+      \strng{authornamehash}{ae2b09091241c5d0658bd1f53f737578}
+      \strng{authorfullhash}{1a59cc434aec8a15233e097b2d042211}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Decision making on the job is becoming increasingly important in the labor market, in which there is an unprecedented rise in demand for workers with problem-solving and critical-thinking skills. This paper investigates how indoor air quality affects the quality of strategic decision making based on data from official chess tournaments. Our main analysis relies on a unique data set linking the readings of air-quality monitors inside the tournament room to the quality of 30,000 moves, each of them objectively evaluated by a powerful artificial intelligence--based chess engine. The results show that poor indoor air quality hampers players' decision making. We find that an increase in the indoor concentration of fine particulate matter (PM 2.5 2.5 ) by 10 {$\mu$}g/ m 3 {$\mu$}g/m3 (corresponding to 75\% of a standard deviation in our sample) increases a player's probability of making an erroneous move by 26.3\%. The decomposition of the effects by different stages of the game shows that time pressure amplifies the damage of poor air quality to the players' decisions. We implement a number of robustness checks and conduct a replication exercise with analogous move-quality data from games in the top national league showing the strength of our results. The results highlight the costs of poor air quality for highly skilled professionals faced with strategic decisions under time pressure. This paper was accepted by Prof. Yan Chen, behavioral economics and decision analysis. Funding: The authors gratefully acknowledge the financial support from the Graduate School of Business and Economics at Maastricht University as well as the Institute of Labor Economics Bonn. Supplemental Material: The online appendix and data are available at https://doi.org/10.1287/mnsc.2022.4643.}
+      \field{issn}{0025-1909}
+      \field{journaltitle}{Management Science}
+      \field{month}{9}
+      \field{number}{9}
+      \field{title}{Indoor {{Air Quality}} and {{Strategic Decision Making}}}
+      \field{urlday}{6}
+      \field{urlmonth}{3}
+      \field{urlyear}{2024}
+      \field{volume}{69}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \field{pages}{5354\bibrangedash 5377}
+      \range{pages}{24}
+      \verb{doi}
+      \verb 10.1287/mnsc.2022.4643
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/M2JBWJU8/Künn et al. - 2023 - Indoor Air Quality and Strategic Decision Making.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://pubsonline.informs.org/doi/full/10.1287/mnsc.2022.4643
+      \endverb
+      \verb{url}
+      \verb https://pubsonline.informs.org/doi/full/10.1287/mnsc.2022.4643
+      \endverb
+      \keyw{chess,indoor air quality,pollution,strategic decision making}
+    \endentry
+    \entry{LoLEsports}{misc}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{title}
+      \field{title}{{{LoL Esports}}}
+      \field{urlday}{27}
+      \field{urlmonth}{1}
+      \field{urlyear}{2024}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/7LLXMCNJ/blt403ee07f98e2e0fc.html
+      \endverb
+      \verb{urlraw}
+      \verb https://lolesports.com/article/dev-diary-win-probability-powered-by-aws-at-worlds/blt403ee07f98e2e0fc
+      \endverb
+      \verb{url}
+      \verb https://lolesports.com/article/dev-diary-win-probability-powered-by-aws-at-worlds/blt403ee07f98e2e0fc
+      \endverb
+    \endentry
+    \entry{claytorRiotGamesAWS2023}{misc}{}
+      \name{author}{2}{}{%
+        {{hash=040c0c04af4fed7d27fdcc6ab976e541}{%
+           family={Claytor},
+           familyi={C\bibinitperiod},
+           given={Ross},
+           giveni={R\bibinitperiod}}}%
+        {{hash=1fa20deef0d45cfe73eff3607f91262a}{%
+           family={Ehrlich},
+           familyi={E\bibinitperiod},
+           given={Elena},
+           giveni={E\bibinitperiod}}}%
+      }
+      \strng{namehash}{4e42e76d5bbb10545ebbdc104d953e43}
+      \strng{fullhash}{ea9fdb50c6a7adbf1a486fe450d3e921}
+      \strng{bibnamehash}{ea9fdb50c6a7adbf1a486fe450d3e921}
+      \strng{authorbibnamehash}{ea9fdb50c6a7adbf1a486fe450d3e921}
+      \strng{authornamehash}{4e42e76d5bbb10545ebbdc104d953e43}
+      \strng{authorfullhash}{ea9fdb50c6a7adbf1a486fe450d3e921}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{chapter}{Amazon SageMaker}
+      \field{langid}{american}
+      \field{month}{10}
+      \field{title}{Riot {{Games}} and {{AWS}} Bring Esports `{{Win Probability}}' Stat to 2023 {{League}} of {{Legends World Championships}} Broadcasts {|} {{AWS}} for {{Games Blog}}}
+      \field{urlday}{27}
+      \field{urlmonth}{1}
+      \field{urlyear}{2024}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/X37ECVIC/riot-games-and-aws-bring-esports-win-probability-stat-to-2023-league-of-legends-world-champions.html
+      \endverb
+      \verb{urlraw}
+      \verb https://aws.amazon.com/blogs/gametech/riot-games-and-aws-bring-esports-win-probability-stat-to-2023-league-of-legends-world-championships-broadcasts/
+      \endverb
+      \verb{url}
+      \verb https://aws.amazon.com/blogs/gametech/riot-games-and-aws-bring-esports-win-probability-stat-to-2023-league-of-legends-world-championships-broadcasts/
+      \endverb
+    \endentry
+    \entry{whiteScalablePsychologicalMomentum2020}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{hash=091adaec17b5eb389ecca5420157e17e}{%
+           family={White},
+           familyi={W\bibinitperiod},
+           given={Alfonso},
+           giveni={A\bibinitperiod}}}%
+        {{hash=cb9365ad748bc1e775d3871dd75310fe}{%
+           family={Romano},
+           familyi={R\bibinitperiod},
+           given={Daniela\bibnamedelima M},
+           giveni={D\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{505a4f323c8128bb43a48c626975b9a9}
+      \strng{fullhash}{8192f933d3555df51f5ccccc2cc03ada}
+      \strng{bibnamehash}{8192f933d3555df51f5ccccc2cc03ada}
+      \strng{authorbibnamehash}{8192f933d3555df51f5ccccc2cc03ada}
+      \strng{authornamehash}{505a4f323c8128bb43a48c626975b9a9}
+      \strng{authorfullhash}{8192f933d3555df51f5ccccc2cc03ada}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The world of competitive Esports and video gaming has seen and continues to experience steady growth in popularity and complexity. Correspondingly, more research on the topic is being published, ranging from social network analyses to the benchmarking of advanced artificial intelligence systems in playing against humans. In this paper, we present ongoing work on an intelligent agent recommendation engine that suggests actions to players in order to maximise success and enjoyment, both in the space of in-game choices, as well as decisions made around play session timing in the broader context. By leveraging temporal data and appropriate models, we show that a learned representation of player psychological momentum, and of tilt, can be used, in combination with player expertise, to achieve state-of-the-art performance in preand post-draft win prediction. Our progress toward fulfilling the potential for deriving optimal recommendations is documented.}
+      \field{booktitle}{Proceedings of the 13th {{International Conference}} on {{Web Search}} and {{Data Mining}}}
+      \field{langid}{english}
+      \field{title}{Scalable {{Psychological Momentum Forecasting}} in {{Esports}}}
+      \field{year}{2020}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/GACNTEW4/White und Romano - 2020 - Scalable Psychological Momentum Forecasting in Esp.pdf
+      \endverb
+      \keyw{League of Legends,MOBA,notion}
+    \endentry
+    \entry{doUsingMachineLearning2021}{inproceedings}{}
+      \name{author}{5}{}{%
+        {{hash=1b8c37567ddb4620b9673332a1d95584}{%
+           family={Do},
+           familyi={D\bibinitperiod},
+           given={Tiffany\bibnamedelima D.},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=7d9bd028ed394eabed574a8234846b5c}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Seong\bibnamedelima Ioi},
+           giveni={S\bibinitperiod\bibinitdelim I\bibinitperiod}}}%
+        {{hash=ef4dddbe4fbbae94a8858ada4fc2d621}{%
+           family={Yu},
+           familyi={Y\bibinitperiod},
+           given={Dylan\bibnamedelima S.},
+           giveni={D\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=f33837d146d8dc6b882adb090780e25c}{%
+           family={McMillian},
+           familyi={M\bibinitperiod},
+           given={Matthew\bibnamedelima G.},
+           giveni={M\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
+        {{hash=0ba8d1293e73eae680b26a7884bc495e}{%
+           family={McMahan},
+           familyi={M\bibinitperiod},
+           given={Ryan\bibnamedelima P.},
+           giveni={R\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {New York, NY, USA}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{f21dfd451c9f6b9126747a7c96529d75}
+      \strng{fullhash}{933d9b04e4f1a50f25c2901f60977783}
+      \strng{bibnamehash}{933d9b04e4f1a50f25c2901f60977783}
+      \strng{authorbibnamehash}{933d9b04e4f1a50f25c2901f60977783}
+      \strng{authornamehash}{f21dfd451c9f6b9126747a7c96529d75}
+      \strng{authorfullhash}{933d9b04e4f1a50f25c2901f60977783}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{League of Legends (LoL) is the most widely played multiplayer online battle arena (MOBA) game in the world. An important aspect of LoL is competitive ranked play, which utilizes a skill-based matchmaking system to form fair teams. However, players' skill levels vary widely depending on which champion, or hero, that they choose to play as. In this paper, we propose a method for predicting game outcomes in ranked LoL games based on players' experience with their selected champion. Using a deep neural network, we found that game outcomes can be predicted with 75.1\% accuracy after all players have selected champions, which occurs before gameplay begins. Our results have important implications for playing LoL and matchmaking. Firstly, individual champion skill plays a significant role in the outcome of a match, regardless of team composition. Secondly, even after the skill-based matchmaking, there is still a wide variance in team skill before gameplay begins. Finally, players should only play champions that they have mastered, if they want to win games.}
+      \field{booktitle}{Proceedings of the 16th {{International Conference}} on the {{Foundations}} of {{Digital Games}}}
+      \field{isbn}{978-1-4503-8422-3}
+      \field{month}{10}
+      \field{series}{{{FDG}} '21}
+      \field{title}{Using {{Machine Learning}} to {{Predict Game Outcomes Based}} on {{Player-Champion Experience}} in {{League}} of {{Legends}}}
+      \field{urlday}{14}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \field{pages}{1\bibrangedash 5}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1145/3472538.3472579
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/MIP3P348/Do et al. - 2021 - Using Machine Learning to Predict Game Outcomes Ba.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://dl.acm.org/doi/10.1145/3472538.3472579
+      \endverb
+      \verb{url}
+      \verb https://dl.acm.org/doi/10.1145/3472538.3472579
+      \endverb
+      \keyw{League of Legends,MOBA,notion}
+    \endentry
+    \entry{costaFeatureAnalysisLeague2021}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{hash=8ad97a9416cc0ba1695b3a694850851c}{%
+           family={Costa},
+           familyi={C\bibinitperiod},
+           given={Lincoln\bibnamedelima Magalhães},
+           giveni={L\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=917e600952b7b5747fc66b876d449e03}{%
+           family={Mantovani},
+           familyi={M\bibinitperiod},
+           given={Rafael\bibnamedelima Gomes},
+           giveni={R\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
+        {{hash=d08555c07a013d6b3c71c14fef6dc70d}{%
+           family={Monteiro\bibnamedelima Souza},
+           familyi={M\bibinitperiod\bibinitdelim S\bibinitperiod},
+           given={Francisco\bibnamedelima Carlos},
+           giveni={F\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+        {{hash=d5926506e8908f6071fa97c3c41c80e7}{%
+           family={Xexéo},
+           familyi={X\bibinitperiod},
+           given={Geraldo},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{2616a866e5da54ab380d40f573e26411}
+      \strng{fullhash}{21eb893da59096bcb31b93e6ceb5412f}
+      \strng{bibnamehash}{21eb893da59096bcb31b93e6ceb5412f}
+      \strng{authorbibnamehash}{21eb893da59096bcb31b93e6ceb5412f}
+      \strng{authornamehash}{2616a866e5da54ab380d40f573e26411}
+      \strng{authorfullhash}{21eb893da59096bcb31b93e6ceb5412f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Victory prediction in online video games has become an important application for machine learning due to the large amount of data generated by these games and their growing popularity. The creation of professional leagues also drives these applications, as teams want to know their chances of victory and know what are the determining factors to achieve it. Thus, in this research, we analyze whether pre-game information can be explored for victory prediction of professional matches of League of Legends (LoL), one of the main MOBA games. In experiments, we benchmarked different feature sets and algorithms to assess the victory predictions in LoL. The results show that historical performance information is the most accurate features for performing this task. The induced models, especially Random Forest and Logistic Regression, achieved AUC values of 0.97.}
+      \field{booktitle}{2021 {{IEEE Conference}} on {{Games}} ({{CoG}})}
+      \field{issn}{2325-4289}
+      \field{month}{8}
+      \field{title}{Feature {{Analysis}} to {{League}} of {{Legends Victory Prediction}} on the {{Picks}} and {{Bans Phase}}}
+      \field{urlday}{5}
+      \field{urlmonth}{10}
+      \field{urlyear}{2023}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \field{pages}{01\bibrangedash 05}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1109/CoG52621.2021.9619019
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/XXV82RQE/Costa et al. - 2021 - Feature Analysis to League of Legends Victory Pred.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/abstract/document/9619019
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/abstract/document/9619019
+      \endverb
+      \keyw{League of Legends,MOBA,notion}
+    \endentry
+    \entry{silvaContinuousOutcomePrediction2018}{article}{}
+      \name{author}{3}{}{%
+        {{hash=16e6425bdc81c843a979465c7b5464df}{%
+           family={Silva},
+           familyi={S\bibinitperiod},
+           given={Antonio\bibnamedelimb Luis\bibnamedelima Cardoso},
+           giveni={A\bibinitperiod\bibinitdelim L\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+        {{hash=56c933da2aee3a87799540e799c8c76d}{%
+           family={Pappa},
+           familyi={P\bibinitperiod},
+           given={Gisele\bibnamedelima Lobo},
+           giveni={G\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=0540120b83be44c1b0c3daa33e9eb2ef}{%
+           family={Chaimowicz},
+           familyi={C\bibinitperiod},
+           given={Luiz},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{1827c2252c0f24de5b8547f93134c72a}
+      \strng{fullhash}{5db2cabf8db7fb89d9633104b577d83c}
+      \strng{bibnamehash}{5db2cabf8db7fb89d9633104b577d83c}
+      \strng{authorbibnamehash}{5db2cabf8db7fb89d9633104b577d83c}
+      \strng{authornamehash}{1827c2252c0f24de5b8547f93134c72a}
+      \strng{authorfullhash}{5db2cabf8db7fb89d9633104b577d83c}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{SBC-proceedings of SBCGames}
+      \field{title}{Continuous Outcome Prediction of League of Legends Competitive Matches Using Recurrent Neural Networks}
+      \field{year}{2018}
+      \field{pages}{2179\bibrangedash 2259}
+      \range{pages}{81}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/WAWXTCHA/Silva et al. - 2018 - Continuous outcome prediction of league of legends.pdf
+      \endverb
+      \keyw{League of Legends,MOBA,notion}
+    \endentry
+    \entry{baileyStatisticalLearningEsports}{article}{}
+      \name{author}{1}{}{%
+        {{hash=8d058da593f33a776507496dc08cb8f9}{%
+           family={Bailey},
+           familyi={B\bibinitperiod},
+           given={Kevin},
+           giveni={K\bibinitperiod}}}%
+      }
+      \strng{namehash}{8d058da593f33a776507496dc08cb8f9}
+      \strng{fullhash}{8d058da593f33a776507496dc08cb8f9}
+      \strng{bibnamehash}{8d058da593f33a776507496dc08cb8f9}
+      \strng{authorbibnamehash}{8d058da593f33a776507496dc08cb8f9}
+      \strng{authornamehash}{8d058da593f33a776507496dc08cb8f9}
+      \strng{authorfullhash}{8d058da593f33a776507496dc08cb8f9}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{Statistical {{Learning}} for {{Esports Match Prediction}}}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/AGMXMZHG/Bailey - Statistical Learning for Esports Match Prediction.pdf
+      \endverb
+      \keyw{League of Legends,MOBA,notion}
+    \endentry
+    \entry{bahrololloomiESportsPlayerPerformance2023}{article}{}
+      \name{author}{5}{}{%
+        {{hash=09b9f09ea823831f0a65d2c74ab7e296}{%
+           family={Bahrololloomi},
+           familyi={B\bibinitperiod},
+           given={Farnod},
+           giveni={F\bibinitperiod}}}%
+        {{hash=3a20bc3e33eac796cf5c05eff38f400f}{%
+           family={Klonowski},
+           familyi={K\bibinitperiod},
+           given={Fabio},
+           giveni={F\bibinitperiod}}}%
+        {{hash=b7c956451acfa435a4d8ba860e87abcf}{%
+           family={Sauer},
+           familyi={S\bibinitperiod},
+           given={Sebastian},
+           giveni={S\bibinitperiod}}}%
+        {{hash=13ba731232fc7ffd394435fb249e53a7}{%
+           family={Horst},
+           familyi={H\bibinitperiod},
+           given={Robin},
+           giveni={R\bibinitperiod}}}%
+        {{hash=cfb48eb4cb5acfe17a97b1f9b3f46dc9}{%
+           family={Dörner},
+           familyi={D\bibinitperiod},
+           given={Ralf},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{d4a372c2bb193b99dec982155a7f8dc9}
+      \strng{fullhash}{c0d9ba00a930e28691a019f9a376b7f9}
+      \strng{bibnamehash}{c0d9ba00a930e28691a019f9a376b7f9}
+      \strng{authorbibnamehash}{c0d9ba00a930e28691a019f9a376b7f9}
+      \strng{authornamehash}{d4a372c2bb193b99dec982155a7f8dc9}
+      \strng{authorfullhash}{c0d9ba00a930e28691a019f9a376b7f9}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Predicting results in electronic sports (e-sports) matches is not an easy task. Different methods can be used for this purpose. A well-known video game in the field of Multiplayer Online Battle Arena (MOBA) is the game League of Legends (LoL), which has a relevant professional scene. An important part of professional gaming is analyzing past matches overall and an individual player's performance to prepare for future matches. In this paper, we follow a design-oriented research methodology (analysis, design, and evaluation) and propose performance metrics that use data from past matches to evaluate a player's performance. We analyze the necessary data which we acquire by selecting a player, analyzing the player's latest games, and repeating the process recursively with the players found in his latest games. The data is utilized within a Machine Learning (ML) Model that computes an overall score from individual player variables. From this, we designed a heuristic approach and evaluated it by applying it to the challenge of winning predictions in e-sports. The difference in the influence of the individual player roles on the outcome of the game was also investigated. It was found that this difference is negligible and that the heuristic performance metric can predict the outcome of a game with an accuracy of 86\%. Furthermore, the concept of a match calculator is explored, which calculates the outcome of a match using the ML model and different player stats.}
+      \field{issn}{2661-8907}
+      \field{journaltitle}{SN Computer Science}
+      \field{langid}{english}
+      \field{month}{3}
+      \field{number}{3}
+      \field{title}{E-{{Sports Player Performance Metrics}} for {{Predicting}} the {{Outcome}} of {{League}} of {{Legends Matches Considering Player Roles}}}
+      \field{urlday}{5}
+      \field{urlmonth}{10}
+      \field{urlyear}{2023}
+      \field{volume}{4}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \field{pages}{238}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1007/s42979-022-01660-6
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/953LIA25/Bahrololloomi et al. - 2023 - E-Sports Player Performance Metrics for Predicting.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/s42979-022-01660-6
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/s42979-022-01660-6
+      \endverb
+      \keyw{League of Legends,MOBA,notion}
+    \endentry
+    \entry{aniVictoryPredictionLeague2019}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{hash=6da960652d2a1a2c63f45f49f91abc4b}{%
+           family={Ani},
+           familyi={A\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+        {{hash=a97b52d51e7d91ef96915035479bc694}{%
+           family={Harikumar},
+           familyi={H\bibinitperiod},
+           given={Vishnu},
+           giveni={V\bibinitperiod}}}%
+        {{hash=8956884da7922d1cd56b78064c9cd10e}{%
+           family={Devan},
+           familyi={D\bibinitperiod},
+           given={Arjun\bibnamedelima K.},
+           giveni={A\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+        {{hash=85007c131e91d54a3e90a72545dc703b}{%
+           family={Deepa},
+           familyi={D\bibinitperiod},
+           given={O.S.},
+           giveni={O\bibinitperiod}}}%
+      }
+      \strng{namehash}{5f6359f7d42b5f60d8b9ce4cd8df1f7e}
+      \strng{fullhash}{edef19a7cdae9e5f2ee6cb9a50f6c20f}
+      \strng{bibnamehash}{edef19a7cdae9e5f2ee6cb9a50f6c20f}
+      \strng{authorbibnamehash}{edef19a7cdae9e5f2ee6cb9a50f6c20f}
+      \strng{authornamehash}{5f6359f7d42b5f60d8b9ce4cd8df1f7e}
+      \strng{authorfullhash}{edef19a7cdae9e5f2ee6cb9a50f6c20f}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Prediction of winners in the online video games has become an important application for machine learning based prediction models. The main goal of the present study is to achieve a good prediction rate for a popular Electronic sport called League of Legends. League of Legends is a Multiplayer Online Battle Arena (MOBA) game that combines intensity of a Real-time strategy with various Role-playing elements. Feature selection is done and only relevant features that affect the match outcomes are considered. Prediction is done by using ensemble models of classification algorithms and the performance was evaluated. The important performance metrics and their influence on each game model were also analyzed. The results show that the reliable match result prediction is possible in the League of Legends game.}
+      \field{booktitle}{2019 {{International Conference}} on {{Intelligent Computing}} and {{Control Systems}} ({{ICCS}})}
+      \field{month}{5}
+      \field{title}{Victory Prediction in {{League}} of {{Legends}} Using {{Feature Selection}} and {{Ensemble}} Methods}
+      \field{urlday}{5}
+      \field{urlmonth}{10}
+      \field{urlyear}{2023}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \field{pages}{74\bibrangedash 77}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1109/ICCS45141.2019.9065758
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/WBKJXZVI/Ani et al. - 2019 - Victory prediction in League of Legends using Feat.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/abstract/document/9065758
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/abstract/document/9065758
+      \endverb
+      \keyw{League of Legends,MOBA,notion}
+    \endentry
+    \entry{hitar-garciaMachineLearningMethods2023}{article}{}
+      \name{author}{3}{}{%
+        {{hash=82c5156f711724a08fa30e1078ba1edf}{%
+           family={{Hitar-García}},
+           familyi={H\bibinitperiod},
+           given={Juan\bibnamedelima Agustín},
+           giveni={J\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=da17735bba6d23badd32fda64b682682}{%
+           family={{Morán-Fernández}},
+           familyi={M\bibinitperiod},
+           given={Laura},
+           giveni={L\bibinitperiod}}}%
+        {{hash=e3ab2409a92302acd4692ee505b7c6ed}{%
+           family={{Bolón-Canedo}},
+           familyi={B\bibinitperiod},
+           given={Verónica},
+           giveni={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{996fb5f5e3f216c36a7ec2fe59e0b221}
+      \strng{fullhash}{6cce9c82e972e571c049ea90544c1980}
+      \strng{bibnamehash}{6cce9c82e972e571c049ea90544c1980}
+      \strng{authorbibnamehash}{6cce9c82e972e571c049ea90544c1980}
+      \strng{authornamehash}{996fb5f5e3f216c36a7ec2fe59e0b221}
+      \strng{authorfullhash}{6cce9c82e972e571c049ea90544c1980}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The video game League of Legends has several professional leagues and tournaments that offer prizes reaching several million dollars, making it one of the most followed games in the Esports scene. This article addresses the prediction of the winning team in professional matches of the game, using only pregame data. We propose to improve the accuracy of the models trained with the features offered by the game application programming interface (API). To this end, new features are built to collect interesting information, such as the skills of a player handling a certain champion, the synergies between players of the same team or the ability of a player to beat another player. Then, we perform feature selection and train different classification algorithms aiming at obtaining the best model. Experimental results show classification accuracy above 0.70, which is comparable to the results of other proposals presented in the literature, but with the added benefit of using few samples and not requiring the use of external sources to collect additional statistics.}
+      \field{issn}{2475-1510}
+      \field{journaltitle}{IEEE Transactions on Games}
+      \field{month}{6}
+      \field{number}{2}
+      \field{title}{Machine {{Learning Methods}} for {{Predicting League}} of {{Legends Game Outcome}}}
+      \field{urlday}{5}
+      \field{urlmonth}{10}
+      \field{urlyear}{2023}
+      \field{volume}{15}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \field{pages}{171\bibrangedash 181}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.1109/TG.2022.3153086
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/TNHQVGCX/Hitar-García et al. - 2023 - Machine Learning Methods for Predicting League of .pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/abstract/document/9720122
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/abstract/document/9720122
+      \endverb
+      \keyw{League of Legends,MOBA,notion}
+    \endentry
+    \entry{linLeagueLegendsMatch2016}{article}{}
+      \name{author}{1}{}{%
+        {{hash=7588100ccb4566552e20033b91bb6680}{%
+           family={Lin},
+           familyi={L\bibinitperiod},
+           given={Lucas},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{7588100ccb4566552e20033b91bb6680}
+      \strng{fullhash}{7588100ccb4566552e20033b91bb6680}
+      \strng{bibnamehash}{7588100ccb4566552e20033b91bb6680}
+      \strng{authorbibnamehash}{7588100ccb4566552e20033b91bb6680}
+      \strng{authornamehash}{7588100ccb4566552e20033b91bb6680}
+      \strng{authorfullhash}{7588100ccb4566552e20033b91bb6680}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We use gradient boosted trees and gradient boosted trees with logistic regression to predict the match outcomes of the popular online multiplayer game, League of Legends. Features are extracted from the data that Riot Games API exposes--including champions picked for the game, player role information, and mastery levels for the players' champions (pre-game knowledge) as well as in-game player statistics. One-hot encoding is used to transform this mostly categorical data of pre-game knowledge into a feature vector that is used in the machine learning algorithms. We find that using only prematch knowledge (champions, masteries, roles, spells) from the very start is only a weak predictor of match outcome but using in-game statistics, the model becomes a strong predictor.}
+      \field{journaltitle}{Comput. Sci. Dept., Univ. Stanford, Stanford, CA, USA, Rep}
+      \field{langid}{english}
+      \field{title}{League of {{Legends Match Outcome Prediction}}}
+      \field{year}{2016}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/ATG663NS/Lin - League of Legends Match Outcome Prediction.pdf
+      \endverb
+    \endentry
+    \entry{kimConfidenceCalibratedMOBAGame2020}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{hash=60c251da48c579e372a4c41320fa7eb9}{%
+           family={Kim},
+           familyi={K\bibinitperiod},
+           given={Dong-Hee},
+           giveni={D\bibinithyphendelim H\bibinitperiod}}}%
+        {{hash=5a74a4c223dcdd23d28d18c0e0d34165}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Changwoo},
+           giveni={C\bibinitperiod}}}%
+        {{hash=1856065377273dee4000f3aa0df74954}{%
+           family={Chung},
+           familyi={C\bibinitperiod},
+           given={Ki-Seok},
+           giveni={K\bibinithyphendelim S\bibinitperiod}}}%
+      }
+      \strng{namehash}{09e0a8c6dcf1678c0682b3143574fe13}
+      \strng{fullhash}{4e54e5480845448598057ca7aa117dd7}
+      \strng{bibnamehash}{4e54e5480845448598057ca7aa117dd7}
+      \strng{authorbibnamehash}{4e54e5480845448598057ca7aa117dd7}
+      \strng{authornamehash}{09e0a8c6dcf1678c0682b3143574fe13}
+      \strng{authorfullhash}{4e54e5480845448598057ca7aa117dd7}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In this paper, we propose a confidence-calibration method for predicting the winner of a famous multiplayer online battle arena (MOBA) game, League of Legends. In MOBA games, the dataset may contain a large amount of input-dependent noise; not all of such noise is observable. Hence, it is desirable to attempt a confidence-calibrated prediction. Unfortunately, most existing confidence calibration methods are pertaining to image and document classification tasks where consideration on uncertainty is not crucial. In this paper, we propose a novel calibration method that takes data uncertainty into consideration. The proposed method achieves an outstanding expected calibration error (ECE) (0.57\%) mainly owing to data uncertainty consideration, compared to a conventional temperature scaling method of which ECE value is 1.11\%.}
+      \field{booktitle}{2020 {{IEEE Conference}} on {{Games}} ({{CoG}})}
+      \field{issn}{2325-4289}
+      \field{month}{8}
+      \field{title}{A {{Confidence-Calibrated MOBA Game Winner Predictor}}}
+      \field{urlday}{10}
+      \field{urlmonth}{1}
+      \field{urlyear}{2024}
+      \field{year}{2020}
+      \field{urldateera}{ce}
+      \field{pages}{622\bibrangedash 625}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1109/CoG47356.2020.9231878
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/K4KRCP9K/Kim et al. - 2020 - A Confidence-Calibrated MOBA Game Winner Predictor.pdf;/Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/LHHQ8DL7/9231878.html
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/document/9231878
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/document/9231878
+      \endverb
+    \endentry
+    \entry{shenMachineLearningApproach2022}{inproceedings}{}
+      \name{author}{1}{}{%
+        {{hash=ec5d611e84740a8e1b07b367adac7b2c}{%
+           family={Shen},
+           familyi={S\bibinitperiod},
+           given={Qiyuan},
+           giveni={Q\bibinitperiod}}}%
+      }
+      \strng{namehash}{ec5d611e84740a8e1b07b367adac7b2c}
+      \strng{fullhash}{ec5d611e84740a8e1b07b367adac7b2c}
+      \strng{bibnamehash}{ec5d611e84740a8e1b07b367adac7b2c}
+      \strng{authorbibnamehash}{ec5d611e84740a8e1b07b367adac7b2c}
+      \strng{authornamehash}{ec5d611e84740a8e1b07b367adac7b2c}
+      \strng{authorfullhash}{ec5d611e84740a8e1b07b367adac7b2c}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Nowadays, the MOBA game is the game type with the most audiences and players around the world. Recently, the League of Legends has become an official sport as an e-sport among 37 events in the 2022 Asia Games held in Hangzhou. As the development in the e-sport, analytical skills are also involved in this field. The topic of this research is to use the machine learning approach to analyze the data of the League of Legends and make a prediction about the result of the game. In this research, the method of machine learning is applied to the dataset which records the first 10 minutes in diamond-ranked games. Several popular machine learning (AdaBoost, GradientBoost, RandomForest, ExtraTree, SVM, Naı̈ve Bayes, KNN, LogisticRegression, and DecisionTree) are applied to test the performance by cross-validation. Then several algorithms that outperform others are selected to make a voting classifier to predict the game result. The accuracy of the voting classifier is 72.68\%.}
+      \field{booktitle}{2022 {{International Conference}} on {{Machine Learning}} and {{Knowledge Engineering}} ({{MLKE}})}
+      \field{month}{2}
+      \field{title}{A Machine Learning Approach to Predict the Result of {{League}} of {{Legends}}}
+      \field{year}{2022}
+      \field{pages}{38\bibrangedash 45}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1109/MLKE55170.2022.00013
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/2EIL2KT2/Shen - 2022 - A machine learning approach to predict the result .pdf
+      \endverb
+      \keyw{League of Legends,MOBA,notion}
+    \endentry
+    \entry{zhangPredictionEsportsGame2021}{inproceedings}{}
+      \name{author}{1}{}{%
+        {{hash=92ca6fc6f7e1e9b4ffd8b1db45845521}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Yunhai},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{92ca6fc6f7e1e9b4ffd8b1db45845521}
+      \strng{fullhash}{92ca6fc6f7e1e9b4ffd8b1db45845521}
+      \strng{bibnamehash}{92ca6fc6f7e1e9b4ffd8b1db45845521}
+      \strng{authorbibnamehash}{92ca6fc6f7e1e9b4ffd8b1db45845521}
+      \strng{authornamehash}{92ca6fc6f7e1e9b4ffd8b1db45845521}
+      \strng{authorfullhash}{92ca6fc6f7e1e9b4ffd8b1db45845521}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Large e-sports games are becoming prevailing at an unprecedented around the world in recent years. Thus, an increasing amount of effort is put into game-predictions for worldwide audiences. However, most of the game prediction results are restricted by both the high uncertainty at the early-game stage, and the hardship of interpreting them for audiences. In this paper, we mainly focus on predicting the game results for one of the most popular games, League of Legends, using the first ten minute in-game features. This research uses Active Learning as the main method to evaluate the dataset that contains approximately ten thousand high-Elo ranked games. Then, the research compares the results of prediction based on our active learning algorithms and the random selection methods. The research experiment finally presents that the prediction result of the active learning model is similar to that of the traditional machine learning methods and outweigh the accuracy of random selection. The paper can conclude that we may save a lot of human-needed work and use a relatively small amount of initial datasets to generate more accurate game predictions by implementing active learning in large data-based e-sports matches.}
+      \field{booktitle}{{{ICMLCA}} 2021; 2nd {{International Conference}} on {{Machine Learning}} and {{Computer Application}}}
+      \field{month}{12}
+      \field{title}{Prediction of {{Esports Game Results Using Early Game Datasets}}}
+      \field{urlday}{5}
+      \field{urlmonth}{10}
+      \field{urlyear}{2023}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \field{pages}{1\bibrangedash 6}
+      \range{pages}{6}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/4ZFJA4YH/Zhang - 2021 - Prediction of Esports Game Results Using Early Gam.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/abstract/document/9736891
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/abstract/document/9736891
+      \endverb
+      \keyw{League of Legends,MOBA,notion}
+    \endentry
+    \entry{mondalDoesSupportRole2022}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{hash=bd147f001cfbdf73a818cc321fe2fbb7}{%
+           family={Mondal},
+           familyi={M\bibinitperiod},
+           given={Joyanta\bibnamedelima Jyoti},
+           giveni={J\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=4922a63d6c05bfd1302450ef424c1426}{%
+           family={Zahin},
+           familyi={Z\bibinitperiod},
+           given={Abrar},
+           giveni={A\bibinitperiod}}}%
+        {{hash=b5a73f152480bf5d86dae736f04fea3d}{%
+           family={Manab},
+           familyi={M\bibinitperiod},
+           given={Meem\bibnamedelima Arafat},
+           giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=b3867c50fcd5598944a4debc3631da70}{%
+           family={Zahidul\bibnamedelima Hasan},
+           familyi={Z\bibinitperiod\bibinitdelim H\bibinitperiod},
+           given={Mohammad},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{1fc388385ff3c443056854182771dc33}
+      \strng{fullhash}{3ddbb0db3371bcd745f1e0cbd8943a64}
+      \strng{bibnamehash}{3ddbb0db3371bcd745f1e0cbd8943a64}
+      \strng{authorbibnamehash}{3ddbb0db3371bcd745f1e0cbd8943a64}
+      \strng{authornamehash}{1fc388385ff3c443056854182771dc33}
+      \strng{authorfullhash}{3ddbb0db3371bcd745f1e0cbd8943a64}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Players make comments like "Mid Diff", "Top Diff", "JG Diff", etc. in the in-game chat at the end of almost every match of League of Legends. It represents the relative difference in in-game abilities of players of the same position that leads to a significant difference between two teams in determining the loss/win of a particular match. However, no player seems to pay enough heed to if there is a difference between players who play the Support role (or "SP Diff" to be specific) which also may have also helped them to win a match. In most places, this role is considered insignificant among players. But do they really not contribute towards the winning of a match? In our research, we investigate the impact of a player who contributes in a Support role toward match victory. Previous researches show collective intelligence (CI) to be a factor in team games that helps to analyze their capacity to work and win collectively. To our knowledge, this is the first work that focuses on the contribution of any single particular role out of the full team of five players toward the victory of a match. We also create a custom dataset based on the match statistics and match-specific performances of different Support role players and evaluate if the outcomes and performance shown by a particular role are crucial enough to the world of teams in competitive online video games, where intensive, self-organized, and time-pressured cooperation takes place entirely online. The results show a stronger correlation between a certain support player's performance and the match result than usually thought of. This points towards more reliable match result prediction in the game. We make the dataset publicly available at https://www.kaggle.com/datasets/joyanta180199/lol-sp}
+      \field{booktitle}{2022 25th {{International Conference}} on {{Computer}} and {{Information Technology}} ({{ICCIT}})}
+      \field{month}{12}
+      \field{shorttitle}{Does {{A Support Role Player}} Really {{Create Difference}} towards {{Triumph}}?}
+      \field{title}{Does {{A Support Role Player}} Really {{Create Difference}} towards {{Triumph}}? {{Analyzing Individual Performances}} of {{Specific Role Players}} to {{Predict Victory}} in {{League}} of {{Legends}}}
+      \field{urlday}{5}
+      \field{urlmonth}{10}
+      \field{urlyear}{2023}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \field{pages}{768\bibrangedash 773}
+      \range{pages}{6}
+      \verb{doi}
+      \verb 10.1109/ICCIT57492.2022.10055689
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/2B76SXH6/Mondal et al. - 2022 - Does A Support Role Player really Create Differenc.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/abstract/document/10055689
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/abstract/document/10055689
+      \endverb
+      \keyw{League of Legends,MOBA,notion}
+    \endentry
+    \entry{raizinFileMapMOBA2013}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=e10124d720c6e036dc2e958a353bbb54}{%
+           family={Raizin},
+           familyi={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{e10124d720c6e036dc2e958a353bbb54}
+      \strng{fullhash}{e10124d720c6e036dc2e958a353bbb54}
+      \strng{bibnamehash}{e10124d720c6e036dc2e958a353bbb54}
+      \strng{authorbibnamehash}{e10124d720c6e036dc2e958a353bbb54}
+      \strng{authornamehash}{e10124d720c6e036dc2e958a353bbb54}
+      \strng{authorfullhash}{e10124d720c6e036dc2e958a353bbb54}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{langid}{english}
+      \field{month}{11}
+      \field{shorttitle}{File}
+      \field{title}{File:{{Map}} of {{MOBA}}.Svg - {{Wikipedia}}}
+      \field{urlday}{6}
+      \field{urlmonth}{3}
+      \field{urlyear}{2024}
+      \field{year}{2013}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/YCRB4SD7/FileMap_of_MOBA.html
+      \endverb
+      \verb{urlraw}
+      \verb https://commons.wikimedia.org/wiki/File:Map_of_MOBA.svg
+      \endverb
+      \verb{url}
+      \verb https://commons.wikimedia.org/wiki/File:Map_of_MOBA.svg
+      \endverb
+    \endentry
+    \entry{janssonNeuralNetworksStandardizing2022}{book}{}
+      \name{author}{2}{}{%
+        {{hash=aa26a6eb278b8e1b40687f29cdb35b3f}{%
+           family={Jansson},
+           familyi={J\bibinitperiod},
+           given={Andréas},
+           giveni={A\bibinitperiod}}}%
+        {{hash=2a7e811ff3637f6cc0a2b17722202375}{%
+           family={Karlsson},
+           familyi={K\bibinitperiod},
+           given={Erik},
+           giveni={E\bibinitperiod}}}%
+      }
+      \strng{namehash}{4485903bfd639d70e43eb1c838080f9a}
+      \strng{fullhash}{8d9a6246526ebbf2ae00deaaffaeee1b}
+      \strng{bibnamehash}{8d9a6246526ebbf2ae00deaaffaeee1b}
+      \strng{authorbibnamehash}{8d9a6246526ebbf2ae00deaaffaeee1b}
+      \strng{authornamehash}{4485903bfd639d70e43eb1c838080f9a}
+      \strng{authorfullhash}{8d9a6246526ebbf2ae00deaaffaeee1b}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{DiVA portal is a finding tool for research publications and student theses written at the following 50 universities and research institutions.}
+      \field{langid}{english}
+      \field{title}{Neural {{Networks}} for {{Standardizing Ratings}} in {{League}} of {{Legends}}}
+      \field{urlday}{9}
+      \field{urlmonth}{12}
+      \field{urlyear}{2023}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/LLJ4N74X/Jansson und Karlsson - 2022 - Neural Networks for Standardizing Ratings inLeague.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://urn.kb.se/resolve?urn=urn:nbn:se:oru:diva-102668
+      \endverb
+      \verb{url}
+      \verb https://urn.kb.se/resolve?urn=urn:nbn:se:oru:diva-102668
+      \endverb
+    \endentry
+    \entry{mccullochLogicalCalculusIdeas1943}{article}{}
+      \name{author}{2}{}{%
+        {{hash=1ccb147b2b2165266e6ce5900193e687}{%
+           family={McCulloch},
+           familyi={M\bibinitperiod},
+           given={Warren\bibnamedelima S.},
+           giveni={W\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=c5a56e799cdf785e814246c091d36e73}{%
+           family={Pitts},
+           familyi={P\bibinitperiod},
+           given={Walter},
+           giveni={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{7f7f224a061f30b79621c80f73c80541}
+      \strng{fullhash}{816477c5724040789c6fe02e3968dc62}
+      \strng{bibnamehash}{816477c5724040789c6fe02e3968dc62}
+      \strng{authorbibnamehash}{816477c5724040789c6fe02e3968dc62}
+      \strng{authornamehash}{7f7f224a061f30b79621c80f73c80541}
+      \strng{authorfullhash}{816477c5724040789c6fe02e3968dc62}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Because of the ``all-or-none'' character of nervous activity, neural events and the relations among them can be treated by means of propositional logic. It is found that the behavior of every net can be described in these terms, with the addition of more complicated logical means for nets containing circles; and that for any logical expression satisfying certain conditions, one can find a net behaving in the fashion it describes. It is shown that many particular choices among possible neurophysiological assumptions are equivalent, in the sense that for every net behaving under one assumption, there exists another net which behaves under the other and gives the same results, although perhaps not in the same time. Various applications of the calculus are discussed.}
+      \field{issn}{1522-9602}
+      \field{journaltitle}{The bulletin of mathematical biophysics}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{number}{4}
+      \field{title}{A Logical Calculus of the Ideas Immanent in Nervous Activity}
+      \field{urlday}{1}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{volume}{5}
+      \field{year}{1943}
+      \field{urldateera}{ce}
+      \field{pages}{115\bibrangedash 133}
+      \range{pages}{19}
+      \verb{doi}
+      \verb 10.1007/BF02478259
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/YECLVBD6/McCulloch und Pitts - 1943 - A logical calculus of the ideas immanent in nervou.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/BF02478259
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/BF02478259
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{rosenblattPerceptronProbabilisticModel1958}{article}{}
+      \name{author}{1}{}{%
+        {{hash=1750cd87a34d44119e7a4aab9b8012c6}{%
+           family={Rosenblatt},
+           familyi={R\bibinitperiod},
+           given={F.},
+           giveni={F\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {US}%
+      }
+      \list{publisher}{1}{%
+        {American Psychological Association}%
+      }
+      \strng{namehash}{1750cd87a34d44119e7a4aab9b8012c6}
+      \strng{fullhash}{1750cd87a34d44119e7a4aab9b8012c6}
+      \strng{bibnamehash}{1750cd87a34d44119e7a4aab9b8012c6}
+      \strng{authorbibnamehash}{1750cd87a34d44119e7a4aab9b8012c6}
+      \strng{authornamehash}{1750cd87a34d44119e7a4aab9b8012c6}
+      \strng{authorfullhash}{1750cd87a34d44119e7a4aab9b8012c6}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{To answer the questions of how information about the physical world is sensed, in what form is information remembered, and how does information retained in memory influence recognition and behavior, a theory is developed for a hypothetical nervous system called a perceptron. The theory serves as a bridge between biophysics and psychology. It is possible to predict learning curves from neurological variables and vice versa. The quantitative statistical approach is fruitful in the understanding of the organization of cognitive systems. 18 references. (PsycINFO Database Record (c) 2016 APA, all rights reserved)}
+      \field{issn}{1939-1471}
+      \field{journaltitle}{Psychological Review}
+      \field{number}{6}
+      \field{shorttitle}{The Perceptron}
+      \field{title}{The Perceptron: {{A}} Probabilistic Model for Information Storage and Organization in the Brain}
+      \field{volume}{65}
+      \field{year}{1958}
+      \field{pages}{386\bibrangedash 408}
+      \range{pages}{23}
+      \verb{doi}
+      \verb 10.1037/h0042519
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/BDLV7JLH/Rosenblatt - 1958 - The perceptron A probabilistic model for informat.pdf
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{bridleProbabilisticInterpretationFeedforward1990}{inproceedings}{}
+      \name{author}{1}{}{%
+        {{hash=c10596a03b22bcd5c707c616753de154}{%
+           family={Bridle},
+           familyi={B\bibinitperiod},
+           given={John\bibnamedelima S.},
+           giveni={J\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=a1e8ebdada6e9d83ea0c7bc2ee7f3f5b}{%
+           family={Soulié},
+           familyi={S\bibinitperiod},
+           given={Françoise\bibnamedelima Fogelman},
+           giveni={F\bibinitperiod\bibinitdelim F\bibinitperiod}}}%
+        {{hash=401dd5cd5880290da6833a6a4872aa49}{%
+           family={Hérault},
+           familyi={H\bibinitperiod},
+           given={Jeanny},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Berlin, Heidelberg}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{c10596a03b22bcd5c707c616753de154}
+      \strng{fullhash}{c10596a03b22bcd5c707c616753de154}
+      \strng{bibnamehash}{c10596a03b22bcd5c707c616753de154}
+      \strng{authorbibnamehash}{c10596a03b22bcd5c707c616753de154}
+      \strng{authornamehash}{c10596a03b22bcd5c707c616753de154}
+      \strng{authorfullhash}{c10596a03b22bcd5c707c616753de154}
+      \strng{editorbibnamehash}{400dd7cb43b6af146ccee9cce49ba672}
+      \strng{editornamehash}{69bfff4f142171eff6ce27bf296dea4e}
+      \strng{editorfullhash}{400dd7cb43b6af146ccee9cce49ba672}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We are concerned with feed-forward non-linear networks (multi-layer perceptrons, or MLPs) with multiple outputs. We wish to treat the outputs of the network as probabilities of alternatives (e.g. pattern classes), conditioned on the inputs. We look for appropriate output non-linearities and for appropriate criteria for adaptation of the parameters of the network (e.g. weights). We explain two modifications: probability scoring, which is an alternative to squared error minimisation, and a normalised exponential (softmax) multi-input generalisation of the logistic non-linearity. The two modifications together result in quite simple arithmetic, and hardware implementation is not difficult either. The use of radial units (squared distance instead of dot product) immediately before the softmax output stage produces a network which computes posterior distributions over class labels based on an assumption of Gaussian within-class distributions. However the training, which uses cross-class information, can result in better performance at class discrimination than the usual within-class training method, unless the within-class distribution assumptions are actually correct.}
+      \field{booktitle}{Neurocomputing}
+      \field{isbn}{978-3-642-76153-9}
+      \field{langid}{english}
+      \field{series}{{{NATO ASI Series}}}
+      \field{title}{Probabilistic {{Interpretation}} of {{Feedforward Classification Network Outputs}}, with {{Relationships}} to {{Statistical Pattern Recognition}}}
+      \field{year}{1990}
+      \field{pages}{227\bibrangedash 236}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1007/978-3-642-76153-9_28
+      \endverb
+      \keyw{Boltzmann Machine,Class Label,Hide Markov Model,Posterior Distribution,Statistical Pattern Recognition}
+    \endentry
+    \entry{hornikMultilayerFeedforwardNetworks1989}{article}{}
+      \name{author}{3}{}{%
+        {{hash=bec8dd1340457a82c21b54971e4c9417}{%
+           family={Hornik},
+           familyi={H\bibinitperiod},
+           given={Kurt},
+           giveni={K\bibinitperiod}}}%
+        {{hash=17a26ba07299c37a45cc2475a9f3bc8d}{%
+           family={Stinchcombe},
+           familyi={S\bibinitperiod},
+           given={Maxwell},
+           giveni={M\bibinitperiod}}}%
+        {{hash=426e452a5ec8e692f7740ce0d3e3655c}{%
+           family={White},
+           familyi={W\bibinitperiod},
+           given={Halbert},
+           giveni={H\bibinitperiod}}}%
+      }
+      \strng{namehash}{a8d7f46f242b5a2ff80ecb656326c2de}
+      \strng{fullhash}{31166c18fa8ee825c1eb4693189f9e2a}
+      \strng{bibnamehash}{31166c18fa8ee825c1eb4693189f9e2a}
+      \strng{authorbibnamehash}{31166c18fa8ee825c1eb4693189f9e2a}
+      \strng{authornamehash}{a8d7f46f242b5a2ff80ecb656326c2de}
+      \strng{authorfullhash}{31166c18fa8ee825c1eb4693189f9e2a}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{This paper rigorously establishes thut standard rnultiluyer feedforward networks with as f\&v us one hidden layer using arbitrary squashing functions ure capable of upproximating uny Bore1 measurable function from one finite dimensional space to another to any desired degree of uccuracy, provided sujficirntly muny hidden units are available. In this sense, multilayer feedforward networks are u class of universul rlpproximators.}
+      \field{issn}{08936080}
+      \field{journaltitle}{Neural Networks}
+      \field{langid}{english}
+      \field{month}{1}
+      \field{number}{5}
+      \field{title}{Multilayer Feedforward Networks Are Universal Approximators}
+      \field{urlday}{2}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{volume}{2}
+      \field{year}{1989}
+      \field{urldateera}{ce}
+      \field{pages}{359\bibrangedash 366}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1016/0893-6080(89)90020-8
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/AGQTPNP4/Hornik et al. - 1989 - Multilayer feedforward networks are universal appr.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/0893608089900208
+      \endverb
+      \verb{url}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/0893608089900208
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{rumelhartLearningRepresentationsBackpropagating1986}{article}{}
+      \name{author}{3}{}{%
+        {{hash=55cd5380bb5b15032a6d5a2015f56e3f}{%
+           family={Rumelhart},
+           familyi={R\bibinitperiod},
+           given={David\bibnamedelima E.},
+           giveni={D\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=813bd95fe553e6079cd53a567b238287}{%
+           family={Hinton},
+           familyi={H\bibinitperiod},
+           given={Geoffrey\bibnamedelima E.},
+           giveni={G\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=6cbc29ad7fd57ffdb9ed4728418fd988}{%
+           family={Williams},
+           familyi={W\bibinitperiod},
+           given={Ronald\bibnamedelima J.},
+           giveni={R\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Nature Publishing Group}%
+      }
+      \strng{namehash}{3c6614c24b144f1599c64619f275bade}
+      \strng{fullhash}{fd75cea68d6982b503a0cd84f7cc7b51}
+      \strng{bibnamehash}{fd75cea68d6982b503a0cd84f7cc7b51}
+      \strng{authorbibnamehash}{fd75cea68d6982b503a0cd84f7cc7b51}
+      \strng{authornamehash}{3c6614c24b144f1599c64619f275bade}
+      \strng{authorfullhash}{fd75cea68d6982b503a0cd84f7cc7b51}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We describe a new learning procedure, back-propagation, for networks of neurone-like units. The procedure repeatedly adjusts the weights of the connections in the network so as to minimize a measure of the difference between the actual output vector of the net and the desired output vector. As a result of the weight adjustments, internal `hidden' units which are not part of the input or output come to represent important features of the task domain, and the regularities in the task are captured by the interactions of these units. The ability to create useful new features distinguishes back-propagation from earlier, simpler methods such as the perceptron-convergence procedure1.}
+      \field{issn}{1476-4687}
+      \field{journaltitle}{Nature}
+      \field{langid}{english}
+      \field{month}{10}
+      \field{number}{6088}
+      \field{title}{Learning Representations by Back-Propagating Errors}
+      \field{urlday}{2}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{volume}{323}
+      \field{year}{1986}
+      \field{urldateera}{ce}
+      \field{pages}{533\bibrangedash 536}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1038/323533a0
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/9NH839CL/Rumelhart et al. - 1986 - Learning representations by back-propagating error.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.nature.com/articles/323533a0
+      \endverb
+      \verb{url}
+      \verb https://www.nature.com/articles/323533a0
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{lecunDeepLearning2015}{article}{}
+      \name{author}{3}{}{%
+        {{hash=6a1aa6b7eab12b931ca7c7e3f927231d}{%
+           family={LeCun},
+           familyi={L\bibinitperiod},
+           given={Yann},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=40a8e4774982146adc2688546f54efb2}{%
+           family={Bengio},
+           familyi={B\bibinitperiod},
+           given={Yoshua},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=9a8750ccdb2a4cf14d2655face1ce016}{%
+           family={Hinton},
+           familyi={H\bibinitperiod},
+           given={Geoffrey},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{9e4c6012409dc8dd9b2aa198a2059804}
+      \strng{fullhash}{c6c75bd00ce5a488e91a749d8383b3df}
+      \strng{bibnamehash}{c6c75bd00ce5a488e91a749d8383b3df}
+      \strng{authorbibnamehash}{c6c75bd00ce5a488e91a749d8383b3df}
+      \strng{authornamehash}{9e4c6012409dc8dd9b2aa198a2059804}
+      \strng{authorfullhash}{c6c75bd00ce5a488e91a749d8383b3df}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0028-0836, 1476-4687}
+      \field{journaltitle}{Nature}
+      \field{langid}{english}
+      \field{month}{5}
+      \field{number}{7553}
+      \field{title}{Deep Learning}
+      \field{urlday}{1}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{volume}{521}
+      \field{year}{2015}
+      \field{urldateera}{ce}
+      \field{pages}{436\bibrangedash 444}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1038/nature14539
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/TKSDZFUV/LeCun et al. - 2015 - Deep learning.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.nature.com/articles/nature14539
+      \endverb
+      \verb{url}
+      \verb https://www.nature.com/articles/nature14539
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{elmanFindingStructureTime1990}{article}{}
+      \name{author}{1}{}{%
+        {{hash=d5a20a1ebd7891ecfcfd79254de20395}{%
+           family={Elman},
+           familyi={E\bibinitperiod},
+           given={Jeffrey\bibnamedelima L.},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \strng{namehash}{d5a20a1ebd7891ecfcfd79254de20395}
+      \strng{fullhash}{d5a20a1ebd7891ecfcfd79254de20395}
+      \strng{bibnamehash}{d5a20a1ebd7891ecfcfd79254de20395}
+      \strng{authorbibnamehash}{d5a20a1ebd7891ecfcfd79254de20395}
+      \strng{authornamehash}{d5a20a1ebd7891ecfcfd79254de20395}
+      \strng{authorfullhash}{d5a20a1ebd7891ecfcfd79254de20395}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Time underlies many interesting human behaviors. Thus, the question of how to represent time in connectionist models is very important. One approach is to represent time implicitly by its effects on processing rather than explicitly (as in a spatial representation). The current report develops a proposal along these lines first described by Jordan (1986) which involves the use of recurrent links in order to provide networks with a dynamic memory. In this approach, hidden unit patterns are fed back to themselves: the internal representations which develop thus reflect task demands in the context of prior internal states. A set of simulations is reported which range from relatively simple problems (temporal version of XOR) to discovering syntactic/semantic features for words. The networks are able to learn interesting internal representations which incorporate task demands with memory demands: indeed, in this approach the notion of memory is inextricably bound up with task processing. These representations reveal a rich structure, which allows them to be highly context-dependent, while also expressing generalizations across classes of items. These representations suggest a method for representing lexical categories and the type/token distinction.}
+      \field{issn}{1551-6709}
+      \field{journaltitle}{Cognitive Science}
+      \field{langid}{english}
+      \field{number}{2}
+      \field{title}{Finding {{Structure}} in {{Time}}}
+      \field{urlday}{3}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{volume}{14}
+      \field{year}{1990}
+      \field{urldateera}{ce}
+      \field{pages}{179\bibrangedash 211}
+      \range{pages}{33}
+      \verb{doi}
+      \verb 10.1207/s15516709cog1402_1
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/5LLXR4N8/Elman - 1990 - Finding Structure in Time.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1207/s15516709cog1402_1
+      \endverb
+      \verb{url}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1207/s15516709cog1402_1
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{aratBackpropagationTimeRecurrent2019}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=3098a41ba4c8524e5022067b0f901ed8}{%
+           family={Arat},
+           familyi={A\bibinitperiod},
+           given={Mustafa\bibnamedelima Murat},
+           giveni={M\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{3098a41ba4c8524e5022067b0f901ed8}
+      \strng{fullhash}{3098a41ba4c8524e5022067b0f901ed8}
+      \strng{bibnamehash}{3098a41ba4c8524e5022067b0f901ed8}
+      \strng{authorbibnamehash}{3098a41ba4c8524e5022067b0f901ed8}
+      \strng{authornamehash}{3098a41ba4c8524e5022067b0f901ed8}
+      \strng{authorfullhash}{3098a41ba4c8524e5022067b0f901ed8}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Homepage}
+      \field{journaltitle}{Mustafa Murat ARAT}
+      \field{langid}{english}
+      \field{month}{2}
+      \field{title}{Backpropagation {{Through Time}} for {{Recurrent Neural Network}}}
+      \field{urlday}{21}
+      \field{urlmonth}{12}
+      \field{urlyear}{2023}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/WTR7U3TV/bptt-of-rnn.html
+      \endverb
+      \verb{urlraw}
+      \verb https://mmuratarat.github.io//2019-02-07/bptt-of-rnn
+      \endverb
+      \verb{url}
+      \verb https://mmuratarat.github.io//2019-02-07/bptt-of-rnn
+      \endverb
+    \endentry
+    \entry{bengioLearningLongtermDependencies1994}{article}{}
+      \name{author}{3}{}{%
+        {{hash=419350ebbeb4eba5351469f378dee007}{%
+           family={Bengio},
+           familyi={B\bibinitperiod},
+           given={Y.},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=fba0c25dc264271a2cad9bf44bc364b3}{%
+           family={Simard},
+           familyi={S\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=3b982eeab60ed3073c2e0601198b970a}{%
+           family={Frasconi},
+           familyi={F\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{2add44768609f802d4063b5c073cffb7}
+      \strng{fullhash}{5a77b4bc004e923d5e8c5809bb1d15cc}
+      \strng{bibnamehash}{5a77b4bc004e923d5e8c5809bb1d15cc}
+      \strng{authorbibnamehash}{5a77b4bc004e923d5e8c5809bb1d15cc}
+      \strng{authornamehash}{2add44768609f802d4063b5c073cffb7}
+      \strng{authorfullhash}{5a77b4bc004e923d5e8c5809bb1d15cc}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Recurrent neural networks can be used to map input sequences to output sequences, such as for recognition, production or prediction problems. However, practical difficulties have been reported in training recurrent neural networks to perform tasks in which the temporal contingencies present in the input/output sequences span long intervals. We show why gradient based learning algorithms face an increasingly difficult problem as the duration of the dependencies to be captured increases. These results expose a trade-off between efficient learning by gradient descent and latching on information for long periods. Based on an understanding of this problem, alternatives to standard gradient descent are considered.{$<>$}}
+      \field{issn}{1941-0093}
+      \field{journaltitle}{IEEE Transactions on Neural Networks}
+      \field{month}{3}
+      \field{number}{2}
+      \field{title}{Learning Long-Term Dependencies with Gradient Descent Is Difficult}
+      \field{urlday}{7}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{volume}{5}
+      \field{year}{1994}
+      \field{urldateera}{ce}
+      \field{pages}{157\bibrangedash 166}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1109/72.279181
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/IZCICZ59/Bengio et al. - 1994 - Learning long-term dependencies with gradient desc.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/abstract/document/279181?casa_token=f5w3HVDYejMAAAAA:oY_D8xnIsGbMdzLZuRzFwX-ED93aitQCWu85Y_VyBD1jmYf_KD9ILUZ8gknQ8ONf34w6LUU
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/abstract/document/279181?casa_token=f5w3HVDYejMAAAAA:oY_D8xnIsGbMdzLZuRzFwX-ED93aitQCWu85Y_VyBD1jmYf_KD9ILUZ8gknQ8ONf34w6LUU
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{pascanuDifficultyTrainingRecurrent2013}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{hash=7045b009b04d57bd2e19b5dfa0864d4f}{%
+           family={Pascanu},
+           familyi={P\bibinitperiod},
+           given={Razvan},
+           giveni={R\bibinitperiod}}}%
+        {{hash=a2d359b12ca2fadf0b40136a73f021bb}{%
+           family={Mikolov},
+           familyi={M\bibinitperiod},
+           given={Tomas},
+           giveni={T\bibinitperiod}}}%
+        {{hash=40a8e4774982146adc2688546f54efb2}{%
+           family={Bengio},
+           familyi={B\bibinitperiod},
+           given={Yoshua},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {PMLR}%
+      }
+      \strng{namehash}{ddea4a14df69745e0b708bc055e9ad09}
+      \strng{fullhash}{219d705befe0e5043ea8e48c4048f89a}
+      \strng{bibnamehash}{219d705befe0e5043ea8e48c4048f89a}
+      \strng{authorbibnamehash}{219d705befe0e5043ea8e48c4048f89a}
+      \strng{authornamehash}{ddea4a14df69745e0b708bc055e9ad09}
+      \strng{authorfullhash}{219d705befe0e5043ea8e48c4048f89a}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{There are two widely known issues with properly training recurrent neural networks, the vanishing and the exploding gradient problems detailed in Bengio et al. (1994). In this paper we attempt to improve the understanding of the underlying issues by exploring these problems from an analytical, a geometric and a dynamical systems perspective. Our analysis is used to justify a simple yet effective solution. We propose a gradient norm clipping strategy to deal with exploding gradients and a soft constraint for the vanishing gradients problem. We validate empirically our hypothesis and proposed solutions in the experimental section.}
+      \field{booktitle}{Proceedings of the 30th {{International Conference}} on {{Machine Learning}}}
+      \field{issn}{1938-7228}
+      \field{langid}{english}
+      \field{month}{5}
+      \field{title}{On the Difficulty of Training Recurrent Neural Networks}
+      \field{urlday}{22}
+      \field{urlmonth}{12}
+      \field{urlyear}{2023}
+      \field{year}{2013}
+      \field{urldateera}{ce}
+      \field{pages}{1310\bibrangedash 1318}
+      \range{pages}{9}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/Q485DY59/Pascanu et al. - 2013 - On the difficulty of training recurrent neural net.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://proceedings.mlr.press/v28/pascanu13.html
+      \endverb
+      \verb{url}
+      \verb https://proceedings.mlr.press/v28/pascanu13.html
+      \endverb
+    \endentry
+    \entry{sutskeverTrainingRecurrentNeural2013}{thesis}{}
+      \name{author}{1}{}{%
+        {{hash=8d569d1d5b8b5a7836017a98b430f959}{%
+           family={Sutskever},
+           familyi={S\bibinitperiod},
+           given={Ilya},
+           giveni={I\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {University of Toronto}%
+      }
+      \list{location}{1}{%
+        {Toronto, ON, Canada}%
+      }
+      \strng{namehash}{8d569d1d5b8b5a7836017a98b430f959}
+      \strng{fullhash}{8d569d1d5b8b5a7836017a98b430f959}
+      \strng{bibnamehash}{8d569d1d5b8b5a7836017a98b430f959}
+      \strng{authorbibnamehash}{8d569d1d5b8b5a7836017a98b430f959}
+      \strng{authornamehash}{8d569d1d5b8b5a7836017a98b430f959}
+      \strng{authorfullhash}{8d569d1d5b8b5a7836017a98b430f959}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Training Recurrent Neural Networks}
+      \field{type}{phdthesis}
+      \field{urlday}{1}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{year}{2013}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/ZHED2SV5/ilya_sutskever_phd_thesis.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.cs.utoronto.ca/~ilya/pubs/ilya_sutskever_phd_thesis.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.cs.utoronto.ca/~ilya/pubs/ilya_sutskever_phd_thesis.pdf
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{zhaoMachineHealthMonitoring2018}{article}{}
+      \name{author}{6}{}{%
+        {{hash=5db4068796cde560b4fd3829096ef6c5}{%
+           family={Zhao},
+           familyi={Z\bibinitperiod},
+           given={Rui},
+           giveni={R\bibinitperiod}}}%
+        {{hash=0f0e360732d32d6370a6913ac6367487}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Dongzhe},
+           giveni={D\bibinitperiod}}}%
+        {{hash=4e1638ee2dbd213e11cf2c81b8227e8b}{%
+           family={Yan},
+           familyi={Y\bibinitperiod},
+           given={Ruqiang},
+           giveni={R\bibinitperiod}}}%
+        {{hash=67e409f5440ed1814db213256b249e30}{%
+           family={Mao},
+           familyi={M\bibinitperiod},
+           given={Kezhi},
+           giveni={K\bibinitperiod}}}%
+        {{hash=246cb85f882f7bf92a18926a694d5c30}{%
+           family={Shen},
+           familyi={S\bibinitperiod},
+           given={Fei},
+           giveni={F\bibinitperiod}}}%
+        {{hash=4e570310fdff72e5a3d618c556248e80}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Jinjiang},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{3de343d8a2fa22423e17519591e84e38}
+      \strng{fullhash}{d4da92f9f96b041768cc07cafcbd577b}
+      \strng{bibnamehash}{d4da92f9f96b041768cc07cafcbd577b}
+      \strng{authorbibnamehash}{d4da92f9f96b041768cc07cafcbd577b}
+      \strng{authornamehash}{3de343d8a2fa22423e17519591e84e38}
+      \strng{authorfullhash}{d4da92f9f96b041768cc07cafcbd577b}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In modern industries, machine health monitoring systems (MHMS) have been applied wildly with the goal of realizing predictive maintenance including failures tracking, downtime reduction, and assets preservation. In the era of big machinery data, data-driven MHMS have achieved remarkable results in the detection of faults after the occurrence of certain failures (diagnosis) and prediction of the future working conditions and the remaining useful life (prognosis). The numerical representation for raw sensory data is the key stone for various successful MHMS. Conventional methods are the labor-extensive as they usually depend on handcrafted features, which require expert knowledge. Inspired by the success of deep learning methods that redefine representation learning from raw data, we propose local feature-based gated recurrent unit (LFGRU) networks. It is a hybrid approach that combines handcrafted feature design with automatic feature learning for machine health monitoring. First, features from windows of input time series are extracted. Then, an enhanced bidirectional GRU network is designed and applied on the generated sequence of local features to learn the representation. A supervised learning layer is finally trained to predict machine condition. Experiments on three machine health monitoring tasks: tool wear prediction, gearbox fault diagnosis, and incipient bearing fault detection verify the effectiveness and generalization of the proposed LFGRU.}
+      \field{issn}{1557-9948}
+      \field{journaltitle}{IEEE Transactions on Industrial Electronics}
+      \field{month}{2}
+      \field{number}{2}
+      \field{title}{Machine {{Health Monitoring Using Local Feature-Based Gated Recurrent Unit Networks}}}
+      \field{urlday}{24}
+      \field{urlmonth}{2}
+      \field{urlyear}{2024}
+      \field{volume}{65}
+      \field{year}{2018}
+      \field{urldateera}{ce}
+      \field{pages}{1539\bibrangedash 1548}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1109/TIE.2017.2733438
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/KBNFD6FE/Zhao et al. - 2018 - Machine Health Monitoring Using Local Feature-Base.pdf;/Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/MRMKLIZH/7997605.html
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/abstract/document/7997605?casa_token=u7k-YBUjNT0AAAAA:e9PEPAki0WeYV3o2jnV11-sDpj3Cnuz0jEwwn_dBHJOPNOyxOqManHOqaNqez4VhIb5YRdZxgeDE
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/abstract/document/7997605?casa_token=u7k-YBUjNT0AAAAA:e9PEPAki0WeYV3o2jnV11-sDpj3Cnuz0jEwwn_dBHJOPNOyxOqManHOqaNqez4VhIb5YRdZxgeDE
+      \endverb
+      \keyw{Computational modeling,Data mining,Fault diagnosis,feature engineering,Feature extraction,gated recurrent unit (GRU),Logic gates,machine health monitoring (MHM),Monitoring,Sensors,tool wear prediction}
+    \endentry
+    \entry{hochreiterLongShortTermMemory1997}{article}{}
+      \name{author}{2}{}{%
+        {{hash=41b31e29fb2bdbf9f5c9c1b0d5b3e815}{%
+           family={Hochreiter},
+           familyi={H\bibinitperiod},
+           given={Sepp},
+           giveni={S\bibinitperiod}}}%
+        {{hash=288bdbcfe1b91ad7484d7a24f74f99ed}{%
+           family={Schmidhuber},
+           familyi={S\bibinitperiod},
+           given={Jürgen},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{417a848243e595e742d2bfabbab6ea78}
+      \strng{fullhash}{4c2e1e2e1ac91e1df9d4f7b85ebe39b4}
+      \strng{bibnamehash}{4c2e1e2e1ac91e1df9d4f7b85ebe39b4}
+      \strng{authorbibnamehash}{4c2e1e2e1ac91e1df9d4f7b85ebe39b4}
+      \strng{authornamehash}{417a848243e595e742d2bfabbab6ea78}
+      \strng{authorfullhash}{4c2e1e2e1ac91e1df9d4f7b85ebe39b4}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Learning to store information over extended time intervals by recurrent backpropagation takes a very long time, mostly because of insufficient, decaying error backflow. We briefly review Hochreiter's (1991) analysis of this problem, then address it by introducing a novel, efficient, gradient based method called long short-term memory (LSTM). Truncating the gradient where this does not do harm, LSTM can learn to bridge minimal time lags in excess of 1000 discrete-time steps by enforcing constant error flow through constant error carousels within special units. Multiplicative gate units learn to open and close access to the constant error flow. LSTM is local in space and time; its computational complexity per time step and weight is O. 1. Our experiments with artificial data involve local, distributed, real-valued, and noisy pattern representations. In comparisons with real-time recurrent learning, back propagation through time, recurrent cascade correlation, Elman nets, and neural sequence chunking, LSTM leads to many more successful runs, and learns much faster. LSTM also solves complex, artificial long-time-lag tasks that have never been solved by previous recurrent network algorithms.}
+      \field{issn}{0899-7667}
+      \field{journaltitle}{Neural Computation}
+      \field{month}{11}
+      \field{number}{8}
+      \field{title}{Long {{Short-Term Memory}}}
+      \field{urlday}{1}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{volume}{9}
+      \field{year}{1997}
+      \field{urldateera}{ce}
+      \field{pages}{1735\bibrangedash 1780}
+      \range{pages}{46}
+      \verb{doi}
+      \verb 10.1162/neco.1997.9.8.1735
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/PIHAK9ST/lstm.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/abstract/document/6795963
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/abstract/document/6795963
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{choLearningPhraseRepresentations2014}{misc}{}
+      \name{author}{7}{}{%
+        {{hash=3da7501a79d9346572c7fd6e41b615df}{%
+           family={Cho},
+           familyi={C\bibinitperiod},
+           given={Kyunghyun},
+           giveni={K\bibinitperiod}}}%
+        {{hash=cb097bafff910a349c08f177d352edb0}{%
+           family={{van Merrienboer}},
+           familyi={v\bibinitperiod},
+           given={Bart},
+           giveni={B\bibinitperiod}}}%
+        {{hash=2adc0c92c308f233c731321d55efe58f}{%
+           family={Gulcehre},
+           familyi={G\bibinitperiod},
+           given={Caglar},
+           giveni={C\bibinitperiod}}}%
+        {{hash=6d80adec79a13a33e73215c5f46f1605}{%
+           family={Bahdanau},
+           familyi={B\bibinitperiod},
+           given={Dzmitry},
+           giveni={D\bibinitperiod}}}%
+        {{hash=6deedc795e51da1bc7fd6289ab321a48}{%
+           family={Bougares},
+           familyi={B\bibinitperiod},
+           given={Fethi},
+           giveni={F\bibinitperiod}}}%
+        {{hash=449689e8c1ced50f608244e3a96fe6d3}{%
+           family={Schwenk},
+           familyi={S\bibinitperiod},
+           given={Holger},
+           giveni={H\bibinitperiod}}}%
+        {{hash=40a8e4774982146adc2688546f54efb2}{%
+           family={Bengio},
+           familyi={B\bibinitperiod},
+           given={Yoshua},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {arXiv}%
+      }
+      \strng{namehash}{9b1920db887fe0d658725c1e606b61f4}
+      \strng{fullhash}{5359397a5d44e88d06c262f5fc48d6f0}
+      \strng{bibnamehash}{5359397a5d44e88d06c262f5fc48d6f0}
+      \strng{authorbibnamehash}{5359397a5d44e88d06c262f5fc48d6f0}
+      \strng{authornamehash}{9b1920db887fe0d658725c1e606b61f4}
+      \strng{authorfullhash}{5359397a5d44e88d06c262f5fc48d6f0}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In this paper, we propose a novel neural network model called RNN Encoder-Decoder that consists of two recurrent neural networks (RNN). One RNN encodes a sequence of symbols into a fixed-length vector representation, and the other decodes the representation into another sequence of symbols. The encoder and decoder of the proposed model are jointly trained to maximize the conditional probability of a target sequence given a source sequence. The performance of a statistical machine translation system is empirically found to improve by using the conditional probabilities of phrase pairs computed by the RNN Encoder-Decoder as an additional feature in the existing log-linear model. Qualitatively, we show that the proposed model learns a semantically and syntactically meaningful representation of linguistic phrases.}
+      \field{eprintclass}{cs, stat}
+      \field{eprinttype}{arxiv}
+      \field{month}{9}
+      \field{number}{arXiv:1406.1078}
+      \field{title}{Learning {{Phrase Representations}} Using {{RNN Encoder-Decoder}} for {{Statistical Machine Translation}}}
+      \field{urlday}{3}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{year}{2014}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.1406.1078
+      \endverb
+      \verb{eprint}
+      \verb 1406.1078
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/SMU6BTJW/Cho et al. - 2014 - Learning Phrase Representations using RNN Encoder-.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1406.1078
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1406.1078
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{vanhoudtReviewLongShortterm2020}{article}{}
+      \name{author}{3}{}{%
+        {{hash=ebdce4c0d5960459978abca4977be45c}{%
+           family={Van\bibnamedelima Houdt},
+           familyi={V\bibinitperiod\bibinitdelim H\bibinitperiod},
+           given={Greg},
+           giveni={G\bibinitperiod}}}%
+        {{hash=8b48389d0da9468ddefdb0e347bcee3e}{%
+           family={Mosquera},
+           familyi={M\bibinitperiod},
+           given={Carlos},
+           giveni={C\bibinitperiod}}}%
+        {{hash=af51a13aef37b4f33dae1abc851d4814}{%
+           family={Nápoles},
+           familyi={N\bibinitperiod},
+           given={Gonzalo},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{baf7402cc8e20c5b7fe8de4714af8826}
+      \strng{fullhash}{4d3826b201df360bf36903b9f1b0db68}
+      \strng{bibnamehash}{4d3826b201df360bf36903b9f1b0db68}
+      \strng{authorbibnamehash}{4d3826b201df360bf36903b9f1b0db68}
+      \strng{authornamehash}{baf7402cc8e20c5b7fe8de4714af8826}
+      \strng{authorfullhash}{4d3826b201df360bf36903b9f1b0db68}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Long short-term memory (LSTM) has transformed both machine learning and neurocomputing fields. According to several online sources, this model has improved Google's speech recognition, greatly improved machine translations on Google Translate, and the answers of Amazon's Alexa. This neural system is also employed by Facebook, reaching over 4 billion LSTM-based translations per day as of 2017. Interestingly, recurrent neural networks had shown a rather discrete performance until LSTM showed up. One reason for the success of this recurrent network lies in its ability to handle the exploding/vanishing gradient problem, which stands as a difficult issue to be circumvented when training recurrent or very deep neural networks. In this paper, we present a comprehensive review that covers LSTM's formulation and training, relevant applications reported in the literature and code resources implementing this model for a toy example.}
+      \field{issn}{1573-7462}
+      \field{journaltitle}{Artificial Intelligence Review}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{number}{8}
+      \field{title}{A Review on the Long Short-Term Memory Model}
+      \field{urlday}{1}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{volume}{53}
+      \field{year}{2020}
+      \field{urldateera}{ce}
+      \field{pages}{5929\bibrangedash 5955}
+      \range{pages}{27}
+      \verb{doi}
+      \verb 10.1007/s10462-020-09838-1
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/EB5JZJMH/Van Houdt et al. - 2020 - A review on the long short-term memory model.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/s10462-020-09838-1
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/s10462-020-09838-1
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{deyGatevariantsGatedRecurrent2017}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{hash=cdbe375f4349622904210be2071a2806}{%
+           family={Dey},
+           familyi={D\bibinitperiod},
+           given={Rahul},
+           giveni={R\bibinitperiod}}}%
+        {{hash=562329d35461b8ad79d7293e6f6f7164}{%
+           family={Salem},
+           familyi={S\bibinitperiod},
+           given={Fathi\bibnamedelima M.},
+           giveni={F\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{4a8f20a7ac0148bbcf8c23f49aeef9be}
+      \strng{fullhash}{0ffcc0752db5a42176e68e794ddc16f3}
+      \strng{bibnamehash}{0ffcc0752db5a42176e68e794ddc16f3}
+      \strng{authorbibnamehash}{0ffcc0752db5a42176e68e794ddc16f3}
+      \strng{authornamehash}{4a8f20a7ac0148bbcf8c23f49aeef9be}
+      \strng{authorfullhash}{0ffcc0752db5a42176e68e794ddc16f3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The paper evaluates three variants of the Gated Recurrent Unit (GRU) in recurrent neural networks (RNNs) by retaining the structure and systematically reducing parameters in the update and reset gates. We evaluate the three variant GRU models on MNIST and IMDB datasets and show that these GRU-RNN variant models perform as well as the original GRU RNN model while reducing the computational expense. In this comparative study, we simply refer to the three variants as, respectively, GRU1, GRU2, and GRU3 RNNs.}
+      \field{booktitle}{2017 {{IEEE}} 60th {{International Midwest Symposium}} on {{Circuits}} and {{Systems}} ({{MWSCAS}})}
+      \field{issn}{1558-3899}
+      \field{month}{8}
+      \field{title}{Gate-Variants of {{Gated Recurrent Unit}} ({{GRU}}) Neural Networks}
+      \field{urlday}{7}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{year}{2017}
+      \field{urldateera}{ce}
+      \field{pages}{1597\bibrangedash 1600}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1109/MWSCAS.2017.8053243
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/L22XJBH5/Dey und Salem - 2017 - Gate-variants of Gated Recurrent Unit (GRU) neural.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/abstract/document/8053243?casa_token=aP9ZzK6D-7sAAAAA:FtaEMxjEzG7XgdwG6MKDiwSz1lZ2FDyft_3QzXh4WR8hI6TRH2o-WxoHZZ8DOIQHEM15C8U
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/abstract/document/8053243?casa_token=aP9ZzK6D-7sAAAAA:FtaEMxjEzG7XgdwG6MKDiwSz1lZ2FDyft_3QzXh4WR8hI6TRH2o-WxoHZZ8DOIQHEM15C8U
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{chungEmpiricalEvaluationGated2014}{misc}{}
+      \name{author}{4}{}{%
+        {{hash=7a79e6bb4ca772c9b3b38f4e9f45b83c}{%
+           family={Chung},
+           familyi={C\bibinitperiod},
+           given={Junyoung},
+           giveni={J\bibinitperiod}}}%
+        {{hash=2adc0c92c308f233c731321d55efe58f}{%
+           family={Gulcehre},
+           familyi={G\bibinitperiod},
+           given={Caglar},
+           giveni={C\bibinitperiod}}}%
+        {{hash=f8dfca934ead3a7cab6b2382a1baaaa1}{%
+           family={Cho},
+           familyi={C\bibinitperiod},
+           given={KyungHyun},
+           giveni={K\bibinitperiod}}}%
+        {{hash=40a8e4774982146adc2688546f54efb2}{%
+           family={Bengio},
+           familyi={B\bibinitperiod},
+           given={Yoshua},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {arXiv}%
+      }
+      \strng{namehash}{2000d0778084bb56905b1654d519f50f}
+      \strng{fullhash}{7f2d21710b1589de5a0a24526a0e0f03}
+      \strng{bibnamehash}{7f2d21710b1589de5a0a24526a0e0f03}
+      \strng{authorbibnamehash}{7f2d21710b1589de5a0a24526a0e0f03}
+      \strng{authornamehash}{2000d0778084bb56905b1654d519f50f}
+      \strng{authorfullhash}{7f2d21710b1589de5a0a24526a0e0f03}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In this paper we compare different types of recurrent units in recurrent neural networks (RNNs). Especially, we focus on more sophisticated units that implement a gating mechanism, such as a long short-term memory (LSTM) unit and a recently proposed gated recurrent unit (GRU). We evaluate these recurrent units on the tasks of polyphonic music modeling and speech signal modeling. Our experiments revealed that these advanced recurrent units are indeed better than more traditional recurrent units such as tanh units. Also, we found GRU to be comparable to LSTM.}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arxiv}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{number}{arXiv:1412.3555}
+      \field{title}{Empirical {{Evaluation}} of {{Gated Recurrent Neural Networks}} on {{Sequence Modeling}}}
+      \field{urlday}{26}
+      \field{urlmonth}{9}
+      \field{urlyear}{2023}
+      \field{year}{2014}
+      \field{urldateera}{ce}
+      \verb{eprint}
+      \verb 1412.3555
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/DCTY8S5M/Chung et al. - 2014 - Empirical Evaluation of Gated Recurrent Neural Net.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1412.3555
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1412.3555
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{bellman1961adaptive}{article}{}
+      \name{author}{1}{}{%
+        {{hash=3acba33176d80eb086ab17c2fe94f1ee}{%
+           family={Bellman},
+           familyi={B\bibinitperiod},
+           given={R},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{3acba33176d80eb086ab17c2fe94f1ee}
+      \strng{fullhash}{3acba33176d80eb086ab17c2fe94f1ee}
+      \strng{bibnamehash}{3acba33176d80eb086ab17c2fe94f1ee}
+      \strng{authorbibnamehash}{3acba33176d80eb086ab17c2fe94f1ee}
+      \strng{authornamehash}{3acba33176d80eb086ab17c2fe94f1ee}
+      \strng{authorfullhash}{3acba33176d80eb086ab17c2fe94f1ee}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Press, NJ}
+      \field{title}{Adaptive Control Processes; a Guided Tour, Princeton Univ}
+      \field{year}{1961}
+    \endentry
+    \entry{jovicReviewFeatureSelection2015}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{hash=e95688227c4f060548a0e2a6208eacfc}{%
+           family={Jovic},
+           familyi={J\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=9499f5e8cb10f2cd483b5975ed2c219d}{%
+           family={Brkic},
+           familyi={B\bibinitperiod},
+           given={K.},
+           giveni={K\bibinitperiod}}}%
+        {{hash=cc17586f0405bef29b1792fb6c752270}{%
+           family={Bogunovic},
+           familyi={B\bibinitperiod},
+           given={N.},
+           giveni={N\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Opatija, Croatia}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{b23082020b82da70553d999364be67b6}
+      \strng{fullhash}{b36e79aa686cc3e2b17a4a383160d803}
+      \strng{bibnamehash}{b36e79aa686cc3e2b17a4a383160d803}
+      \strng{authorbibnamehash}{b36e79aa686cc3e2b17a4a383160d803}
+      \strng{authornamehash}{b23082020b82da70553d999364be67b6}
+      \strng{authorfullhash}{b36e79aa686cc3e2b17a4a383160d803}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Feature selection (FS) methods can be used in data pre-processing to achieve efficient data reduction. This is useful for finding accurate data models. Since exhaustive search for optimal feature subset is infeasible in most cases, many search strategies have been proposed in literature. The usual applications of FS are in classification, clustering, and regression tasks. This review considers most of the commonly used FS techniques. Particular emphasis is on the application aspects. In addition to standard filter, wrapper, and embedded methods, we also provide insight into FS for recent hybrid approaches and other advanced topics.}
+      \field{booktitle}{2015 38th {{International Convention}} on {{Information}} and {{Communication Technology}}, {{Electronics}} and {{Microelectronics}} ({{MIPRO}})}
+      \field{isbn}{978-953-233-082-3}
+      \field{langid}{english}
+      \field{month}{5}
+      \field{title}{A Review of Feature Selection Methods with Applications}
+      \field{urlday}{1}
+      \field{urlmonth}{12}
+      \field{urlyear}{2023}
+      \field{year}{2015}
+      \field{urldateera}{ce}
+      \field{pages}{1200\bibrangedash 1205}
+      \range{pages}{6}
+      \verb{doi}
+      \verb 10.1109/MIPRO.2015.7160458
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/YTW4R424/Jovic et al. - 2015 - A review of feature selection methods with applica.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://ieeexplore.ieee.org/document/7160458/
+      \endverb
+      \verb{url}
+      \verb http://ieeexplore.ieee.org/document/7160458/
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{venkateshReviewFeatureSelection2019}{article}{}
+      \name{author}{2}{}{%
+        {{hash=498dec3700eda62744cbc7a0831ea0f4}{%
+           family={Venkatesh},
+           familyi={V\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod}}}%
+        {{hash=0071b28afa3e956fb709c3d4e0478ced}{%
+           family={Anuradha},
+           familyi={A\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{86038ebedc34a61f7fb0fa7c20088f0a}
+      \strng{fullhash}{2016d0e9d0167f93457b88615062e396}
+      \strng{bibnamehash}{2016d0e9d0167f93457b88615062e396}
+      \strng{authorbibnamehash}{2016d0e9d0167f93457b88615062e396}
+      \strng{authornamehash}{86038ebedc34a61f7fb0fa7c20088f0a}
+      \strng{authorfullhash}{2016d0e9d0167f93457b88615062e396}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{AbstractNowadays, being in digital era the data generated by various applications are increasing drastically both row-wise and column wise; this creates a bottleneck for analytics and also increases the burden of machine learning algorithms that work for pattern recognition. This cause of dimensionality can be handled through reduction techniques. The Dimensionality Reduction (DR) can be handled in two ways namely Feature Selection (FS) and Feature Extraction (FE). This paper focuses on a survey of feature selection methods, from this extensive survey we can conclude that most of the FS methods use static data. However, after the emergence of IoT and web-based applications, the data are generated dynamically and grow in a fast rate, so it is likely to have noisy data, it also hinders the performance of the algorithm. With the increase in the size of the data set, the scalability of the FS methods becomes jeopardized. So the existing DR algorithms do not address the issues with the dynamic data. Using FS methods not only reduces the burden of the data but also avoids overfitting of the model.}
+      \field{journaltitle}{Cybernetics and Information Technologies}
+      \field{langid}{english}
+      \field{month}{3}
+      \field{number}{1}
+      \field{title}{A {{Review}} of {{Feature Selection}} and {{Its Methods}}}
+      \field{urlday}{1}
+      \field{urlmonth}{12}
+      \field{urlyear}{2023}
+      \field{volume}{19}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \field{pages}{3\bibrangedash 26}
+      \range{pages}{24}
+      \verb{doi}
+      \verb 10.2478/cait-2019-0001
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/WZSX5FRG/Venkatesh und Anuradha - 2019 - A Review of Feature Selection and Its Methods.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://sciendo.com/article/10.2478/cait-2019-0001
+      \endverb
+      \verb{url}
+      \verb https://sciendo.com/article/10.2478/cait-2019-0001
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{guyonIntroductionVariableFeature2003}{article}{}
+      \name{author}{2}{}{%
+        {{hash=284a778b6c8e17f1aae38e288dc06036}{%
+           family={Guyon},
+           familyi={G\bibinitperiod},
+           given={Isabelle},
+           giveni={I\bibinitperiod}}}%
+        {{hash=2d94e9f30443c60219d6654ae426df98}{%
+           family={Elisseeff},
+           familyi={E\bibinitperiod},
+           given={Andre},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{e1556a53b433ff03ee66d9c631b120fa}
+      \strng{fullhash}{6482b2930aae0624329a32e856876b41}
+      \strng{bibnamehash}{6482b2930aae0624329a32e856876b41}
+      \strng{authorbibnamehash}{6482b2930aae0624329a32e856876b41}
+      \strng{authornamehash}{e1556a53b433ff03ee66d9c631b120fa}
+      \strng{authorfullhash}{6482b2930aae0624329a32e856876b41}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Variable and feature selection have become the focus of much research in areas of application for which datasets with tens or hundreds of thousands of variables are available. These areas include text processing of internet documents, gene expression array analysis, and combinatorial chemistry. The objective of variable selection is three-fold: improving the prediction performance of the predictors, providing faster and more cost-effective predictors, and providing a better understanding of the underlying process that generated the data. The contributions of this special issue cover a wide range of aspects of such problems: providing a better definition of the objective function, feature construction, feature ranking, multivariate feature selection, efficient search methods, and feature validity assessment methods.}
+      \field{journaltitle}{Journal of machine learning research}
+      \field{langid}{english}
+      \field{title}{An {{Introduction}} to {{Variable}} and {{Feature Selection}}}
+      \field{volume}{3}
+      \field{year}{2003}
+      \field{pages}{1157\bibrangedash 1182}
+      \range{pages}{26}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/ZEBH9EEP/Guyon und Elisseeff - An Introduction to Variable and Feature Selection.pdf
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{chandrashekarSurveyFeatureSelection2014}{article}{}
+      \name{author}{2}{}{%
+        {{hash=451b7d0d41016d0e1d03bfac86140432}{%
+           family={Chandrashekar},
+           familyi={C\bibinitperiod},
+           given={Girish},
+           giveni={G\bibinitperiod}}}%
+        {{hash=29fe0a8675f19f1b0400e111ed6bb957}{%
+           family={Sahin},
+           familyi={S\bibinitperiod},
+           given={Ferat},
+           giveni={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{5889ff9f0cf78e41d72e12193387b3b7}
+      \strng{fullhash}{08cb1c49490a8fd5919ae553ce1d7d0d}
+      \strng{bibnamehash}{08cb1c49490a8fd5919ae553ce1d7d0d}
+      \strng{authorbibnamehash}{08cb1c49490a8fd5919ae553ce1d7d0d}
+      \strng{authornamehash}{5889ff9f0cf78e41d72e12193387b3b7}
+      \strng{authorfullhash}{08cb1c49490a8fd5919ae553ce1d7d0d}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Plenty of feature selection methods are available in literature due to the availability of data with hundreds of variables leading to data with very high dimension. Feature selection methods provides us a way of reducing computation time, improving prediction performance, and a better understanding of the data in machine learning or pattern recognition applications. In this paper we provide an overview of some of the methods present in literature. The objective is to provide a generic introduction to variable elimination which can be applied to a wide array of machine learning problems. We focus on Filter, Wrapper and Embedded methods. We also apply some of the feature selection techniques on standard datasets to demonstrate the applicability of feature selection techniques.}
+      \field{issn}{00457906}
+      \field{journaltitle}{Computers \& Electrical Engineering}
+      \field{langid}{english}
+      \field{month}{1}
+      \field{number}{1}
+      \field{title}{A Survey on Feature Selection Methods}
+      \field{urlday}{1}
+      \field{urlmonth}{12}
+      \field{urlyear}{2023}
+      \field{volume}{40}
+      \field{year}{2014}
+      \field{urldateera}{ce}
+      \field{pages}{16\bibrangedash 28}
+      \range{pages}{13}
+      \verb{doi}
+      \verb 10.1016/j.compeleceng.2013.11.024
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/CXWEB3I6/Chandrashekar und Sahin - 2014 - A survey on feature selection methods.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0045790613003066
+      \endverb
+      \verb{url}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0045790613003066
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{friedmanGreedyFunctionApproximation2001}{article}{}
+      \name{author}{1}{}{%
+        {{hash=ce884cc144616c39e723a8fe2eb3c879}{%
+           family={Friedman},
+           familyi={F\bibinitperiod},
+           given={Jerome\bibnamedelima H.},
+           giveni={J\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Institute of Mathematical Statistics}%
+      }
+      \strng{namehash}{ce884cc144616c39e723a8fe2eb3c879}
+      \strng{fullhash}{ce884cc144616c39e723a8fe2eb3c879}
+      \strng{bibnamehash}{ce884cc144616c39e723a8fe2eb3c879}
+      \strng{authorbibnamehash}{ce884cc144616c39e723a8fe2eb3c879}
+      \strng{authornamehash}{ce884cc144616c39e723a8fe2eb3c879}
+      \strng{authorfullhash}{ce884cc144616c39e723a8fe2eb3c879}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Function estimation/approximation is viewed from the perspective of numerical optimization in function space, rather than parameter space. A connection is made between stagewise additive expansions and steepest-descent minimization. A general gradient descent "boosting" paradigm is developed for additive expansions based on any fitting criterion. Specific algorithms are presented for least-squares, least absolute deviation, and Huber-M loss functions for regression, and multiclass logistic likelihood for classification. Special enhancements are derived for the particular case where the individual additive components are regression trees, and tools for interpreting such "TreeBoost" models are presented. Gradient boosting of regression trees produces competitive, highly robust, interpretable procedures for both regression and classification, especially appropriate for mining less than clean data. Connections between this approach and the boosting methods of Freund and Shapire and Friedman, Hastie and Tibshirani are discussed.}
+      \field{eprinttype}{jstor}
+      \field{issn}{0090-5364}
+      \field{journaltitle}{The Annals of Statistics}
+      \field{number}{5}
+      \field{shorttitle}{Greedy {{Function Approximation}}}
+      \field{title}{Greedy {{Function Approximation}}: {{A Gradient Boosting Machine}}}
+      \field{urlday}{6}
+      \field{urlmonth}{3}
+      \field{urlyear}{2024}
+      \field{volume}{29}
+      \field{year}{2001}
+      \field{urldateera}{ce}
+      \field{pages}{1189\bibrangedash 1232}
+      \range{pages}{44}
+      \verb{eprint}
+      \verb 2699986
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/AT636YKI/Friedman - 2001 - Greedy Function Approximation A Gradient Boosting.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.jstor.org/stable/2699986
+      \endverb
+      \verb{url}
+      \verb https://www.jstor.org/stable/2699986
+      \endverb
+    \endentry
+    \entry{bentejacComparativeAnalysisGradient2021}{article}{}
+      \name{author}{3}{}{%
+        {{hash=921b0765deefa261b68c5ea740370209}{%
+           family={Bentéjac},
+           familyi={B\bibinitperiod},
+           given={Candice},
+           giveni={C\bibinitperiod}}}%
+        {{hash=14bd394214a4db7de8a70c8df7867811}{%
+           family={Csörgő},
+           familyi={C\bibinitperiod},
+           given={Anna},
+           giveni={A\bibinitperiod}}}%
+        {{hash=bdcc8c7477933cfe322a457315f1f7b9}{%
+           family={{Martínez-Muñoz}},
+           familyi={M\bibinitperiod},
+           given={Gonzalo},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{e204e14429fca07f42292b0f2cc16364}
+      \strng{fullhash}{eee8e2e43a97b3201401d66f0f3b3b5c}
+      \strng{bibnamehash}{eee8e2e43a97b3201401d66f0f3b3b5c}
+      \strng{authorbibnamehash}{eee8e2e43a97b3201401d66f0f3b3b5c}
+      \strng{authornamehash}{e204e14429fca07f42292b0f2cc16364}
+      \strng{authorfullhash}{eee8e2e43a97b3201401d66f0f3b3b5c}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The family of gradient boosting algorithms has been recently extended with several interesting proposals (i.e. XGBoost, LightGBM and CatBoost) that focus on both speed and accuracy. XGBoost is a scalable ensemble technique that has demonstrated to be a reliable and efficient machine learning challenge solver. LightGBM is an accurate model focused on providing extremely fast training performance using selective sampling of high gradient instances. CatBoost modifies the computation of gradients to avoid the prediction shift in order to improve the accuracy of the model. This work proposes a practical analysis of how these novel variants of gradient boosting work in terms of training speed, generalization performance and hyper-parameter setup. In addition, a comprehensive comparison between XGBoost, LightGBM, CatBoost, random forests and gradient boosting has been performed using carefully tuned models as well as using their default settings. The results of this comparison indicate that CatBoost obtains the best results in generalization accuracy and AUC in the studied datasets although the differences are small. LightGBM is the fastest of all methods but not the most accurate. Finally, XGBoost places second both in accuracy and in training speed. Finally an extensive analysis of the effect of hyper-parameter tuning in XGBoost, LightGBM and CatBoost is carried out using two novel proposed tools.}
+      \field{issn}{1573-7462}
+      \field{journaltitle}{Artificial Intelligence Review}
+      \field{langid}{english}
+      \field{month}{3}
+      \field{number}{3}
+      \field{title}{A Comparative Analysis of Gradient Boosting Algorithms}
+      \field{urlday}{20}
+      \field{urlmonth}{2}
+      \field{urlyear}{2024}
+      \field{volume}{54}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \field{pages}{1937\bibrangedash 1967}
+      \range{pages}{31}
+      \verb{doi}
+      \verb 10.1007/s10462-020-09896-5
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/M2FIJDIE/Bentéjac et al. - 2021 - A comparative analysis of gradient boosting algori.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/s10462-020-09896-5
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/s10462-020-09896-5
+      \endverb
+      \keyw{CatBoost,Ensembles of classifiers,Gradient boosting,LightGBM,Random forest,XGBoost}
+    \endentry
+    \entry{chenXGBoostScalableTree2016}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{hash=48461ccdf50ba5a54e29a354aa734c0b}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Tianqi},
+           giveni={T\bibinitperiod}}}%
+        {{hash=c9ab8ac486d7f85ac914b1a8e51e512b}{%
+           family={Guestrin},
+           familyi={G\bibinitperiod},
+           given={Carlos},
+           giveni={C\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {New York, NY, USA}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{4a1b902110b26e322484f62946cb7718}
+      \strng{fullhash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{bibnamehash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{authorbibnamehash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \strng{authornamehash}{4a1b902110b26e322484f62946cb7718}
+      \strng{authorfullhash}{f79ceb030bcf791e5521f87ac6ada03b}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Tree boosting is a highly effective and widely used machine learning method. In this paper, we describe a scalable end-to-end tree boosting system called XGBoost, which is used widely by data scientists to achieve state-of-the-art results on many machine learning challenges. We propose a novel sparsity-aware algorithm for sparse data and weighted quantile sketch for approximate tree learning. More importantly, we provide insights on cache access patterns, data compression and sharding to build a scalable tree boosting system. By combining these insights, XGBoost scales beyond billions of examples using far fewer resources than existing systems.}
+      \field{booktitle}{Proceedings of the 22nd {{ACM SIGKDD International Conference}} on {{Knowledge Discovery}} and {{Data Mining}}}
+      \field{isbn}{978-1-4503-4232-2}
+      \field{month}{8}
+      \field{series}{{{KDD}} '16}
+      \field{shorttitle}{{{XGBoost}}}
+      \field{title}{{{XGBoost}}: {{A Scalable Tree Boosting System}}}
+      \field{urlday}{2}
+      \field{urlmonth}{12}
+      \field{urlyear}{2023}
+      \field{year}{2016}
+      \field{urldateera}{ce}
+      \field{pages}{785\bibrangedash 794}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1145/2939672.2939785
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/WS9PDQHT/Chen und Guestrin - 2016 - XGBoost A Scalable Tree Boosting System.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://dl.acm.org/doi/10.1145/2939672.2939785
+      \endverb
+      \verb{url}
+      \verb https://dl.acm.org/doi/10.1145/2939672.2939785
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{riotgamesMasterGrandmasterChallenger2023}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=88c35b9a642a0f10b3fdba232e42fdba}{%
+           family={Games},
+           familyi={G\bibinitperiod},
+           given={Riot},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{fullhash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{bibnamehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{authorbibnamehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{authornamehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{authorfullhash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \field{extraname}{2}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Welcome to the top of the food chain. To reach any of the top three ranked tiers in League of Legends is an incredible accomplishment and proves without a doubt you're among the best players in the...}
+      \field{journaltitle}{League of Legends Support}
+      \field{langid}{american}
+      \field{month}{8}
+      \field{shorttitle}{Master, {{Grandmaster}}, and {{Challenger}}}
+      \field{title}{Master, {{Grandmaster}}, and {{Challenger}}: {{The Apex Tiers}}}
+      \field{urlday}{1}
+      \field{urlmonth}{1}
+      \field{urlyear}{2024}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/VSMDRRBZ/4405776545427-Master-Grandmaster-and-Challenger-The-Apex-Tiers.html
+      \endverb
+      \verb{urlraw}
+      \verb https://support-leagueoflegends.riotgames.com/hc/en-us/articles/4405776545427-Master-Grandmaster-and-Challenger-The-Apex-Tiers
+      \endverb
+      \verb{url}
+      \verb https://support-leagueoflegends.riotgames.com/hc/en-us/articles/4405776545427-Master-Grandmaster-and-Challenger-The-Apex-Tiers
+      \endverb
+    \endentry
+    \entry{riotgamesRankedTiersDivisions2023}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=88c35b9a642a0f10b3fdba232e42fdba}{%
+           family={Games},
+           familyi={G\bibinitperiod},
+           given={Riot},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{fullhash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{bibnamehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{authorbibnamehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{authornamehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{authorfullhash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \field{extraname}{3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{From the slums of Zaun to the peak of Targon, Runeterra holds a tremendous gradient of people and places. And in a lot of ways, League is no different! Whether you're a weekend warrior or dial in d...}
+      \field{journaltitle}{League of Legends Support}
+      \field{langid}{american}
+      \field{month}{8}
+      \field{title}{Ranked {{Tiers}}, {{Divisions}}, and {{Queues}}}
+      \field{urlday}{9}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/FXKJ74HK/4406004330643-Ranked-Tiers-Divisions-and-Queues.html
+      \endverb
+      \verb{urlraw}
+      \verb https://support-leagueoflegends.riotgames.com/hc/en-us/articles/4406004330643-Ranked-Tiers-Divisions-and-Queues
+      \endverb
+      \verb{url}
+      \verb https://support-leagueoflegends.riotgames.com/hc/en-us/articles/4406004330643-Ranked-Tiers-Divisions-and-Queues
+      \endverb
+      \keyw{notion}
+    \endentry
+    \entry{riotgamesDevBalanceFramework2020}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=88c35b9a642a0f10b3fdba232e42fdba}{%
+           family={Games},
+           familyi={G\bibinitperiod},
+           given={Riot},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{fullhash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{bibnamehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{authorbibnamehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{authornamehash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \strng{authorfullhash}{88c35b9a642a0f10b3fdba232e42fdba}
+      \field{extraname}{4}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{We introduced a more objective approach to champ balance last year. Here's what we learned so far.}
+      \field{langid}{american}
+      \field{month}{6}
+      \field{shorttitle}{/Dev}
+      \field{title}{/Dev: {{Balance Framework Update}} - {{League}} of {{Legends}}}
+      \field{urlday}{9}
+      \field{urlmonth}{11}
+      \field{urlyear}{2023}
+      \field{year}{2020}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/LLP2F79S/dev-balance-framework-update.html
+      \endverb
+      \verb{urlraw}
+      \verb https://www.leagueoflegends.com/news/dev/dev-balance-framework-update/
+      \endverb
+      \verb{url}
+      \verb https://www.leagueoflegends.com/news/dev/dev-balance-framework-update/
+      \endverb
+      \keyw{League of Legends,notion}
+    \endentry
+    \entry{RiotDeveloperPortal}{misc}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{title}
+      \field{title}{Riot {{Developer Portal}}}
+      \field{urlday}{19}
+      \field{urlmonth}{12}
+      \field{urlyear}{2023}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/2BHJRP2M/developer.riotgames.com.html
+      \endverb
+      \verb{urlraw}
+      \verb https://developer.riotgames.com/
+      \endverb
+      \verb{url}
+      \verb https://developer.riotgames.com/
+      \endverb
+    \endentry
+    \entry{GGBestLeague}{misc}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Best Builds from the Best Data. Riot-approved U.GG provides the best League of Legends builds, LoL runes, Probuilds, Tier List, Counters, and more.}
+      \field{langid}{english}
+      \field{shorttitle}{U {{GG}}}
+      \field{title}{U {{GG}}: {{The Best League}} of {{Legends Builds LoL Build Champion Probuilds LoL Runes Tier List Counters Guides}}}
+      \field{urlday}{15}
+      \field{urlmonth}{12}
+      \field{urlyear}{2023}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/7GLXVIPB/u.gg.html
+      \endverb
+      \verb{urlraw}
+      \verb https://u.gg
+      \endverb
+      \verb{url}
+      \verb https://u.gg
+      \endverb
+    \endentry
+    \entry{2023LeagueLegends2023}{article}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The 2023 League of Legends World Championship was an esports tournament for the multiplayer online battle arena video game League of Legends. It was the thirteenth iteration of the League of Legends World Championship, an annual international tournament organized by the game's developer, Riot Games. The tournament began in South Korea on October 10 until November 19. Twenty-two teams from nine regions qualified for the tournament based on their placement in regional circuits; defending champions DRX failed to do so after losing to Dplus KIA in the 2023 LCK Regional Finals. JD Gaming were in contention to become the first team to complete the "Golden Road", but lost to eventual champions T1 in the semifinals of the knockout stage."Gods" (stylized in all caps), performed by NewJeans, was announced as the tournament's theme song. A virtual boyband named "Heartsteel" (stylized in all caps) was unveiled by Riot Games during the event, with Baekhyun from Exo and SuperM, {Ø}ZI, Tobi Lou and Cal Scruby representing the group as its human counterpart and in the live performance of their debut song, "Paranoia".The final took place on 19 November 2023 at the Gocheok Sky Dome, where T1 defeated Weibo Gaming by a 3--0 score, marking the organization's record-extending fourth World Championship. The event's concurrent viewership reached a peak of 6.4 million viewers, breaking the all-time viewership record for a single esports event, not accounting for Chinese viewership.}
+      \field{annotation}{Page Version ID: 1189902903}
+      \field{journaltitle}{Wikipedia}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{title}{2023 {{{\emph{League}}}}{\emph{ of }}{{{\emph{Legends}}}} {{World Championship}}}
+      \field{urlday}{2}
+      \field{urlmonth}{1}
+      \field{urlyear}{2024}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://en.wikipedia.org/w/index.php?title=2023_League_of_Legends_World_Championship&oldid=1189902903
+      \endverb
+      \verb{url}
+      \verb https://en.wikipedia.org/w/index.php?title=2023_League_of_Legends_World_Championship&oldid=1189902903
+      \endverb
+    \endentry
+    \entry{acockWorkingMissingValues2005}{article}{}
+      \name{author}{1}{}{%
+        {{hash=cba2807f9d9cbd79bb1e46560fa6ab5b}{%
+           family={Acock},
+           familyi={A\bibinitperiod},
+           given={Alan\bibnamedelima C.},
+           giveni={A\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \strng{namehash}{cba2807f9d9cbd79bb1e46560fa6ab5b}
+      \strng{fullhash}{cba2807f9d9cbd79bb1e46560fa6ab5b}
+      \strng{bibnamehash}{cba2807f9d9cbd79bb1e46560fa6ab5b}
+      \strng{authorbibnamehash}{cba2807f9d9cbd79bb1e46560fa6ab5b}
+      \strng{authornamehash}{cba2807f9d9cbd79bb1e46560fa6ab5b}
+      \strng{authorfullhash}{cba2807f9d9cbd79bb1e46560fa6ab5b}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Less than optimum strategies for missing values can produce biased estimates, distorted statistical power, and invalid conclusions. After reviewing traditional approaches (listwise, pairwise, and mean substitution), selected alternatives are covered including single imputation, multiple imputation, and full information maximum likelihood estimation. The effects of missing values are illustrated for a linear model, and a series of recommendations is provided. When missing values cannot be avoided, multiple imputation and full information methods offer substantial improvements over traditional approaches. Selected results using SPSS, NORM, Stata (mvis/micombine), and Mplus are included as is a table of available software and an appendix with examples of programs for Stata and Mplus.}
+      \field{issn}{1741-3737}
+      \field{journaltitle}{Journal of Marriage and Family}
+      \field{langid}{english}
+      \field{number}{4}
+      \field{title}{Working {{With Missing Values}}}
+      \field{urlday}{6}
+      \field{urlmonth}{1}
+      \field{urlyear}{2024}
+      \field{volume}{67}
+      \field{year}{2005}
+      \field{urldateera}{ce}
+      \field{pages}{1012\bibrangedash 1028}
+      \range{pages}{17}
+      \verb{doi}
+      \verb 10.1111/j.1741-3737.2005.00191.x
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/PY67KNYF/Acock - 2005 - Working With Missing Values.pdf;/Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/9AQ575FE/j.1741-3737.2005.00191.html
+      \endverb
+      \verb{urlraw}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1741-3737.2005.00191.x
+      \endverb
+      \verb{url}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1741-3737.2005.00191.x
+      \endverb
+      \keyw{MAR,MCAR,missing data,missing values,multiple imputation}
+    \endentry
+    \entry{shankerEffectDataStandardization1996}{article}{}
+      \name{author}{3}{}{%
+        {{hash=18cfcf4f4754c2389d74db1fccbc1277}{%
+           family={Shanker},
+           familyi={S\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=76afd0a6c1a84d33d4c629dc5db27da8}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={M.\bibnamedelimi Y.},
+           giveni={M\bibinitperiod\bibinitdelim Y\bibinitperiod}}}%
+        {{hash=f016f6f8dee2c8821e9a53a02a5da2ac}{%
+           family={Hung},
+           familyi={H\bibinitperiod},
+           given={M.\bibnamedelimi S.},
+           giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \strng{namehash}{1ffe99c5830ef57d4451eb1b4471c7e8}
+      \strng{fullhash}{f6e75c2eacad68d620a6dbfc58ceadec}
+      \strng{bibnamehash}{f6e75c2eacad68d620a6dbfc58ceadec}
+      \strng{authorbibnamehash}{f6e75c2eacad68d620a6dbfc58ceadec}
+      \strng{authornamehash}{1ffe99c5830ef57d4451eb1b4471c7e8}
+      \strng{authorfullhash}{f6e75c2eacad68d620a6dbfc58ceadec}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Data transformation is a popular option in training neural networks. This study evaluates the effectiveness of two well-known transformation methods: linear transformation and statistical standardization. These two are referred to as data standardization. A carefully designed experiment is used in which data from two-group classification problems were trained by feedforward networks. Different kinds of classification problems, from relatively simple to hard, were generated. Other experimental factors include network architecture, sample size, and sample proportion of group 1 members. Three performance measurements for the effect of data standardization are employed. The results suggest that networks trained on standardized data yield better results in general, but the advantage diminishes as network and sample size become large. In other words, neural networks exhibit a self-scaling capability. In addition, impact of data standardization on the performance of training algorithm in terms of computation time and number of iterations is evaluated. The results indicate that, overall, data standardization slows down training. Finally, these results are illustrated with a data set obtained from the American Telephone and Telegraph Company.}
+      \field{issn}{0305-0483}
+      \field{journaltitle}{Omega}
+      \field{month}{8}
+      \field{number}{4}
+      \field{title}{Effect of Data Standardization on Neural Network Training}
+      \field{urlday}{6}
+      \field{urlmonth}{1}
+      \field{urlyear}{2024}
+      \field{volume}{24}
+      \field{year}{1996}
+      \field{urldateera}{ce}
+      \field{pages}{385\bibrangedash 397}
+      \range{pages}{13}
+      \verb{doi}
+      \verb 10.1016/0305-0483(96)00010-2
+      \endverb
+      \verb{file}
+      \verb /Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/I2SUFF9Z/Shanker et al. - 1996 - Effect of data standardization on neural network t.pdf;/Users/admin/Documents/Informatik/Studium/Bachelorarbeit/Thesis/literature/Zotero/storage/QUIC8JPX/0305048396000102.html
+      \endverb
+      \verb{urlraw}
+      \verb https://www.sciencedirect.com/science/article/pii/0305048396000102
+      \endverb
+      \verb{url}
+      \verb https://www.sciencedirect.com/science/article/pii/0305048396000102
+      \endverb
+      \keyw{modelling,neural networks}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
