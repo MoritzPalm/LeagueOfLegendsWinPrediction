@@ -3,13 +3,13 @@ import pickle
 import sqlalchemy.orm
 
 from src.sqlstore.timeline import (
-    SQLTimeline,
+    SQLEvent,
     SQLFrame,
     SQLKillEvent,
+    SQLParticipantFrame,
+    SQLTimeline,
     SQLTimelineDamageDealt,
     SQLTimelineDamageReceived,
-    SQLEvent,
-    SQLParticipantFrame,
 )
 
 

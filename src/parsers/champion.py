@@ -4,10 +4,8 @@ import sqlalchemy.orm
 from riotwatcher import LolWatcher
 
 from src.scraping.myspider import scrape_champion_metrics
-from src.sqlstore.champion import SQLChampionTags, SQLChampion, SQLChampionStats
+from src.sqlstore.champion import SQLChampion, SQLChampionStats, SQLChampionTags
 from src.utils import clean_champion_name
-
-import re
 
 
 def parse_champion_data(

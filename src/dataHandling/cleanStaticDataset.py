@@ -13,7 +13,7 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     :return: X_train, X_val, X_test
     """
     print("Cleaning static dataset...")
-    dir = 'data/static_16_12_23'
+    dir = "data/static_16_12_23"
     test_size = 4000
     # df = pd.DataFrame()
     # for f in glob.glob(f'{dir}/raw/match_*.pkl'):
@@ -22,7 +22,7 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     #     df = pd.concat([df, df_new], axis=0)
     # df.to_pickle(f'{dir}/raw/static_full.pkl')
     # logging.info("Concatenated all files")
-    df = pd.read_pickle(f'{dir}/raw/static_full.pkl')
+    df = pd.read_pickle(f"{dir}/raw/static_full.pkl")
     df = clean.drop_wrong_data(df)
     df.reset_index(drop=True, inplace=True)
     df = clean.fix_rank(df)
@@ -36,10 +36,10 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     df = clean.drop_missing(df)
     df = clean.drop_wrong_teamIds(df)
 
-    assert df.columns[-1] == 'label'
+    assert df.columns[-1] == "label"
 
-    print(f'Found {len(df)} rows after cleaning')
-    print(f'number of rows with at least one nan in dataset: {df.isna().sum().sum()}')
+    print(f"Found {len(df)} rows after cleaning")
+    print(f"number of rows with at least one nan in dataset: {df.isna().sum().sum()}")
 
     X_train, X_test, y_train, y_test = train_test_split(df.iloc[:, :-1],
                                                         df.iloc[:, -1],
@@ -66,12 +66,12 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     X_val = pd.DataFrame(X_val, columns=df.columns)
 
     if save:
-        X_train.to_pickle(f'{dir}/processed/default/train_static.pkl')
-        X_test.to_pickle(f'{dir}/processed/default/test_static.pkl')
-        X_val.to_pickle(f'{dir}/processed/default/val_static.pkl')
-        np.save(f'{dir}/processed/default/train_static.npy', X_train)
-        np.save(f'{dir}/processed/default/test_static.npy', X_test)
-        np.save(f'{dir}/processed/default/val_static.npy', X_val)
+        X_train.to_pickle(f"{dir}/processed/default/train_static.pkl")
+        X_test.to_pickle(f"{dir}/processed/default/test_static.pkl")
+        X_val.to_pickle(f"{dir}/processed/default/val_static.pkl")
+        np.save(f"{dir}/processed/default/train_static.npy", X_train)
+        np.save(f"{dir}/processed/default/test_static.npy", X_test)
+        np.save(f"{dir}/processed/default/val_static.npy", X_val)
 
     # handling of averaged dataset
 
@@ -79,7 +79,7 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     df_merged = pd.DataFrame(clean.merge_columns(df))
 
     df_merged_label = df_merged.copy()
-    df_merged_label['label'] = df['label']
+    df_merged_label["label"] = df["label"]
     (X_train_only_merged, X_test_only_merged,
      y_train_only_merged, y_test_only_merged) = train_test_split(df_merged_label.iloc[:, :-1],
                                                                  df_merged_label.iloc[:, -1],
@@ -109,23 +109,23 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     df_val_only_merged = pd.DataFrame(X_val_only_merged, columns=df_merged_label.columns)
 
     if save:
-        df_train_only_merged.to_pickle(f'{dir}/processed/merged_only/train_static.pkl')
-        df_test_only_merged.to_pickle(f'{dir}/processed/merged_only/test_static.pkl')
-        df_val_only_merged.to_pickle(f'{dir}/processed/merged_only/val_static.pkl')
-        np.save(f'{dir}/processed/merged_only/train_static.npy', X_train_only_merged)
-        np.save(f'{dir}/processed/merged_only/test_static.npy', X_test_only_merged)
-        np.save(f'{dir}/processed/merged_only/val_static.npy', X_val_only_merged)
+        df_train_only_merged.to_pickle(f"{dir}/processed/merged_only/train_static.pkl")
+        df_test_only_merged.to_pickle(f"{dir}/processed/merged_only/test_static.pkl")
+        df_val_only_merged.to_pickle(f"{dir}/processed/merged_only/val_static.pkl")
+        np.save(f"{dir}/processed/merged_only/train_static.npy", X_train_only_merged)
+        np.save(f"{dir}/processed/merged_only/test_static.npy", X_test_only_merged)
+        np.save(f"{dir}/processed/merged_only/val_static.npy", X_val_only_merged)
 
     # one hot encoding of championNumber
-    categorical_columns = [f'participant{x}_champion_championNumber' for x in range(1, 11)]
+    categorical_columns = [f"participant{x}_champion_championNumber" for x in range(1, 11)]
     df_categorical = df.loc[:, categorical_columns]
     # df_categorical_one_hot = pd.get_dummies(df_categorical.loc[:, 'participant1_champion_championNumber'],
     # columns='participant1_champion_championNumber', prefix='championNumber')
     df_categorical_one_hot = clean.one_hot_encode_teams(df_categorical)
     df_merged_ohc = pd.concat([df_merged, df_categorical_one_hot], axis=1)
-    df_merged_ohc['label'] = df['label']
+    df_merged_ohc["label"] = df["label"]
 
-    assert df_merged_ohc.columns[-1] == 'label'
+    assert df_merged_ohc.columns[-1] == "label"
 
     (X_train_merged, X_test_merged,
      y_train_merged, y_test_merged) = train_test_split(df_merged_ohc.iloc[:, :-1],
@@ -146,8 +146,8 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     # are dropped
     preprocessor = ColumnTransformer(
         transformers=[
-            ('scaler', StandardScaler(), numerical_columns)],
-        remainder='passthrough')
+            ("scaler", StandardScaler(), numerical_columns)],
+        remainder="passthrough")
 
     transformer = preprocessor.fit(X_train_merged)
     X_train_merged = transformer.transform(X_train_merged)
@@ -161,36 +161,36 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     df_val_merged = pd.DataFrame(X_val_merged, columns=df_merged_ohc.columns)
 
     if save:
-        df_train_merged.to_pickle(f'{dir}/processed/merged_ohc/train_static.pkl')
-        df_test_merged.to_pickle(f'{dir}/processed/merged_ohc/test_static.pkl')
-        df_val_merged.to_pickle(f'{dir}/processed/merged_ohc/val_static.pkl')
-        np.save(f'{dir}/processed/merged_ohc/train_static.npy', X_train_merged)
-        np.save(f'{dir}/processed/merged_ohc/test_static.npy', X_test_merged)
-        np.save(f'{dir}/processed/merged_ohc/val_static.npy', X_val_merged)
+        df_train_merged.to_pickle(f"{dir}/processed/merged_ohc/train_static.pkl")
+        df_test_merged.to_pickle(f"{dir}/processed/merged_ohc/test_static.pkl")
+        df_val_merged.to_pickle(f"{dir}/processed/merged_ohc/val_static.pkl")
+        np.save(f"{dir}/processed/merged_ohc/train_static.npy", X_train_merged)
+        np.save(f"{dir}/processed/merged_ohc/test_static.npy", X_test_merged)
+        np.save(f"{dir}/processed/merged_ohc/val_static.npy", X_val_merged)
 
-    print(f'X_train shape: {X_train.shape}')
-    print(f'X_test shape: {X_test.shape}')
-    print(f'X_val shape: {X_val.shape}')
+    print(f"X_train shape: {X_train.shape}")
+    print(f"X_test shape: {X_test.shape}")
+    print(f"X_val shape: {X_val.shape}")
     print("Done cleaning static dataset")
 
     # df_categorical from above is used for feature selection
-    relevant_feature_categories = ['kda',
-                                   'gold',
-                                   'leaguePoints',
-                                   'assists',
-                                   'deaths',
-                                   'maxKills',
-                                   'lastPlayTime',
-                                   'winrate',
-                                   'kills',
-                                   'championLevel',
-                                   'hotstreak',
-                                   'damage',
-                                   'cs'
+    relevant_feature_categories = ["kda",
+                                   "gold",
+                                   "leaguePoints",
+                                   "assists",
+                                   "deaths",
+                                   "maxKills",
+                                   "lastPlayTime",
+                                   "winrate",
+                                   "kills",
+                                   "championLevel",
+                                   "hotstreak",
+                                   "damage",
+                                   "cs"
                                    ]
     df_fs = clean.drop_columns_not_including(df_merged, relevant_feature_categories)
     df_fs_only = df_fs.copy()
-    df_fs_only['label'] = df['label']
+    df_fs_only["label"] = df["label"]
 
     (X_train_fs_only, X_test_fs_only,
      y_train_fs_only, y_test_fs_only) = train_test_split(df_fs_only.iloc[:, :-1],
@@ -211,8 +211,8 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     # are dropped
     preprocessor = ColumnTransformer(
         transformers=[
-            ('scaler', StandardScaler(), numerical_columns)],
-        remainder='passthrough')
+            ("scaler", StandardScaler(), numerical_columns)],
+        remainder="passthrough")
 
     transformer = preprocessor.fit(X_train_fs_only)
     X_train_fs_only = transformer.transform(X_train_fs_only)
@@ -226,19 +226,19 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     df_val_fs_only = pd.DataFrame(X_val_fs_only, columns=df_fs_only.columns)
 
     if save:
-        df_train_fs_only.to_pickle(f'{dir}/processed/fs_only/train_static.pkl')
-        df_test_fs_only.to_pickle(f'{dir}/processed/fs_only/test_static.pkl')
-        df_val_fs_only.to_pickle(f'{dir}/processed/fs_only/val_static.pkl')
-        np.save(f'{dir}/processed/fs_only/train_static.npy', X_train_fs_only)
-        np.save(f'{dir}/processed/fs_only/test_static.npy', X_test_fs_only)
-        np.save(f'{dir}/processed/fs_only/val_static.npy', X_val_fs_only)
+        df_train_fs_only.to_pickle(f"{dir}/processed/fs_only/train_static.pkl")
+        df_test_fs_only.to_pickle(f"{dir}/processed/fs_only/test_static.pkl")
+        df_val_fs_only.to_pickle(f"{dir}/processed/fs_only/val_static.pkl")
+        np.save(f"{dir}/processed/fs_only/train_static.npy", X_train_fs_only)
+        np.save(f"{dir}/processed/fs_only/test_static.npy", X_test_fs_only)
+        np.save(f"{dir}/processed/fs_only/val_static.npy", X_val_fs_only)
 
 
 
     df_fs_ohc = pd.concat([df_fs, df_categorical_one_hot], axis=1)
-    df_fs_ohc['label'] = df['label']
+    df_fs_ohc["label"] = df["label"]
 
-    assert df_fs_ohc.columns[-1] == 'label'
+    assert df_fs_ohc.columns[-1] == "label"
 
     (X_train_fs, X_test_fs,
      y_train_fs, y_test_fs) = train_test_split(df_fs_ohc.iloc[:, :-1],
@@ -259,8 +259,8 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     # are dropped
     preprocessor = ColumnTransformer(
         transformers=[
-            ('scaler', StandardScaler(), numerical_columns)],
-        remainder='passthrough')
+            ("scaler", StandardScaler(), numerical_columns)],
+        remainder="passthrough")
 
     transformer = preprocessor.fit(X_train_fs)
     X_train_fs = transformer.transform(X_train_fs)
@@ -274,13 +274,13 @@ def cleanStaticDataset(save: bool = True) -> (np.ndarray, np.ndarray, np.ndarray
     df_val_fs = pd.DataFrame(X_val_fs, columns=df_fs_ohc.columns)
 
     if save:
-        df_train_fs.to_pickle(f'{dir}/processed/fs_ohc/train_static.pkl')
-        df_test_fs.to_pickle(f'{dir}/processed/fs_ohc/test_static.pkl')
-        df_val_fs.to_pickle(f'{dir}/processed/fs_ohc/val_static.pkl')
-        np.save(f'{dir}/processed/fs_ohc/train_static.npy', X_train_fs)
-        np.save(f'{dir}/processed/fs_ohc/test_static.npy', X_test_fs)
-        np.save(f'{dir}/processed/fs_ohc/val_static.npy', X_val_fs)
+        df_train_fs.to_pickle(f"{dir}/processed/fs_ohc/train_static.pkl")
+        df_test_fs.to_pickle(f"{dir}/processed/fs_ohc/test_static.pkl")
+        df_val_fs.to_pickle(f"{dir}/processed/fs_ohc/val_static.pkl")
+        np.save(f"{dir}/processed/fs_ohc/train_static.npy", X_train_fs)
+        np.save(f"{dir}/processed/fs_ohc/test_static.npy", X_test_fs)
+        np.save(f"{dir}/processed/fs_ohc/val_static.npy", X_val_fs)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cleanStaticDataset(save=True)

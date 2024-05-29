@@ -1,11 +1,11 @@
 from sqlalchemy import (
-    Integer,
-    String,
-    Float,
+    BigInteger,
     DateTime,
+    Float,
     ForeignKey,
     Identity,
-    BigInteger,
+    Integer,
+    String,
 )
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func

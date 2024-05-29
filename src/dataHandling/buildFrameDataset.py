@@ -5,14 +5,18 @@ import re
 import time
 
 import pandas as pd
-from joblib import Parallel, delayed
-from joblib import wrap_non_picklable_objects
+from joblib import Parallel, delayed, wrap_non_picklable_objects
 from sqlalchemy import func
 
 from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats
-from src.sqlstore.timeline import SQLTimeline, SQLFrame, SQLParticipantFrame, SQLKillEvent
-from src.utils import separateMatchID, get_teamId_from_participantIds
+from src.sqlstore.timeline import (
+    SQLFrame,
+    SQLKillEvent,
+    SQLParticipantFrame,
+    SQLTimeline,
+)
+from src.utils import get_teamId_from_participantIds, separateMatchID
 
 
 @wrap_non_picklable_objects
@@ -45,17 +49,17 @@ def process_match(match, save: bool = True):
                 # previous frames
                 team0TotalGold, team1TotalGold = 0, 0
                 matchIds.append((match.matchId, frame.id))
-                frameDict = {'timestamp': frame.timestamp, 'winning_team': winning_team}
+                frameDict = {"timestamp": frame.timestamp, "winning_team": winning_team}
                 participantFrames = session.query(SQLParticipantFrame).filter_by(frameId=frame.id).all()
                 for i, participantFrame in enumerate(participantFrames):
                     participantFrameTrainingData = participantFrame.get_training_data()
-                    participantFrameDict = {f'participant{i + 1}_{k}': v for k, v in
+                    participantFrameDict = {f"participant{i + 1}_{k}": v for k, v in
                                             participantFrameTrainingData.items()}
                     frameDict.update(participantFrameDict)
                     if i <= 5:
-                        team0TotalGold += participantFrameTrainingData['totalGold']
+                        team0TotalGold += participantFrameTrainingData["totalGold"]
                     elif i <= 10:
-                        team1TotalGold += participantFrameTrainingData['totalGold']
+                        team1TotalGold += participantFrameTrainingData["totalGold"]
                     else:
                         raise ValueError(f"participantId {i} not in range 1-10")
                 buildingKillEvents = session.query(SQLKillEvent).filter_by(frameId=frame.id, type="BUILDING_KILL").all()
@@ -73,15 +77,15 @@ def process_match(match, save: bool = True):
                         team0BuildingsDestroyed += 1
                     elif teamId == 1:
                         team1BuildingsDestroyed += 1
-                frameDict['team0_buildings_destroyed'] = team0BuildingsDestroyed
-                frameDict['team1_buildings_destroyed'] = team1BuildingsDestroyed
-                frameDict['team0_total_gold'] = team0TotalGold
-                frameDict['team1_total_gold'] = team1TotalGold
+                frameDict["team0_buildings_destroyed"] = team0BuildingsDestroyed
+                frameDict["team1_buildings_destroyed"] = team1BuildingsDestroyed
+                frameDict["team0_total_gold"] = team0TotalGold
+                frameDict["team1_total_gold"] = team1TotalGold
                 frameData.append(frameDict)
             if save:
-                index = pd.MultiIndex.from_tuples(matchIds, names=['matchId', 'frameId'])
+                index = pd.MultiIndex.from_tuples(matchIds, names=["matchId", "frameId"])
                 dfTimelines = pd.DataFrame(frameData, index=index)
-                dfTimelines.to_pickle(f'data/raw/timeline_matches/{match.matchId}.pkl')
+                dfTimelines.to_pickle(f"data/raw/timeline_matches/{match.matchId}.pkl")
 
         except Exception as e:
             print(f"Error: {e}")
@@ -113,10 +117,10 @@ def build_frame_dataset(size: int = None, save: bool = True, recovery_path: str 
             matches = session.query(SQLMatch).where(SQLMatch.patch == 20).order_by(func.random()).limit(size).all()
             logging.info(f"Processing {len(matches)} matches")
 
-    results = Parallel(n_jobs=20, verbose=10, prefer='threads')(delayed(process_match)(match) for match in matches)
+    results = Parallel(n_jobs=20, verbose=10, prefer="threads")(delayed(process_match)(match) for match in matches)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     start = time.time()
     build_frame_dataset(None, True, "data/raw/timeline_matches/")
     end = time.time()

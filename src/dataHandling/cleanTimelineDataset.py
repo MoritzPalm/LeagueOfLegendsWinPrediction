@@ -15,11 +15,11 @@ def drop_irrelevant_columns(df: pd.DataFrame) -> pd.DataFrame:
     :param df: DataFrame to drop columns from
     :return: DataFrame with dropped columns
     """
-    irrelevant_cols = ['participantId', 'abilityHaste', 'armorPen', 'bonusArmorPenPercent', 'bonusMagicPenPercent',
-                       'cooldownReduction', 'physicalVamp', 'spellVamp', 'goldPerSecond']
+    irrelevant_cols = ["participantId", "abilityHaste", "armorPen", "bonusArmorPenPercent", "bonusMagicPenPercent",
+                       "cooldownReduction", "physicalVamp", "spellVamp", "goldPerSecond"]
     for i in range(1, 11):
         for col in irrelevant_cols:
-            col = f'participant{i}_{col}'
+            col = f"participant{i}_{col}"
             df.drop(col, axis=1, inplace=True)
     return df
 
@@ -30,7 +30,7 @@ def make_label_last_col(df: pd.DataFrame) -> pd.DataFrame:
     :param df: DataFrame to move label column in
     :return: DataFrame with label column moved
     """
-    cols = [col for col in df.columns if col != 'winning_team'] + ['winning_team']
+    cols = [col for col in df.columns if col != "winning_team"] + ["winning_team"]
     df = df[cols]
     return df
 
@@ -43,7 +43,7 @@ def prune_timeline(df: pd.DataFrame) -> pd.DataFrame:
     """
     len_before = len(df)
     df_new = df.drop(df.query("timestamp > 960000").index)
-    print(f'Pruned {len_before - len(df_new)} rows')
+    print(f"Pruned {len_before - len(df_new)} rows")
     return df_new
 
 
@@ -54,14 +54,14 @@ def drop_short_matches(df: pd.DataFrame) -> pd.DataFrame:
     :return: DataFrame with dropped matches
     """
     len_before = len(df)
-    matchIds = df.index.get_level_values('matchId').unique()
+    matchIds = df.index.get_level_values("matchId").unique()
     short_matches = []
     for matchId in matchIds:
         match_df = df.loc[matchId]
-        if match_df.iloc[-1]['timestamp'] < 900000:
+        if match_df.iloc[-1]["timestamp"] < 900000:
             short_matches.append(matchId)
-    df_new = df.drop(short_matches, level='matchId')
-    print(f'Dropped {len_before - len(df_new)} rows or {len(short_matches)} matches')
+    df_new = df.drop(short_matches, level="matchId")
+    print(f"Dropped {len_before - len(df_new)} rows or {len(short_matches)} matches")
     return df_new
 
 
@@ -78,7 +78,7 @@ def train_val_test_split(df: pd.DataFrame, test_size: float | int = 0.1,
     :param test_size: Size of the test set as a fraction of the total set
     :return: train_df, train_labels, test_df, test_labels
     """
-    matchIds = df.index.get_level_values('matchId').unique()
+    matchIds = df.index.get_level_values("matchId").unique()
     if isinstance(test_size, int):
         test_length = test_size
         val_length = val_size
@@ -86,7 +86,7 @@ def train_val_test_split(df: pd.DataFrame, test_size: float | int = 0.1,
         test_length = int(len(matchIds) * test_size)
         val_length = int(len(matchIds) * val_size)
     else:
-        raise ValueError('test_size must be either int or float')
+        raise ValueError("test_size must be either int or float")
     # assert 1 - test_size * 2 > 0
     test_matchIds = matchIds[:test_length]
     val_matchIds = matchIds[test_length:test_length + val_length]
@@ -94,9 +94,9 @@ def train_val_test_split(df: pd.DataFrame, test_size: float | int = 0.1,
     test_df = df.loc[test_matchIds]
     train_df = df.loc[train_matchIds]
     val_df = df.loc[val_matchIds]
-    train_labels = train_df.pop('winning_team')
-    test_labels = test_df.pop('winning_team')
-    val_labels = val_df.pop('winning_team')
+    train_labels = train_df.pop("winning_team")
+    test_labels = test_df.pop("winning_team")
+    val_labels = val_df.pop("winning_team")
     check_correct_split(df, train_df, test_df, val_df)
     return train_df, train_labels, test_df, test_labels, val_df, val_labels
 
@@ -110,17 +110,17 @@ def check_correct_split(df: pd.DataFrame, train_df, test_df, val_df):
     :param val_df:
     :return:
     """
-    train_matchIds = train_df.index.get_level_values('matchId').unique()
-    test_matchIds = test_df.index.get_level_values('matchId').unique()
-    val_matchIds = val_df.index.get_level_values('matchId').unique()
+    train_matchIds = train_df.index.get_level_values("matchId").unique()
+    test_matchIds = test_df.index.get_level_values("matchId").unique()
+    val_matchIds = val_df.index.get_level_values("matchId").unique()
     assert len(train_matchIds) + len(test_matchIds) + len(val_matchIds) == len(
-        df.index.get_level_values('matchId').unique())
+        df.index.get_level_values("matchId").unique())
     assert len(set(train_matchIds).intersection(set(test_matchIds))) == 0
     assert len(set(train_matchIds).intersection(set(val_matchIds))) == 0
     assert len(set(test_matchIds).intersection(set(val_matchIds))) == 0
     all_matchIds = set(train_matchIds).union(test_matchIds).union(val_matchIds)  # this removes duplicate
     # matchIds
-    assert len(all_matchIds) == len(df.index.get_level_values('matchId').unique())
+    assert len(all_matchIds) == len(df.index.get_level_values("matchId").unique())
 
 
 def test_match_length(df: pd.DataFrame) -> bool:
@@ -129,16 +129,16 @@ def test_match_length(df: pd.DataFrame) -> bool:
     :param df: DataFrame to test
     :return: True if all matches have 16 timestamps, False otherwise
     """
-    matchIds = df.index.get_level_values('matchId').unique()
+    matchIds = df.index.get_level_values("matchId").unique()
     found_short = False
-    print(f'Found {len(matchIds)} matches')
+    print(f"Found {len(matchIds)} matches")
     for matchId in matchIds:
         match_df = df.loc[matchId]
         if len(match_df) != 16:
-            print(f'Match {matchId} has {len(match_df)} timestamps')
+            print(f"Match {matchId} has {len(match_df)} timestamps")
             found_short = True
     if not found_short:
-        print('All matches have 16 timestamps')
+        print("All matches have 16 timestamps")
         return True
     else:
         return False
@@ -151,24 +151,24 @@ def average_over_teams(df: pd.DataFrame) -> pd.DataFrame:
     :return:
     """
     # Columns that should be left as they are
-    columns_left = ['timestamp', 'winning_team']
+    columns_left = ["timestamp", "winning_team"]
     # Extract unique types from the column names
-    types = set(col.split('_')[-1] for col in df.columns)
+    types = set(col.split("_")[-1] for col in df.columns)
 
     # Create a new DataFrame for the results
     result_df = pd.DataFrame()
 
     for type in types:
         # Columns for participants 1-5
-        cols_1_to_5 = [f'participant{i}_{type}' for i in range(1, 6) if f'participant{i}_{type}' in df.columns]
+        cols_1_to_5 = [f"participant{i}_{type}" for i in range(1, 6) if f"participant{i}_{type}" in df.columns]
         # Columns for participants 6-10
-        cols_6_to_10 = [f'participant{i}_{type}' for i in range(6, 11) if f'participant{i}_{type}' in df.columns]
+        cols_6_to_10 = [f"participant{i}_{type}" for i in range(6, 11) if f"participant{i}_{type}" in df.columns]
 
         # Calculate averages and add to the result DataFrame
         if cols_1_to_5:
-            result_df[f'team0_{type}'] = df[cols_1_to_5].mean(axis=1)
+            result_df[f"team0_{type}"] = df[cols_1_to_5].mean(axis=1)
         if cols_6_to_10:
-            result_df[f'team1_{type}'] = df[cols_6_to_10].mean(axis=1)
+            result_df[f"team1_{type}"] = df[cols_6_to_10].mean(axis=1)
 
     # Add the remaining columns
     for col in columns_left:
@@ -196,21 +196,21 @@ def cleanTimelineDataset(save=True, concatenated=False):
     Cleans the timeline dataset and saves it to the data/processed folder
     :return: None
     """
-    dir = 'data/timeline_25_12_23'
+    dir = "data/timeline_25_12_23"
     if not concatenated:
         df = pd.DataFrame()
-        for f in glob.glob(f'{dir}/raw/*.pkl'):
-            with open(f, 'rb') as file:
+        for f in glob.glob(f"{dir}/raw/*.pkl"):
+            with open(f, "rb") as file:
                 df_new = pickle.load(file)
             df = pd.concat([df, df_new], axis=0)
-        df.to_pickle(f'{dir}/timeline_full_raw.pkl')  # this cannot be saved in the /raw/
+        df.to_pickle(f"{dir}/timeline_full_raw.pkl")  # this cannot be saved in the /raw/
         # dir as it would not stand out with the glob regex
         logging.info("Concatenated all files")
     else:
-        with open(f'{dir}/timeline_full_raw.pkl', 'rb') as f:
+        with open(f"{dir}/timeline_full_raw.pkl", "rb") as f:
             df = pickle.load(f)
             print(df.shape)
-    df = df.sort_values(by=['matchId', 'timestamp'])
+    df = df.sort_values(by=["matchId", "timestamp"])
     df = drop_irrelevant_columns(df)
     df = make_label_last_col(df)
     df = prune_timeline(df)
@@ -219,7 +219,7 @@ def cleanTimelineDataset(save=True, concatenated=False):
     columns = df.columns
 
     if not test_match_length(df):
-        raise ValueError('Timeline length of at least one match is not 16')
+        raise ValueError("Timeline length of at least one match is not 16")
     train_df, train_labels, test_df, test_labels, val_df, val_labels = train_val_test_split(df, 1000, 1000)
 
     scaler = StandardScaler()
@@ -235,17 +235,17 @@ def cleanTimelineDataset(save=True, concatenated=False):
     df_test = pd.DataFrame(X_test, columns=columns)
     df_val = pd.DataFrame(X_val, columns=columns)
 
-    print(f'X_train shape: {X_train.shape}')
-    print(f'X_test shape: {X_test.shape}')
-    print(f'X_val shape: {X_val.shape}')
+    print(f"X_train shape: {X_train.shape}")
+    print(f"X_test shape: {X_test.shape}")
+    print(f"X_val shape: {X_val.shape}")
     if save:
-        dir_full = f'{dir}/processed/full'
-        np.save(f'{dir_full}/train_timeline', X_train)
-        np.save(f'{dir_full}/test_timeline', X_test)
-        np.save(f'{dir_full}/val_timeline', X_val)
-        df_train.to_pickle(f'{dir_full}/train_timeline.pkl')
-        df_test.to_pickle(f'{dir_full}/test_timeline.pkl')
-        df_val.to_pickle(f'{dir_full}/val_timeline.pkl')
+        dir_full = f"{dir}/processed/full"
+        np.save(f"{dir_full}/train_timeline", X_train)
+        np.save(f"{dir_full}/test_timeline", X_test)
+        np.save(f"{dir_full}/val_timeline", X_val)
+        df_train.to_pickle(f"{dir_full}/train_timeline.pkl")
+        df_test.to_pickle(f"{dir_full}/test_timeline.pkl")
+        df_val.to_pickle(f"{dir_full}/val_timeline.pkl")
 
     # averaging over teams
     df = average_over_teams(df)
@@ -266,16 +266,16 @@ def cleanTimelineDataset(save=True, concatenated=False):
     df_val = pd.DataFrame(X_val, columns=columns)
 
     if save:
-        dir_avg = f'{dir}/processed/avg'
-        np.save(f'{dir_avg}/train_timeline', X_train)
-        np.save(f'{dir_avg}/test_timeline', X_test)
-        np.save(f'{dir_avg}/val_timeline', X_val)
-        df_train.to_pickle(f'{dir_avg}/train_timeline.pkl')
-        df_test.to_pickle(f'{dir_avg}/test_timeline.pkl')
-        df_val.to_pickle(f'{dir_avg}/val_timeline.pkl')
+        dir_avg = f"{dir}/processed/avg"
+        np.save(f"{dir_avg}/train_timeline", X_train)
+        np.save(f"{dir_avg}/test_timeline", X_test)
+        np.save(f"{dir_avg}/val_timeline", X_val)
+        df_train.to_pickle(f"{dir_avg}/train_timeline.pkl")
+        df_test.to_pickle(f"{dir_avg}/test_timeline.pkl")
+        df_val.to_pickle(f"{dir_avg}/val_timeline.pkl")
 
     # averaged over teams only gold
-    cols = ['totalGold', 'winning_team']
+    cols = ["totalGold", "winning_team"]
     df_gold = drop_columns_not_including(df, cols)
     df_gold_cols = df_gold.columns
 
@@ -295,16 +295,16 @@ def cleanTimelineDataset(save=True, concatenated=False):
     df_val = pd.DataFrame(X_val, columns=df_gold_cols)
 
     if save:
-        dir_gold = f'{dir}/processed/gold'
-        np.save(f'{dir_gold}/train_timeline', X_train)
-        np.save(f'{dir_gold}/test_timeline', X_test)
-        np.save(f'{dir_gold}/val_timeline', X_val)
-        df_train.to_pickle(f'{dir_gold}/train_timeline.pkl')
-        df_test.to_pickle(f'{dir_gold}/test_timeline.pkl')
-        df_val.to_pickle(f'{dir_gold}/val_timeline.pkl')
+        dir_gold = f"{dir}/processed/gold"
+        np.save(f"{dir_gold}/train_timeline", X_train)
+        np.save(f"{dir_gold}/test_timeline", X_test)
+        np.save(f"{dir_gold}/val_timeline", X_val)
+        df_train.to_pickle(f"{dir_gold}/train_timeline.pkl")
+        df_test.to_pickle(f"{dir_gold}/test_timeline.pkl")
+        df_val.to_pickle(f"{dir_gold}/val_timeline.pkl")
 
     # averaged over teams manual selection
-    cols = ['totalGold', 'kills', 'level', 'totalDamageDone', 'winning_team']
+    cols = ["totalGold", "kills", "level", "totalDamageDone", "winning_team"]
     df_manual = drop_columns_not_including(df, cols)
     df_manual_cols = df_manual.columns
 
@@ -324,14 +324,14 @@ def cleanTimelineDataset(save=True, concatenated=False):
     df_val = pd.DataFrame(X_val, columns=df_manual_cols)
 
     if save:
-        dir_manual = f'{dir}/processed/manual'
-        np.save(f'{dir_manual}/train_timeline', X_train)
-        np.save(f'{dir_manual}/test_timeline', X_test)
-        np.save(f'{dir_manual}/val_timeline', X_val)
-        df_train.to_pickle(f'{dir_manual}/train_timeline.pkl')
-        df_test.to_pickle(f'{dir_manual}/test_timeline.pkl')
-        df_val.to_pickle(f'{dir_manual}/val_timeline.pkl')
+        dir_manual = f"{dir}/processed/manual"
+        np.save(f"{dir_manual}/train_timeline", X_train)
+        np.save(f"{dir_manual}/test_timeline", X_test)
+        np.save(f"{dir_manual}/val_timeline", X_val)
+        df_train.to_pickle(f"{dir_manual}/train_timeline.pkl")
+        df_test.to_pickle(f"{dir_manual}/test_timeline.pkl")
+        df_val.to_pickle(f"{dir_manual}/val_timeline.pkl")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cleanTimelineDataset(save=True, concatenated=True)

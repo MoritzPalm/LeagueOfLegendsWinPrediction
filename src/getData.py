@@ -9,13 +9,12 @@ from tqdm import tqdm
 import keys
 from src import utils
 from src.crawlers.MatchIdCrawler import MatchIdCrawler
-from src.parsers import champion, summoner, timeline, participant
+from src.parsers import champion, participant, summoner, timeline
 from src.parsers.summoner import scrape_champion_masteries
 from src.sqlstore import queries
 from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLMatch
 from src.sqlstore.queries import get_all_matchIds
-
 
 # TODO: fix issue where crawler crawls many summoner ids or puuids
 
@@ -272,7 +271,7 @@ if __name__ == "__main__":
     otherlogginglevel = getattr(logging, args.otherlogginglevel.upper(), None)
     if not isinstance(logginglevel, int):
         raise ValueError("Invalid log level: %s" % args.logginglevel)
-    file_handler = logging.FileHandler(filename=f"logging.log", mode="w")
+    file_handler = logging.FileHandler(filename="logging.log", mode="w")
     stdout_handler = logging.StreamHandler(stream=sys.stdout)
     handlers = [file_handler, stdout_handler]
     logging.basicConfig(

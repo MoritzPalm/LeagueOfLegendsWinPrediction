@@ -1,16 +1,17 @@
-from sqlalchemy.orm import mapped_column, relationship
+import roman
 from sqlalchemy import (
-    Integer,
-    String,
     BigInteger,
     Boolean,
-    ForeignKey,
     DateTime,
-    Identity,
     Float,
+    ForeignKey,
+    Identity,
+    Integer,
+    String,
 )
+from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func
-import roman
+
 from src.sqlstore.db import Base
 
 
@@ -46,7 +47,7 @@ class SQLSummoner(Base):
         return f"summoner {self.name} with puuid {self.puuid}"
 
     def get_training_data(self):
-        return {'level': self.summonerLevel}
+        return {"level": self.summonerLevel}
 
 
 class SQLSummonerLeague(Base):
@@ -108,15 +109,15 @@ class SQLSummonerLeague(Base):
 
     def get_training_data(self):
         return {
-            'tier': self.tier,
-            'rank': self.rank,
-            'leaguePoints': self.leaguePoints,
-            'wins': self.wins,
-            'losses': self.losses,
-            'veteran': self.veteran,
-            'inactive': self.inactive,
-            'freshBlood': self.freshBlood,
-            'hotStreak': self.hotStreak
+            "tier": self.tier,
+            "rank": self.rank,
+            "leaguePoints": self.leaguePoints,
+            "wins": self.wins,
+            "losses": self.losses,
+            "veteran": self.veteran,
+            "inactive": self.inactive,
+            "freshBlood": self.freshBlood,
+            "hotStreak": self.hotStreak
         }
 
 
@@ -201,20 +202,20 @@ class SQLChampionMastery(Base):
 
     def get_training_data(self):
         return {
-            'lastPlayTime': self.lastPlayTime,
-            'championLevel': self.championLevel,
-            'championPoints': self.championPoints,
-            'championPointsSinceLastLevel': self.championPointsSinceLastLevel,
-            'tokensEarned': self.tokensEarned,
+            "lastPlayTime": self.lastPlayTime,
+            "championLevel": self.championLevel,
+            "championPoints": self.championPoints,
+            "championPointsSinceLastLevel": self.championPointsSinceLastLevel,
+            "tokensEarned": self.tokensEarned,
             # 'championWins': self.wins,
             # 'championWinrate': self.championWinrate,
-            'kda': self.kda,
-            'kills': self.kills,
-            'deaths': self.deaths,
-            'assists': self.assists,
-            'lp': self.lp,
-            'maxKills': self.maxKills,
-            'cs': self.cs,
-            'damage': self.damage,
-            'gold': self.gold,
+            "kda": self.kda,
+            "kills": self.kills,
+            "deaths": self.deaths,
+            "assists": self.assists,
+            "lp": self.lp,
+            "maxKills": self.maxKills,
+            "cs": self.cs,
+            "damage": self.damage,
+            "gold": self.gold,
         }

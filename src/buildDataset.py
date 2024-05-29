@@ -10,7 +10,7 @@ from src.sqlstore import queries
 from src.sqlstore.champion import SQLChampion
 from src.sqlstore.db import get_session
 from src.sqlstore.match import SQLMatch, SQLParticipant, SQLParticipantStats
-from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
+from src.sqlstore.summoner import SQLChampionMastery, SQLSummoner, SQLSummonerLeague
 
 
 def process_summoner(participant_puuid, session):
@@ -139,7 +139,7 @@ def build_static_dataset(size: int = None, save: bool = True) -> pd.DataFrame:
         logging.info(f"Fetched {len(matches)} matches from the database.")
 
     # Use joblib to parallelize match processing
-    processed_data = Parallel(n_jobs=20, prefer='threads', verbose=10)(delayed(process_match)(match, 'data/raw/',
+    processed_data = Parallel(n_jobs=20, prefer="threads", verbose=10)(delayed(process_match)(match, "data/raw/",
                                                                                               True) for
                                                                        match in
                                                                        matches)

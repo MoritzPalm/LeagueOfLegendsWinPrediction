@@ -3,8 +3,8 @@ import contextlib
 import logging
 from configparser import ConfigParser
 
-from sqlalchemy import create_engine, URL, exc
-from sqlalchemy.orm import declarative_base, Session
+from sqlalchemy import URL, create_engine, exc
+from sqlalchemy.orm import Session, declarative_base
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ def db_config(filename="src/database.ini", section="postgresql") -> dict:
             logger.info("opening config file")
             db_configparser.read_file(f)
     except IOError:
-        logger.critical(f"no dabase ini file found!")
+        logger.critical("no dabase ini file found!")
         raise
     try:
         db = dict(db_configparser[section])
@@ -47,7 +47,7 @@ engine = connect_to_db()
 @contextlib.contextmanager
 def get_session(cleanup=False) -> Session:
     session = Session(bind=engine)
-    logger.info(f"building database session")
+    logger.info("building database session")
     Base.metadata.create_all(engine)
 
     try:

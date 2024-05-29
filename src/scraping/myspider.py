@@ -1,18 +1,17 @@
-import scrapy
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from bs4 import BeautifulSoup
-import pandas as pd
 import time
 
-from src import utils
-
-from scrapy import Spider, Request
-from scrapy.item import Item, Field
+import pandas as pd
+from bs4 import BeautifulSoup
+from scrapy import Request, Spider
+from scrapy.item import Field, Item
 from scrapy.utils.project import get_project_settings
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+from src import utils
 
 
 class MySpider(Spider):
@@ -26,14 +25,14 @@ class MySpider(Spider):
         self.start_urls = []
         for data in init_data:
             self.start_urls.append({
-                'url': f"https://u.gg/lol/profile/{data['region']}/{data['summonerName']}/champion-stats",
-                'alternative_url': f"https://u.gg/lol/profile/{data['region']}/{data['summonerName']}/champion-stats?queueType=normal_draft_5x5",
-                'tried_alternative': False  # To track whether the alternative URL has been tried
+                "url": f"https://u.gg/lol/profile/{data['region']}/{data['summonerName']}/champion-stats",
+                "alternative_url": f"https://u.gg/lol/profile/{data['region']}/{data['summonerName']}/champion-stats?queueType=normal_draft_5x5",
+                "tried_alternative": False  # To track whether the alternative URL has been tried
             })
 
     def start_requests(self):
         for url_data in self.start_urls:
-            yield Request(url=url_data['url'], callback=self.parse, meta={'url_data': url_data})
+            yield Request(url=url_data["url"], callback=self.parse, meta={"url_data": url_data})
 
     def parse(self, response):
         settings = get_project_settings()
@@ -54,7 +53,7 @@ class MySpider(Spider):
             "gold",
         ]
         row_index = 1
-        url_data = response.meta['url_data']
+        url_data = response.meta["url_data"]
         while True:
             try:
                 row = {}
@@ -91,27 +90,27 @@ class MySpider(Spider):
                     else:
                         row[column] = "N/A"
                 if is_row_empty:
-                    if not url_data['tried_alternative']:
+                    if not url_data["tried_alternative"]:
                         # If no data and haven't tried the alternative URL, then try it.
-                        url_data['tried_alternative'] = True
-                        yield Request(url=url_data['alternative_url'], callback=self.parse, meta={'url_data': url_data})
+                        url_data["tried_alternative"] = True
+                        yield Request(url=url_data["alternative_url"], callback=self.parse, meta={"url_data": url_data})
                     break
 
                 item = SummonerItem()
-                item['url'] = response.meta['url_data']['url']
-                item['rank'] = row['rank']
-                item['champion'] = row['champion']
-                item['winRate'] = row['winRate']
-                item['winsLoses'] = row['winsLoses']
-                item['kda'] = row['kda']
-                item['kills'] = row['kills']
-                item['deaths'] = row['deaths']
-                item['assists'] = row['assists']
-                item['lp'] = row['lp']
-                item['maxKills'] = row['maxKills']
-                item['cs'] = row['cs']
-                item['damage'] = row['damage']
-                item['gold'] = row['gold']
+                item["url"] = response.meta["url_data"]["url"]
+                item["rank"] = row["rank"]
+                item["champion"] = row["champion"]
+                item["winRate"] = row["winRate"]
+                item["winsLoses"] = row["winsLoses"]
+                item["kda"] = row["kda"]
+                item["kills"] = row["kills"]
+                item["deaths"] = row["deaths"]
+                item["assists"] = row["assists"]
+                item["lp"] = row["lp"]
+                item["maxKills"] = row["maxKills"]
+                item["cs"] = row["cs"]
+                item["damage"] = row["damage"]
+                item["gold"] = row["gold"]
                 yield item
                 row_index += 1
             except Exception as e:

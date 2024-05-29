@@ -45,7 +45,7 @@ def clean_champion_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def is_valid_match(match_info: dict) -> bool:
-    logging.debug(f"validating match info")
+    logging.debug("validating match info")
     if match_info["gameDuration"] < 960:  # 16 min = 960 sec
         logging.warning(
             f"match is too short: match length was {match_info['gameDuration']}s, more than 960s expected"
@@ -96,7 +96,7 @@ def clean_champion_name(name: str) -> str:
     :param name:
     :return:
     """
-    cleaned = re.sub(r'[^\w\s]', "", name).replace(" ", "").lower()
+    cleaned = re.sub(r"[^\w\s]", "", name).replace(" ", "").lower()
     if cleaned == "wukong":
         cleaned = "monkeyking"
     if cleaned == "nunuwillump":

@@ -17,7 +17,7 @@ def drop_missing(df: pd.DataFrame, thresh: int = 0) -> pd.DataFrame:
         thresh = len(df.columns) - 1
     len_before = len(df)
     df_new = df.dropna(axis=0)
-    print(f'dropped {len_before - len(df_new)} rows')
+    print(f"dropped {len_before - len(df_new)} rows")
     return df_new
 
 
@@ -38,7 +38,7 @@ def get_winning_team(df: pd.DataFrame) -> pd.DataFrame:
     :param df: pd.Dataframe with column 'participant1_win'
     :return: None
     """
-    df['label'] = np.where(df['participant1_win'], 0, 1)  # 0 = team1 won, 1 = team2 won
+    df["label"] = np.where(df["participant1_win"], 0, 1)  # 0 = team1 won, 1 = team2 won
     return df
 
 
@@ -49,20 +49,20 @@ def drop_wrong_data(df: pd.DataFrame) -> pd.DataFrame:
     :return: None
     """
     len_before = len(df)
-    print(f'found {len(df)} rows')
-    df.drop(df[df['mapId'] != 11].index, inplace=True)
-    print('dropped wrong mapId')
-    df.drop(df[df['queueId'] != 420].index, inplace=True)
-    print('dropped wrong queueId')
-    df.drop(df[df['gameDuration'] < 900].index, inplace=True)
-    print('dropped wrong gameDuration')
-    df.drop(df[df['seasonId'] != 13].index, inplace=True)
-    print('dropped wrong seasonId')
-    df.drop(df[df['gameVersion'] != df['gameVersion'][0]].index, inplace=True)
-    print('dropped wrong gameVersion')
-    df.drop(df[df['patch'] != df['patch'][0]].index, inplace=True)
-    print('dropped wrong patch')
-    print(f'dropped {len_before - len(df)} wrong rows')
+    print(f"found {len(df)} rows")
+    df.drop(df[df["mapId"] != 11].index, inplace=True)
+    print("dropped wrong mapId")
+    df.drop(df[df["queueId"] != 420].index, inplace=True)
+    print("dropped wrong queueId")
+    df.drop(df[df["gameDuration"] < 900].index, inplace=True)
+    print("dropped wrong gameDuration")
+    df.drop(df[df["seasonId"] != 13].index, inplace=True)
+    print("dropped wrong seasonId")
+    df.drop(df[df["gameVersion"] != df["gameVersion"][0]].index, inplace=True)
+    print("dropped wrong gameVersion")
+    df.drop(df[df["patch"] != df["patch"][0]].index, inplace=True)
+    print("dropped wrong patch")
+    print(f"dropped {len_before - len(df)} wrong rows")
     return df
 
 
@@ -73,21 +73,21 @@ def drop_irrelevant(df: pd.DataFrame) -> pd.DataFrame:
     :return: None
     """
     irrelevant_cols = []
-    general_irrelevant = ['gameDuration', 'gameCreation', 'gameVersion', 'mapId', 'queueId', 'patch', 'seasonId',
-                          'platformId']
+    general_irrelevant = ["gameDuration", "gameCreation", "gameVersion", "mapId", "queueId", "patch", "seasonId",
+                          "platformId"]
     irrelevant_cols.extend(general_irrelevant)
-    participant_irrelevant = ['win', 'veteran', 'inactive', 'freshBlood', 'hotStreak',
-                              'champion_championPointsSinceLastLevel',
-                              'champion_tokensEarned',
-                              'champion_infoAttack', 'champion_infoDefense', 'champion_infoMagic',
-                              'champion_infoDifficulty', 'champion_matches', 'teamId', 'champion_championLevel',
-                              'champion_kills', 'champion_deaths', 'champion_assists', 'champion_maxKills',
-                              'champion_cs', 'champion_damage', 'champion_gold', 'champion_championNumber',
-                              'champion_pick_rate', 'champion_ban_rate', 'leaguePoints', 'champion_tier']
-    participant_irrelevant = ['win', 'lp']
+    participant_irrelevant = ["win", "veteran", "inactive", "freshBlood", "hotStreak",
+                              "champion_championPointsSinceLastLevel",
+                              "champion_tokensEarned",
+                              "champion_infoAttack", "champion_infoDefense", "champion_infoMagic",
+                              "champion_infoDifficulty", "champion_matches", "teamId", "champion_championLevel",
+                              "champion_kills", "champion_deaths", "champion_assists", "champion_maxKills",
+                              "champion_cs", "champion_damage", "champion_gold", "champion_championNumber",
+                              "champion_pick_rate", "champion_ban_rate", "leaguePoints", "champion_tier"]
+    participant_irrelevant = ["win", "lp"]
     for i in range(1, 11):
         for col in participant_irrelevant:
-            irrelevant_cols.append(f'participant{i}_{col}')
+            irrelevant_cols.append(f"participant{i}_{col}")
     df_new = df.drop(columns=irrelevant_cols)
     return df_new
 
@@ -115,7 +115,7 @@ def format_rank(tier: str, rank: str) -> str:
     :param rank: minor rank group, e.g. I, II, III, IV
     :return: formatted rank, e.g. 7.1
     """
-    return f'{tier}.{rank}'
+    return f"{tier}.{rank}"
 
 
 def fix_rank(df: pd.DataFrame) -> pd.DataFrame:
@@ -125,11 +125,11 @@ def fix_rank(df: pd.DataFrame) -> pd.DataFrame:
     :return: None
     """
     for i in range(1, 11):
-        df[f'participant{i}_tier'] = df[f'participant{i}_tier'].apply(lambda x: Tier[x].value)
-        df.loc[:, f'participant{i}_tier'] = df.apply(
-            lambda x: format_rank(x[f'participant{i}_tier'], x[f'participant{i}_rank']), axis=1)
-        df[f'participant{i}_tier'] = df[f'participant{i}_tier'].astype(float)
-        df.drop(columns=[f'participant{i}_rank'], inplace=True)
+        df[f"participant{i}_tier"] = df[f"participant{i}_tier"].apply(lambda x: Tier[x].value)
+        df.loc[:, f"participant{i}_tier"] = df.apply(
+            lambda x: format_rank(x[f"participant{i}_tier"], x[f"participant{i}_rank"]), axis=1)
+        df[f"participant{i}_tier"] = df[f"participant{i}_tier"].astype(float)
+        df.drop(columns=[f"participant{i}_rank"], inplace=True)
     return df
 
 
@@ -141,9 +141,9 @@ def calc_winrate(df: pd.DataFrame) -> pd.DataFrame:
     :return: None
     """
     for i in range(1, 11):
-        df[f'participant{i}_winrate'] = df[f'participant{i}_wins'] / (
-                df[f'participant{i}_wins'] + df[f'participant{i}_losses'])
-        df.drop(columns=[f'participant{i}_wins', f'participant{i}_losses'], inplace=True)
+        df[f"participant{i}_winrate"] = df[f"participant{i}_wins"] / (
+                df[f"participant{i}_wins"] + df[f"participant{i}_losses"])
+        df.drop(columns=[f"participant{i}_wins", f"participant{i}_losses"], inplace=True)
     return df
 
 
@@ -154,7 +154,7 @@ def fix_teamId(df: pd.DataFrame) -> pd.DataFrame:
     :return: None
     """
     for i in range(1, 11):
-        df[f'participant{i}_teamId'] = df[f'participant{i}_teamId'] // 100 - 1
+        df[f"participant{i}_teamId"] = df[f"participant{i}_teamId"] // 100 - 1
     return df
 
 
@@ -175,7 +175,7 @@ def convert_lastPlayTime(df: pd.DataFrame) -> pd.DataFrame:
     :return: None
     """
     for i in range(1, 11):
-        df[f'participant{i}_lastPlayTime'] = df[f'participant{i}_lastPlayTime'].apply(
+        df[f"participant{i}_lastPlayTime"] = df[f"participant{i}_lastPlayTime"].apply(
             lambda x: int((datetime.now() - datetime.fromtimestamp(x / 1000)).total_seconds()) if x is not np.nan
             else 0)
     return df
@@ -200,7 +200,7 @@ def convert_championTier(df: pd.DataFrame) -> pd.DataFrame:
     :return: DataFrame with changed column
     """
     for i in range(1, 11):
-        df[f'participant{i}_champion_tier'] = (df[f'participant{i}_champion_tier']
+        df[f"participant{i}_champion_tier"] = (df[f"participant{i}_champion_tier"]
                                                .apply(lambda x: championTier[x]
                                                       .value if x != "S+" else 5))
     return df
@@ -214,10 +214,10 @@ def drop_wrong_teamIds(df: pd.DataFrame) -> pd.DataFrame:
     """
     len_before = len(df)
     for i in range(1, 6):
-        df.drop(df[df[f'participant{i}_teamId'] != 0].index, inplace=True)
+        df.drop(df[df[f"participant{i}_teamId"] != 0].index, inplace=True)
     for i in range(6, 11):
-        df.drop(df[df[f'participant{i}_teamId'] != 1].index, inplace=True)
-    print(f'dropped {len_before - len(df)} rows because of wrong teamIds')
+        df.drop(df[df[f"participant{i}_teamId"] != 1].index, inplace=True)
+    print(f"dropped {len_before - len(df)} rows because of wrong teamIds")
     return df
 
 
@@ -231,8 +231,8 @@ def drop_wrong_wins(df: pd.DataFrame) -> pd.DataFrame:
     """
     len_before = len(df)
     # Columns for first 5 participants and last 5 participants
-    first_five_cols = [f'participant{i}_win' for i in range(1, 6)]
-    last_five_cols = [f'participant{i}_win' for i in range(6, 11)]
+    first_five_cols = [f"participant{i}_win" for i in range(1, 6)]
+    last_five_cols = [f"participant{i}_win" for i in range(6, 11)]
 
     # Check the condition for each row
     valid_rows = df.apply(
@@ -241,7 +241,7 @@ def drop_wrong_wins(df: pd.DataFrame) -> pd.DataFrame:
                     (row[first_five_cols[0]] != row[last_five_cols[0]]),
         axis=1
     )
-    print(f'dropped {len_before - len(df[valid_rows])} rows because of wrong wins')
+    print(f"dropped {len_before - len(df[valid_rows])} rows because of wrong wins")
     # Filter the DataFrame
     return df[valid_rows]
 
@@ -266,7 +266,7 @@ def merge_columns(df: pd.DataFrame) -> pd.DataFrame:
     cols = df.columns.tolist()
     merged_columns = {}
     # cols that are not to be merged as they are categorical, so averaging them does not make sense
-    cols_left = ['teamId', 'champion_championNumber']
+    cols_left = ["teamId", "champion_championNumber"]
     for col in cols:
         matches = re.search(r"participant(\d+)_(\w+)", col)
         if matches and matches.group(2) not in cols_left:
@@ -274,16 +274,16 @@ def merge_columns(df: pd.DataFrame) -> pd.DataFrame:
             col_type = matches.group(2)
 
             # Determine the team of the participant
-            team_col = f'participant{participant_number}_teamId'
-            team = df[team_col].iloc[0] if team_col in df.columns else 'unknown'
+            team_col = f"participant{participant_number}_teamId"
+            team = df[team_col].iloc[0] if team_col in df.columns else "unknown"
 
             if col_type not in merged_columns:
-                merged_columns[col_type] = {'team1': [], 'team2': []}
+                merged_columns[col_type] = {"team1": [], "team2": []}
 
             if team == 0:
-                merged_columns[col_type]['team1'].append(df[col])
+                merged_columns[col_type]["team1"].append(df[col])
             elif team == 1:
-                merged_columns[col_type]['team2'].append(df[col])
+                merged_columns[col_type]["team2"].append(df[col])
 
     merged_series = {}
     for col_type, teams_data in merged_columns.items():
@@ -306,8 +306,8 @@ def one_hot_encode_teams(df) -> pd.DataFrame:
 
     # Iterate over the columns and separate them into two teams
     for col in df.columns:
-        if col.startswith('participant'):
-            participant_number = int(col.split('_')[0][11:])
+        if col.startswith("participant"):
+            participant_number = int(col.split("_")[0][11:])
             if 1 <= participant_number <= 5:
                 # Team 0
                 team_0 = pd.concat([team_0, df[col]], axis=1)
@@ -316,8 +316,8 @@ def one_hot_encode_teams(df) -> pd.DataFrame:
                 team_1 = pd.concat([team_1, df[col]], axis=1)
 
     # One-hot encode the champions for each team
-    team_0_encoded = pd.get_dummies(team_0, prefix='team_0_champion', columns=team_0.columns)
-    team_1_encoded = pd.get_dummies(team_1, prefix='team_1_champion', columns=team_1.columns)
+    team_0_encoded = pd.get_dummies(team_0, prefix="team_0_champion", columns=team_0.columns)
+    team_1_encoded = pd.get_dummies(team_1, prefix="team_1_champion", columns=team_1.columns)
 
     # Sum the one-hot encoded columns for each team
     team_0_encoded = team_0_encoded.groupby(level=0, axis=1).sum()
@@ -339,7 +339,7 @@ def sort_columns(col) -> tuple:
     :param col:
     :return:
     """
-    parts = col.split('_')
+    parts = col.split("_")
     team_number = int(parts[1])  # Extract team number (0 or 1)
     champion_number = int(parts[-1])  # Extract champion number
     return team_number, champion_number

@@ -1,12 +1,12 @@
 from sqlalchemy import (
-    Integer,
-    String,
     BigInteger,
     Boolean,
-    ForeignKey,
     DateTime,
-    PickleType,
+    ForeignKey,
     Identity,
+    Integer,
+    PickleType,
+    String,
     UniqueConstraint,
 )
 from sqlalchemy.orm import mapped_column, relationship

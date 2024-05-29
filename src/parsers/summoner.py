@@ -1,14 +1,11 @@
-import logging
 
 import sqlalchemy.orm
 from riotwatcher import LolWatcher
 from scrapy.crawler import CrawlerProcess
-import pandas as pd
 
-import src.utils
-from src.sqlstore import queries
-from src.sqlstore.summoner import SQLSummoner, SQLSummonerLeague, SQLChampionMastery
 from src.scraping.myspider import MySpider
+from src.sqlstore import queries
+from src.sqlstore.summoner import SQLChampionMastery, SQLSummoner, SQLSummonerLeague
 
 
 def parse_summoner_data(
@@ -64,7 +61,7 @@ def parse_summoner_data(
                 hotStreak=data["hotStreak"],
             )
         if summoner_league_obj is None:
-            raise Exception(f"no ranked summoner data found!")
+            raise Exception("no ranked summoner data found!")
         summoner_obj.leagues.append(summoner_league_obj)
         session.add(summoner_league_obj)
 

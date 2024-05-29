@@ -3,14 +3,14 @@ import logging
 
 import sqlalchemy.exc
 from scrapy.item import Item
-from sqlalchemy import select, or_
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import exists
 
 from src import sqlstore
 from src.sqlstore.champion import SQLChampion
 from src.sqlstore.match import SQLMatch, SQLParticipantStats
-from src.sqlstore.summoner import SQLSummoner, SQLChampionMastery
+from src.sqlstore.summoner import SQLChampionMastery, SQLSummoner
 from src.utils import clean_champion_name
 
 
@@ -221,7 +221,7 @@ def update_mastery(session: sqlalchemy.orm.Session, scraped: Item, region: str, 
             continue
         if key == "wins" or key == "championWinrate":
             continue  # TODO: as soon as the scraping of these is working, comment this and the columns in the table back in
-        if value == 'N/A':
+        if value == "N/A":
             setattr(mastery, key, None)
             continue
         setattr(mastery, key, value)

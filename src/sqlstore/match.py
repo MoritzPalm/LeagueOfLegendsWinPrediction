@@ -1,17 +1,17 @@
 from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    DateTime,
+    Float,
+    ForeignKey,
+    Identity,
     Integer,
     String,
-    BigInteger,
-    DateTime,
-    Identity,
-    ForeignKey,
-    Boolean,
-    Float,
 )
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func
-from src.sqlstore.db import Base
 
+from src.sqlstore.db import Base
 from src.utils import get_patch, get_season
 
 
@@ -60,9 +60,9 @@ class SQLMatch(Base):
         return f"({self.platformId}) ({self.gameId}) ({self.gameCreation})"
 
     def get_training_data(self):
-        return {'gameDuration': self.gameDuration, 'gameCreation': self.gameCreation, 'gameVersion': self.gameVersion,
-                'mapId': self.mapId, 'queueId': self.queueId, 'patch': self.patch, 'seasonId': self.seasonId,
-                'platformId': self.platformId}
+        return {"gameDuration": self.gameDuration, "gameCreation": self.gameCreation, "gameVersion": self.gameVersion,
+                "mapId": self.mapId, "queueId": self.queueId, "patch": self.patch, "seasonId": self.seasonId,
+                "platformId": self.platformId}
 
 
 class SQLParticipant(Base):

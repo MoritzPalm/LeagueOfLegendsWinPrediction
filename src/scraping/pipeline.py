@@ -1,11 +1,11 @@
-import re
 import logging
+import re
 
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 
-from src.sqlstore.queries import scraping_needed, update_mastery
 from src.sqlstore.db import get_session
+from src.sqlstore.queries import scraping_needed, update_mastery
 
 
 class DataPipeline:
