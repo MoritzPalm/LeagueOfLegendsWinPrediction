@@ -1,5 +1,6 @@
 env
 *.log
+*.log.*
 keys.py
 data/
 .idea
