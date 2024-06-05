@@ -43,6 +43,13 @@ def setup_logging(internal_log_level: str, external_log_level: str) -> None:
 
 
 def get_match_data(match_id: str, watcher: LolWatcher, region: str) -> dict | None:
+    """
+    Fetches match data from the Riot API
+    :param match_id: ID of the match
+    :param watcher: RiotWatcher object
+    :param region: region of the match, e.g. euw1
+    :return: dict containing general information about the match, e.g. gameDuration
+    """
     try:
         match_info = watcher.match.by_id(region=region, match_id=match_id)["info"]
         if utils.is_valid_match(match_info):
@@ -55,6 +62,11 @@ def get_match_data(match_id: str, watcher: LolWatcher, region: str) -> dict | No
 
 
 def get_data(arguments: argparse.Namespace) -> None:
+    """
+    Main function to fetch match data
+    :param arguments: argparse.Namespace object containing the arguments
+    :return:
+    """
     if arguments.n == 0 or not arguments.n:
         arguments.n = sys.maxsize  # if no maximum number of matches or 0 passed,
         # use maximum number of matches possible
@@ -128,12 +140,20 @@ def parse_data(
         session: sqlalchemy.orm.Session,
         watcher: LolWatcher,
         matchid: str,
-        season: int,
-        patch: int,
         match_info: dict,
         match_timeline: dict,
         region: str,
 ) -> None:
+    """
+    Parses the data from the match and inserts it into the database
+    :param session:
+    :param watcher:
+    :param matchid:
+    :param match_info:
+    :param match_timeline:
+    :param region:
+    :return:
+    """
     try:
         current_match = SQLMatch(
             matchId=matchid,
