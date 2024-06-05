@@ -3,7 +3,7 @@ import logging
 import logging.handlers
 import sys
 
-import sqlalchemy
+from sqlalchemy.orm import declarative_base
 import sqlalchemy.orm.session
 from riotwatcher import LolWatcher
 from tqdm import tqdm
@@ -14,7 +14,7 @@ from src.crawlers.MatchIdCrawler import MatchIdCrawler
 from src.parsers import champion, summoner, timeline, participant
 from src.parsers.summoner import scrape_champion_masteries
 from src.sqlstore import queries
-from src.sqlstore.db import get_session
+from src.sqlstore.db import get_session, connect_to_db, db_config
 from src.sqlstore.match import SQLMatch
 from src.sqlstore.queries import get_all_matchIds
 
@@ -61,8 +61,11 @@ def getData(arguments: argparse.Namespace) -> None:
         arguments.n = sys.maxsize  # if no maximum number of matches or 0 passed,
         # use maximum number of matches possible
 
+    # connecting to database
+    engine = connect_to_db(config=db_config("src/database.ini"))
+
     logger.info("Pulling all match IDs already present in the database")
-    with get_session() as session:
+    with get_session(engine) as session:
         present_matchIDs: set = get_all_matchIds(session=session, patch=arguments.patch,
                                                  season=arguments.season)
         logger.info(f"Present match IDs: {len(present_matchIDs)}")
@@ -72,7 +75,7 @@ def getData(arguments: argparse.Namespace) -> None:
         f"region {arguments.region} and tier {arguments.tier}")
     crawler = MatchIdCrawler(api_key=api_key,
                              region=arguments.region,
-                             tier=arguments.tier,
+                             tier=arguments.tier.upper(),
                              patch=arguments.patch,
                              season=arguments.season,
                              known_matchIDs=present_matchIDs)
@@ -81,7 +84,7 @@ def getData(arguments: argparse.Namespace) -> None:
     logger.info(f"{len(matchIDs)} non-unique match IDs crawled")
     watcher = LolWatcher(api_key)
 
-    with get_session() as session:
+    with get_session(engine) as session:
         for matchID in tqdm(matchIDs):
             try:
                 if queries.check_matchId_present(session, matchID): # TODO: test if this is necessary, as the matchIDs are already filtered
@@ -207,10 +210,10 @@ if __name__ == "__main__":
                         choices=[x for x in range(13)],
                         help="Season from which matches get pulled", dest="season")
 
-    parser.add_argument("-p", "--patch", action="store", default=17, type=int,
+    parser.add_argument("-p", "--patch", action="store", default=20, type=int,
                         help="Patch from which matches are pulled", dest="patch")
 
-    parser.add_argument("-ll", "--otherloglevel", action="store", default="warning",
+    parser.add_argument("-ll", "--otherloglevel", action="store", default="debug",
                         type=lambda s: s.lower(),
                         choices=["debug", "info", "warning", "error", "critical"],
                         help="Choosing the level of logging used by imported code",
