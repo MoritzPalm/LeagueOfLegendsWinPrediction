@@ -3,7 +3,6 @@ import logging
 import logging.handlers
 import sys
 
-from sqlalchemy.orm import declarative_base
 import sqlalchemy.orm.session
 from riotwatcher import LolWatcher
 from tqdm import tqdm
@@ -11,10 +10,10 @@ from tqdm import tqdm
 import keys
 from src import utils
 from src.crawlers.MatchIdCrawler import MatchIdCrawler
-from src.parsers import champion, summoner, timeline, participant
+from src.parsers import champion, participant, summoner, timeline
 from src.parsers.summoner import scrape_champion_masteries
 from src.sqlstore import queries
-from src.sqlstore.db import get_session, connect_to_db, db_config
+from src.sqlstore.db import connect_to_db, db_config, get_session
 from src.sqlstore.match import SQLMatch
 from src.sqlstore.queries import get_all_matchIds
 
@@ -48,15 +47,14 @@ def get_match_data(match_id: str, watcher: LolWatcher, region: str) -> dict | No
         match_info = watcher.match.by_id(region=region, match_id=match_id)["info"]
         if utils.is_valid_match(match_info):
             return match_info
-        else:
-            logger.warning(f"Match {match_id} is not valid")
-            return
+        logger.warning(f"Match {match_id} is not valid")
+        return None
     except Exception as e:
         logger.error(f"Error fetching match {match_id}: {e}")
-        return
+        return None
 
 
-def getData(arguments: argparse.Namespace) -> None:
+def get_data(arguments: argparse.Namespace) -> None:
     if arguments.n == 0 or not arguments.n:
         arguments.n = sys.maxsize  # if no maximum number of matches or 0 passed,
         # use maximum number of matches possible
@@ -66,9 +64,9 @@ def getData(arguments: argparse.Namespace) -> None:
 
     logger.info("Pulling all match IDs already present in the database")
     with get_session(engine) as session:
-        present_matchIDs: set = get_all_matchIds(session=session, patch=arguments.patch,
+        present_matchids: set = get_all_matchIds(session=session, patch=arguments.patch,
                                                  season=arguments.season)
-        logger.info(f"Present match IDs: {len(present_matchIDs)}")
+        logger.info(f"Present match IDs: {len(present_matchids)}")
 
     logger.info(
         f"Initializing MatchIdCrawler with API key {api_key}, "
@@ -78,20 +76,22 @@ def getData(arguments: argparse.Namespace) -> None:
                              tier=arguments.tier.upper(),
                              patch=arguments.patch,
                              season=arguments.season,
-                             known_matchIDs=present_matchIDs)
+                             known_matchIDs=present_matchids)
     logger.info(f"Crawling {arguments.n} match IDs")
-    matchIDs: set[str] = crawler.getMatchIDs(n=arguments.n)
-    logger.info(f"{len(matchIDs)} non-unique match IDs crawled")
+    matchids: set[str] = crawler.getMatchIDs(n=arguments.n)
+    logger.info(f"{len(matchids)} non-unique match IDs crawled")
     watcher = LolWatcher(api_key)
 
     with get_session(engine) as session:
-        for matchID in tqdm(matchIDs):
+        for matchid in tqdm(matchids):
             try:
-                if queries.check_matchId_present(session, matchID): # TODO: test if this is necessary, as the matchIDs are already filtered
-                    logger.warning(f"Match ID {matchID} already present in database")
+                if queries.check_matchId_present(session, matchid):
+                    # TODO: test if this is necessary,
+                    #  as the matchIDs are already filtered
+                    logger.warning(f"Match ID {matchid} already present in database")
                     continue
 
-                match_info = get_match_data(matchID, watcher, arguments.region)
+                match_info = get_match_data(matchid, watcher, arguments.region)
                 if not match_info:
                     continue
 
@@ -107,15 +107,15 @@ def getData(arguments: argparse.Namespace) -> None:
 
                 current_match_timeline = \
                     watcher.match.timeline_by_match(region=args.region,
-                                                    match_id=matchID)["info"]
-                parse_data(session, watcher, matchID, season, patch, match_info,
+                                                    match_id=matchid)["info"]
+                parse_data(session, watcher, matchid, season, patch, match_info,
                            current_match_timeline, args.region)
                 session.flush()
                 logger.info("Session commit")
                 session.commit()
             except Exception as e:
                 logger.error(
-                    f"Skipping match ID {matchID} because of the following error:")
+                    f"Skipping match ID {matchid} because of the following error:")
                 logger.error(str(e))
                 session.rollback()
                 continue
@@ -127,7 +127,7 @@ def getData(arguments: argparse.Namespace) -> None:
 def parse_data(
         session: sqlalchemy.orm.Session,
         watcher: LolWatcher,
-        matchID: str,
+        matchid: str,
         season: int,
         patch: int,
         match_info: dict,
@@ -136,7 +136,7 @@ def parse_data(
 ) -> None:
     try:
         current_match = SQLMatch(
-            matchId=matchID,
+            matchId=matchid,
             platformId=match_info["platformId"],
             gameId=match_info["gameId"],
             queueId=match_info["queueId"],
@@ -166,7 +166,7 @@ def parse_data(
             timeline=match_timeline,
         )
     except Exception as e:
-        logger.error(f"Error parsing data for match {matchID}: {e}")
+        logger.error(f"Error parsing data for match {matchid}: {e}")
         raise
 
 
@@ -207,7 +207,7 @@ if __name__ == "__main__":
                         dest="matches_per_id")
 
     parser.add_argument("-s", "--season", action="store", default=13, type=int,
-                        choices=[x for x in range(13)],
+                        choices=list(range(13)),
                         help="Season from which matches get pulled", dest="season")
 
     parser.add_argument("-p", "--patch", action="store", default=20, type=int,
@@ -234,4 +234,4 @@ if __name__ == "__main__":
     setup_logging(args.logginglevel, args.otherlogginglevel)
     logger.info(f"Starting getData.py with arguments {sys.argv}")
 
-    getData(args)
+    get_data(args)
